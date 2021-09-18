@@ -6,4 +6,5 @@ Garant.Platform.Backend - проект api сервисов бэка. Проек
 <strong>ORM:</strong> LINQ, Entity Framework Core.<br/>
 <strong>БД:</strong> Postgres.<br/>
 <strong>DI:</strong> Autofac.<br/>
-<strong>CI/CD:</strong> Github, TeamCity.
+<strong>CI/CD:</strong> Github, TeamCity.<br/>
+<strong>OC:</strong> Linux (CentOS).<br/>
