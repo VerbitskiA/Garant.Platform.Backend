@@ -33,6 +33,7 @@ namespace Garant.Platform
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform", Version = "v1" });
             });
 
+            // TODO: проверить без этого
             services.AddHttpsRedirection(options =>
             {
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
