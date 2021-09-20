@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.IO;
-using System.Net;
 
 namespace Garant.Platform
 {
@@ -16,8 +15,17 @@ namespace Garant.Platform
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseKestrel()
+                        .UseContentRoot(Directory.GetCurrentDirectory())
+                        .UseUrls("http://*:5000", "http://*:5001")
+                        .UseStartup<Startup>();
                 });
+
+        //Host.CreateDefaultBuilder(args)
+        //.ConfigureWebHostDefaults(webBuilder =>
+        //{
+        //    webBuilder.UseStartup<Startup>();
+        //});
         //Host.CreateDefaultBuilder(args)
         //.ConfigureWebHostDefaults(webBuilder =>
         //{
@@ -36,16 +44,5 @@ namespace Garant.Platform
         //        })
         //        .UseStartup<Startup>();
         //});
-        //Host.CreateDefaultBuilder(args)
-        //    .UseKestrel(options =>
-        //    {
-        //        options.Listen(IPAddress.Loopback, 5000);  // http:localhost:5000
-        //        options.Listen(IPAddress.Any, 80);         // http:*:80
-        //        options.Listen(IPAddress.Loopback, 443, listenOptions =>
-        //        {
-        //            listenOptions.UseHttps("certificate.pfx", "password");
-        //        });
-        //    })
-        //    .UseStartup<Startup>();
     }
 }
