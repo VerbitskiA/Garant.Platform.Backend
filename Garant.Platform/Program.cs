@@ -17,7 +17,7 @@ namespace Garant.Platform
                 {
                     webBuilder.UseKestrel()
                         .UseContentRoot(Directory.GetCurrentDirectory())
-                        .UseUrls("http://*:9999")
+                        .UseUrls("https://*:9999")
                         .UseStartup<Startup>();
                 });
     }
