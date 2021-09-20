@@ -3,6 +3,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Garant.Platform.Service.Utils;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -30,6 +31,12 @@ namespace Garant.Platform
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform", Version = "v1" });
+            });
+
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                options.HttpsPort = 44344;
             });
 
             //ApplicationContainer = AutoFac.Init(cb =>

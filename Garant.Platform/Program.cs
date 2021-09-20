@@ -12,20 +12,20 @@ namespace Garant.Platform
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseKestrel()
-                        .UseContentRoot(Directory.GetCurrentDirectory())
-                        .UseUrls("http://localhost:8000;https://localhost:8001")
-                        .UseStartup<Startup>();
-                });
-
         //Host.CreateDefaultBuilder(args)
-        //.ConfigureWebHostDefaults(webBuilder =>
-        //{
-        //    webBuilder.UseStartup<Startup>();
-        //});
+        //    .ConfigureWebHostDefaults(webBuilder =>
+        //    {
+        //        webBuilder.UseKestrel()
+        //            .UseContentRoot(Directory.GetCurrentDirectory())
+        //            .UseUrls("http://localhost:8000;https://localhost:8001")
+        //            .UseStartup<Startup>();
+        //    });
+
+        Host.CreateDefaultBuilder(args)
+        .ConfigureWebHostDefaults(webBuilder =>
+        {
+            webBuilder.UseStartup<Startup>();
+        });
         //Host.CreateDefaultBuilder(args)
         //.ConfigureWebHostDefaults(webBuilder =>
         //{
