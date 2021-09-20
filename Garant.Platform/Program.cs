@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.IO;
+using System.Net;
 
 namespace Garant.Platform
 {
@@ -15,10 +16,36 @@ namespace Garant.Platform
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseKestrel()
-                        .UseContentRoot(Directory.GetCurrentDirectory())
-                        .UseUrls("http://*:9999")
-                        .UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>();
                 });
+        //Host.CreateDefaultBuilder(args)
+        //.ConfigureWebHostDefaults(webBuilder =>
+        //{
+        //    webBuilder
+        //        //.UseKestrel()
+        //        //.UseContentRoot(Directory.GetCurrentDirectory())
+        //        //.UseUrls("httpz://*:9999")
+        //        .UseKestrel(options =>
+        //        {
+        //            options.Listen(IPAddress.Loopback, 5000);  // http:localhost:5000
+        //            options.Listen(IPAddress.Any, 80);         // http:*:80
+        //            options.Listen(IPAddress.Loopback, 443, listenOptions =>
+        //            {
+        //                listenOptions.UseHttps("certificate.pfx", "password");
+        //            });
+        //        })
+        //        .UseStartup<Startup>();
+        //});
+        //Host.CreateDefaultBuilder(args)
+        //    .UseKestrel(options =>
+        //    {
+        //        options.Listen(IPAddress.Loopback, 5000);  // http:localhost:5000
+        //        options.Listen(IPAddress.Any, 80);         // http:*:80
+        //        options.Listen(IPAddress.Loopback, 443, listenOptions =>
+        //        {
+        //            listenOptions.UseHttps("certificate.pfx", "password");
+        //        });
+        //    })
+        //    .UseStartup<Startup>();
     }
 }
