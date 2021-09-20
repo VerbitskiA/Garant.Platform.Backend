@@ -10,7 +10,7 @@ namespace Garant.Platform.Controllers
     [Route("test")]
     public class BaseController : Controller
     {
-        [Route("gettest")]
+        [HttpGet, Route("gettest")]
         public IActionResult GetTest()
         {
             return Ok();
