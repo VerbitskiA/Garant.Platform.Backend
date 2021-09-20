@@ -23,8 +23,8 @@ namespace Garant.Platform
             ContainerBuilder = new ContainerBuilder();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.IServiceProvider
-        public void ConfigureServices(IServiceCollection services)
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllers();
@@ -39,12 +39,12 @@ namespace Garant.Platform
                 options.HttpsPort = 44344;
             });
 
-            //ApplicationContainer = AutoFac.Init(cb =>
-            //{
-            //    cb.Populate(services);
-            //});
+            ApplicationContainer = AutoFac.Init(cb =>
+            {
+                cb.Populate(services);
+            });
 
-            //return new AutofacServiceProvider(ApplicationContainer);
+            return new AutofacServiceProvider(ApplicationContainer);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
