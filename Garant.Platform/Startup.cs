@@ -42,11 +42,11 @@ namespace Garant.Platform
                     .AllowCredentials();
             }));
 
-            services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
-                opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"), b => b.MigrationsAssembly("Barbuuuda.Core").EnableRetryOnFailure()));
+            //services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
+            //    opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"), b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
 
             services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
-                opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Barbuuuda.Core").EnableRetryOnFailure()));
+                opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
 
             services.AddIdentity<UserEntity, IdentityRole>(opts =>
                 {
