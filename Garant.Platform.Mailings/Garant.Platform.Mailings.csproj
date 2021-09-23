@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,18 +15,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-    <PackageReference Include="Moq" Version="4.16.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
-    <PackageReference Include="coverlet.collector" Version="3.0.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Garant.Platform.Core\Garant.Platform.Core.csproj" />
-    <ProjectReference Include="..\Garant.Platform.Mailings\Garant.Platform.Mailings.csproj" />
     <ProjectReference Include="..\Garant.Platform.Models\Garant.Platform.Models.csproj" />
-    <ProjectReference Include="..\Garant.Platform.Service\Garant.Platform.Service.csproj" />
     <ProjectReference Include="..\Garant.Platform\Garant.Platform.csproj" />
   </ItemGroup>
 

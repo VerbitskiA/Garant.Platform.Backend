@@ -5,13 +5,15 @@ VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform", "Garant.Platform\Garant.Platform.csproj", "{7B6BA868-6441-4544-96EA-F0D744B4683E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Garant.Platform.Models", "Garant.Platform.Models\Garant.Platform.Models.csproj", "{BF3F91F3-BD46-45E1-8BAD-60698D9C5440}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Models", "Garant.Platform.Models\Garant.Platform.Models.csproj", "{BF3F91F3-BD46-45E1-8BAD-60698D9C5440}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Garant.Platform.Core", "Garant.Platform.Core\Garant.Platform.Core.csproj", "{054520AD-5DBD-4651-9BB0-C92D0F8263C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Core", "Garant.Platform.Core\Garant.Platform.Core.csproj", "{054520AD-5DBD-4651-9BB0-C92D0F8263C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Garant.Platform.Service", "Garant.Platform.Service\Garant.Platform.Service.csproj", "{9749F54C-8FB5-4BD2-B746-5A3A4AD9C9D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Service", "Garant.Platform.Service\Garant.Platform.Service.csproj", "{9749F54C-8FB5-4BD2-B746-5A3A4AD9C9D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Garant.Platform.Tests", "Garant.Platform.Tests\Garant.Platform.Tests.csproj", "{40D6E603-2F2C-4A78-A0C5-5545C3044895}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Tests", "Garant.Platform.Tests\Garant.Platform.Tests.csproj", "{40D6E603-2F2C-4A78-A0C5-5545C3044895}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Mailings", "Garant.Platform.Mailings\Garant.Platform.Mailings.csproj", "{237297E2-4A6C-47EB-B87D-2D7BB0EB8D36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{40D6E603-2F2C-4A78-A0C5-5545C3044895}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40D6E603-2F2C-4A78-A0C5-5545C3044895}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40D6E603-2F2C-4A78-A0C5-5545C3044895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{237297E2-4A6C-47EB-B87D-2D7BB0EB8D36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{237297E2-4A6C-47EB-B87D-2D7BB0EB8D36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{237297E2-4A6C-47EB-B87D-2D7BB0EB8D36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{237297E2-4A6C-47EB-B87D-2D7BB0EB8D36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

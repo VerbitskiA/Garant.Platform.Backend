@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Autofac;
-using Garant.Platform.Service.AutofacModules;
 
-namespace Garant.Platform.Service.Utils
+namespace Garant.Platform.LoaderModules
 {
     public static class AutoFac
     {
@@ -21,17 +23,35 @@ namespace Garant.Platform.Service.Utils
             }
 
             _builder = new ContainerBuilder();
+
+            // Запустит сканирование всех модулей автофака во всем солюшене.
+            _builder.ScanAssembly();
+
             containerBuilderHandler?.Invoke(_builder);
-            ServicesModule.InitModules(_builder);
+
             _container = _builder.Build();
 
             return _container;
         }
 
         /// <summary>
+        /// Метод регистрации всех модулей автофака во всем солюшене.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="searchPattern"></param>
+        private static void ScanAssembly(this ContainerBuilder builder, string searchPattern = "Garant.Platform.*.dll")
+        {
+            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            foreach (var assembly in Directory.GetFiles(path, searchPattern).Select(Assembly.LoadFrom))
+            {
+                builder.RegisterAssemblyModules(assembly);
+            }
+        }
+
+        /// <summary>
         /// Получить сервис
         /// </summary>
-        /// 
         /// <typeparam name="TService">Тип сервиса</typeparam>
         /// <param name="notException">Не выдавать исключение если не удалось получить объект По умолчанию false</param> 
         /// <returns>Экземпляр запрашиваемого сервиса</returns>

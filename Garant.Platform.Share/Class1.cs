@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Garant.Platform.Models
+namespace Garant.Platform.Share
 {
     public class Class1
     {

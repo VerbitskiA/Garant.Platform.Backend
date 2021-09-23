@@ -1,13 +1,18 @@
 using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Garant.Platform.Service.Utils;
+using Garant.Platform.Core.Data;
+using Garant.Platform.LoaderModules;
+using Garant.Platform.Models.Entities.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Garant.Platform
 {
@@ -28,17 +33,59 @@ namespace Garant.Platform
         {
 
             services.AddControllers();
+
+            services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
+            {
+                builder.WithOrigins("http://localhost:4200", "http://localhost:4200/", "https://gobizy.ru", "https://gobizy.ru/")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            }));
+
+            services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
+                opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"), b => b.MigrationsAssembly("Barbuuuda.Core").EnableRetryOnFailure()));
+
+            services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
+                opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Barbuuuda.Core").EnableRetryOnFailure()));
+
+            services.AddIdentity<UserEntity, IdentityRole>(opts =>
+                {
+                    opts.Password.RequiredLength = 5;
+                    opts.Password.RequireNonAlphanumeric = false;
+                    opts.Password.RequireLowercase = false;
+                    opts.Password.RequireUppercase = false;
+                    opts.Password.RequireDigit = false;
+                })
+                .AddEntityFrameworkStores<IdentityDbContext>()
+                .AddDefaultTokenProviders();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform", Version = "v1" });
             });
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = AuthOptions.ISSUER,
+                        ValidateAudience = true,
+                        ValidAudience = AuthOptions.AUDIENCE,
+                        ValidateLifetime = true,
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                        ValidateIssuerSigningKey = true,
+                    };
+                });
+
             // TODO: проверить без этого
-            services.AddHttpsRedirection(options =>
-            {
-                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-                options.HttpsPort = 44344;
-            });
+            //services.AddHttpsRedirection(options =>
+            //{
+            //    options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+            //    options.HttpsPort = 44344;
+            //});
 
             ApplicationContainer = AutoFac.Init(cb =>
             {
@@ -51,6 +98,7 @@ namespace Garant.Platform
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseCors("ApiCorsPolicy");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseHttpsRedirection();
