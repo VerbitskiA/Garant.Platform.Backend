@@ -6,13 +6,11 @@ using Garant.Platform.Mailings.Abstraction;
 
 namespace Garant.Platform.Mailings.Service.Sms
 {
+    /// <summary>
+    /// Сервис рассылок.
+    /// </summary>
     public class MailingSmsService : IMailingSmsService
     {
-        public MailingSmsService()
-        {
-            
-        }
-
         /// <summary>
         /// Метод рассылки смс кода подтверждения.
         /// </summary>

@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Models.Mailing;
 using Garant.Platform.Models.User.Input;
+using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers
@@ -34,9 +36,26 @@ namespace Garant.Platform.Controllers
         /// <param name="loginInput">Входная модель.</param>
         /// <returns>Данные авторизованного пользователя.</returns>
         [HttpPost, Route("login")]
+        [ProducesResponseType(200, Type = typeof(ClaimOutput))]
         public async Task<IActionResult> LoginAsync([FromBody] LoginInput loginInput)
         {
-            return Ok();
+            var result = await _userService.LoginAsync(loginInput.Name, loginInput.City, loginInput.Email, loginInput.Password);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод проверит правильность кода подтверждения.
+        /// </summary>
+        /// <param name="sendAcceptCodeInput">Входная модель.</param>
+        /// <returns>Статус проверки.</returns>
+        [HttpPost, Route("check-code")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> CheckAcceptCodeAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
+        {
+            var user = await _userService.CheckAcceptCodeAsync(sendAcceptCodeInput.Code);
+
+            return Ok(user);
         }
     }
 }

@@ -54,5 +54,11 @@ namespace Garant.Platform.Models.Entities.User
 
         [Column("RememberMe", TypeName = "boolean")]
         public bool RememberMe { get; set; }
+
+        /// <summary>
+        /// Код подтверждения.
+        /// </summary>
+        [Column("Code", TypeName = "varchar(5)")]
+        public string Code { get; set; }
     }
 }

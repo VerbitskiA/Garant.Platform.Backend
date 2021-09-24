@@ -32,4 +32,8 @@
     <ProjectReference Include="..\Garant.Platform\Garant.Platform.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UserTest\" />
+  </ItemGroup>
+
 </Project>
