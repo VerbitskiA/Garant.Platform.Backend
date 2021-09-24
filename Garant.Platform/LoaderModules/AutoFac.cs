@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Autofac;
+using Garant.Platform.Mailings.AutofacModules;
+using Garant.Platform.Service.AutofacModules;
 
 namespace Garant.Platform.LoaderModules
 {
@@ -25,9 +24,11 @@ namespace Garant.Platform.LoaderModules
             _builder = new ContainerBuilder();
 
             // Запустит сканирование всех модулей автофака во всем солюшене.
-            _builder.ScanAssembly();
+            //_builder.ScanAssembly();
 
             containerBuilderHandler?.Invoke(_builder);
+            CommonServicesModule.InitModules(_builder);
+            MailingModule.InitModules(_builder);
 
             _container = _builder.Build();
 
@@ -39,15 +40,15 @@ namespace Garant.Platform.LoaderModules
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="searchPattern"></param>
-        private static void ScanAssembly(this ContainerBuilder builder, string searchPattern = "Garant.Platform.*.dll")
-        {
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        //private static void ScanAssembly(this ContainerBuilder builder, string searchPattern = "Garant.Platform.*.dll")
+        //{
+        //    var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            foreach (var assembly in Directory.GetFiles(path, searchPattern).Select(Assembly.LoadFrom))
-            {
-                builder.RegisterAssemblyModules(assembly);
-            }
-        }
+        //    foreach (var assembly in Directory.GetFiles(path, searchPattern).Select(Assembly.LoadFrom))
+        //    {
+        //        builder.RegisterAssemblyModules(assembly);
+        //    }
+        //}
 
         /// <summary>
         /// Получить сервис

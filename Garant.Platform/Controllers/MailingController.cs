@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers
@@ -22,7 +21,6 @@ namespace Garant.Platform.Controllers
         /// Метод отправит код подтверждения по смс. Также запишет этот код в базу.
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet, Route("send-sms-confirm-code")]
         [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<IActionResult> SendMailAcceptCodeSmsAsync([FromQuery] string number)

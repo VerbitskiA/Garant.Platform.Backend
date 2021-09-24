@@ -1,14 +1,19 @@
 ﻿namespace Garant.Platform.Models.User.Input
 {
     /// <summary>
-    /// Класс входной модели авторизации.
+    /// Класс входной модели пользователя.
     /// </summary>
-    public class LoginInput
+    public class UserInput
     {
         /// <summary>
         /// Имя.
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Фамилия.
+        /// </summary>
+        public string LastName { get; set; }
 
         /// <summary>
         /// Город.

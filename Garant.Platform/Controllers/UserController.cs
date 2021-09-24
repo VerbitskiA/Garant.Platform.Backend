@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Mailing;
 using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers
@@ -14,10 +16,14 @@ namespace Garant.Platform.Controllers
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
+        private readonly SignInManager<UserEntity> _signInManager;
+        private readonly UserManager<UserEntity> _userManager;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager)
         {
             _userService = userService;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -25,9 +31,12 @@ namespace Garant.Platform.Controllers
         /// </summary>
         /// <returns>Данные нового пользователя.</returns>
         [HttpPost, Route("create")]
-        public async Task<IActionResult> CreateAsync()
+        //[ProducesResponseType(200, Type = typeof(UserOutput))]
+        public async Task<IActionResult> CreateAsync([FromBody] UserInput userInput)
         {
-            return Ok();
+            var result = await _userService.CreateAsync(userInput.Name, userInput.LastName, userInput.City, userInput.Email, userInput.Password);
+
+            return Ok(result);
         }
 
         /// <summary>
@@ -37,9 +46,9 @@ namespace Garant.Platform.Controllers
         /// <returns>Данные авторизованного пользователя.</returns>
         [HttpPost, Route("login")]
         [ProducesResponseType(200, Type = typeof(ClaimOutput))]
-        public async Task<IActionResult> LoginAsync([FromBody] LoginInput loginInput)
+        public async Task<IActionResult> LoginAsync([FromBody] UserInput loginInput)
         {
-            var result = await _userService.LoginAsync(loginInput.Name, loginInput.City, loginInput.Email, loginInput.Password);
+            var result = await _userService.LoginAsync(loginInput.Email, loginInput.Password);
 
             return Ok(result);
         }

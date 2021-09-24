@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
@@ -36,12 +37,10 @@ namespace Garant.Platform.Service.Service.User
         /// <summary>
         /// Метод авторизует пользователя стандартным способом.
         /// </summary>
-        /// <param name="name">Имя пользователя.</param>
-        /// <param name="city">Город.</param>
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
         /// <returns>Данные авторизованного пользователя.</returns>
-        public async Task<ClaimOutput> LoginAsync(string name, string city, string email, string password)
+        public async Task<ClaimOutput> LoginAsync(string email, string password)
         {
             try
             {
@@ -125,6 +124,52 @@ namespace Garant.Platform.Service.Service.User
                     .FirstOrDefaultAsync();
 
                 return user != null;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод создаст нового пользователя.
+        /// </summary>
+        /// <param name="name">Имя.</param>
+        /// <param name="lastName">Фамилия.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="email">Email.</param>
+        /// <param name="password">Пароль.</param>
+        /// <returns>Данные созданного пользователя.</returns>
+        public async Task<UserOutput> CreateAsync(string name, string lastName, string city, string email, string password)
+        {
+            try
+            {
+                // Создаст пользователя.
+                var date = DateTime.UtcNow;
+
+                var user = await _userManager.CreateAsync(new UserEntity
+                {
+                    UserName = email,
+                    FirstName = name,
+                    LastName = lastName,
+                    Email = email,
+                    City = city,
+                    DateRegister = date,
+                    Code = string.Empty
+                }, password);
+
+                var reult = new UserOutput
+                {
+                    Email = email,
+                    City = city,
+                    FirstName = name,
+                    LastName = lastName,
+                    DateRegister = date
+                };
+
+                return reult;
             }
 
             catch (Exception e)

@@ -56,7 +56,8 @@ namespace Garant.Platform
                     opts.Password.RequireUppercase = false;
                     opts.Password.RequireDigit = false;
                 })
-                .AddEntityFrameworkStores<IdentityDbContext>()
+                //.AddEntityFrameworkStores<IdentityDbContext>()
+                .AddEntityFrameworkStores<PostgreDbContext>()
                 .AddDefaultTokenProviders();
 
             services.AddSwaggerGen(c =>
