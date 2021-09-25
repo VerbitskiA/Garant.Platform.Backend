@@ -1,9 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Models.Entities.User;
+using Garant.Platform.Models.Header.Input;
+using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Mailing;
 using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +18,7 @@ namespace Garant.Platform.Controllers
     /// Контроллер работы с пользователями сервиса.
     /// </summary>
     [ApiController, Route("user")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
@@ -30,6 +36,7 @@ namespace Garant.Platform.Controllers
         /// Метод создает пользователя.
         /// </summary>
         /// <returns>Данные нового пользователя.</returns>
+        [AllowAnonymous]
         [HttpPost, Route("create")]
         //[ProducesResponseType(200, Type = typeof(UserOutput))]
         public async Task<IActionResult> CreateAsync([FromBody] UserInput userInput)
@@ -44,6 +51,7 @@ namespace Garant.Platform.Controllers
         /// </summary>
         /// <param name="loginInput">Входная модель.</param>
         /// <returns>Данные авторизованного пользователя.</returns>
+        [AllowAnonymous]
         [HttpPost, Route("login")]
         [ProducesResponseType(200, Type = typeof(ClaimOutput))]
         public async Task<IActionResult> LoginAsync([FromBody] UserInput loginInput)
@@ -58,6 +66,7 @@ namespace Garant.Platform.Controllers
         /// </summary>
         /// <param name="sendAcceptCodeInput">Входная модель.</param>
         /// <returns>Статус проверки.</returns>
+        [AllowAnonymous]
         [HttpPost, Route("check-code")]
         [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<IActionResult> CheckAcceptCodeAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
@@ -65,6 +74,20 @@ namespace Garant.Platform.Controllers
             var user = await _userService.CheckAcceptCodeAsync(sendAcceptCodeInput.Code);
 
             return Ok(user);
+        }
+
+        /// <summary>
+        /// Метод получает список полей основного хидера.
+        /// </summary>
+        /// <param name="headerInput">Входная модель.</param>
+        /// <returns>Список полей хидера.</returns>
+        [HttpPost, Route("init-header")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<HeaderOutput>))]
+        public async Task<IActionResult> InitHeaderAsync([FromBody] HeaderInput headerInput)
+        {
+            var result = await _userService.InitHeaderAsync(headerInput.Type);
+
+            return Ok(result);
         }
     }
 }

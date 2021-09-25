@@ -16,15 +16,21 @@ namespace Garant.Platform.Models.Entities.Header
         public int HeaderId { get; set; }
 
         /// <summary>
-        /// Название пункта хидера.
+        /// Название поля хидера.
         /// </summary>
         [Column("HeaderName", TypeName = "varchar(200)")]
         public string HeaderName { get; set; }
 
         /// <summary>
-        /// Тип идера.
+        /// Тип хидера.
         /// </summary>
         [Column("HeaderType", TypeName = "varchar(50)")]
         public string HeaderType { get; set; }
+
+        /// <summary>
+        /// Позиция.
+        /// </summary>
+        [Column("Position", TypeName = "int")]
+        public int Position { get; set; }
     }
 }

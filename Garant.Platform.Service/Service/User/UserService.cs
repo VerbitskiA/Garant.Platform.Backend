@@ -9,6 +9,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.User;
+using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -176,6 +177,38 @@ namespace Garant.Platform.Service.Service.User
                 };
 
                 return reult;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получает список полей основного хидера.
+        /// </summary>
+        /// <param name="type">Тип хидера, для которого нужно получить список полей.</param>
+        /// <returns>Список полей хидера.</returns>
+        public async Task<IEnumerable<HeaderOutput>> InitHeaderAsync(string type)
+        {
+            try
+            {
+                var result = await (from h in _postgreDbContext.Headers
+                                    where h.HeaderType.Equals(type)
+                                    orderby h.Position
+                                    select new HeaderOutput
+                                    {
+                                        Name = h.HeaderName,
+                                        Type = h.HeaderType,
+                                        Position = h.Position
+                                    })
+                    .ToListAsync();
+
+                return result;
             }
 
             catch (Exception e)

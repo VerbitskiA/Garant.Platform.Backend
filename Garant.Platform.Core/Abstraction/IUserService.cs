@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.User.Output;
 
 namespace Garant.Platform.Core.Abstraction
@@ -34,5 +36,12 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="role">Роль.</param>
         /// <returns>Данные созданного пользователя.</returns>
         Task<UserOutput> CreateAsync(string name, string lastName, string city, string email, string password, string role);
+
+        /// <summary>
+        /// Метод получает список полей основного хидера.
+        /// </summary>
+        /// <param name="type">Тип хидера, для которого нужно получить список полей.</param>
+        /// <returns>Список полей хидера.</returns>
+        Task<IEnumerable<HeaderOutput>> InitHeaderAsync(string type);
     }
 }

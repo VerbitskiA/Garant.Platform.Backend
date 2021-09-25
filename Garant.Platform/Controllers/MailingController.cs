@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers
@@ -8,6 +10,7 @@ namespace Garant.Platform.Controllers
     /// Контроллер работы с рассылками.
     /// </summary>
     [ApiController, Route("mailing")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MailingController : BaseController
     {
         private readonly ICommonService _commonService;
@@ -21,6 +24,7 @@ namespace Garant.Platform.Controllers
         /// Метод отправит код подтверждения по смс. Также запишет этот код в базу.
         /// </summary>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet, Route("send-sms-confirm-code")]
         [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<IActionResult> SendMailAcceptCodeSmsAsync([FromQuery] string number)

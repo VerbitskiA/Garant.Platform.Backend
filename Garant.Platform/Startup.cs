@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Garant.Platform.Core.Data;
@@ -8,7 +6,6 @@ using Garant.Platform.LoaderModules;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -31,7 +28,6 @@ namespace Garant.Platform
             ContainerBuilder = new ContainerBuilder();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -67,9 +63,9 @@ namespace Garant.Platform
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform", Version = "v1" });
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                //c.IncludeXmlComments(xmlPath);
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -96,7 +92,6 @@ namespace Garant.Platform
             return new AutofacServiceProvider(ApplicationContainer);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
             app.UseCors("ApiCorsPolicy");
