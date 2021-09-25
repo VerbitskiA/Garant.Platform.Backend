@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
+using Garant.Platform.Core.Logger;
 using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +58,8 @@ namespace Garant.Platform.Service.Service.Common
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }
@@ -104,6 +107,8 @@ namespace Garant.Platform.Service.Service.Common
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }

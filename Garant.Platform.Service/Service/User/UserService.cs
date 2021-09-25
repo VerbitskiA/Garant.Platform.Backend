@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
+using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Identity;
@@ -65,6 +66,8 @@ namespace Garant.Platform.Service.Service.User
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }
@@ -126,6 +129,8 @@ namespace Garant.Platform.Service.Service.User
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }
@@ -174,6 +179,8 @@ namespace Garant.Platform.Service.Service.User
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }

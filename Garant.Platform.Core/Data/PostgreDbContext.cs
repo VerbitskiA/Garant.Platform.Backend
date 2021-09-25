@@ -1,4 +1,5 @@
-﻿using Garant.Platform.Models.Entities.User;
+﻿using Garant.Platform.Models.Entities.Logger;
+using Garant.Platform.Models.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Core.Data
@@ -18,5 +19,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица пользователей.
         /// </summary>
         public DbSet<UserEntity> Users { get; set; }
+
+        /// <summary>
+        /// Таблица логов.
+        /// </summary>
+        public DbSet<LoggerEntity> Logs { get; set; }
     }
 }
