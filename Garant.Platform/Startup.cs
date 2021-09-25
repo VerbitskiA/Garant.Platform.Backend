@@ -4,16 +4,15 @@ using Autofac.Extensions.DependencyInjection;
 using Garant.Platform.Core.Data;
 using Garant.Platform.LoaderModules;
 using Garant.Platform.Models.Entities.User;
-using Garant.Platform.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Garant.Platform
@@ -65,8 +64,7 @@ namespace Garant.Platform
 
             services.AddSwaggerGen(c =>
             {
-                //c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform", Version = "v1" });
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform", Version = "v1" });
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -84,6 +82,13 @@ namespace Garant.Platform
                         ValidateIssuerSigningKey = true
                     };
                 });
+
+            // TODO: проверить без этого
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                options.HttpsPort = 44344;
+            });
 
             ApplicationContainer = AutoFac.Init(cb =>
             {
@@ -115,14 +120,7 @@ namespace Garant.Platform
                 endpoints.MapControllers();
             });
             app.UseSwagger();
-            //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Garant.Platform v1"));
-            var swaggerOptions = new SwaggerOptions();
-            Configuration.GetSection(nameof(SwaggerOptions)).Bind(swaggerOptions);
-            app.UseSwagger(option => { option.RouteTemplate = swaggerOptions.JsonRoute; });
-            app.UseSwaggerUI(option =>
-            {
-                option.SwaggerEndpoint(swaggerOptions.UIEndpoint, swaggerOptions.Description);
-            });
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Garant.Platform v1"));
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
