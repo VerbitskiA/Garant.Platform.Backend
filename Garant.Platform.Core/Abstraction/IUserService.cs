@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.User.Output;
 
@@ -43,5 +44,11 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="type">Тип хидера, для которого нужно получить список полей.</param>
         /// <returns>Список полей хидера.</returns>
         Task<IEnumerable<HeaderOutput>> InitHeaderAsync(string type);
+
+        /// <summary>
+        /// Метод получит список полей футера.
+        /// </summary>
+        /// <returns>Список полей футера.</returns>
+        Task<IEnumerable<FooterOutput>> InitFooterAsync();
     }
 }

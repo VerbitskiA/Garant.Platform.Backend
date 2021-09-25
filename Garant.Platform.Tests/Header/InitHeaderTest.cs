@@ -5,7 +5,7 @@ using Garant.Platform.Service.Service.User;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Garant.Platform.Tests.HeaderTest
+namespace Garant.Platform.Tests.Header
 {
     [TestClass]
     public class InitHeaderTest : BaseServiceTest

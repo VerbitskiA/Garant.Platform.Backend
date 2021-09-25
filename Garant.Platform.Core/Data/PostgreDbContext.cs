@@ -1,4 +1,5 @@
-﻿using Garant.Platform.Models.Entities.Header;
+﻿using Garant.Platform.Models.Entities.Footer;
+using Garant.Platform.Models.Entities.Header;
 using Garant.Platform.Models.Entities.Logger;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.EntityFrameworkCore;
@@ -30,5 +31,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица хидера.
         /// </summary>
         public DbSet<HeaderEntity> Headers { get; set; }
+
+        /// <summary>
+        /// Таблица футера.
+        /// </summary>
+        public DbSet<FooterEntity> Footers { get; set; }
     }
 }

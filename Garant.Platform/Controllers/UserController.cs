@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Models.Entities.User;
+using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Input;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Mailing;
@@ -77,15 +78,30 @@ namespace Garant.Platform.Controllers
         }
 
         /// <summary>
-        /// Метод получает список полей основного хидера.
+        /// Метод получит список полей основного хидера.
         /// </summary>
         /// <param name="headerInput">Входная модель.</param>
         /// <returns>Список полей хидера.</returns>
+        [AllowAnonymous]
         [HttpPost, Route("init-header")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<HeaderOutput>))]
         public async Task<IActionResult> InitHeaderAsync([FromBody] HeaderInput headerInput)
         {
             var result = await _userService.InitHeaderAsync(headerInput.Type);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список полей футера.
+        /// </summary>
+        /// <returns>Список полей футера.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("init-footer")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FooterOutput>))]
+        public async Task<IActionResult> InitFooterAsync()
+        {
+            var result = await _userService.InitFooterAsync();
 
             return Ok(result);
         }

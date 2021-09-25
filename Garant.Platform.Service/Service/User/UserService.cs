@@ -9,6 +9,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.User;
+using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Identity;
@@ -205,6 +206,39 @@ namespace Garant.Platform.Service.Service.User
                                         Name = h.HeaderName,
                                         Type = h.HeaderType,
                                         Position = h.Position
+                                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список полей футера.
+        /// </summary>
+        /// <returns>Список полей футера.</returns>
+        public async Task<IEnumerable<FooterOutput>> InitFooterAsync()
+        {
+            try
+            {
+                var result = await (from f in _postgreDbContext.Footers
+                                    orderby f.Column
+                                    select new FooterOutput
+                                    {
+                                        Title = f.FooterTitle,
+                                        Name = f.FooterFieldName,
+                                        IsPlace = f.IsPlace,
+                                        IsSignleTitle = f.IsSignleTitle,
+                                        Column = f.Column,
+                                        Position = f.Position
                                     })
                     .ToListAsync();
 
