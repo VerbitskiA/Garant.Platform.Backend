@@ -35,7 +35,7 @@ namespace Garant.Platform.Tests
             // Настройка экземпляров сервисов для тестов.
             MailingSmsService = new MailingSmsService();
             CommonService = new CommonService(PostgreDbContext, MailingSmsService);
-            UserService = new UserService(CommonService, null, null, PostgreDbContext);
+            UserService = new UserService(null, null, PostgreDbContext);
         }
     }
 }

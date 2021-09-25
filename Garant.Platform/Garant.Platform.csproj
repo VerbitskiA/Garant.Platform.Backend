@@ -6,6 +6,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>..\bin\Debug\</OutputPath>
+    <DocumentationFile>..\bin\Debug\Garant.Platform.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

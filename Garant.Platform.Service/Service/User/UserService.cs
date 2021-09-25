@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
@@ -21,14 +20,12 @@ namespace Garant.Platform.Service.Service.User
     /// </summary>
     public sealed class UserService : IUserService
     {
-        private readonly ICommonService _commonService;
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly UserManager<UserEntity> _userManager;
         private readonly PostgreDbContext _postgreDbContext;
 
-        public UserService(ICommonService commonService, SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext)
         {
-            _commonService = commonService;
             _signInManager = signInManager;
             _userManager = userManager;
             _postgreDbContext = postgreDbContext;
@@ -149,7 +146,7 @@ namespace Garant.Platform.Service.Service.User
                 // Создаст пользователя.
                 var date = DateTime.UtcNow;
 
-                var user = await _userManager.CreateAsync(new UserEntity
+                await _userManager.CreateAsync(new UserEntity
                 {
                     UserName = email,
                     FirstName = name,
@@ -157,7 +154,9 @@ namespace Garant.Platform.Service.Service.User
                     Email = email,
                     City = city,
                     DateRegister = date,
-                    Code = string.Empty
+                    Code = string.Empty,
+                    UserPassword = password,
+                    LockoutEnabled = false
                 }, password);
 
                 var reult = new UserOutput

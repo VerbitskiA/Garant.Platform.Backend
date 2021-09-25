@@ -31,7 +31,6 @@ namespace Garant.Platform
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
 
             services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
@@ -48,6 +47,9 @@ namespace Garant.Platform
             services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
 
+            services.AddDbContext<IdentityDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
+
             services.AddIdentity<UserEntity, IdentityRole>(opts =>
                 {
                     opts.Password.RequiredLength = 5;
@@ -56,8 +58,7 @@ namespace Garant.Platform
                     opts.Password.RequireUppercase = false;
                     opts.Password.RequireDigit = false;
                 })
-                //.AddEntityFrameworkStores<IdentityDbContext>()
-                .AddEntityFrameworkStores<PostgreDbContext>()
+                .AddEntityFrameworkStores<IdentityDbContext>()
                 .AddDefaultTokenProviders();
 
             services.AddSwaggerGen(c =>
@@ -77,7 +78,7 @@ namespace Garant.Platform
                         ValidAudience = AuthOptions.AUDIENCE,
                         ValidateLifetime = true,
                         IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                        ValidateIssuerSigningKey = true,
+                        ValidateIssuerSigningKey = true
                     };
                 });
 
