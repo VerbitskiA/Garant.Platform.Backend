@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Reflection;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Garant.Platform.Core.Data;
@@ -65,6 +67,9 @@ namespace Garant.Platform
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform", Version = "v1" });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -82,13 +87,6 @@ namespace Garant.Platform
                         ValidateIssuerSigningKey = true
                     };
                 });
-
-            // TODO: проверить без этого
-            services.AddHttpsRedirection(options =>
-            {
-                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-                options.HttpsPort = 44344;
-            });
 
             ApplicationContainer = AutoFac.Init(cb =>
             {
