@@ -34,7 +34,7 @@ namespace Garant.Platform.Controllers
         //[ProducesResponseType(200, Type = typeof(UserOutput))]
         public async Task<IActionResult> CreateAsync([FromBody] UserInput userInput)
         {
-            var result = await _userService.CreateAsync(userInput.Name, userInput.LastName, userInput.City, userInput.Email, userInput.Password);
+            var result = await _userService.CreateAsync(userInput.Name, userInput.LastName, userInput.City, userInput.Email, userInput.Password, userInput.Role);
 
             return Ok(result);
         }

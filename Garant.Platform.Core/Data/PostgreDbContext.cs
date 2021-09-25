@@ -1,4 +1,5 @@
-﻿using Garant.Platform.Models.Entities.Logger;
+﻿using Garant.Platform.Models.Entities.Header;
+using Garant.Platform.Models.Entities.Logger;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,5 +25,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица логов.
         /// </summary>
         public DbSet<LoggerEntity> Logs { get; set; }
+
+        /// <summary>
+        /// Таблица хидера.
+        /// </summary>
+        public DbSet<HeaderEntity> Headers { get; set; }
     }
 }

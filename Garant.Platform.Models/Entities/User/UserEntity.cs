@@ -60,5 +60,11 @@ namespace Garant.Platform.Models.Entities.User
         /// </summary>
         [Column("Code", TypeName = "varchar(5)")]
         public string Code { get; set; }
+
+        /// <summary>
+        /// Подписаться на рассылку.
+        /// </summary>
+        [Column("IsNews", TypeName = "bool")]
+        public bool IsNews { get; set; }
     }
 }

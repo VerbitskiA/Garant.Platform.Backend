@@ -31,7 +31,8 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="city">Город.</param>
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
+        /// <param name="role">Роль.</param>
         /// <returns>Данные созданного пользователя.</returns>
-        Task<UserOutput> CreateAsync(string name, string lastName, string city, string email, string password);
+        Task<UserOutput> CreateAsync(string name, string lastName, string city, string email, string password, string role);
     }
 }

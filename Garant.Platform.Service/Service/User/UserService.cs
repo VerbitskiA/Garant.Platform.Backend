@@ -143,14 +143,15 @@ namespace Garant.Platform.Service.Service.User
         /// <param name="city">Город.</param>
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
+        /// <param name="role">Роль.</param>
         /// <returns>Данные созданного пользователя.</returns>
-        public async Task<UserOutput> CreateAsync(string name, string lastName, string city, string email, string password)
+        public async Task<UserOutput> CreateAsync(string name, string lastName, string city, string email, string password, string role)
         {
             try
             {
-                // Создаст пользователя.
                 var date = DateTime.UtcNow;
 
+                // Создаст пользователя.
                 await _userManager.CreateAsync(new UserEntity
                 {
                     UserName = email,
@@ -161,7 +162,8 @@ namespace Garant.Platform.Service.Service.User
                     DateRegister = date,
                     Code = string.Empty,
                     UserPassword = password,
-                    LockoutEnabled = false
+                    LockoutEnabled = false,
+                    UserRole = role
                 }, password);
 
                 var reult = new UserOutput

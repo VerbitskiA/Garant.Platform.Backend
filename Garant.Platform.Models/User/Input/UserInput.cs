@@ -29,5 +29,10 @@
         /// Пароль.
         /// </summary>
         public string Password { get; set; }
+
+        /// <summary>
+        /// Роль.
+        /// </summary>
+        public string Role { get; set; }
     }
 }
