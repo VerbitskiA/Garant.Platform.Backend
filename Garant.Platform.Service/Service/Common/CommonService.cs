@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
@@ -31,7 +30,7 @@ namespace Garant.Platform.Service.Service.Common
         /// </summary>
         /// <param name="data">Телефон или почта.</param>
         /// <returns>Флаг успеха.</returns>
-        public async Task GenerateAcceptCodeAsync(string data)
+        public async Task<bool> GenerateAcceptCodeAsync(string data)
         {
             await using var transaction = await _postgreDbContext.Database.BeginTransactionAsync();
 
@@ -78,6 +77,8 @@ namespace Garant.Platform.Service.Service.Common
                     await _mailigSmsService.SendAcceptCodeMailAsync(code, data);
                     await transaction.CommitAsync();
                 }
+
+                return true;
             }
 
             catch (Exception e)

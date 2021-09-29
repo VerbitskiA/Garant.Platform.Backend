@@ -26,13 +26,13 @@ namespace Garant.Platform.Controllers
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost, Route("send-sms-confirm-code")]
+        [HttpPost, Route("send-confirm-code")]
         [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<IActionResult> SendMailAcceptCodeSmsAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
         {
-            await _commonService.GenerateAcceptCodeAsync(sendAcceptCodeInput.Data);
+            var result = await _commonService.GenerateAcceptCodeAsync(sendAcceptCodeInput.Data);
 
-            return Ok();
+            return Ok(result);
         }
     }
 }

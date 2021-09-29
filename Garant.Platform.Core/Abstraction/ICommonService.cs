@@ -12,6 +12,6 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <param name="data">Телефон или почта.</param>
         /// <returns>Флаг успеха.</returns>
-        Task GenerateAcceptCodeAsync(string data);
+        Task<bool> GenerateAcceptCodeAsync(string data);
     }
 }
