@@ -5,7 +5,7 @@ using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Input;
 using Garant.Platform.Models.Header.Output;
-using Garant.Platform.Models.Mailing;
+using Garant.Platform.Models.Mailing.Input;
 using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -18,7 +18,7 @@ namespace Garant.Platform.Tests
         protected PostgreDbContext PostgreDbContext;
         protected UserService UserService;
         protected CommonService CommonService;
-        protected MailingSmsService MailingSmsService;
+        protected MailingService MailingService;
 
         public BaseServiceTest()
         {
@@ -33,8 +33,8 @@ namespace Garant.Platform.Tests
             PostgreDbContext = new PostgreDbContext(optionsBuilder.Options);
 
             // Настройка экземпляров сервисов для тестов.
-            MailingSmsService = new MailingSmsService();
-            CommonService = new CommonService(PostgreDbContext, MailingSmsService);
+            MailingService = new MailingService(PostgreDbContext);
+            CommonService = new CommonService(PostgreDbContext, MailingService);
             UserService = new UserService(null, null, PostgreDbContext);
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Models.Mailing.Input;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,15 +22,15 @@ namespace Garant.Platform.Controllers
         }
 
         /// <summary>
-        /// Метод отправит код подтверждения по смс. Также запишет этот код в базу.
+        /// Метод отправит код подтверждения. Также запишет этот код в базу.
         /// </summary>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet, Route("send-sms-confirm-code")]
+        [HttpPost, Route("send-sms-confirm-code")]
         [ProducesResponseType(200, Type = typeof(bool))]
-        public async Task<IActionResult> SendMailAcceptCodeSmsAsync([FromQuery] string number)
+        public async Task<IActionResult> SendMailAcceptCodeSmsAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
         {
-            await _commonService.GenerateAcceptCodeAsync(number, "sms");
+            await _commonService.GenerateAcceptCodeAsync(sendAcceptCodeInput.Data);
 
             return Ok();
         }

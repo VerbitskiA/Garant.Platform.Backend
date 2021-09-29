@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
@@ -16,10 +17,10 @@ namespace Garant.Platform.Service.Service.Common
     /// </summary>
     public sealed class CommonService : ICommonService
     {
-        private readonly IMailingSmsService _mailigSmsService;
+        private readonly IMailingService _mailigSmsService;
         private readonly PostgreDbContext _postgreDbContext;
 
-        public CommonService(PostgreDbContext postgreDbContext, IMailingSmsService mailigSmsService)
+        public CommonService(PostgreDbContext postgreDbContext, IMailingService mailigSmsService)
         {
             _postgreDbContext = postgreDbContext;
             _mailigSmsService = mailigSmsService;
@@ -28,38 +29,65 @@ namespace Garant.Platform.Service.Service.Common
         /// <summary>
         /// Метод создает код. Кол-во цифр зависит от переданного типа.
         /// </summary>
-        /// <param name="number">Номер телефона.</param>
-        /// <param name="type">Тип кода. От этого зависит алгоритм создания кода и кол-во цифр.</param>
+        /// <param name="data">Телефон или почта.</param>
         /// <returns>Флаг успеха.</returns>
-        public async Task GenerateAcceptCodeAsync(string number, string type)
+        public async Task GenerateAcceptCodeAsync(string data)
         {
-            var random = new Random();
+            await using var transaction = await _postgreDbContext.Database.BeginTransactionAsync();
 
             try
             {
-                if (string.IsNullOrEmpty(type))
+                var random = new Random();
+                string type = null;
+
+                if (string.IsNullOrEmpty(data))
                 {
                     throw new EmptyTypeMailingException();
                 }
 
+                // Создаст код подтверждения из 5 цифр.
+                var code = random.Next(10000, 99999).ToString("D4");
+
+                // Если передали почту.
+                if (data.Contains("@"))
+                {
+                    type = "mail";
+                }
+
+                // Если не почту, тогда по sms.
+                else if (!data.Contains("@"))
+                {
+                    type = "sms";
+                }
+
                 if (type.Equals("sms"))
                 {
-                    // Создаст код подтверждения из 5 цифр.
-                    var code = random.Next(10000, 99999).ToString("D4");
-
                     // Запишет код подтверждения в базу или обновит его.
-                    await SaveCodeAsync(number, code);
+                    await SaveCodeAsync(data, code);
 
                     // Отправит код подтверждения по смс.
-                    await _mailigSmsService.SendMailAcceptCodeSmsAsync(number, code);
+                    await _mailigSmsService.SendAcceptCodeSmsAsync(data, code);
+                    await transaction.CommitAsync();
+                }
+
+                else if (type.Equals("mail"))
+                {
+                    // Запишет код подтверждения в базу или обновит его.
+                    await SaveCodeAsync(data, code);
+
+                    await _mailigSmsService.SendAcceptCodeMailAsync(code, data);
+                    await transaction.CommitAsync();
                 }
             }
 
             catch (Exception e)
             {
                 Console.WriteLine(e);
+
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+
+                await transaction.RollbackAsync();
                 throw;
             }
         }
@@ -67,17 +95,32 @@ namespace Garant.Platform.Service.Service.Common
         /// <summary>
         /// Метод запишет код подтвержедния в БД.
         /// </summary>
-        /// <param name="number">Номер телефона.</param>
+        /// <param name="number">Данные.</param>
         /// <param name="code">Код подтверждения.</param>
-        private async Task SaveCodeAsync(string number, string code)
+        private async Task SaveCodeAsync(string data, string code)
         {
             try
             {
-                // Если найдет такой номер телеофна в БД, то перезпишет код.
-                var findNumber = await (from u in _postgreDbContext.Users
-                                        where u.PhoneNumber.Equals(number)
+                UserEntity findNumber = null;
+                var isEmail = data.Contains("@");
+
+                if (!isEmail)
+                {
+                    // Если найдет такой номер телеофна в БД, то перезапишет код.
+                    findNumber = await (from u in _postgreDbContext.Users
+                                        where u.PhoneNumber.Equals(data)
                                         select u)
-                    .FirstOrDefaultAsync();
+                        .FirstOrDefaultAsync();
+                }
+
+                else
+                {
+                    // Если найдет такой username в БД, то перезапишет код.
+                    findNumber = await (from u in _postgreDbContext.Users
+                                        where u.UserName.Equals(data)
+                                        select u)
+                        .FirstOrDefaultAsync();
+                }
 
                 // Если такой номер был, то обновит код пользователю.
                 if (findNumber != null)
@@ -88,10 +131,8 @@ namespace Garant.Platform.Service.Service.Common
                     return;
                 }
 
-                // Такого номера не было, добавит пользователя.
-                await _postgreDbContext.Users.AddAsync(new UserEntity
+                var insertData = new UserEntity
                 {
-                    PhoneNumber = number,
                     Code = code,
                     DateRegister = DateTime.Now,
                     RememberMe = false,
@@ -100,7 +141,21 @@ namespace Garant.Platform.Service.Service.Common
                     TwoFactorEnabled = false,
                     LockoutEnabled = false,
                     AccessFailedCount = 0
-                });
+                };
+
+                if (isEmail)
+                {
+                    insertData.UserName = data;
+                    insertData.Email = data;
+                }
+
+                else
+                {
+                    insertData.PhoneNumber = data;
+                }
+
+                // Такого номера не было, добавит пользователя.
+                await _postgreDbContext.Users.AddAsync(insertData);
                 await _postgreDbContext.SaveChangesAsync();
             }
 
