@@ -39,7 +39,7 @@ namespace Garant.Platform.Controllers
         /// <returns>Данные нового пользователя.</returns>
         [AllowAnonymous]
         [HttpPost, Route("create")]
-        //[ProducesResponseType(200, Type = typeof(UserOutput))]
+        [ProducesResponseType(200, Type = typeof(UserOutput))]
         public async Task<IActionResult> CreateAsync([FromBody] UserInput userInput)
         {
             var result = await _userService.CreateAsync(userInput.Name, userInput.LastName, userInput.City, userInput.Email, userInput.Password, userInput.Role);

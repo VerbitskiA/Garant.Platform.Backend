@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Garant.Platform.Core.Attributes;
 using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Mailings.Service.Sms;
 
@@ -15,12 +16,5 @@ namespace Garant.Platform.Mailings.AutofacModules
             builder.RegisterType<MailingSmsService>().Named<IMailingSmsService>("MailingSmsService");
             builder.RegisterType<MailingSmsService>().As<IMailingSmsService>();
         }
-
-        //protected override void Load(ContainerBuilder builder)
-        //{
-        //    //// Сервис смс-рассылок.
-        //    builder.RegisterType<MailingSmsService>().Named<IMailingSmsService>("MailingSmsService");
-        //    builder.RegisterType<MailingSmsService>().As<IMailingSmsService>();
-        //}
     }
 }

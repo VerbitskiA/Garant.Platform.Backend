@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Autofac;
-using Garant.Platform.Mailings.AutofacModules;
-using Garant.Platform.Service.AutofacModules;
+using Garant.Platform.Core.Attributes;
+using Module = Autofac.Module;
 
-namespace Garant.Platform.LoaderModules
+namespace Garant.Platform.Core.Utils
 {
     public static class AutoFac
     {
         private static ContainerBuilder _builder;
         private static IContainer _container;
+        private static IEnumerable<Type> _typeModules;
 
         /// <summary>
         /// Инициализация контейнера
@@ -23,32 +28,43 @@ namespace Garant.Platform.LoaderModules
 
             _builder = new ContainerBuilder();
 
-            // Запустит сканирование всех модулей автофака во всем солюшене.
-            //_builder.ScanAssembly();
+            var assemblies1 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Service"));
+
+            var assemblies2 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Mailings"));
+
+            _builder.RegisterAssemblyTypes(assemblies1).AsImplementedInterfaces();
+            _builder.RegisterAssemblyTypes(assemblies2).AsImplementedInterfaces();
+
+            var assemblies = assemblies1.Union(assemblies2);
+
+            _typeModules = (from assembly in assemblies
+                            from type in assembly.GetTypes()
+                            where type.IsClass && type.GetCustomAttribute<CommonModuleAttribute>() != null
+                            select type).ToArray();
 
             containerBuilderHandler?.Invoke(_builder);
-            CommonServicesModule.InitModules(_builder);
-            MailingModule.InitModules(_builder);
+
+            foreach (var module in _typeModules)
+            {
+                _builder.RegisterModule(Activator.CreateInstance(module) as Module);
+            }
 
             _container = _builder.Build();
 
             return _container;
         }
 
-        /// <summary>
-        /// Метод регистрации всех модулей автофака во всем солюшене.
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="searchPattern"></param>
-        //private static void ScanAssembly(this ContainerBuilder builder, string searchPattern = "Garant.Platform.*.dll")
-        //{
-        //    var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        private static Assembly[] GetAssembliesFromApplicationBaseDirectory(Func<AssemblyName, bool> condition)
+        {
+            var baseDirectoryPath = AppDomain.CurrentDomain.BaseDirectory; 
+            Func<string, bool> isAssembly = file => string.Equals(Path.GetExtension(file), ".dll", StringComparison.OrdinalIgnoreCase);
 
-        //    foreach (var assembly in Directory.GetFiles(path, searchPattern).Select(Assembly.LoadFrom))
-        //    {
-        //        builder.RegisterAssemblyModules(assembly);
-        //    }
-        //}
+            return Directory.GetFiles(baseDirectoryPath)
+                .Where(isAssembly)
+                .Where(f => condition(AssemblyName.GetAssemblyName(f)))
+                .Select(Assembly.LoadFrom)
+                .ToArray();
+        }
 
         /// <summary>
         /// Получить сервис

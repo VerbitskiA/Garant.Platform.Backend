@@ -2,7 +2,7 @@ using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Garant.Platform.Core.Data;
-using Garant.Platform.LoaderModules;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
