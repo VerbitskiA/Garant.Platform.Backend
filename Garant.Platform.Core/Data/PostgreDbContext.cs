@@ -36,5 +36,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица футера.
         /// </summary>
         public DbSet<FooterEntity> Footers { get; set; }
+
+        /// <summary>
+        /// Таблица информации пользователя dbo.UsersInformation.
+        /// </summary>
+        public DbSet<UserInformationEntity> UsersInformation { get; set; }
     }
 }

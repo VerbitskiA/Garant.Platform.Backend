@@ -105,5 +105,18 @@ namespace Garant.Platform.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод добавит информацию о пользователе.
+        /// </summary>
+        /// <param name="userInformationInput">Входная модель.</param>
+        /// <returns>Данные пользователя.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("add-user-info")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserInformationOutput>))]
+        public async Task<IActionResult> AddUserInfoAsync([FromBody] UserInformationInput userInformationInput)
+        {
+            return Ok();
+        }
     }
 }

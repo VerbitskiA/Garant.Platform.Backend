@@ -253,5 +253,40 @@ namespace Garant.Platform.Service.Service.User
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод добавит информацию о пользователе.
+        /// </summary>
+        /// <param name="firstName">Имя.</param>
+        /// <param name="lastName">Фамилия.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="email">Email.</param>
+        /// <param name="password">Пароль.</param>
+        /// <param name="variantName">Название причины регистрации.</param>
+        /// <param name="variantCode">Код причины регистрации.</param>
+        /// <returns>Данные пользователя.</returns>
+        public Task<UserInformationOutput> AddUserInfoAsync(string firstName, string lastName, string city, string email, string password, string variantName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(firstName) 
+                    || string.IsNullOrEmpty(lastName) 
+                    || string.IsNullOrEmpty(city) 
+                    || string.IsNullOrEmpty(email) 
+                    || string.IsNullOrEmpty(password) 
+                    || string.IsNullOrEmpty(variantName))
+                {
+                    throw new EmptyUserInformationException();
+                }
+
+                return null;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
     }
 }

@@ -50,5 +50,17 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <returns>Список полей футера.</returns>
         Task<IEnumerable<FooterOutput>> InitFooterAsync();
+
+        /// <summary>
+        /// Метод добавит информацию о пользователе.
+        /// </summary>
+        /// <param name="firstName">Имя.</param>
+        /// <param name="lastName">Фамилия.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="email">Email.</param>
+        /// <param name="password">Пароль.</param>
+        /// <param name="variantName">Название причины регистрации.</param>
+        /// <returns>Данные пользователя.</returns>
+        Task<UserInformationOutput> AddUserInfoAsync(string firstName, string lastName, string city, string email, string password, string variantName);
     }
 }
