@@ -34,17 +34,17 @@ namespace Garant.Platform
 
             services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
             {
-                //builder
-                //    .WithOrigins("http://localhost:4200", "https://gobizy.ru/", "https://gobizy.ru/login")
-                //    .AllowAnyHeader()
-                //    .AllowAnyMethod()
-                //    .AllowCredentials();
-                builder.AllowAnyMethod()
+                builder
+                    .WithOrigins("http://localhost:4200", "https://gobizy.ru/")
                     .AllowAnyHeader()
-                    .WithOrigins("*")
-                    .WithMethods("*")
-                    .WithHeaders("*")
-                    .DisallowCredentials();
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+                //builder.AllowAnyMethod()
+                //    .AllowAnyHeader()
+                //    .WithOrigins("*")
+                //    .WithMethods("*")
+                //    .WithHeaders("*")
+                //    .DisallowCredentials();
             }));
 
             //services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
@@ -108,10 +108,10 @@ namespace Garant.Platform
             app.UseRouting();
 
             // Äëÿ Linux.
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
+            //app.UseForwardedHeaders(new ForwardedHeadersOptions
+            //{
+            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            //});
 
             app.UseAuthentication();
             app.UseAuthorization();
