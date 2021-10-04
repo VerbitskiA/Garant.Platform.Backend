@@ -35,7 +35,7 @@ namespace Garant.Platform
             services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
             {
                 builder
-                    .WithOrigins("http://localhost:4200", "https://gobizy.ru")
+                    .WithOrigins("http://localhost:4200", "https://gobizy.ru", "https://gobizy.ru/login")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
