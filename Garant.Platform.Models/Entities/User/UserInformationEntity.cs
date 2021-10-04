@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Garant.Platform.Models.Entities.User
 {
@@ -11,6 +12,7 @@ namespace Garant.Platform.Models.Entities.User
         /// <summary>
         /// PK.
         /// </summary>
+        [Key]
         public long InformationId { get; set; }
 
         /// <summary>

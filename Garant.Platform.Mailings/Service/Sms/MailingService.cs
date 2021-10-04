@@ -94,7 +94,7 @@ namespace Garant.Platform.Mailings.Service.Sms
 
                 using var client = new SmtpClient();
                 await client.ConnectAsync(host, port, MailKit.Security.SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync("gobizy@bk.ru", "ZUrJBp0GXD3xekTdU9YZ");
+                await client.AuthenticateAsync("gobizy@bk.ru", "Garant1234");//ZUrJBp0GXD3xekTdU9YZ
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }
