@@ -38,7 +38,7 @@ namespace Garant.Platform
                     .WithOrigins("*")
                     .WithMethods("*")
                     .WithHeaders("*")
-                    .AllowCredentials();
+                    .DisallowCredentials();
             }));
 
             //services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
