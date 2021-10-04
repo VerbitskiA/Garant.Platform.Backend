@@ -33,13 +33,10 @@ namespace Garant.Platform
 
             services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
             {
-                //builder.AllowAnyMethod()
-                //    //.AllowAnyHeader()
-                //    .WithOrigins("*")
-                //    .WithMethods("*")
-                //    .WithHeaders("*")
-                //    .AllowCredentials();
-                builder.AllowAnyOrigin();
+                builder.WithOrigins("http://localhost:4200", "http://localhost:4200/", "https://gobizy.ru", "https://gobizy.ru/")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
             }));
 
             //services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
