@@ -6,6 +6,7 @@ using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Identity;
@@ -33,7 +34,7 @@ namespace Garant.Platform
 
             services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
             {
-                builder.WithOrigins("http://localhost:4200", "http://localhost:4200/", "https://gobizy.ru", "https://gobizy.ru/")
+                builder.WithOrigins("http://localhost:4200", "https://gobizy.ru")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
@@ -100,10 +101,10 @@ namespace Garant.Platform
             app.UseRouting();
 
             // Äëÿ Linux.
-            //app.UseForwardedHeaders(new ForwardedHeadersOptions
-            //{
-            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            //});
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();
