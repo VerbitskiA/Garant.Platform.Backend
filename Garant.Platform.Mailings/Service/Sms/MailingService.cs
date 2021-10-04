@@ -84,7 +84,8 @@ namespace Garant.Platform.Mailings.Service.Sms
                 }
 
                 var emailMessage = new MimeMessage();
-                emailMessage.From.Add(new MailboxAddress("gobizy@bk.ru"));
+                //emailMessage.From.Add(new MailboxAddress("gobizy@bk.ru"));
+                emailMessage.From.Add(new MailboxAddress("dead.toni@mail.ru"));
                 emailMessage.To.Add(new MailboxAddress(emailTo));
                 emailMessage.Subject = "Gobizy: Код подтверждения";
                 emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
@@ -94,7 +95,8 @@ namespace Garant.Platform.Mailings.Service.Sms
 
                 using var client = new SmtpClient();
                 await client.ConnectAsync(host, port, MailKit.Security.SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync("gobizy@bk.ru", "Garant1234");//ZUrJBp0GXD3xekTdU9YZ
+                //await client.AuthenticateAsync("gobizy@bk.ru", "Garant1234");//ZUrJBp0GXD3xekTdU9YZ
+                await client.AuthenticateAsync("dead.toni@mail.ru", "13467kvm");//ZUrJBp0GXD3xekTdU9YZ
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }
