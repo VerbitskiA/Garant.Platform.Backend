@@ -41,8 +41,8 @@ namespace Garant.Platform
                     //    "https://gobizy.ru",
                     //    "https://gobizy.ru/")
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                    .AllowAnyMethod();
+                //.AllowCredentials();
             }));
 
             //services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
