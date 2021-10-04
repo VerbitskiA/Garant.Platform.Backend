@@ -6,6 +6,7 @@ using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Mailings.Abstraction;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Configuration;
 using MimeKit;
 
 namespace Garant.Platform.Mailings.Service.Sms
@@ -16,10 +17,12 @@ namespace Garant.Platform.Mailings.Service.Sms
     public class MailingService : IMailingService
     {
         private readonly PostgreDbContext _postgreDbContext;
+        private readonly IConfiguration _configuration;
 
-        public MailingService(PostgreDbContext postgreDbContext)
+        public MailingService(PostgreDbContext postgreDbContext, IConfiguration configuration)
         {
             _postgreDbContext = postgreDbContext;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -95,8 +98,11 @@ namespace Garant.Platform.Mailings.Service.Sms
 
                 using var client = new SmtpClient();
                 await client.ConnectAsync(host, port, MailKit.Security.SecureSocketOptions.StartTls);
-                //await client.AuthenticateAsync("gobizy@bk.ru", "Garant1234");//ZUrJBp0GXD3xekTdU9YZ
-                await client.AuthenticateAsync("dead.toni@mail.ru", "13467kvm");//ZUrJBp0GXD3xekTdU9YZ
+                //await client.AuthenticateAsync("gobizy@bk.ru", "Garant1234");
+                await client.AuthenticateAsync(
+                    _configuration.GetSection("MailingSettings:Email").Value,
+                    _configuration.GetSection("MailingSettings:Password").Value
+                    );
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }

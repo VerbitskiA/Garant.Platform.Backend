@@ -33,7 +33,7 @@ namespace Garant.Platform.Tests
             PostgreDbContext = new PostgreDbContext(optionsBuilder.Options);
 
             // Настройка экземпляров сервисов для тестов.
-            MailingService = new MailingService(PostgreDbContext);
+            MailingService = new MailingService(PostgreDbContext, AppConfiguration);
             CommonService = new CommonService(PostgreDbContext, MailingService);
             UserService = new UserService(null, null, PostgreDbContext);
         }

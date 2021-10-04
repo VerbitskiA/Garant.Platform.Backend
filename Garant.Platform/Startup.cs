@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,16 +34,10 @@ namespace Garant.Platform
             services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
             {
                 builder
-                    .WithOrigins("http://localhost:4200", "https://gobizy.ru/")
+                    .WithOrigins("http://localhost:4200", "https://gobizy.ru")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
-                //builder.AllowAnyMethod()
-                //    .AllowAnyHeader()
-                //    .WithOrigins("*")
-                //    .WithMethods("*")
-                //    .WithHeaders("*")
-                //    .DisallowCredentials();
             }));
 
             //services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
