@@ -23,10 +23,14 @@ namespace Garant.Platform.Controllers
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
+        private readonly SignInManager<UserEntity> _signInManager;
+        private readonly UserManager<UserEntity> _userManager;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager)
         {
             _userService = userService;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         /// <summary>

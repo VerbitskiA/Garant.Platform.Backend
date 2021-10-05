@@ -1,8 +1,10 @@
 ﻿using Autofac;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Attributes;
+using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Service.Service.Common;
 using Garant.Platform.Service.Service.User;
+using Microsoft.AspNetCore.Identity;
 
 namespace Garant.Platform.Service.AutofacModules
 {
@@ -21,6 +23,9 @@ namespace Garant.Platform.Service.AutofacModules
             // Общий сервис.
             builder.RegisterType<CommonService>().Named<ICommonService>("CommonService");
             builder.RegisterType<CommonService>().As<ICommonService>();
+
+            builder.RegisterType<SignInManager<UserEntity>>().AsSelf().InstancePerRequest();
+            builder.RegisterType<UserManager<UserEntity>>().AsSelf().InstancePerRequest();
         }
     }
 }
