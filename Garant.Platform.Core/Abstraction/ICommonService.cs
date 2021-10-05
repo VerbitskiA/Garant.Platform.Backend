@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Garant.Platform.Models.Mailing.Output;
 
 namespace Garant.Platform.Core.Abstraction
 {
@@ -12,6 +13,6 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <param name="data">Телефон или почта.</param>
         /// <returns>Флаг успеха.</returns>
-        Task<bool> GenerateAcceptCodeAsync(string data);
+        Task<MailngOutput> GenerateAcceptCodeAsync(string data);
     }
 }

@@ -95,6 +95,7 @@ namespace Garant.Platform
         public void Configure(IApplicationBuilder app)
         {
             app.UseCors("ApiCorsPolicy");
+            app.UseDeveloperExceptionPage();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseHttpsRedirection();

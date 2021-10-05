@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Models.Mailing.Input;
+using Garant.Platform.Models.Mailing.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace Garant.Platform.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost, Route("send-confirm-code")]
-        [ProducesResponseType(200, Type = typeof(bool))]
+        [ProducesResponseType(200, Type = typeof(MailngOutput))]
         public async Task<IActionResult> SendMailAcceptCodeSmsAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
         {
             var result = await _commonService.GenerateAcceptCodeAsync(sendAcceptCodeInput.Data);

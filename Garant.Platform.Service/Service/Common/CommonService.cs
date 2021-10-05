@@ -7,6 +7,7 @@ using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Entities.User;
+using Garant.Platform.Models.Mailing.Output;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Service.Service.Common
@@ -30,7 +31,7 @@ namespace Garant.Platform.Service.Service.Common
         /// </summary>
         /// <param name="data">Телефон или почта.</param>
         /// <returns>Флаг успеха.</returns>
-        public async Task<bool> GenerateAcceptCodeAsync(string data)
+        public async Task<MailngOutput> GenerateAcceptCodeAsync(string data)
         {
             await using var transaction = await _postgreDbContext.Database.BeginTransactionAsync();
 
@@ -78,7 +79,13 @@ namespace Garant.Platform.Service.Service.Common
                     await transaction.CommitAsync();
                 }
 
-                return true;
+                var result = new MailngOutput
+                {
+                    IsSuccessMailing = true,
+                    TypeMailing = type
+                };
+
+                return result;
             }
 
             catch (Exception e)
