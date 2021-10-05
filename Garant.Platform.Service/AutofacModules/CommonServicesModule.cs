@@ -24,8 +24,8 @@ namespace Garant.Platform.Service.AutofacModules
             builder.RegisterType<CommonService>().Named<ICommonService>("CommonService");
             builder.RegisterType<CommonService>().As<ICommonService>();
 
-            builder.RegisterType<SignInManager<UserEntity>>().AsSelf().InstancePerRequest();
-            builder.RegisterType<UserManager<UserEntity>>().AsSelf().InstancePerRequest();
+            builder.RegisterType<SignInManager<UserEntity>>().InstancePerLifetimeScope();
+            builder.RegisterType<UserManager<UserEntity>>().InstancePerLifetimeScope();
         }
     }
 }
