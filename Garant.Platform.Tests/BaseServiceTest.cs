@@ -1,5 +1,5 @@
 ﻿using Garant.Platform.Core.Data;
-using Garant.Platform.Mailings.Service.Sms;
+using Garant.Platform.Mailings.Service;
 using Garant.Platform.Service.Service.Common;
 using Garant.Platform.Service.Service.User;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +35,7 @@ namespace Garant.Platform.Tests
             // Настройка экземпляров сервисов для тестов.
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
             CommonService = new CommonService(PostgreDbContext, MailingService);
-            UserService = new UserService(null, null, PostgreDbContext, CommonService);
+            UserService = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
         }
     }
 }

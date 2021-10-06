@@ -72,5 +72,11 @@ namespace Garant.Platform.Models.Entities.User
         /// </summary>
         [Column("IsWriteQuestion", TypeName = "bool")]
         public bool IsWriteQuestion { get; set; }
+
+        /// <summary>
+        /// Код подтверждения почты (Guid).
+        /// </summary>
+        [Column("ConfirmEmailCode", TypeName = "varchar(200)")]
+        public string ConfirmEmailCode { get; set; }
     }
 }

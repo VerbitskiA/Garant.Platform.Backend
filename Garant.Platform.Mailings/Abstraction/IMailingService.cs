@@ -17,5 +17,13 @@ namespace Garant.Platform.Mailings.Abstraction
         /// <param name="code">Код подтверждения.</param>
         /// <param name="emailTo">email на который отправить сообщение.</param>
         Task SendAcceptCodeMailAsync(string code, string emailTo);
+
+        /// <summary>
+        /// Метод отправит подтверждение на почту.
+        /// </summary>
+        /// <param name="mailTo">Адрес кому отправить.</param>
+        /// <param name="messageBody">Тело сообщения.</param>
+        /// <param name="messageTitle">Заголовок сообщения.</param>
+        Task SendAcceptEmailAsync(string mailTo, string messageBody, string messageTitle);
     }
 }

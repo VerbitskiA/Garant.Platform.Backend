@@ -120,5 +120,20 @@ namespace Garant.Platform.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод подтвердит почту по временному коду (guid).
+        /// </summary>
+        /// <param name="confirmEmailInput">Входная модель.</param>
+        /// <returns>Флаг подтверждения.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("confirm-email")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> ConfirmEmailAsync([FromBody] ConfirmEmailInput confirmEmailInput)
+        {
+            var result = await _userService.ConfirmEmailAsync(confirmEmailInput.Code);
+
+            return Ok(result);
+        }
     }
 }

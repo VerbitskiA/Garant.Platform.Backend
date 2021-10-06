@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Garant.Platform.Core.Attributes;
 using Garant.Platform.Mailings.Abstraction;
-using Garant.Platform.Mailings.Service.Sms;
+using Garant.Platform.Mailings.Service;
 
 namespace Garant.Platform.Mailings.AutofacModules
 {

@@ -8,6 +8,7 @@ using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
@@ -27,13 +28,15 @@ namespace Garant.Platform.Service.Service.User
         private readonly UserManager<UserEntity> _userManager;
         private readonly PostgreDbContext _postgreDbContext;
         private readonly ICommonService _commonService;
+        private readonly IMailingService _mailingService;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, ICommonService commonService)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, ICommonService commonService, IMailingService mailingService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _postgreDbContext = postgreDbContext;
             _commonService = commonService;
+            _mailingService = mailingService;
         }
 
         /// <summary>
@@ -333,6 +336,23 @@ namespace Garant.Platform.Service.Service.User
                         user.IsWriteQuestion = true;
 
                         await _postgreDbContext.SaveChangesAsync();
+
+                        // Генерит guid код для подтверждения почты.
+                        var guid = Guid.NewGuid();
+
+                        // Отправит подтверждение на почту.
+                        await _mailingService.SendAcceptEmailAsync(email, $"Подтвердите регистрацию, перейдя по ссылке: <a href='https://gobizy.ru?code={guid}'>Подтвердить</a>", "Gobizy: Подтверждение почты");
+                        //http://localhost:4200
+
+                        // Запишет guid в таблицу пользователей.
+                        var getUser = await (from u in _postgreDbContext.Users
+                                             where u.Id.Equals(user.UserId)
+                                             select u)
+                            .FirstOrDefaultAsync();
+
+                        getUser.ConfirmEmailCode = guid.ToString();
+
+                        await _postgreDbContext.SaveChangesAsync();
                     }
 
                     // Иначе обновит.
@@ -437,6 +457,32 @@ namespace Garant.Platform.Service.Service.User
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод подтвердит почту по временному коду (guid).
+        /// </summary>
+        /// <param name="code">Временный код.</param>
+        /// <returns>Флаг подтверждения.</returns>
+        public async Task<bool> ConfirmEmailAsync(string code)
+        {
+            try
+            {
+                var userCode = await (from u in _postgreDbContext.Users
+                                      where u.ConfirmEmailCode.Equals(code)
+                                      select u)
+                    .FirstOrDefaultAsync();
+
+                return userCode != null;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }

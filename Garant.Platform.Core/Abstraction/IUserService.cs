@@ -76,5 +76,12 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="data">Логин или email пользователя.</param>
         /// <returns>Захэшированный пароль.</returns>
         Task<string> GetUserHashPassword(string data);
+
+        /// <summary>
+        /// Метод подтвердит почту по временному коду (guid).
+        /// </summary>
+        /// <param name="code">Временный код.</param>
+        /// <returns>Флаг подтверждения.</returns>
+        Task<bool> ConfirmEmailAsync(string code);
     }
 }
