@@ -52,15 +52,29 @@ namespace Garant.Platform.Core.Abstraction
         Task<IEnumerable<FooterOutput>> InitFooterAsync();
 
         /// <summary>
-        /// Метод добавит информацию о пользователе.
+        /// Метод завершит регистрацию и добавит информацию о пользователе.
         /// </summary>
         /// <param name="firstName">Имя.</param>
         /// <param name="lastName">Фамилия.</param>
         /// <param name="city">Город.</param>
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
-        /// <param name="variantName">Название причины регистрации.</param>
+        /// <param name="values">Причины регистрации разделенные запятой.</param>
         /// <returns>Данные пользователя.</returns>
-        Task<UserInformationOutput> AddUserInfoAsync(string firstName, string lastName, string city, string email, string password, string variantName);
+        Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values);
+
+        /// <summary>
+        /// Метод найдет пользователя по email или номеру телефона.
+        /// </summary>
+        /// <param name="data">Email или номер телефона.</param>
+        /// <returns>Данные пользователя.</returns>
+        Task<UserOutput> FindUserByEmailOrPhoneNumberAsync(string data);
+
+        /// <summary>
+        /// Метод найдет захэшированный пароль пользователя по логину или email или номеру телефона.
+        /// </summary>
+        /// <param name="data">Логин или email пользователя.</param>
+        /// <returns>Захэшированный пароль.</returns>
+        Task<string> GetUserHashPassword(string data);
     }
 }

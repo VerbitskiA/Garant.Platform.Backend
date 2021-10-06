@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
@@ -174,6 +175,29 @@ namespace Garant.Platform.Service.Service.Common
                 await logger.LogCritical();
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Метод хэширует пароль аналогично как это делает Identity.
+        /// </summary>
+        /// <param name="password">Исходный пароль без хэша.</param>
+        /// <returns>Хэш пароля.</returns>
+        public async Task<string> HashPasswordAsync(string password)
+        {
+            byte[] salt;
+            byte[] buffer2;
+            
+            using (var bytes = new Rfc2898DeriveBytes(password, 0x10, 0x3e8))
+            {
+                salt = bytes.Salt;
+                buffer2 = bytes.GetBytes(0x20);
+            }
+
+            var dst = new byte[0x31];
+            Buffer.BlockCopy(salt, 0, dst, 1, 0x10);
+            Buffer.BlockCopy(buffer2, 0, dst, 0x11, 0x20);
+
+            return await Task.FromResult(Convert.ToBase64String(dst));
         }
     }
 }

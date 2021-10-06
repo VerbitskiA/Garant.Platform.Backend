@@ -40,14 +40,22 @@ namespace Garant.Platform
                     .AllowCredentials();
             }));
 
+            #region Продакшен.
+
             //services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
             //    opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"), b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
+
+            #endregion
+
+            #region Тестовая среда.
 
             services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
 
             services.AddDbContext<IdentityDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
+
+            #endregion
 
             services.AddIdentity<UserEntity, IdentityRole>(opts =>
             {
@@ -63,9 +71,6 @@ namespace Garant.Platform
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform", Version = "v1" });
-                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                //c.IncludeXmlComments(xmlPath);
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -100,13 +105,6 @@ namespace Garant.Platform
             app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseRouting();
-
-            // Для Linux.
-            //app.UseForwardedHeaders(new ForwardedHeadersOptions
-            //{
-            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            //});
-
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>

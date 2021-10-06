@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Garant.Platform.Models.User.Input
+﻿namespace Garant.Platform.Models.User.Input
 {
     /// <summary>
     /// Класс входной модели для добавления доп. информации пользователя.
@@ -33,8 +31,8 @@ namespace Garant.Platform.Models.User.Input
         public string Password { get; set; }
 
         /// <summary>
-        /// Название причины регистрации.
+        /// Название причин регистрации разделенные запятыми.
         /// </summary>
-        public string VariantForWhatName { get; set; }
+        public string Values { get; set; }
     }
 }

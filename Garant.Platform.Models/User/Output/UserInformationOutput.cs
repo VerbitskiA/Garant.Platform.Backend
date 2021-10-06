@@ -26,13 +26,13 @@
         public string Email { get; set; }
 
         /// <summary>
-        /// Название причины регистрации.
+        /// Название причины регистрации разделенные запятыми.
         /// </summary>
-        public string VariantForWhatName { get; set; }
+        public string Values { get; set; }
 
         /// <summary>
-        /// Код причины регистрации.
+        /// Номер телефона.
         /// </summary>
-        public string VariantForWhatCode { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

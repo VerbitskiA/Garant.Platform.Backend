@@ -46,15 +46,21 @@ namespace Garant.Platform.Models.Entities.User
         public string Password { get; set; }
 
         /// <summary>
-        /// Название причины регистрации.
+        /// Номер телефона.
         /// </summary>
-        [Column("VariantForWhatName", TypeName = "varchar(100)")]
-        public string VariantForWhatName { get; set; }
+        [Column("PhoneNumber", TypeName = "varchar(100)")]
+        public string PhoneNumber { get; set; }
 
         /// <summary>
-        /// Код причины регистрации.
+        /// Значения разделенные запятой.
         /// </summary>
-        [Column("VariantForWhatCode", TypeName = "varchar(100)")]
-        public string VariantForWhatCode { get; set; }
+        [Column("Values", TypeName = "varchar(50)")]
+        public string Values { get; set; }
+
+        /// <summary>
+        /// Id пользователя.
+        /// </summary>
+        [Column("UserId", TypeName = "varchar(50)")]
+        public string UserId { get; set; }
     }
 }

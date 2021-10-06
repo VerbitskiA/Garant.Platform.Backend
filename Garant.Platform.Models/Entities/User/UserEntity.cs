@@ -66,5 +66,11 @@ namespace Garant.Platform.Models.Entities.User
         /// </summary>
         [Column("IsNews", TypeName = "bool")]
         public bool IsNews { get; set; }
+
+        /// <summary>
+        /// Флаг ответа на вопросы.
+        /// </summary>
+        [Column("IsWriteQuestion", TypeName = "bool")]
+        public bool IsWriteQuestion { get; set; }
     }
 }

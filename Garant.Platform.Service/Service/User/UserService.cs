@@ -26,12 +26,14 @@ namespace Garant.Platform.Service.Service.User
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly UserManager<UserEntity> _userManager;
         private readonly PostgreDbContext _postgreDbContext;
+        private readonly ICommonService _commonService;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, ICommonService commonService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _postgreDbContext = postgreDbContext;
+            _commonService = commonService;
         }
 
         /// <summary>
@@ -255,36 +257,186 @@ namespace Garant.Platform.Service.Service.User
         }
 
         /// <summary>
-        /// Метод добавит информацию о пользователе.
+        /// Метод завершит регистрацию и добавит информацию о пользователе.
         /// </summary>
         /// <param name="firstName">Имя.</param>
         /// <param name="lastName">Фамилия.</param>
         /// <param name="city">Город.</param>
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
-        /// <param name="variantName">Название причины регистрации.</param>
-        /// <param name="variantCode">Код причины регистрации.</param>
+        /// <param name="values">Причины регистрации разделенные запятой.</param>
         /// <returns>Данные пользователя.</returns>
-        public Task<UserInformationOutput> AddUserInfoAsync(string firstName, string lastName, string city, string email, string password, string variantName)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values)
         {
             try
             {
-                if (string.IsNullOrEmpty(firstName) 
-                    || string.IsNullOrEmpty(lastName) 
-                    || string.IsNullOrEmpty(city) 
-                    || string.IsNullOrEmpty(email) 
-                    || string.IsNullOrEmpty(password) 
-                    || string.IsNullOrEmpty(variantName))
+                var result = new UserInformationOutput();
+
+                if (string.IsNullOrEmpty(firstName)
+                    || string.IsNullOrEmpty(lastName)
+                    || string.IsNullOrEmpty(city)
+                    || string.IsNullOrEmpty(email)
+                    || string.IsNullOrEmpty(password)
+                    || string.IsNullOrEmpty(values))
                 {
                     throw new EmptyUserInformationException();
                 }
 
-                return null;
+                // Найдет такого пользователя по email.
+                var user = await FindUserByEmailOrPhoneNumberAsync(email);
+
+                if (user != null)
+                {
+                    // Выберет хэш пароля.
+                    var passwordHash = await GetUserHashPassword(email);
+
+                    if (passwordHash == null)
+                    {
+                        passwordHash = await _commonService.HashPasswordAsync(password);
+
+                        // Изменит пароль в таблице пользователей.
+                        var getUser = await (from u in _postgreDbContext.Users
+                                             where u.Id.Equals(user.UserId)
+                                             select u)
+                            .FirstOrDefaultAsync();
+
+                        getUser.UserPassword = password;
+                        getUser.PasswordHash = passwordHash;
+
+                        await _postgreDbContext.SaveChangesAsync();
+                    }
+
+                    // Проверит, есть ли такие данные в таблицы доп.информации пользователей.
+                    var checkUserInfoData = await (from ui in _postgreDbContext.UsersInformation
+                                                   where ui.UserId.Equals(user.UserId)
+                                                   select ui)
+                        .FirstOrDefaultAsync();
+
+                    // Если таких данных еще не было, то добавит.
+                    if (checkUserInfoData == null)
+                    {
+                        // Запишет доп.информацию.   
+                        await _postgreDbContext.UsersInformation.AddAsync(new UserInformationEntity
+                        {
+                            FirstName = firstName,
+                            LastName = lastName,
+                            City = city,
+                            Email = email,
+                            Password = passwordHash,
+                            Values = values,
+                            PhoneNumber = user.PhoneNumber,
+                            UserId = user.UserId
+                        });
+
+                        await _postgreDbContext.SaveChangesAsync();
+
+                        user.IsWriteQuestion = true;
+
+                        await _postgreDbContext.SaveChangesAsync();
+                    }
+
+                    // Иначе обновит.
+                    else
+                    {
+                        checkUserInfoData.FirstName = firstName;
+                        checkUserInfoData.LastName = lastName;
+                        checkUserInfoData.City = city;
+                        checkUserInfoData.Email = email;
+                        checkUserInfoData.Password = passwordHash;
+                        checkUserInfoData.Values = values;
+                        checkUserInfoData.PhoneNumber = user.PhoneNumber;
+                        checkUserInfoData.UserId = user.UserId;
+
+                        await _postgreDbContext.SaveChangesAsync();
+
+                        user.IsWriteQuestion = true;
+
+                        await _postgreDbContext.SaveChangesAsync();
+                    }
+
+                    result = new UserInformationOutput
+                    {
+                        FirstName = firstName,
+                        LastName = lastName,
+                        City = city,
+                        Email = email,
+                        Values = values,
+                        PhoneNumber = user.PhoneNumber
+                    };
+                }
+
+                return result;
             }
 
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод найдет пользователя по email или номеру телефона.
+        /// </summary>
+        /// <param name="data">Email или номер телефона.</param>
+        /// <returns>Данные пользователя.</returns>
+        public async Task<UserOutput> FindUserByEmailOrPhoneNumberAsync(string data)
+        {
+            try
+            {
+                var result = await (from u in _postgreDbContext.Users
+                                    where u.Email.Equals(data) || u.PhoneNumber.Equals(data)
+                                    select new UserOutput
+                                    {
+                                        Email = u.Email,
+                                        PhoneNumber = u.PhoneNumber,
+                                        DateRegister = u.DateRegister,
+                                        FirstName = u.FirstName,
+                                        LastName = u.LastName,
+                                        City = u.City,
+                                        IsWriteQuestion = u.IsWriteQuestion,
+                                        UserId = u.Id
+                                    })
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод найдет захэшированный пароль пользователя по логину или email или номеру телефона.
+        /// </summary>
+        /// <param name="data">Логин или email пользователя.</param>
+        /// <returns>Захэшированный пароль.</returns>
+        public async Task<string> GetUserHashPassword(string data)
+        {
+            try
+            {
+                var result = await (from u in _postgreDbContext.Users
+                                    where u.Email.Equals(data) 
+                                          || u.PhoneNumber.Equals(data)
+                                          || u.UserName.Equals(data)
+                                    select u.PasswordHash)
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }
