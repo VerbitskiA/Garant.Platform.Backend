@@ -3,6 +3,7 @@ using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Attributes;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Service.Service.Common;
+using Garant.Platform.Service.Service.MainPage;
 using Garant.Platform.Service.Service.User;
 using Microsoft.AspNetCore.Identity;
 
@@ -26,6 +27,10 @@ namespace Garant.Platform.Service.AutofacModules
 
             builder.RegisterType<SignInManager<UserEntity>>().InstancePerLifetimeScope();
             builder.RegisterType<UserManager<UserEntity>>().InstancePerLifetimeScope();
+
+            // Сервис главной страницы.
+            builder.RegisterType<MainPageService>().Named<IMainPageService>("MainPageService");
+            builder.RegisterType<MainPageService>().As<IMainPageService>();
         }
     }
 }

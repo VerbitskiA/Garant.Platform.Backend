@@ -1,4 +1,5 @@
-﻿using Garant.Platform.Models.Entities.Footer;
+﻿using Garant.Platform.Models.Entities.Category;
+using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Header;
 using Garant.Platform.Models.Entities.Logger;
 using Garant.Platform.Models.Entities.User;
@@ -41,5 +42,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица информации пользователя dbo.UsersInformation.
         /// </summary>
         public DbSet<UserInformationEntity> UsersInformation { get; set; }
+
+        /// <summary>
+        /// Таблица dbo.BusinessCategories.
+        /// </summary>
+        public DbSet<BusinessCategoryEntity> BusinessCategories { get; set; }
     }
 }
