@@ -63,9 +63,11 @@ namespace Garant.Platform.Mailings.Service
             try
             {
                 var data = await GetHostAndPortAsync(emailTo);
+                var email = _configuration.GetSection("MailingSettings:Email").Value;
+                var password = _configuration.GetSection("MailingSettings:Password").Value;
 
                 var emailMessage = new MimeMessage();
-                emailMessage.From.Add(new MailboxAddress(_configuration.GetSection("MailingSettings:From").Value));
+                emailMessage.From.Add(new MailboxAddress(email));
                 emailMessage.To.Add(new MailboxAddress(emailTo));
                 emailMessage.Subject = "Gobizy: Код подтверждения";
                 emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
@@ -75,7 +77,7 @@ namespace Garant.Platform.Mailings.Service
 
                 using var client = new SmtpClient();
                 await client.ConnectAsync(data.Item1, data.Item2, MailKit.Security.SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(_configuration.GetSection("MailingSettings:Email").Value, _configuration.GetSection("MailingSettings:Password").Value);
+                await client.AuthenticateAsync(email, password);
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }
@@ -125,9 +127,11 @@ namespace Garant.Platform.Mailings.Service
             try
             {
                 var data = await GetHostAndPortAsync(mailTo);
+                var email = _configuration.GetSection("MailingSettings:Email").Value;
+                var password = _configuration.GetSection("MailingSettings:Password").Value;
 
                 var emailMessage = new MimeMessage();
-                emailMessage.From.Add(new MailboxAddress(_configuration.GetSection("MailingSettings:From").Value));
+                emailMessage.From.Add(new MailboxAddress(email));
                 emailMessage.To.Add(new MailboxAddress(mailTo));
                 emailMessage.Subject = messageTitle;
                 emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
@@ -137,7 +141,7 @@ namespace Garant.Platform.Mailings.Service
 
                 using var client = new SmtpClient();
                 await client.ConnectAsync(data.Item1, data.Item2, MailKit.Security.SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(_configuration.GetSection("MailingSettings:Email").Value, _configuration.GetSection("MailingSettings:Password").Value);
+                await client.AuthenticateAsync(email, password);
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }
