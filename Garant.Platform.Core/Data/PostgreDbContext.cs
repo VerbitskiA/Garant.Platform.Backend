@@ -2,6 +2,7 @@
 using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Header;
 using Garant.Platform.Models.Entities.Logger;
+using Garant.Platform.Models.Entities.News;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,7 +45,12 @@ namespace Garant.Platform.Core.Data
         public DbSet<UserInformationEntity> UsersInformation { get; set; }
 
         /// <summary>
-        /// Таблица dbo.BusinessCategories.
+        /// Таблица новостей dbo.News.
+        /// </summary>
+        public DbSet<NewsEntity> News { get; set; }
+
+        /// <summary>
+        /// Таблица категорий dbo.BusinessCategories..
         /// </summary>
         public DbSet<BusinessCategoryEntity> BusinessCategories { get; set; }
     }

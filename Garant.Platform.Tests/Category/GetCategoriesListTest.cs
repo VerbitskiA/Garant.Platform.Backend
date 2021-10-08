@@ -18,7 +18,7 @@ namespace Garant.Platform.Tests.Category
             var component = new MainPageService(PostgreDbContext);
             var result = await component.GetCategoriesListAsync();
 
-            Assert.IsTrue(result.Any());
+            Assert.IsTrue(result.ResultCol1.Any());
         }
     }
 }

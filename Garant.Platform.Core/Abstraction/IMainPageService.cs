@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Garant.Platform.Models.Category.Output;
 
 namespace Garant.Platform.Core.Abstraction
@@ -12,7 +11,7 @@ namespace Garant.Platform.Core.Abstraction
         /// <summary>
         /// Метод получит список категорий бизнеса.
         /// </summary>
-        /// <returns>Список категорий бизнеса.</returns>
-        Task<IEnumerable<BusinessCategoryOutput>> GetCategoriesListAsync();
+        /// <returns>Список категорий бизнеса. Все это дело разбито на 4 столбца.</returns>
+        Task<GetResultBusinessCategoryOutput> GetCategoriesListAsync();
     }
 }
