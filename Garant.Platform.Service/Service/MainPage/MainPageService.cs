@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Category.Output;
+using Garant.Platform.Models.LastBuy.Output;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Service.Service.MainPage
@@ -147,6 +149,39 @@ namespace Garant.Platform.Service.Service.MainPage
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит последние 5 записей недавно купленных франшиз.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        public async Task<IEnumerable<LastBuyOutput>> GetSliderLastBuyAsync()
+        {
+            try
+            {
+                var result = await (from res in _postgreDbContext.LastBuys
+                                    select new LastBuyOutput
+                                    {
+                                        CountDays = res.CountDays,
+                                        DateBuy = res.DateBuy,
+                                        DayDeclination = res.DayDeclination,
+                                        Name = res.Name,
+                                        Price = string.Format("{0:0,0}", res.Price),
+                                        Text = res.Text,
+                                        TextDoPrice = res.TextDoPrice,
+                                        Url = res.Url
+                                    })
+                    .Take(5)
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
                 throw;
             }
         }

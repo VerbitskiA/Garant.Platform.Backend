@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Models.Category.Output;
+using Garant.Platform.Models.LastBuy.Output;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers
@@ -27,6 +29,19 @@ namespace Garant.Platform.Controllers
         public async Task<IActionResult> GetCategoriesListAsync()
         {
             var result = await _mainPageService.GetCategoriesListAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит последние 5 записей недавно купленных франшиз.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        [HttpPost, Route("slider-last-buy")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<LastBuyOutput>))]
+        public async Task<IActionResult> GetSliderLastBuyAsync()
+        {
+            var result = await _mainPageService.GetSliderLastBuyAsync();
 
             return Ok(result);
         }
