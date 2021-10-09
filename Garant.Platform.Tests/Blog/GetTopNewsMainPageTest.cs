@@ -8,15 +8,15 @@ using Moq;
 namespace Garant.Platform.Tests.Blog
 {
     [TestClass]
-    public class GetBlogsListTest : BaseServiceTest
+    public class GetTopNewsMainPageTest : BaseServiceTest
     {
         [TestMethod]
-        public async Task GetBlogsListAsyncTest()
+        public async Task GetTopNewsMainPageAsyncTest()
         {
             var mock = new Mock<IBlogService>();
-            mock.Setup(a => a.GetBlogsListMainPageAsync());
+            mock.Setup(a => a.GetTopNewsMainPageAsync());
             var component = new BlogService(PostgreDbContext);
-            var result = await component.GetBlogsListMainPageAsync();
+            var result = await component.GetTopNewsMainPageAsync();
 
             Assert.IsTrue(result.Any());
         }

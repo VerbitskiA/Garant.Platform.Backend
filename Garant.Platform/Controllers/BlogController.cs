@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Garant.Platform.Controllers
 {
     /// <summary>
-    /// Контроллер блога.
+    /// Контроллер блогов и новостей.
     /// </summary>
     [ApiController, Route("blog")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -23,15 +23,28 @@ namespace Garant.Platform.Controllers
         }
 
         /// <summary>
-        /// Метод получит список объявлений.
+        /// Метод получит список объявлений для главной страницы.
         /// </summary>
         /// <returns>Список объявлений.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("blogs")]
+        [HttpPost, Route("main-blogs")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BlogOutput>))]
-        public async Task<IActionResult> GetBlogsListAsync()
+        public async Task<IActionResult> GetBlogsListMainPageAsync()
         {
-            var result = await _blogService.GetBlogsListAsync();
+            var result = await _blogService.GetBlogsListMainPageAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список новостей, у которых стоит флаг IsPaid. Т.е те, которые проплачены за размещение на главной.
+        /// </summary>
+        /// <returns>Список новостей.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("main-news")]
+        public async Task<IActionResult> GetTopNewsMainPageAsync()
+        {
+            var result = await _blogService.GetTopNewsMainPageAsync();
 
             return Ok(result);
         }

@@ -14,5 +14,10 @@
         /// Путь к изображению.
         /// </summary>
         public string Url { get; set; }
+
+        /// <summary>
+        /// Оплачено ли размещение на главной.
+        /// </summary>
+        public bool IsPaid { get; set; }
     }
 }

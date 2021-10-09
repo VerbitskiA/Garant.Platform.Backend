@@ -26,5 +26,11 @@ namespace Garant.Platform.Models.Entities.Blog
         /// </summary>
         [Column("Url", TypeName = "text")]
         public string Url { get; set; }
+
+        /// <summary>
+        /// Оплачено ли размещение на главной.
+        /// </summary>
+        [Column("IsPaid", TypeName = "bool")]
+        public bool IsPaid { get; set; }
     }
 }
