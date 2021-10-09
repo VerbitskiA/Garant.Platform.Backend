@@ -1,6 +1,7 @@
 ﻿using Garant.Platform.Models.Entities.Actions;
 using Garant.Platform.Models.Entities.Category;
 using Garant.Platform.Models.Entities.Footer;
+using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Entities.Header;
 using Garant.Platform.Models.Entities.LastBuy;
 using Garant.Platform.Models.Entities.Logger;
@@ -71,5 +72,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица предложений dbo.Suggestions.
         /// </summary>
         public DbSet<SuggestionEntity> Suggestions { get; set; }
+
+        /// <summary>
+        /// Таблица популярных франшиз dbo.Franchises.
+        /// </summary>
+        public DbSet<PopularFranchiseEntity> PopularFranchises { get; set; }
     }
 }

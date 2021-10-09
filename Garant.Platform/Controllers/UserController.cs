@@ -143,9 +143,9 @@ namespace Garant.Platform.Controllers
         /// </summary>
         /// <param name="suggestionInput">Входная модель.</param>
         /// <returns>Данные предложения.</returns>
+        [AllowAnonymous]
         [HttpPost, Route("single-suggestion")]
         [ProducesResponseType(200, Type = typeof(SuggestionOutput))]
-
         public async Task<IActionResult> GetSingleSuggestionAsync([FromBody] SuggestionInput suggestionInput)
         {
             var result = await _userService.GetSingleSuggestion(suggestionInput.IsSingle, suggestionInput.IsAll);
@@ -158,9 +158,8 @@ namespace Garant.Platform.Controllers
         /// </summary>
         /// <param name="suggestionInput">Входная модель.</param>
         /// <returns>Список предложений.</returns>
-        [HttpPost, Route("single-suggestion")]
+        [HttpPost, Route("all-suggestions")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<SuggestionOutput>))]
-
         public async Task<IActionResult> GetAllSuggestionsAsync([FromBody] SuggestionInput suggestionInput)
         {
             var result = await _userService.GetAllSuggestionsAsync(suggestionInput.IsSingle, suggestionInput.IsAll);

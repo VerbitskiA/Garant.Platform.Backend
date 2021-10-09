@@ -1,6 +1,7 @@
 ﻿using Garant.Platform.Core.Data;
 using Garant.Platform.Mailings.Service;
 using Garant.Platform.Service.Service.Common;
+using Garant.Platform.Service.Service.Franchise;
 using Garant.Platform.Service.Service.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ namespace Garant.Platform.Tests
         protected UserService UserService;
         protected CommonService CommonService;
         protected MailingService MailingService;
+        protected FranchiseService FranchiseService;
 
         public BaseServiceTest()
         {
@@ -36,6 +38,7 @@ namespace Garant.Platform.Tests
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
             CommonService = new CommonService(PostgreDbContext, MailingService);
             UserService = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
+            FranchiseService = new FranchiseService(PostgreDbContext);
         }
     }
 }
