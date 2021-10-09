@@ -13,7 +13,7 @@ namespace Garant.Platform.Core.Abstraction
         /// Метод получит список популярных франшиз.
         /// </summary>
         /// <returns>Список франшиз.</returns>
-        Task<IEnumerable<PopularFranchiseOutput>> GetPopularFranchises();
+        //Task<IEnumerable<PopularFranchiseOutput>> GetPopularFranchises();
 
         /// <summary>
         /// Метод получит список популярных франшиз для главной страницы.

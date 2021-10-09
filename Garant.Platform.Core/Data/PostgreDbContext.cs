@@ -1,4 +1,5 @@
 ﻿using Garant.Platform.Models.Entities.Actions;
+using Garant.Platform.Models.Entities.Add;
 using Garant.Platform.Models.Entities.Category;
 using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Franchise;
@@ -77,5 +78,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица популярных франшиз dbo.Franchises.
         /// </summary>
         public DbSet<PopularFranchiseEntity> PopularFranchises { get; set; }
+
+        /// <summary>
+        /// Таблица объявлений dbo.Ads.
+        /// </summary>
+        public DbSet<AdEntity> Ads { get; set; }
     }
 }

@@ -2,19 +2,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Garant.Platform.Models.Entities.Franchise
+namespace Garant.Platform.Models.Entities.Add
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей dbo.Franchises.
+    /// Класс сопоставляется с таблицей объявлений dbo.Ads.
     /// </summary>
-    [Table("PopularFranchises", Schema = "dbo")]
-    public class PopularFranchiseEntity
+    [Table("Ads", Schema = "dbo")]
+    public class AdEntity
     {
         /// <summary>
         /// PK.
         /// </summary>
         [Key]
-        public long FranchiseId { get; set; }
+        public long AdId { get; set; }
 
         /// <summary>
         /// Путь к изображению.
