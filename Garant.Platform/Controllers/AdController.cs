@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers
 {
+    /// <summary>
+    /// Контроллер объявлений.
+    /// </summary>
     [ApiController, Route("ad")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AdController : BaseController

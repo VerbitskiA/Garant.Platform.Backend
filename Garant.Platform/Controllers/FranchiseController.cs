@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers
 {
+    /// <summary>
+    /// Контроллер франшиз.
+    /// </summary>
     [ApiController, Route("franchise")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FranchiseController : BaseController
