@@ -5,6 +5,7 @@ using Garant.Platform.Models.Entities.Header;
 using Garant.Platform.Models.Entities.LastBuy;
 using Garant.Platform.Models.Entities.Logger;
 using Garant.Platform.Models.Entities.News;
+using Garant.Platform.Models.Entities.Suggestion;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -65,5 +66,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица событий на главной странице dbo.MainPageActions.
         /// </summary>
         public DbSet<MainPageActionEntity> MainPageActions { get; set; }
+
+        /// <summary>
+        /// Таблица предложений dbo.Suggestions.
+        /// </summary>
+        public DbSet<SuggestionEntity> Suggestions { get; set; }
     }
 }

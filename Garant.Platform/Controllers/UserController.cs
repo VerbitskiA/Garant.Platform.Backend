@@ -6,6 +6,8 @@ using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Input;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Mailing.Input;
+using Garant.Platform.Models.Suggestion.Input;
+using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -132,6 +134,36 @@ namespace Garant.Platform.Controllers
         public async Task<IActionResult> ConfirmEmailAsync([FromBody] ConfirmEmailInput confirmEmailInput)
         {
             var result = await _userService.ConfirmEmailAsync(confirmEmailInput.Code);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит одно предложение с флагом IsSingle.
+        /// </summary>
+        /// <param name="suggestionInput">Входная модель.</param>
+        /// <returns>Данные предложения.</returns>
+        [HttpPost, Route("single-suggestion")]
+        [ProducesResponseType(200, Type = typeof(SuggestionOutput))]
+
+        public async Task<IActionResult> GetSingleSuggestionAsync([FromBody] SuggestionInput suggestionInput)
+        {
+            var result = await _userService.GetSingleSuggestion(suggestionInput.IsSingle, suggestionInput.IsAll);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит все предложения с флагом IsAll.
+        /// </summary>
+        /// <param name="suggestionInput">Входная модель.</param>
+        /// <returns>Список предложений.</returns>
+        [HttpPost, Route("single-suggestion")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<SuggestionOutput>))]
+
+        public async Task<IActionResult> GetAllSuggestionsAsync([FromBody] SuggestionInput suggestionInput)
+        {
+            var result = await _userService.GetAllSuggestionsAsync(suggestionInput.IsSingle, suggestionInput.IsAll);
 
             return Ok(result);
         }

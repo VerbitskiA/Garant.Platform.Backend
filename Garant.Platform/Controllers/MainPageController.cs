@@ -4,6 +4,8 @@ using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
 using Garant.Platform.Models.LastBuy.Output;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers
@@ -12,6 +14,7 @@ namespace Garant.Platform.Controllers
     /// Контроллер главной страницы.
     /// </summary>
     [ApiController, Route("main")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class MainPageController : BaseController
     {
         private readonly IMainPageService _mainPageService;
@@ -25,6 +28,7 @@ namespace Garant.Platform.Controllers
         /// Метод получит список категорий бизнеса.
         /// </summary>
         /// <returns>Список категорий бизнеса. Все это дело разбито на 4 столбца.</returns>
+        [AllowAnonymous]
         [HttpPost, Route("categories-list")]
         [ProducesResponseType(200, Type = typeof(GetResultBusinessCategoryOutput))]
         public async Task<IActionResult> GetCategoriesListAsync()
@@ -38,6 +42,7 @@ namespace Garant.Platform.Controllers
         /// Метод получит последние 5 записей недавно купленных франшиз.
         /// </summary>
         /// <returns>Список франшиз.</returns>
+        [AllowAnonymous]
         [HttpPost, Route("slider-last-buy")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<LastBuyOutput>))]
         public async Task<IActionResult> GetSliderLastBuyAsync()
@@ -51,6 +56,7 @@ namespace Garant.Platform.Controllers
         /// Метод получит данные для блока событий главной страницы.
         /// </summary>
         /// <returns>Список данных.</returns>
+        [AllowAnonymous]
         [HttpPost, Route("actions")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<MainPageActionOutput>))]
         public async Task<IActionResult> GetActionsMainPageAsync()
