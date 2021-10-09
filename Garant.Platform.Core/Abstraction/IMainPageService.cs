@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
 using Garant.Platform.Models.LastBuy.Output;
 
@@ -21,5 +22,11 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <returns>Список франшиз.</returns>
         Task<IEnumerable<LastBuyOutput>> GetSliderLastBuyAsync();
+
+        /// <summary>
+        /// Метод получит данные для блока событий главной страницы.
+        /// </summary>
+        /// <returns>Список данных.</returns>
+        Task<IEnumerable<MainPageActionOutput>> GetActionsMainPageAsync();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Garant.Platform.Models.Entities.Category;
+﻿using Garant.Platform.Models.Entities.Actions;
+using Garant.Platform.Models.Entities.Category;
 using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Header;
 using Garant.Platform.Models.Entities.LastBuy;
@@ -59,5 +60,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица последних покупок dbo.LastBuy.
         /// </summary>
         public DbSet<LastBuyEntity> LastBuys { get; set; }
+
+        /// <summary>
+        /// Таблица событий на главной странице dbo.MainPageActions.
+        /// </summary>
+        public DbSet<MainPageActionEntity> MainPageActions { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
 using Garant.Platform.Models.LastBuy.Output;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +43,19 @@ namespace Garant.Platform.Controllers
         public async Task<IActionResult> GetSliderLastBuyAsync()
         {
             var result = await _mainPageService.GetSliderLastBuyAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит данные для блока событий главной страницы.
+        /// </summary>
+        /// <returns>Список данных.</returns>
+        [HttpPost, Route("actions")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<MainPageActionOutput>))]
+        public async Task<IActionResult> GetActionsMainPageAsync()
+        {
+            var result = await _mainPageService.GetActionsMainPageAsync();
 
             return Ok(result);
         }

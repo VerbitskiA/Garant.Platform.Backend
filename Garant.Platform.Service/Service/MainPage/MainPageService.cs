@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
 using Garant.Platform.Models.LastBuy.Output;
 using Microsoft.EntityFrameworkCore;
@@ -182,6 +183,38 @@ namespace Garant.Platform.Service.Service.MainPage
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит данные для блока событий главной страницы.
+        /// </summary>
+        /// <returns>Список данных.</returns>
+        public async Task<IEnumerable<MainPageActionOutput>> GetActionsMainPageAsync()
+        {
+            try
+            {
+                var result = await (from a in _postgreDbContext.MainPageActions
+                                    select new MainPageActionOutput
+                                    {
+                                        ButtonText = a.ButtonText,
+                                        SubTitle = a.SubTitle,
+                                        Text = a.Text,
+                                        Title = a.Title
+                                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }
