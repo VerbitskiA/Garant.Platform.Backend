@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Garant.Platform.Models.Entities.Blog
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей блогов dbo.Blogs. 
+    /// Класс сопоставляется с таблицей блогов Info.Blogs. 
     /// </summary>
-    [Table("Blogs",Schema = "dbo")]
+    [Table("Blogs",Schema = "Info")]
     public class BlogEntity
     {
         /// <summary>

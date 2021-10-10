@@ -7,7 +7,7 @@ namespace Garant.Platform.Models.Entities.Add
     /// <summary>
     /// Класс сопоставляется с таблицей объявлений dbo.Ads.
     /// </summary>
-    [Table("Ads", Schema = "dbo")]
+    [Table("Ads", Schema = "Info")]
     public class AdEntity
     {
         /// <summary>

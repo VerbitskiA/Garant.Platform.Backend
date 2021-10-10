@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Garant.Platform.Models.Entities.Suggestion
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей предложений dbo.Suggestions.
+    /// Класс сопоставляется с таблицей предложений Info.Suggestions.
     /// </summary>
-    [Table("Suggestions", Schema = "dbo")]
+    [Table("Suggestions", Schema = "Info")]
     public class SuggestionEntity
     {
         /// <summary>

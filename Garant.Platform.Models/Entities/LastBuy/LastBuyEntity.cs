@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Garant.Platform.Models.Entities.LastBuy
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей последних покупок dbo.LastBuy.
+    /// Класс сопоставляется с таблицей последних покупок Commerce.LastBuy.
     /// </summary>
-    [Table("LastBuy", Schema = "dbo")]
+    [Table("LastBuy", Schema = "Commerce")]
     public class LastBuyEntity
     {
         /// <summary>

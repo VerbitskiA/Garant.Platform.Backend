@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Garant.Platform.Models.Entities.Franchise
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей dbo.Franchises.
+    /// Класс сопоставляется с таблицей franchise.Franchises.
     /// </summary>
-    [Table("PopularFranchises", Schema = "dbo")]
+    [Table("PopularFranchises", Schema = "Franchises")]
     public class PopularFranchiseEntity
     {
         /// <summary>

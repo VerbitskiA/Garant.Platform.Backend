@@ -6,7 +6,7 @@ namespace Garant.Platform.Models.Entities.User
     /// <summary>
     /// Класс сопоставляется с таблицей информации о пользователе dbo.UsersInformation.
     /// </summary>
-    [Table("UsersInformation", Schema = "dbo")]
+    [Table("UsersInformation", Schema = "Info")]
     public class UserInformationEntity
     {
         /// <summary>

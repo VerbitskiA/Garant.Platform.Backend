@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Garant.Platform.Models.Entities.News
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей dbo.News.
+    /// Класс сопоставляется с таблицей Info.News.
     /// </summary>
-    [Table("News", Schema = "dbo")]
+    [Table("News", Schema = "Info")]
     public class NewsEntity
     {
         /// <summary>

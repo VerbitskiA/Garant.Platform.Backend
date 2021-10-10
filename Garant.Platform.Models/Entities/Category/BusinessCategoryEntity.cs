@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Garant.Platform.Models.Entities.Category
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей категорий бизнеса dbo.BusinessCategories.
+    /// Класс сопоставляется с таблицей категорий бизнеса Business.BusinessCategories.
     /// </summary>
-    [Table("BusinessCategories", Schema = "dbo")]
+    [Table("BusinessCategories", Schema = "Business")]
     public class BusinessCategoryEntity
     {
         /// <summary>
