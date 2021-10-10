@@ -38,5 +38,11 @@ namespace Garant.Platform.Models.Entities.Actions
         /// </summary>
         [Column("ButtonText", TypeName = "varchar(50)")]
         public string ButtonText { get; set; }
+
+        /// <summary>
+        /// Флаг необходимости размещения в топе страницы.
+        /// </summary>
+        [Column("IsTop", TypeName = "bool")]
+        public bool IsTop { get; set; }
     }
 }

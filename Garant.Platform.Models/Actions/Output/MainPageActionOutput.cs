@@ -24,5 +24,10 @@
         /// Текст кнопки.
         /// </summary>
         public string ButtonText { get; set; }
+
+        /// <summary>
+        /// Флаг необходимости размещения в топе страницы.
+        /// </summary>
+        public bool IsTop { get; set; }
     }
 }

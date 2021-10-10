@@ -203,7 +203,8 @@ namespace Garant.Platform.Service.Service.MainPage
                                         ButtonText = a.ButtonText,
                                         SubTitle = a.SubTitle,
                                         Text = a.Text,
-                                        Title = a.Title
+                                        Title = a.Title,
+                                        IsTop = a.IsTop
                                     })
                     .ToListAsync();
 

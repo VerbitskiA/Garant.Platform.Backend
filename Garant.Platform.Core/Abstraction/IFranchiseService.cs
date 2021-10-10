@@ -20,5 +20,11 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <returns>Список франшиз.</returns>
         Task<IEnumerable<PopularFranchiseOutput>> GetMainPopularFranchises();
+
+        /// <summary>
+        /// Метод получит 4 франшизы для выгрузки в блок с быстрым поиском.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        Task<IEnumerable<FranchiseOutput>> GetFranchiseQuickSearchAsync();
     }
 }

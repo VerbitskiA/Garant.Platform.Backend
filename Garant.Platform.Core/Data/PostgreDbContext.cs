@@ -81,6 +81,11 @@ namespace Garant.Platform.Core.Data
         public DbSet<PopularFranchiseEntity> PopularFranchises { get; set; }
 
         /// <summary>
+        /// Таблица популярных франшиз Franchises.Franchises.
+        /// </summary>
+        public DbSet<FranchiseEntity> Franchises { get; set; }
+
+        /// <summary>
         /// Таблица объявлений Info.Ads.
         /// </summary>
         public DbSet<AdEntity> Ads { get; set; }

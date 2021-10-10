@@ -48,5 +48,19 @@ namespace Garant.Platform.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит 4 франшизы для выгрузки в блок с быстрым поиском.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("quick-franchises")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IActionResult> GetFranchiseQuickSearchAsync()
+        {
+            var result = await _franchiseService.GetFranchiseQuickSearchAsync();
+
+            return Ok(result);
+        }
     }
 }
