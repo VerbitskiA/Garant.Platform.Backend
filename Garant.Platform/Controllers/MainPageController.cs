@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
+using Garant.Platform.Models.Franchise.Output;
 using Garant.Platform.Models.LastBuy.Output;
+using Garant.Platform.Models.Search.Input;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +20,12 @@ namespace Garant.Platform.Controllers
     public class MainPageController : BaseController
     {
         private readonly IMainPageService _mainPageService;
+        private readonly IFranchiseService _franchiseService;
 
-        public MainPageController(IMainPageService mainPageService)
+        public MainPageController(IMainPageService mainPageService, IFranchiseService franchiseService)
         {
             _mainPageService = mainPageService;
+            _franchiseService = franchiseService;
         }
 
         /// <summary>
@@ -62,6 +66,63 @@ namespace Garant.Platform.Controllers
         public async Task<IActionResult> GetActionsMainPageAsync()
         {
             var result = await _mainPageService.GetActionsMainPageAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список франшиз на основе фильтров.
+        /// </summary>
+        /// <param name="quickSearchInput">Входная модель.</param>
+        /// <returns>Список франшиз.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("filter")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IActionResult> FilterFranchisesAsync([FromBody] QuickSearchInput quickSearchInput)
+        {
+            var result = await _mainPageService.FilterFranchisesAsync(quickSearchInput.viewCode, quickSearchInput.CategoryCode, quickSearchInput.CityCode, quickSearchInput.MinPrice, quickSearchInput.MaxPrice);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список городов франшиз.
+        /// </summary>
+        /// <returns>Список городов.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("cities-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseCityOutput>))]
+        public async Task<IActionResult> GetFranchisesCitiesListAsync()
+        {
+            var result = await _franchiseService.GetFranchisesCitiesListAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список категорий бизнеса.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("business-categories-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseCityOutput>))]
+        public async Task<IActionResult> GetFranchisesCategoriesListAsync()
+        {
+            var result = await _franchiseService.GetFranchisesCategoriesListAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список видов бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("business-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ViewBusinessOutput>))]
+        public async Task<IActionResult> GetFranchisesViewBusinessListAsync()
+        {
+            var result = await _franchiseService.GetFranchisesViewBusinessListAsync();
 
             return Ok(result);
         }

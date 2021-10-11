@@ -63,5 +63,32 @@ namespace Garant.Platform.Models.Entities.Franchise
         /// </summary>
         [Column("DayDeclination", TypeName = "varchar(100)")]
         public string DayDeclination { get; set; }
+
+        /// <summary>
+        /// Категория франшизы.
+        /// </summary>
+        [Column("Category", TypeName = "varchar(100)")]
+        public string Category { get; set; }
+
+        /// <summary>
+        /// Подкатегория.
+        /// </summary>
+        [Column("SubCategory", TypeName = "text")]
+        public string SubCategory { get; set; }
+
+        /// <summary>
+        /// Вид бизнеса.
+        /// </summary>
+        [Column("ViewBusiness", TypeName = "varchar(200)")]
+        public string ViewBusiness { get; set; }
+
+        /// <summary>
+        /// Покупка через гарант.
+        /// </summary>
+        [Column("IsGarant", TypeName = "bool")]
+        public bool IsGarant { get; set; }
+
+        [Column("City", TypeName = "varchar(200)")]
+        public string City { get; set; }
     }
 }

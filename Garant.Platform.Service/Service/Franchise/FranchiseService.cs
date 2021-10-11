@@ -122,5 +122,89 @@ namespace Garant.Platform.Service.Service.Franchise
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список городов франшиз.
+        /// </summary>
+        /// <returns>Список городов.</returns>
+        public async Task<IEnumerable<FranchiseCityOutput>> GetFranchisesCitiesListAsync()
+        {
+            try
+            {
+                var result = await (from c in _postgreDbContext.FranchiseCities
+                                    select new FranchiseCityOutput
+                                    {
+                                        CityCode = c.CityCode,
+                                        CityName = c.CityName
+                                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список категорий бизнеса.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        public async Task<IEnumerable<CategoryOutput>> GetFranchisesCategoriesListAsync()
+        {
+            try
+            {
+                var result = await (from c in _postgreDbContext.Categories
+                                    select new CategoryOutput
+                                    {
+                                        CategoryCode = c.CategoryCode,
+                                        CategoryName = c.CategoryName
+                                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список видов бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        public async Task<IEnumerable<ViewBusinessOutput>> GetFranchisesViewBusinessListAsync()
+        {
+            try
+            {
+                var result = await (from c in _postgreDbContext.ViewBusiness
+                                    select new ViewBusinessOutput
+                                    {
+                                        ViewCode = c.ViewCode,
+                                        ViewName = c.ViewName
+                                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

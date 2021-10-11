@@ -26,5 +26,23 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <returns>Список франшиз.</returns>
         Task<IEnumerable<FranchiseOutput>> GetFranchiseQuickSearchAsync();
+
+        /// <summary>
+        /// Метод получит список городов франшиз.
+        /// </summary>
+        /// <returns>Список городов.</returns>
+        Task<IEnumerable<FranchiseCityOutput>> GetFranchisesCitiesListAsync();
+
+        /// <summary>
+        /// Метод получит список категорий бизнеса.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        Task<IEnumerable<CategoryOutput>> GetFranchisesCategoriesListAsync();
+
+        /// <summary>
+        /// Метод получит список видов бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        Task<IEnumerable<ViewBusinessOutput>> GetFranchisesViewBusinessListAsync();
     }
 }

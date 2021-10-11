@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Garant.Platform.Models.Franchise.Other;
 
 namespace Garant.Platform.Models.Franchise.Output
 {
@@ -43,5 +45,17 @@ namespace Garant.Platform.Models.Franchise.Output
         /// Склонение дней.
         /// </summary>
         public string DayDeclination { get; set; }
+
+        /// <summary>
+        /// Категория франшизы.
+        /// </summary>
+        public string Category { get; set; }
+
+        /// <summary>
+        /// Подкатегория.
+        /// </summary>
+        public string SubCategory { get; set; }
+
+        public List<SubCategory> SubCategoryResult { get; set; } = new();
     }
 }

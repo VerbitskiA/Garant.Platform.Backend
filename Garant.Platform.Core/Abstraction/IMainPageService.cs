@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
+using Garant.Platform.Models.Franchise.Output;
 using Garant.Platform.Models.LastBuy.Output;
 
 namespace Garant.Platform.Core.Abstraction
@@ -28,5 +29,16 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <returns>Список данных.</returns>
         Task<IEnumerable<MainPageActionOutput>> GetActionsMainPageAsync();
+
+        /// <summary>
+        /// Метод получит список франшиз на основе фильтров.
+        /// </summary>
+        /// <param name="viewBusiness">Вид бизнеса.</param>
+        /// <param name="category">Категория.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <returns>Список франшиз.</returns>
+        Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string viewBusinessCode, string categoryCode, string cityCode, double minPrice, double maxPrice);
     }
 }

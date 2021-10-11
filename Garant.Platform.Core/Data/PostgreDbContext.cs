@@ -94,5 +94,20 @@ namespace Garant.Platform.Core.Data
         /// Таблица блогов Info.Blogs.
         /// </summary>
         public DbSet<BlogEntity> Blogs { get; set; }
+
+        /// <summary>
+        /// Таблица Franchises.FranchiseCities.
+        /// </summary>
+        public DbSet<FranchiseCityEntity> FranchiseCities { get; set; }
+
+        /// <summary>
+        /// Таблица Franchises.ViewBusiness.
+        /// </summary>
+        public DbSet<ViewBusinessEntity> ViewBusiness { get; set; }
+
+        /// <summary>
+        /// Таблица Franchises.Categories.
+        /// </summary>
+        public DbSet<CategoryEntity> Categories { get; set; }
     }
 }
