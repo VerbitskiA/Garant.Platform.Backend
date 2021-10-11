@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Garant.Platform.Models.Entities.Logger
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей логов dbo.Logs.
+    /// Класс сопоставляется с таблицей логов Logs.Logs.
     /// </summary>
-    [Table("Logs", Schema = "dbo")]
+    [Table("Logs", Schema = "Logs")]
     public class LoggerEntity
     {
         /// <summary>

@@ -12,6 +12,7 @@ using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
+using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -476,6 +477,94 @@ namespace Garant.Platform.Service.Service.User
                     .FirstOrDefaultAsync();
 
                 return userCode != null;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит одно предложение с флагом IsSingle.
+        /// </summary>
+        /// <param name="isSingle">Получить одно предложение.</param>
+        /// <param name="isAll">Получить все предложения.</param>
+        /// <returns>Данные предложения.</returns>
+        public async Task<SuggestionOutput> GetSingleSuggestion(bool isSingle, bool isAll)
+        {
+            try
+            {
+                var result = new SuggestionOutput();
+
+                // Если нужно получить одно предложение.
+                if (isSingle && !isAll)
+                {
+                    var getSuggestion = await (from s in _postgreDbContext.Suggestions
+                                               where s.IsSingle.Equals(true)
+                                                     && s.IsAll.Equals(false)
+                                               select new SuggestionOutput
+                                               {
+                                                   Button1Text = s.Button1Text,
+                                                   Button2Text = s.Button2Text,
+                                                   IsAll = s.IsAll,
+                                                   IsDisplay = s.IsDisplay,
+                                                   IsSingle = s.IsSingle,
+                                                   Text = s.Text,
+                                                   UserId = s.UserId
+                                               })
+                        .FirstOrDefaultAsync();
+
+                    result = getSuggestion;
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит все предложения с флагом IsAll.
+        /// </summary>
+        /// <param name="isSingle">Получить одно предложение.</param>
+        /// <param name="isAll">Получить все предложения.</param>
+        /// <returns>Список предложений.</returns>
+        public async Task<IEnumerable<SuggestionOutput>> GetAllSuggestionsAsync(bool isSingle, bool isAll)
+        {
+            try
+            {
+                IEnumerable<SuggestionOutput> result = null;
+
+                // Если нужно получить список предложений.
+                if (!isSingle && isAll)
+                {
+                    result = await (from s in _postgreDbContext.Suggestions
+                                    where s.IsSingle.Equals(false)
+                                          && s.IsAll.Equals(true)
+                                    select new SuggestionOutput
+                                    {
+                                        Button1Text = s.Button1Text,
+                                        Button2Text = s.Button2Text,
+                                        IsAll = s.IsAll,
+                                        IsDisplay = s.IsDisplay,
+                                        IsSingle = s.IsSingle,
+                                        Text = s.Text,
+                                        UserId = s.UserId
+                                    })
+                        .ToListAsync();
+                }
+
+                return result;
             }
 
             catch (Exception e)

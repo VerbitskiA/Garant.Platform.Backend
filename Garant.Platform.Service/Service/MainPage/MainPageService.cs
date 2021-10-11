@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
+using Garant.Platform.Models.Franchise.Other;
+using Garant.Platform.Models.Franchise.Output;
+using Garant.Platform.Models.LastBuy.Output;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Service.Service.MainPage
@@ -137,6 +143,128 @@ namespace Garant.Platform.Service.Service.MainPage
                             result.ResultCol4.Add(item);
                         }
                     }
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит последние 5 записей недавно купленных франшиз.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        public async Task<IEnumerable<LastBuyOutput>> GetSliderLastBuyAsync()
+        {
+            try
+            {
+                var result = await (from res in _postgreDbContext.LastBuys
+                                    select new LastBuyOutput
+                                    {
+                                        CountDays = res.CountDays,
+                                        DateBuy = res.DateBuy,
+                                        DayDeclination = res.DayDeclination,
+                                        Name = res.Name,
+                                        Price = string.Format("{0:0,0}", res.Price),
+                                        Text = res.Text,
+                                        TextDoPrice = res.TextDoPrice,
+                                        Url = res.Url
+                                    })
+                    .Take(5)
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит данные для блока событий главной страницы.
+        /// </summary>
+        /// <returns>Список данных.</returns>
+        public async Task<IEnumerable<MainPageActionOutput>> GetActionsMainPageAsync()
+        {
+            try
+            {
+                var result = await (from a in _postgreDbContext.MainPageActions
+                                    select new MainPageActionOutput
+                                    {
+                                        ButtonText = a.ButtonText,
+                                        SubTitle = a.SubTitle,
+                                        Text = a.Text,
+                                        Title = a.Title,
+                                        IsTop = a.IsTop
+                                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список франшиз на основе фильтров.
+        /// </summary>
+        /// <param name="viewBusiness">Вид бизнеса.</param>
+        /// <param name="category">Категория.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <returns>Список франшиз.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string viewBusinessCode, string categoryCode, string cityCode, double minPrice, double maxPrice)
+        {
+            try
+            {
+                var result = await (from f in _postgreDbContext.Franchises
+                                    where f.ViewBusiness.Equals(viewBusinessCode)
+                                        && f.Category.Equals(categoryCode)
+                                        && f.City.Equals(cityCode)
+                                        && (f.Price <= maxPrice && f.Price >= minPrice)
+                                    orderby f.FranchiseId
+                                    select new FranchiseOutput
+                                    {
+                                        Category = f.Category,
+                                        CountDays = f.CountDays,
+                                        DateCreate = f.DateCreate,
+                                        DayDeclination = f.DayDeclination,
+                                        Price = string.Format("{0:0,0}", f.Price),
+                                        TextDoPrice = f.TextDoPrice,
+                                        Text = f.Text,
+                                        SubCategory = f.SubCategory,
+                                        Title = f.Title,
+                                        Url = f.Url
+                                    })
+                    .Take(4)
+                    .ToListAsync();
+
+                foreach (var item in result)
+                {
+                    var value = JsonSerializer.Deserialize<SubCategory>(item.SubCategory);
+                    item.SubCategoryResult.Add(new SubCategory
+                    {
+                        Value = value?.Value
+                    });
                 }
 
                 return result;

@@ -1,61 +1,55 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Garant.Platform.Models.Entities.News
+namespace Garant.Platform.Models.Blog.Output
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей Info.News.
+    /// Класс выходной модели новостей.
     /// </summary>
-    [Table("News", Schema = "Info")]
-    public class NewsEntity
+    public class NewsOutput
     {
-        /// <summary>
-        /// PK.
-        /// </summary>
-        [Key]
-        public long NewsId { get; set; }
-
         /// <summary>
         /// Название новости.
         /// </summary>
-        [Column("Name", TypeName = "varchar(200)")]
         public string Name { get; set; }
 
         /// <summary>
         /// Путь иконки новости.
         /// </summary>
-        [Column("Url", TypeName = "text")]
         public string Url { get; set; }
 
         /// <summary>
         /// Дата и время создания новости.
         /// </summary>
-        [Column("DateCreated", TypeName = "timestamp")]
         public DateTime DateCreated { get; set; }
 
         /// <summary>
         /// Флаг отобразить ли надпись сегодня вместо даты.
         /// </summary>
-        [Column("IsToday", TypeName = "bool")]
         public bool IsToday { get; set; }
+
+        /// <summary>
+        /// Время создания новости.
+        /// </summary>
+        public string Time { get; set; }
+
+        /// <summary>
+        /// Дата создания новости.
+        /// </summary>
+        public string Date { get; set; }
 
         /// <summary>
         /// Тип.
         /// </summary>
-        [Column("Type", TypeName = "varchar(100)")]
         public string Type { get; set; }
 
         /// <summary>
-        /// Флаг применить ли отступ снизу от новости.
+        /// Флаг применить ли отступ сверху от новости.
         /// </summary>
-        [Column("IsMarginTop", TypeName = "bool")]
         public bool IsMarginTop { get; set; }
 
         /// <summary>
         /// Флаг оплаты размещения новости на главной странице.
         /// </summary>
-        [Column("IsPaid", TypeName = "bool")]
         public bool IsPaid { get; set; }
     }
 }

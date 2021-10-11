@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
+using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.User.Output;
 
 namespace Garant.Platform.Core.Abstraction
@@ -83,5 +84,21 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="code">Временный код.</param>
         /// <returns>Флаг подтверждения.</returns>
         Task<bool> ConfirmEmailAsync(string code);
+
+        /// <summary>
+        /// Метод получит одно предложение с флагом IsSingle.
+        /// </summary>
+        /// <param name="isSingle">Получить одно предложение.</param>
+        /// <param name="isAll">Получить все предложения.</param>
+        /// <returns>Данные предложения.</returns>
+        Task<SuggestionOutput> GetSingleSuggestion(bool isSingle, bool isAll);
+
+        /// <summary>
+        /// Метод получит все предложения с флагом IsAll.
+        /// </summary>
+        /// <param name="isSingle">Получить одно предложение.</param>
+        /// <param name="isAll">Получить все предложения.</param>
+        /// <returns>Список предложений.</returns>
+        Task<IEnumerable<SuggestionOutput>> GetAllSuggestionsAsync(bool isSingle, bool isAll);
     }
 }
