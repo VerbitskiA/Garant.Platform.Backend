@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Attributes;
+using Garant.Platform.Core.Data;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Service.Service.Ad;
 using Garant.Platform.Service.Service.Blog;
@@ -30,6 +31,7 @@ namespace Garant.Platform.Service.AutofacModules
 
             builder.RegisterType<SignInManager<UserEntity>>().InstancePerLifetimeScope();
             builder.RegisterType<UserManager<UserEntity>>().InstancePerLifetimeScope();
+            builder.RegisterType<PostgreDbContext>().InstancePerLifetimeScope();
 
             // Сервис главной страницы.
             builder.RegisterType<MainPageService>().Named<IMainPageService>("MainPageService");
