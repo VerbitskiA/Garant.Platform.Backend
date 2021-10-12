@@ -10,10 +10,10 @@ namespace Garant.Platform.Core.Abstraction
     public interface IFranchiseService
     {
         /// <summary>
-        /// Метод получит список популярных франшиз.
+        /// Метод получит список франшиз.
         /// </summary>
         /// <returns>Список франшиз.</returns>
-        //Task<IEnumerable<PopularFranchiseOutput>> GetPopularFranchises();
+        Task<IEnumerable<FranchiseOutput>> GetFranchisesListAsync();
 
         /// <summary>
         /// Метод получит список популярных франшиз для главной страницы.

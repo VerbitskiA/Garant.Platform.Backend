@@ -20,38 +20,39 @@ namespace Garant.Platform.Service.Service.Franchise
         }
 
         /// <summary>
-        /// Метод получит список популярных франшиз.
+        /// Метод получит список франшиз.
         /// </summary>
         /// <returns>Список франшиз.</returns>
-        //public async Task<IEnumerable<PopularFranchiseOutput>> GetPopularFranchises()
-        //{
-        //    try
-        //    {
-        //        var result = await (from p in _postgreDbContext.PopularFranchises
-        //                            select new PopularFranchiseOutput
-        //                            {
-        //                                DateCreate = p.DateCreate,
-        //                                Price = string.Format("{0:0,0}", p.Price),
-        //                                CountDays = p.CountDays,
-        //                                DayDeclination = p.DayDeclination,
-        //                                Text = p.Text,
-        //                                TextDoPrice = p.TextDoPrice,
-        //                                Title = p.Title,
-        //                                Url = p.Url
-        //                            })
-        //            .ToListAsync();
+        public async Task<IEnumerable<FranchiseOutput>> GetFranchisesListAsync()
+        {
+            try
+            {
+                var result = await (from p in _postgreDbContext.Franchises
+                                    select new FranchiseOutput
+                                    {
+                                        DateCreate = p.DateCreate,
+                                        Price = string.Format("{0:0,0}", p.Price),
+                                        CountDays = p.CountDays,
+                                        DayDeclination = p.DayDeclination,
+                                        Text = p.Text,
+                                        TextDoPrice = p.TextDoPrice,
+                                        Title = p.Title,
+                                        Url = p.Url,
+                                        FullText = p.Text + " " + p.CountDays + " " + p.DayDeclination
+                                    })
+                    .ToListAsync();
 
-        //        return result;
-        //    }
+                return result;
+            }
 
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e);
-        //        var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-        //        await logger.LogError();
-        //        throw;
-        //    }
-        //}
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
 
         /// <summary>
         /// Метод получит список популярных франшиз для главной страницы.

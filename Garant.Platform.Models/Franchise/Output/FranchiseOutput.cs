@@ -57,5 +57,10 @@ namespace Garant.Platform.Models.Franchise.Output
         public string SubCategory { get; set; }
 
         public List<SubCategory> SubCategoryResult { get; set; } = new();
+
+        /// <summary>
+        /// Полная строка текста для вставки в одном поле.
+        /// </summary>
+        public string FullText { get; set; }
     }
 }

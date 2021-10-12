@@ -23,17 +23,18 @@ namespace Garant.Platform.Controllers
         }
 
         /// <summary>
-        /// Метод получит список популярных франшиз.
+        /// Метод получит список франшиз.
         /// </summary>
         /// <returns>Список франшиз.</returns>
-        //[HttpPost, Route("popular")]
-        //[ProducesResponseType(200, Type = typeof(IEnumerable<PopularFranchiseOutput>))]
-        //public async Task<IActionResult> GetPopularFranchisesAsync()
-        //{
-        //    var result = await _franchiseService.GetPopularFranchises();
+        [AllowAnonymous]
+        [HttpPost, Route("catalog-franchise")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IActionResult> GetFranchisesListAsync()
+        {
+            var result = await _franchiseService.GetFranchisesListAsync();
 
-        //    return Ok(result);
-        //}
+            return Ok(result);
+        }
 
         /// <summary>
         /// Метод получит список популярных франшиз для главной страницы.
