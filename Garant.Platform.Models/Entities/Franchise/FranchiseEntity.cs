@@ -90,5 +90,11 @@ namespace Garant.Platform.Models.Entities.Franchise
 
         [Column("City", TypeName = "varchar(200)")]
         public string City { get; set; }
+
+        /// <summary>
+        /// Желаемая прибыль в мес.
+        /// </summary>
+        [Column("ProfitPrice", TypeName = "numeric")]
+        public double ProfitPrice { get; set; }
     }
 }

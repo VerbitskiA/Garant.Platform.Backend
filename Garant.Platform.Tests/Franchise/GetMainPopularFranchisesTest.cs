@@ -21,15 +21,15 @@ namespace Garant.Platform.Tests.Franchise
             Assert.IsTrue(result.Any());
         }
 
-        //[TestMethod]
-        //public async Task GetPopularFranchisesAsyncTest()
-        //{
-        //    var mock = new Mock<IFranchiseService>();
-        //    mock.Setup(a => a.GetMainPopularFranchises());
-        //    var component = new FranchiseService(PostgreDbContext);
-        //    var result = await component.GetMainPopularFranchises();
+        [TestMethod]
+        public async Task GetFranchisesListAsyncAsyncTest()
+        {
+            var mock = new Mock<IFranchiseService>();
+            mock.Setup(a => a.GetFranchisesListAsync());
+            var component = new FranchiseService(PostgreDbContext);
+            var result = await component.GetFranchisesListAsync();
 
-        //    Assert.IsTrue(result.Any());
-        //}
+            Assert.IsTrue(result.Any());
+        }
     }
 }

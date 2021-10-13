@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Attributes;
-using Garant.Platform.Core.Data;
 using Garant.Platform.Models.Entities.User;
+using Garant.Platform.Service.Pagination;
 using Garant.Platform.Service.Service.Ad;
 using Garant.Platform.Service.Service.Blog;
 using Garant.Platform.Service.Service.Common;
@@ -47,6 +47,10 @@ namespace Garant.Platform.Service.AutofacModules
             // Сервис блогов.
             builder.RegisterType<BlogService>().Named<IBlogService>("BlogService");
             builder.RegisterType<BlogService>().As<IFranchiseService>();
+
+            // Сервис пагинации.
+            builder.RegisterType<PaginationService>().Named<IPaginationService>("PaginationService");
+            builder.RegisterType<PaginationService>().As<IPaginationService>();
         }
     }
 }

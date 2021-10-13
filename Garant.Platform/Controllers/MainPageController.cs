@@ -80,7 +80,7 @@ namespace Garant.Platform.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
         public async Task<IActionResult> FilterFranchisesAsync([FromBody] QuickSearchInput quickSearchInput)
         {
-            var result = await _mainPageService.FilterFranchisesAsync(quickSearchInput.viewCode, quickSearchInput.CategoryCode, quickSearchInput.CityCode, quickSearchInput.MinPrice, quickSearchInput.MaxPrice);
+            var result = await _mainPageService.FilterFranchisesAsync(quickSearchInput.ViewCode, quickSearchInput.CategoryCode, quickSearchInput.CityCode, quickSearchInput.MinPrice, quickSearchInput.MaxPrice);
 
             return Ok(result);
         }

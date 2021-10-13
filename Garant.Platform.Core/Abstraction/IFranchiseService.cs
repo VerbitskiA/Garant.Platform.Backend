@@ -10,10 +10,10 @@ namespace Garant.Platform.Core.Abstraction
     public interface IFranchiseService
     {
         /// <summary>
-        /// Метод получит список популярных франшиз.
+        /// Метод получит список франшиз.
         /// </summary>
         /// <returns>Список франшиз.</returns>
-        //Task<IEnumerable<PopularFranchiseOutput>> GetPopularFranchises();
+        Task<IEnumerable<FranchiseOutput>> GetFranchisesListAsync();
 
         /// <summary>
         /// Метод получит список популярных франшиз для главной страницы.
@@ -44,5 +44,15 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <returns>Список бизнеса.</returns>
         Task<IEnumerable<ViewBusinessOutput>> GetFranchisesViewBusinessListAsync();
+
+        /// <summary>
+        /// Метод фильтрации франшиз по разным атрибутам.
+        /// </summary>
+        /// <param name="typeSort">Тип фильтрации цены (по возрастанию или убыванию).</param>
+        /// <param name="isGarant">Покупка через гарант.</param>
+        /// <param name="minPrice">Прибыль от.</param>
+        /// <param name="maxPrice">Прибыль до.</param>
+        /// <returns>Список франшиз после фильтрации.</returns>
+        Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, string minPrice, string maxPrice, bool isGarant = false);
     }
 }

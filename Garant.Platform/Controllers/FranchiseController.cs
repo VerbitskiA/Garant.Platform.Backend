@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -23,17 +24,18 @@ namespace Garant.Platform.Controllers
         }
 
         /// <summary>
-        /// Метод получит список популярных франшиз.
+        /// Метод получит список франшиз.
         /// </summary>
         /// <returns>Список франшиз.</returns>
-        //[HttpPost, Route("popular")]
-        //[ProducesResponseType(200, Type = typeof(IEnumerable<PopularFranchiseOutput>))]
-        //public async Task<IActionResult> GetPopularFranchisesAsync()
-        //{
-        //    var result = await _franchiseService.GetPopularFranchises();
+        [AllowAnonymous]
+        [HttpPost, Route("catalog-franchise")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IActionResult> GetFranchisesListAsync()
+        {
+            var result = await _franchiseService.GetFranchisesListAsync();
 
-        //    return Ok(result);
-        //}
+            return Ok(result);
+        }
 
         /// <summary>
         /// Метод получит список популярных франшиз для главной страницы.
@@ -59,6 +61,21 @@ namespace Garant.Platform.Controllers
         public async Task<IActionResult> GetFranchiseQuickSearchAsync()
         {
             var result = await _franchiseService.GetFranchiseQuickSearchAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод фильтрации франшиз по разным атрибутам.
+        /// </summary>
+        /// <param name="fitFilterInput">Входная модель.</param>
+        /// <returns>Список франшиз после фильтрации.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("filter-franchises")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IActionResult> FilterFranchisesAsync([FromBody] FilterInput fitFilterInput)
+        {
+            var result = await _franchiseService.FilterFranchisesAsync(fitFilterInput.TypeSortPrice, fitFilterInput.ProfitMinPrice, fitFilterInput.ProfitMaxPrice, fitFilterInput.IsGarant);
 
             return Ok(result);
         }

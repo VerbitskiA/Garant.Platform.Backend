@@ -57,5 +57,20 @@ namespace Garant.Platform.Models.Franchise.Output
         public string SubCategory { get; set; }
 
         public List<SubCategory> SubCategoryResult { get; set; } = new();
+
+        /// <summary>
+        /// Полная строка текста для вставки в одном поле.
+        /// </summary>
+        public string FullText { get; set; }
+
+        /// <summary>
+        /// Покупка через гарант.
+        /// </summary>
+        public bool IsGarant { get; set; }
+
+        /// <summary>
+        /// Желаемая прибыль в мес.
+        /// </summary>
+        public double ProfitPrice { get; set; }
     }
 }
