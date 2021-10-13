@@ -241,6 +241,7 @@ namespace Garant.Platform.Service.Service.Franchise
                                      TextDoPrice = f.TextDoPrice,
                                      Title = f.Title,
                                      Url = f.Url,
+                                     FullText = f.Text + " " + f.CountDays + " " + f.DayDeclination,
                                      IsGarant = f.IsGarant,
                                      ProfitPrice = f.ProfitPrice
                                  })
@@ -271,6 +272,7 @@ namespace Garant.Platform.Service.Service.Franchise
                                      TextDoPrice = f.TextDoPrice,
                                      Title = f.Title,
                                      Url = f.Url,
+                                     FullText = f.Text + " " + f.CountDays + " " + f.DayDeclination,
                                      IsGarant = f.IsGarant,
                                      ProfitPrice = f.ProfitPrice
                                  })
