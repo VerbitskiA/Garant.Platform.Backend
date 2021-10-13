@@ -38,7 +38,9 @@ namespace Garant.Platform.Service.Service.Franchise
                                         TextDoPrice = p.TextDoPrice,
                                         Title = p.Title,
                                         Url = p.Url,
-                                        FullText = p.Text + " " + p.CountDays + " " + p.DayDeclination
+                                        FullText = p.Text + " " + p.CountDays + " " + p.DayDeclination,
+                                        IsGarant = p.IsGarant,
+                                        ProfitPrice = p.ProfitPrice
                                     })
                     .ToListAsync();
 
@@ -107,7 +109,9 @@ namespace Garant.Platform.Service.Service.Franchise
                             Text = p.Text,
                             TextDoPrice = p.TextDoPrice,
                             Title = p.Title,
-                            Url = p.Url
+                            Url = p.Url,
+                            IsGarant = p.IsGarant,
+                            ProfitPrice = p.ProfitPrice
                         })
                     .Take(4)
                     .ToListAsync();
@@ -195,6 +199,92 @@ namespace Garant.Platform.Service.Service.Franchise
                                         ViewName = c.ViewName
                                     })
                     .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод фильтрации франшиз по разным атрибутам.
+        /// </summary>
+        /// <param name="typeSort">Тип фильтрации цены (по возрастанию или убыванию).</param>
+        /// <param name="isGarant">Покупка через гарант.</param>
+        /// <param name="minPrice">Прибыль от.</param>
+        /// <param name="maxPrice">Прибыль до.</param>
+        /// <returns>Список франшиз после фильтрации.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, string minPrice, string maxPrice, bool isGarant = false)
+        {
+            try
+            {
+                IEnumerable<FranchiseOutput> result = null;
+
+                // Сортировать на возрастанию цены.
+                if (typeSort.Equals("Asc"))
+                {
+                    var query = (from f in _postgreDbContext.Franchises
+                                 orderby f.Price
+                                 select new FranchiseOutput
+                                 {
+                                     DateCreate = f.DateCreate,
+                                     Price = string.Format("{0:0,0}", f.Price),
+                                     CountDays = f.CountDays,
+                                     DayDeclination = f.DayDeclination,
+                                     Text = f.Text,
+                                     TextDoPrice = f.TextDoPrice,
+                                     Title = f.Title,
+                                     Url = f.Url,
+                                     IsGarant = f.IsGarant,
+                                     ProfitPrice = f.ProfitPrice
+                                 })
+                        .AsQueryable();
+
+                    // Нужно ли дополнить запрос для сортировки по прибыли.
+                    if (!string.IsNullOrEmpty(minPrice) && !string.IsNullOrEmpty(maxPrice))
+                    {
+                        query = query.Where(c => c.ProfitPrice <= Convert.ToDouble(maxPrice) 
+                                                 && c.ProfitPrice >= Convert.ToDouble(minPrice));
+                    }
+
+                    result = await query.ToListAsync();
+                }
+
+                // Сортировать на убыванию цены.
+                else if (typeSort.Equals("Desc"))
+                {
+                    var query = (from f in _postgreDbContext.Franchises
+                                 orderby f.Price descending
+                                 select new FranchiseOutput
+                                 {
+                                     DateCreate = f.DateCreate,
+                                     Price = string.Format("{0:0,0}", f.Price),
+                                     CountDays = f.CountDays,
+                                     DayDeclination = f.DayDeclination,
+                                     Text = f.Text,
+                                     TextDoPrice = f.TextDoPrice,
+                                     Title = f.Title,
+                                     Url = f.Url,
+                                     IsGarant = f.IsGarant,
+                                     ProfitPrice = f.ProfitPrice
+                                 })
+                        .AsQueryable();
+
+                    // Нужно ли дополнить запрос для сортировки по прибыли.
+                    if (!string.IsNullOrEmpty(minPrice) && !string.IsNullOrEmpty(maxPrice))
+                    {
+                        query = query.Where(c => c.ProfitPrice <= Convert.ToDouble(maxPrice)
+                                                 && c.ProfitPrice >= Convert.ToDouble(minPrice));
+                    }
+
+                    result = await query.ToListAsync();
+                }
 
                 return result;
             }

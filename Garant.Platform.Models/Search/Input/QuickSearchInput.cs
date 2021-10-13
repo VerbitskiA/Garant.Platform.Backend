@@ -8,7 +8,7 @@
         /// <summary>
         /// Код бизнеса.
         /// </summary>
-        public string viewCode { get; set; }
+        public string ViewCode { get; set; }
 
         /// <summary>
         /// Код категории.
