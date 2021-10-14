@@ -299,5 +299,84 @@ namespace Garant.Platform.Service.Service.Franchise
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит новые франшизы, которые были созданы в текущем месяце.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> GetNewFranchisesAsync()
+        {
+            try
+            {
+                var year = DateTime.Now.Year;
+
+                var result = await (from f in _postgreDbContext.Franchises
+                                    where f.DateCreate.Year == year
+                                    select new FranchiseOutput
+                                    {
+                                        DateCreate = f.DateCreate,
+                                        Price = string.Format("{0:0,0}", f.Price),
+                                        CountDays = f.CountDays,
+                                        DayDeclination = f.DayDeclination,
+                                        Text = f.Text,
+                                        TextDoPrice = f.TextDoPrice,
+                                        Title = f.Title,
+                                        Url = f.Url,
+                                        FullText = f.Text + " " + f.CountDays + " " + f.DayDeclination,
+                                        IsGarant = f.IsGarant,
+                                        ProfitPrice = f.ProfitPrice
+                                    })
+                    .Take(10)
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список отзывов о франшизах.
+        /// </summary>
+        /// <returns>Список отзывов.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> GetReviewsFranchisesAsync()
+        {
+            try
+            {
+                var result = await (from f in _postgreDbContext.Franchises
+                                    select new FranchiseOutput
+                                    {
+                                        DateCreate = f.DateCreate,
+                                        Price = string.Format("{0:0,0}", f.Price),
+                                        CountDays = f.CountDays,
+                                        DayDeclination = f.DayDeclination,
+                                        Text = f.Text,
+                                        TextDoPrice = f.TextDoPrice,
+                                        Title = f.Title,
+                                        Url = f.Url,
+                                        FullText = f.Text + " " + f.CountDays + " " + f.DayDeclination,
+                                        IsGarant = f.IsGarant,
+                                        ProfitPrice = f.ProfitPrice
+                                    })
+                    .Take(10)
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

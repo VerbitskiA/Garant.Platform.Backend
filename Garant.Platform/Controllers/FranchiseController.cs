@@ -79,5 +79,33 @@ namespace Garant.Platform.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит новые франшизы, которые были созданы в текущем месяце.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("new-franchise")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IActionResult> GetNewFranchisesAsync()
+        {
+            var result = await _franchiseService.GetNewFranchisesAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список отзывов о франшизах.
+        /// </summary>
+        /// <returns>Список отзывов.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("review")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IActionResult> GetReviewsFranchisesAsync()
+        {
+            var result = await _franchiseService.GetReviewsFranchisesAsync();
+
+            return Ok(result);
+        }
     }
 }

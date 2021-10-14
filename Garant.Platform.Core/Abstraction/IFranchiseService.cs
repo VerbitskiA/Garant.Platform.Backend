@@ -54,5 +54,17 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="maxPrice">Прибыль до.</param>
         /// <returns>Список франшиз после фильтрации.</returns>
         Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, string minPrice, string maxPrice, bool isGarant = false);
+
+        /// <summary>
+        /// Метод получит новые франшизы, которые были созданы в текущем месяце.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        Task<IEnumerable<FranchiseOutput>> GetNewFranchisesAsync();
+
+        /// <summary>
+        /// Метод получит список отзывов о франшизах.
+        /// </summary>
+        /// <returns>Список отзывов.</returns>
+        Task<IEnumerable<FranchiseOutput>> GetReviewsFranchisesAsync();
     }
 }
