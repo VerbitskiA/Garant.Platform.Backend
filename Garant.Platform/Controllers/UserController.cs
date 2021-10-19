@@ -71,7 +71,7 @@ namespace Garant.Platform.Controllers
         /// <returns>Статус проверки.</returns>
         [AllowAnonymous]
         [HttpPost, Route("check-code")]
-        [ProducesResponseType(200, Type = typeof(bool))]
+        [ProducesResponseType(200, Type = typeof(ClaimOutput))]
         public async Task<IActionResult> CheckAcceptCodeAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
         {
             var user = await _userService.CheckAcceptCodeAsync(sendAcceptCodeInput.Code);
@@ -163,6 +163,20 @@ namespace Garant.Platform.Controllers
         public async Task<IActionResult> GetAllSuggestionsAsync([FromBody] SuggestionInput suggestionInput)
         {
             var result = await _userService.GetAllSuggestionsAsync(suggestionInput.IsSingle, suggestionInput.IsAll);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод обновит токен.
+        /// </summary>
+        /// <returns>Новый токен.</returns>
+        [AllowAnonymous]
+        [HttpGet, Route("token")]
+        [ProducesResponseType(200, Type = typeof(ClaimOutput))]
+        public async Task<IActionResult> GenerateTokenAsync()
+        {
+            var result = await _userService.GenerateTokenAsync();
 
             return Ok(result);
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
 
 namespace Garant.Platform.Core.Abstraction
@@ -66,5 +67,12 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <returns>Список отзывов.</returns>
         Task<IEnumerable<FranchiseOutput>> GetReviewsFranchisesAsync();
+
+        /// <summary>
+        /// Метод создаст новую  или обновит существующую франшизу.
+        /// </summary>
+        /// <param name="franchiseInput">Входная модель.</param>
+        /// <returns>Данные франшизы.</returns>
+        Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(CreateUpdateFranchiseInput franchiseInput);
     }
 }

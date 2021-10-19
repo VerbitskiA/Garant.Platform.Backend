@@ -64,8 +64,9 @@ namespace Garant.Platform.Service.Service.User
 
                 var result = new ClaimOutput
                 {
-                    Email = email,
-                    Token = token
+                    User = email,
+                    Token = token,
+                    IsSuccess = true
                 };
 
                 return result;
@@ -122,7 +123,7 @@ namespace Garant.Platform.Service.Service.User
         /// </summary>
         /// <param name="code">Код подтверждения.</param>
         /// <returns>Статус проверки.</returns>
-        public async Task<bool> CheckAcceptCodeAsync(string code)
+        public async Task<ClaimOutput> CheckAcceptCodeAsync(string code)
         {
             try
             {
@@ -131,7 +132,33 @@ namespace Garant.Platform.Service.Service.User
                                   select u)
                     .FirstOrDefaultAsync();
 
-                return user != null;
+                var claim = GetIdentityClaim(code);
+
+                // Генерит токен юзеру.
+                var token = GenerateToken(claim).Result;
+
+                ClaimOutput result = null;
+
+                // Если пользователь найден.
+                if (user != null)
+                {
+                    result = new ClaimOutput
+                    {
+                        Token = token,
+                        User = user.PhoneNumber ?? user.Email,
+                        IsSuccess = true
+                    };
+                }
+
+                else
+                {
+                    result = new ClaimOutput
+                    {
+                        IsSuccess = false
+                    };
+                }
+
+                return result;
             }
 
             catch (Exception e)
@@ -563,6 +590,41 @@ namespace Garant.Platform.Service.Service.User
                                     })
                         .ToListAsync();
                 }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод обновит токен.
+        /// </summary>
+        /// <returns>Новый токен.</returns>
+        public async Task<ClaimOutput> GenerateTokenAsync()
+        {
+            try
+            {
+                var now = DateTime.UtcNow;
+                var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: new ClaimsIdentity().Claims,
+                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+                var result = new ClaimOutput
+                {
+                    Token = encodedJwt
+                };
 
                 return result;
             }

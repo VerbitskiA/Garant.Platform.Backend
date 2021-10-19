@@ -25,7 +25,7 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <param name="code">Код подтверждения.</param>
         /// <returns>Статус проверки.</returns>
-        Task<bool> CheckAcceptCodeAsync(string code);
+        Task<ClaimOutput> CheckAcceptCodeAsync(string code);
 
         /// <summary>
         /// Метод создаст нового пользователя.
@@ -100,5 +100,11 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="isAll">Получить все предложения.</param>
         /// <returns>Список предложений.</returns>
         Task<IEnumerable<SuggestionOutput>> GetAllSuggestionsAsync(bool isSingle, bool isAll);
+
+        /// <summary>
+        /// Метод обновит токен.
+        /// </summary>
+        /// <returns>Новый токен.</returns>
+        Task<ClaimOutput> GenerateTokenAsync();
     }
 }

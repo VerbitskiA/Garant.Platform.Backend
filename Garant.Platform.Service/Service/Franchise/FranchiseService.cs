@@ -6,6 +6,9 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Franchise.Output;
 using System.Linq;
+using Garant.Platform.FTP.Abstraction;
+using Garant.Platform.Models.Entities.Franchise;
+using Garant.Platform.Models.Franchise.Input;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Service.Service.Franchise
@@ -13,10 +16,12 @@ namespace Garant.Platform.Service.Service.Franchise
     public sealed class FranchiseService : IFranchiseService
     {
         private readonly PostgreDbContext _postgreDbContext;
+        private readonly IFtpService _ftpService;
 
-        public FranchiseService(PostgreDbContext postgreDbContext)
+        public FranchiseService(PostgreDbContext postgreDbContext, IFtpService ftpService)
         {
             _postgreDbContext = postgreDbContext;
+            _ftpService = ftpService;
         }
 
         /// <summary>
@@ -27,24 +32,28 @@ namespace Garant.Platform.Service.Service.Franchise
         {
             try
             {
-                var result = await (from p in _postgreDbContext.Franchises
+                var items = await (from p in _postgreDbContext.Franchises
                                     select new FranchiseOutput
                                     {
                                         DateCreate = p.DateCreate,
                                         Price = string.Format("{0:0,0}", p.Price),
-                                        CountDays = p.CountDays,
-                                        DayDeclination = p.DayDeclination,
+                                        CountDays = DateTime.Now.Day - p.DateCreate.Day,
+                                        DayDeclination = "дня",
                                         Text = p.Text,
                                         TextDoPrice = p.TextDoPrice,
                                         Title = p.Title,
                                         Url = p.Url,
-                                        FullText = p.Text + " " + p.CountDays + " " + p.DayDeclination,
                                         IsGarant = p.IsGarant,
                                         ProfitPrice = p.ProfitPrice
                                     })
                     .ToListAsync();
 
-                return result;
+                foreach (var item in items)
+                {
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
+                }
+
+                return items;
             }
 
             catch (Exception e)
@@ -69,8 +78,8 @@ namespace Garant.Platform.Service.Service.Franchise
                                     {
                                         DateCreate = p.DateCreate,
                                         Price = string.Format("{0:0,0}", p.Price),
-                                        CountDays = p.CountDays,
-                                        DayDeclination = p.DayDeclination,
+                                        CountDays = DateTime.Now.Day - p.DateCreate.Day,
+                                        DayDeclination = "дня",
                                         Text = p.Text,
                                         TextDoPrice = p.TextDoPrice,
                                         Title = p.Title,
@@ -99,24 +108,29 @@ namespace Garant.Platform.Service.Service.Franchise
         {
             try
             {
-                var result = await (from p in _postgreDbContext.Franchises
-                        select new FranchiseOutput
-                        {
-                            DateCreate = p.DateCreate,
-                            Price = string.Format("{0:0,0}", p.Price),
-                            CountDays = p.CountDays,
-                            DayDeclination = p.DayDeclination,
-                            Text = p.Text,
-                            TextDoPrice = p.TextDoPrice,
-                            Title = p.Title,
-                            Url = p.Url,
-                            IsGarant = p.IsGarant,
-                            ProfitPrice = p.ProfitPrice
-                        })
+                var items = await (from p in _postgreDbContext.Franchises
+                                   select new FranchiseOutput
+                                   {
+                                       DateCreate = p.DateCreate,
+                                       Price = string.Format("{0:0,0}", p.Price),
+                                       CountDays = DateTime.Now.Day - p.DateCreate.Day,
+                                       DayDeclination = "дня",
+                                       Text = p.Text,
+                                       TextDoPrice = p.TextDoPrice,
+                                       Title = p.Title,
+                                       Url = p.Url,
+                                       IsGarant = p.IsGarant,
+                                       ProfitPrice = p.ProfitPrice
+                                   })
                     .Take(4)
                     .ToListAsync();
 
-                return result;
+                foreach (var item in items)
+                {
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
+                }
+
+                return items;
             }
 
             catch (Exception e)
@@ -224,7 +238,7 @@ namespace Garant.Platform.Service.Service.Franchise
         {
             try
             {
-                IEnumerable<FranchiseOutput> result = null;
+                IEnumerable<FranchiseOutput> items = null;
 
                 // Сортировать на возрастанию цены.
                 if (typeSort.Equals("Asc"))
@@ -235,13 +249,12 @@ namespace Garant.Platform.Service.Service.Franchise
                                  {
                                      DateCreate = f.DateCreate,
                                      Price = string.Format("{0:0,0}", f.Price),
-                                     CountDays = f.CountDays,
-                                     DayDeclination = f.DayDeclination,
+                                     CountDays = DateTime.Now.Day - f.DateCreate.Day,
+                                     DayDeclination = "дня",
                                      Text = f.Text,
                                      TextDoPrice = f.TextDoPrice,
                                      Title = f.Title,
                                      Url = f.Url,
-                                     FullText = f.Text + " " + f.CountDays + " " + f.DayDeclination,
                                      IsGarant = f.IsGarant,
                                      ProfitPrice = f.ProfitPrice
                                  })
@@ -254,7 +267,7 @@ namespace Garant.Platform.Service.Service.Franchise
                                                  && c.ProfitPrice >= Convert.ToDouble(minPrice));
                     }
 
-                    result = await query.ToListAsync();
+                    items = await query.ToListAsync();
                 }
 
                 // Сортировать на убыванию цены.
@@ -266,13 +279,12 @@ namespace Garant.Platform.Service.Service.Franchise
                                  {
                                      DateCreate = f.DateCreate,
                                      Price = string.Format("{0:0,0}", f.Price),
-                                     CountDays = f.CountDays,
-                                     DayDeclination = f.DayDeclination,
+                                     CountDays = DateTime.Now.Day - f.DateCreate.Day,
+                                     DayDeclination = "дня",
                                      Text = f.Text,
                                      TextDoPrice = f.TextDoPrice,
                                      Title = f.Title,
                                      Url = f.Url,
-                                     FullText = f.Text + " " + f.CountDays + " " + f.DayDeclination,
                                      IsGarant = f.IsGarant,
                                      ProfitPrice = f.ProfitPrice
                                  })
@@ -285,10 +297,15 @@ namespace Garant.Platform.Service.Service.Franchise
                                                  && c.ProfitPrice >= Convert.ToDouble(minPrice));
                     }
 
-                    result = await query.ToListAsync();
+                    items = await query.ToListAsync();
                 }
 
-                return result;
+                foreach (var item in items)
+                {
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
+                }
+
+                return items;
             }
 
             catch (Exception e)
@@ -310,26 +327,30 @@ namespace Garant.Platform.Service.Service.Franchise
             {
                 var year = DateTime.Now.Year;
 
-                var result = await (from f in _postgreDbContext.Franchises
+                var items = await (from f in _postgreDbContext.Franchises
                                     where f.DateCreate.Year == year
                                     select new FranchiseOutput
                                     {
                                         DateCreate = f.DateCreate,
                                         Price = string.Format("{0:0,0}", f.Price),
-                                        CountDays = f.CountDays,
-                                        DayDeclination = f.DayDeclination,
+                                        CountDays = DateTime.Now.Day - f.DateCreate.Day,
+                                        DayDeclination = "дня",
                                         Text = f.Text,
                                         TextDoPrice = f.TextDoPrice,
                                         Title = f.Title,
                                         Url = f.Url,
-                                        FullText = f.Text + " " + f.CountDays + " " + f.DayDeclination,
                                         IsGarant = f.IsGarant,
                                         ProfitPrice = f.ProfitPrice
                                     })
                     .Take(10)
                     .ToListAsync();
 
-                return result;
+                foreach (var item in items)
+                {
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
+                }
+
+                return items;
             }
 
             catch (Exception e)
@@ -349,23 +370,228 @@ namespace Garant.Platform.Service.Service.Franchise
         {
             try
             {
-                var result = await (from f in _postgreDbContext.Franchises
-                                    select new FranchiseOutput
-                                    {
-                                        DateCreate = f.DateCreate,
-                                        Price = string.Format("{0:0,0}", f.Price),
-                                        CountDays = f.CountDays,
-                                        DayDeclination = f.DayDeclination,
-                                        Text = f.Text,
-                                        TextDoPrice = f.TextDoPrice,
-                                        Title = f.Title,
-                                        Url = f.Url,
-                                        FullText = f.Text + " " + f.CountDays + " " + f.DayDeclination,
-                                        IsGarant = f.IsGarant,
-                                        ProfitPrice = f.ProfitPrice
-                                    })
+                var items = await (from f in _postgreDbContext.Franchises
+                                   select new FranchiseOutput
+                                   {
+                                       DateCreate = f.DateCreate,
+                                       Price = string.Format("{0:0,0}", f.Price),
+                                       CountDays = DateTime.Now.Day - f.DateCreate.Day,
+                                       DayDeclination = "дня",
+                                       Text = f.Text,
+                                       TextDoPrice = f.TextDoPrice,
+                                       Title = f.Title,
+                                       Url = f.Url,
+                                       IsGarant = f.IsGarant,
+                                       ProfitPrice = f.ProfitPrice
+                                   })
                     .Take(10)
                     .ToListAsync();
+
+                foreach (var item in items)
+                {
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
+                }
+
+                return items;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод создаст новую  или обновит существующую франшизу.
+        /// </summary>
+        /// <param name="franchiseInput">Входная модель.</param>
+        /// <returns>Данные франшизы.</returns>
+        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(CreateUpdateFranchiseInput franchiseInput)
+        {
+            try
+            {
+                // Отправит файлы дополнительных фото франшизы на сервер по FTP.
+                if (franchiseInput.UrlsDetails.Count > 0)
+                {
+                    await _ftpService.UploadFilesFtpAsync(franchiseInput.UrlsDetails);
+                }
+
+                // Отправит файл основного фото на сервер по FTP.
+                if (!string.IsNullOrEmpty(franchiseInput.FranchisePhoto.Files[0].FileName))
+                {
+                    await _ftpService.UploadFilesFtpAsync(franchiseInput.FranchisePhoto);
+                }
+
+                // Отправит фин.модель на сервер по FTP.
+                if (!string.IsNullOrEmpty(franchiseInput.FinModelFile.Files[0].FileName))
+                {
+                    await _ftpService.UploadFilesFtpAsync(franchiseInput.FinModelFile);
+                }
+
+                // Отправит лого на сервер по FTP.
+                if (!string.IsNullOrEmpty(franchiseInput.FileLogo.Files[0].FileName))
+                {
+                    await _ftpService.UploadFilesFtpAsync(franchiseInput.FileLogo);
+                }
+
+                // Отправит файл презентации на сервер по FTP.
+                if (!string.IsNullOrEmpty(franchiseInput.PresentFile.Files[0].FileName))
+                {
+                    await _ftpService.UploadFilesFtpAsync(franchiseInput.PresentFile);
+                }
+
+                // Отправит файл обучения на сервер по FTP.
+                if (!string.IsNullOrEmpty(franchiseInput.TrainingPhoto.Files[0].FileName))
+                {
+                    await _ftpService.UploadFilesFtpAsync(franchiseInput.TrainingPhoto);
+                }
+
+                // Найдет франшизу с таким названием.
+                var findFranchise = await FindFranchiseByTitle(franchiseInput.Title);
+
+                // Создаст новую франшизу.
+                var urlsDetails = new List<string>();
+
+                // Запишет пути к доп.изображениям франшизы.
+                foreach (var item in franchiseInput.UrlsDetails.Files)
+                {
+                    urlsDetails.Add("../../../assets/images/" + item.FileName);
+                }
+
+                var lastFranchiseId = await _postgreDbContext.Franchises.MaxAsync(c => c.FranchiseId);
+                lastFranchiseId++;
+
+                if (franchiseInput.IsNew && findFranchise == null)
+                {
+                    await _postgreDbContext.Franchises.AddAsync(new FranchiseEntity
+                    {
+                        FranchiseId = lastFranchiseId,
+                        ActivityDetail = franchiseInput.ActivityDetail,
+                        BaseDate = DateTime.Now.Year,
+                        BusinessCount = franchiseInput.BusinessCount,
+                        Category = franchiseInput.Category,
+                        SubCategory = franchiseInput.SubCategory,
+                        DateCreate = DateTime.Now,
+                        DotCount = franchiseInput.DotCount,
+                        FinIndicators = franchiseInput.FinIndicators,
+                        FranchisePacks = franchiseInput.FranchisePacks,
+                        UrlsDetails = urlsDetails.ToArray(),
+                        UrlLogo = "../../../assets/images/" + franchiseInput.FileLogo.Files[0].FileName,
+                        NameFinIndicators = franchiseInput.FinIndicators,
+                        NameFinModelFile = franchiseInput.FinModelFile.Files[0].FileName,
+                        NameFranchisePhoto = franchiseInput.FranchisePhoto.Files[0].FileName,
+                        NamePresentFile = franchiseInput.PresentFile.Files[0].FileName,
+                        TrainingPhotoName = franchiseInput.TrainingPhoto.Files[0].FileName,
+                        Title = franchiseInput.Title,
+                        Text = franchiseInput.Text,
+                        Price = franchiseInput.Price,
+                        ViewBusiness = franchiseInput.ViewBusiness,
+                        IsGarant = franchiseInput.IsGarant,
+                        ProfitMonth = franchiseInput.ProfitMonth,
+                        ProfitPrice = franchiseInput.ProfitPrice,
+                        Status = franchiseInput.Status,
+                        YearStart = franchiseInput.YearStart,
+                        GeneralInvest = franchiseInput.GeneralInvest,
+                        LumpSumPayment = franchiseInput.LumpSumPayment,
+                        Royalty = franchiseInput.Royalty,
+                        Payback = franchiseInput.Payback,
+                        LaunchDate = franchiseInput.LaunchDate,
+                        InvestInclude = franchiseInput.InvestInclude,
+                        Peculiarity = franchiseInput.Peculiarity,
+                        PaymentDetail = franchiseInput.PaymentDetail,
+                        TrainingDetails = franchiseInput.TrainingDetails,
+                        UrlVideo = franchiseInput.UrlVideo,
+                        Reviews = franchiseInput.Reviews
+                    });
+                }
+
+                // Обновит франшизу.
+                else if (!franchiseInput.IsNew && findFranchise != null)
+                {
+                    findFranchise.ActivityDetail = franchiseInput.ActivityDetail;
+                    findFranchise.BaseDate = DateTime.Now.Year;
+                    findFranchise.BusinessCount = franchiseInput.BusinessCount;
+                    findFranchise.Category = franchiseInput.Category;
+                    findFranchise.SubCategory = franchiseInput.SubCategory;
+                    findFranchise.DateCreate = DateTime.Now;
+                    findFranchise.DotCount = franchiseInput.DotCount;
+                    findFranchise.FinIndicators = franchiseInput.FinIndicators;
+                    findFranchise.FranchisePacks = franchiseInput.FranchisePacks;
+                    findFranchise.UrlsDetails = urlsDetails.ToArray();
+                    findFranchise.UrlLogo = "../../../assets/images/" + franchiseInput.FileLogo.Files[0].FileName;
+                    findFranchise.NameFinIndicators = franchiseInput.FinIndicators;
+                    findFranchise.NameFinModelFile = franchiseInput.FinModelFile.Files[0].FileName;
+                    findFranchise.NameFranchisePhoto = franchiseInput.FranchisePhoto.Files[0].FileName;
+                    findFranchise.NamePresentFile = franchiseInput.PresentFile.Files[0].FileName;
+                    findFranchise.TrainingPhotoName = franchiseInput.TrainingPhoto.Files[0].FileName;
+                    findFranchise.Title = franchiseInput.Title;
+                    findFranchise.Text = franchiseInput.Text;
+                    findFranchise.Price = franchiseInput.Price;
+                    findFranchise.ViewBusiness = franchiseInput.ViewBusiness;
+                    findFranchise.IsGarant = franchiseInput.IsGarant;
+                    findFranchise.ProfitMonth = franchiseInput.ProfitMonth;
+                    findFranchise.ProfitPrice = franchiseInput.ProfitPrice;
+                    findFranchise.Status = franchiseInput.Status;
+                    findFranchise.YearStart = franchiseInput.YearStart;
+                    findFranchise.GeneralInvest = franchiseInput.GeneralInvest;
+                    findFranchise.LumpSumPayment = franchiseInput.LumpSumPayment;
+                    findFranchise.Royalty = franchiseInput.Royalty;
+                    findFranchise.Payback = franchiseInput.Payback;
+                    findFranchise.LaunchDate = franchiseInput.LaunchDate;
+                    findFranchise.InvestInclude = franchiseInput.InvestInclude;
+                    findFranchise.Peculiarity = franchiseInput.Peculiarity;
+                    findFranchise.PaymentDetail = franchiseInput.PaymentDetail;
+                    findFranchise.TrainingDetails = franchiseInput.TrainingDetails;
+                    findFranchise.UrlVideo = franchiseInput.UrlVideo;
+                    findFranchise.Reviews = franchiseInput.Reviews;
+
+                    _postgreDbContext.Update(findFranchise);
+                }
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                var result = new CreateUpdateFranchiseOutput
+                {
+                    ActivityDetail = franchiseInput.ActivityDetail,
+                    BaseDate = DateTime.Now.Year,
+                    BusinessCount = franchiseInput.BusinessCount,
+                    Category = franchiseInput.Category,
+                    SubCategory = franchiseInput.SubCategory,
+                    DateCreate = DateTime.Now,
+                    DotCount = franchiseInput.DotCount,
+                    FinIndicators = franchiseInput.FinIndicators,
+                    FranchisePacks = franchiseInput.FranchisePacks,
+                    UrlsDetails = urlsDetails.ToArray(),
+                    FileLogoUrl = "../../../assets/images/" + franchiseInput.FileLogo.Files[0].FileName,
+                    NameFinIndicators = franchiseInput.FinIndicators,
+                    FinModelFileUrl = "/docs" + franchiseInput.FinModelFile.Files[0].FileName,
+                    FranchisePhotoUrl = "../../../assets/images/" + franchiseInput.FranchisePhoto.Files[0].FileName,
+                    PresentFileUrl = "/docs" + franchiseInput.PresentFile.Files[0].FileName,
+                    TrainingPhotoUrl = "../../../assets/images/" + franchiseInput.TrainingPhoto.Files[0].FileName,
+                    Title = franchiseInput.Title,
+                    Text = franchiseInput.Text,
+                    Price = franchiseInput.Price,
+                    ViewBusiness = franchiseInput.ViewBusiness,
+                    IsGarant = franchiseInput.IsGarant,
+                    ProfitMonth = franchiseInput.ProfitMonth,
+                    ProfitPrice = franchiseInput.ProfitPrice,
+                    Status = franchiseInput.Status,
+                    YearStart = franchiseInput.YearStart,
+                    GeneralInvest = franchiseInput.GeneralInvest,
+                    LumpSumPayment = franchiseInput.LumpSumPayment,
+                    Royalty = franchiseInput.Royalty,
+                    Payback = franchiseInput.Payback,
+                    LaunchDate = franchiseInput.LaunchDate,
+                    InvestInclude = franchiseInput.InvestInclude,
+                    Peculiarity = franchiseInput.Peculiarity,
+                    PaymentDetail = franchiseInput.PaymentDetail,
+                    TrainingDetails = franchiseInput.TrainingDetails,
+                    UrlVideo = franchiseInput.UrlVideo,
+                    Reviews = franchiseInput.Reviews
+                };
 
                 return result;
             }
@@ -374,7 +600,77 @@ namespace Garant.Platform.Service.Service.Franchise
             {
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogError();
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод найдет франшизу по названию.
+        /// </summary>
+        /// <param name="title">Название франшизы.</param>
+        /// <returns>Данные франшизы.</returns>
+        private async Task<FranchiseEntity> FindFranchiseByTitle(string title)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Franchises
+                    .Where(f => f.Title.Equals(title))
+                    .Select(f => new FranchiseEntity
+                    {
+                        FranchiseId = f.FranchiseId,
+                        ActivityDetail = f.ActivityDetail,
+                        BaseDate = DateTime.Now.Year,
+                        BusinessCount = f.BusinessCount,
+                        Category = f.Category,
+                        SubCategory = f.SubCategory,
+                        DateCreate = f.DateCreate,
+                        DotCount = f.DotCount,
+                        FinIndicators = f.FinIndicators,
+                        FranchisePacks = f.FranchisePacks,
+                        UrlsDetails = f.UrlsDetails,
+                        UrlLogo = f.UrlLogo,
+                        NameFinIndicators = f.FinIndicators,
+                        NameFinModelFile = f.NameFinModelFile,
+                        NameFranchisePhoto = f.NameFranchisePhoto,
+                        NamePresentFile = f.NamePresentFile,
+                        TrainingPhotoName = f.TrainingPhotoName,
+                        Title = f.Title,
+                        Text = f.Text,
+                        Price = f.Price,
+                        ViewBusiness = f.ViewBusiness,
+                        IsGarant = f.IsGarant,
+                        ProfitMonth = f.ProfitMonth,
+                        ProfitPrice = f.ProfitPrice,
+                        Status = f.Status,
+                        YearStart = f.YearStart,
+                        GeneralInvest = f.GeneralInvest,
+                        LumpSumPayment = f.LumpSumPayment,
+                        Royalty = f.Royalty,
+                        Payback = f.Payback,
+                        LaunchDate = f.LaunchDate,
+                        InvestInclude = f.InvestInclude,
+                        Peculiarity = f.Peculiarity,
+                        PaymentDetail = f.PaymentDetail,
+                        TrainingDetails = f.TrainingDetails,
+                        UrlVideo = f.UrlVideo,
+                        Reviews = f.Reviews
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (result == null)
+                {
+                    return null;
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }

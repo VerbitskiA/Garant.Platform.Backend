@@ -107,5 +107,20 @@ namespace Garant.Platform.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод создаст новую  или обновит существующую франшизу.
+        /// </summary>
+        /// <param name="franchiseInput">Входная модель.</param>
+        /// <returns>Данные франшизы.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("create-update-franchise")]
+        [ProducesResponseType(200, Type = typeof(CreateUpdateFranchiseOutput))]
+        public async Task<IActionResult> CreateUpdateFranchiseAsync([FromForm] CreateUpdateFranchiseInput franchiseInput)
+        {
+            var result = await _franchiseService.CreateUpdateFranchiseAsync(franchiseInput);
+            
+            return Ok(result);
+        }
     }
 }
