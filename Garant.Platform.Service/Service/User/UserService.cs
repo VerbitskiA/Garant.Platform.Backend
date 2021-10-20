@@ -637,5 +637,49 @@ namespace Garant.Platform.Service.Service.User
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод сформирует хлебные крошки для страницы.
+        /// </summary>
+        /// <param name="selectorPage"> Селектор страницы, для которой нужно сформировать хлебные крошки.</param>
+        /// <returns>Список хлебных крошек.</returns>
+        public async Task<IEnumerable<BreadcrumbOutput>> GetBreadcrumbsAsync(string selectorPage)
+        {
+            try
+            {
+                var result = await (from b in _postgreDbContext.Breadcrumbs
+                                    where b.SelectorPage.Equals(selectorPage)
+                                    orderby b.Position
+                                    select new BreadcrumbOutput
+                                    {
+                                        Label = b.Label,
+                                        SelectorPage = b.SelectorPage,
+                                        Url = b.Url,
+                                        Position = b.Position
+                                    })
+                    .ToListAsync();
+
+                // Вычислит последний активный пункт цепочки хлебных крошек.
+                var maxPosition = result.Max(l => l.Position);
+
+                foreach (var item in result)
+                {
+                    if (item.Position == maxPosition)
+                    {
+                        item.IsCurrent = true;
+                    }
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

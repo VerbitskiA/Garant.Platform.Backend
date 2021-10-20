@@ -109,5 +109,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица Franchises.Categories.
         /// </summary>
         public DbSet<CategoryEntity> Categories { get; set; }
+
+        /// <summary>
+        /// Таблица dbo.Breadcrumbs.
+        /// </summary>
+        public DbSet<BreadcrumbEntity> Breadcrumbs { get; set; }
     }
 }

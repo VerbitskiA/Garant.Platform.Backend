@@ -180,5 +180,21 @@ namespace Garant.Platform.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод сформирует хлебные крошки для страницы.
+        /// </summary>
+        /// <param name="breadcrumbInput">Входная модель.</param>
+        /// <returns>Список хлебных крошек.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("get-breadcrumbs")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BreadcrumbOutput>))]
+        public async Task<IActionResult> GetBreadcrumbsAsync([FromBody] BreadcrumbInput breadcrumbInput)
+        {
+            var result = await _userService.GetBreadcrumbsAsync(breadcrumbInput.SelectorPage);
+
+            return Ok(result);
+        }
     }
 }

@@ -106,5 +106,12 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <returns>Новый токен.</returns>
         Task<ClaimOutput> GenerateTokenAsync();
+
+        /// <summary>
+        /// Метод сформирует хлебные крошки для страницы.
+        /// </summary>
+        /// <param name="selectorPage"> Селектор страницы, для которой нужно сформировать хлебные крошки.</param>
+        /// <returns>Список хлебных крошек.</returns>
+        Task<IEnumerable<BreadcrumbOutput>> GetBreadcrumbsAsync(string selectorPage);
     }
 }

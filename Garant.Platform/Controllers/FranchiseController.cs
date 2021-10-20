@@ -126,6 +126,7 @@ namespace Garant.Platform.Controllers
         /// <summary>
         /// Метод получит франшизу для просмотра или изменения.
         /// </summary>
+        /// <param name="franchiseInput">Входная модель.</param>
         /// <returns></returns>
         [HttpPost, Route("get-franchise")]
         [ProducesResponseType(200, Type = typeof(FranchiseEntity))]
