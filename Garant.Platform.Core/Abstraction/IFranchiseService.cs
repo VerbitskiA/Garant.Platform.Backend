@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
 
@@ -74,5 +75,13 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="franchiseInput">Входная модель.</param>
         /// <returns>Данные франшизы.</returns>
         Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(CreateUpdateFranchiseInput franchiseInput);
+
+        /// <summary>
+        /// Метод получит франшизу для просмотра или изменения.
+        /// </summary>
+        /// <param name="franchiseId">Id франшизы.</param>
+        /// <param name="mode">Режим (Edit или View).</param>
+        /// <returns>Данные франшизы.</returns>
+        Task<FranchiseEntity> GetFranchiseAsync(long franchiseId, string mode);
     }
 }

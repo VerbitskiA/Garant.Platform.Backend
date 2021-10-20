@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -113,13 +114,25 @@ namespace Garant.Platform.Controllers
         /// </summary>
         /// <param name="franchiseInput">Входная модель.</param>
         /// <returns>Данные франшизы.</returns>
-        [AllowAnonymous]
         [HttpPost, Route("create-update-franchise")]
         [ProducesResponseType(200, Type = typeof(CreateUpdateFranchiseOutput))]
         public async Task<IActionResult> CreateUpdateFranchiseAsync([FromForm] CreateUpdateFranchiseInput franchiseInput)
         {
             var result = await _franchiseService.CreateUpdateFranchiseAsync(franchiseInput);
             
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит франшизу для просмотра или изменения.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost, Route("get-franchise")]
+        [ProducesResponseType(200, Type = typeof(FranchiseEntity))]
+        public async Task<IActionResult> GetFranchiseAsync([FromBody] FranchiseInput franchiseInput)
+        {
+            var result = await _franchiseService.GetFranchiseAsync(franchiseInput.FranchiseId, franchiseInput.Mode);
+
             return Ok(result);
         }
     }

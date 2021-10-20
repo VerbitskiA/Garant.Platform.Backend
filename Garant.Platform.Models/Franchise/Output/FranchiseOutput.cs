@@ -72,5 +72,10 @@ namespace Garant.Platform.Models.Franchise.Output
         /// Желаемая прибыль в мес.
         /// </summary>
         public double ProfitPrice { get; set; }
+
+        /// <summary>
+        /// Режим просмотр или редактирование франшизы.
+        /// </summary>
+        public string Mode { get; set; }
     }
 }
