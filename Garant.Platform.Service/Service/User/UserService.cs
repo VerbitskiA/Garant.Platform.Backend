@@ -685,18 +685,18 @@ namespace Garant.Platform.Service.Service.User
         /// <summary>
         /// Метод найдет пользователя по коду.
         /// </summary>
-        /// <param name="code">Код.</param>
-        /// <returns>Флаг найден ли пользователь.</returns>
-        public async Task<bool> FindUserByCodeAsync(string code)
+        /// <param name="data">Параметр поиска.</param>
+        /// <returns>Id пользователя.</returns>
+        public async Task<string> FindUserByCodeAsync(string data)
         {
             try
             {
                 var result = await (from u in _postgreDbContext.Users
-                                    where u.Code.Equals(code)
-                                    select u)
+                                where u.Code.Equals(data)
+                                select u.Id)
                     .FirstOrDefaultAsync();
 
-                return result != null;
+                return result;
             }
 
             catch (Exception e)

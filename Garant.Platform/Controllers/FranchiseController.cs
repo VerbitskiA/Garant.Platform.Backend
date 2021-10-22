@@ -141,12 +141,12 @@ namespace Garant.Platform.Controllers
         /// <summary>
         /// Метод отправит файл в папку и временно запишет в БД.
         /// </summary>
-        /// <param name="form">Файлы.</param>
+        /// <param name="files">Файлы.</param>
         [HttpPost]
         [Route("temp-file")]
-        public async Task<IActionResult> AddTempFilesBeforeCreateFranchiseAsync([FromForm] IFormCollection form)
+        public async Task<IActionResult> AddTempFilesBeforeCreateFranchiseAsync([FromForm] IFormCollection files)
         {
-            var result = await _franchiseService.AddTempFilesBeforeCreateFranchiseAsync(form, GetUserName());
+            var result = await _franchiseService.AddTempFilesBeforeCreateFranchiseAsync(files, GetUserName());
 
             return Ok(result);
         }

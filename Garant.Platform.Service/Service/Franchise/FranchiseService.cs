@@ -762,19 +762,20 @@ namespace Garant.Platform.Service.Service.Franchise
                 }
 
                 // Найдет такого пользователя.
-                var findUser = await _userService.FindUserByCodeAsync(user);
+                var userId = await _userService.FindUserByCodeAsync(user);
 
-                if (findUser)
+                if (!string.IsNullOrEmpty(userId))
                 {
                     // Запишет во временную таблицу какие названия файлов, которые добавили но еще не сохранили.
                     foreach (var item in form.Files)
                     {
                         await _postgreDbContext.TempFranchises.AddAsync(new TempFranchiseEntity
                         {
-                            FileName = item.FileName
+                            FileName = item.FileName,
+                            Id = userId
                         });
 
-                        results.Add(item.FileName);
+                        results.Add("../../../assets/images/" + item.FileName);
                     }
                 }
 

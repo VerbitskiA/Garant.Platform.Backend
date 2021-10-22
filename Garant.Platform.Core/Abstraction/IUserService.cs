@@ -118,7 +118,7 @@ namespace Garant.Platform.Core.Abstraction
         /// Метод найдет пользователя по коду.
         /// </summary>
         /// <param name="code">Код.</param>
-        /// <returns>Флаг найден ли пользователь.</returns>
-        Task<bool> FindUserByCodeAsync(string code);
+        /// <returns>Id пользователя.</returns>
+        Task<string> FindUserByCodeAsync(string code);
     }
 }
