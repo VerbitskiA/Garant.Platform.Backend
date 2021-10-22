@@ -681,5 +681,31 @@ namespace Garant.Platform.Service.Service.User
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод найдет пользователя по коду.
+        /// </summary>
+        /// <param name="code">Код.</param>
+        /// <returns>Флаг найден ли пользователь.</returns>
+        public async Task<bool> FindUserByCodeAsync(string code)
+        {
+            try
+            {
+                var result = await (from u in _postgreDbContext.Users
+                                    where u.Code.Equals(code)
+                                    select u)
+                    .FirstOrDefaultAsync();
+
+                return result != null;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

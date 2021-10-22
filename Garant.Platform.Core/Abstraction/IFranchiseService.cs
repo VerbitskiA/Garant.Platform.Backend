@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
+using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Core.Abstraction
 {
@@ -83,5 +84,12 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="mode">Режим (Edit или View).</param>
         /// <returns>Данные франшизы.</returns>
         Task<FranchiseEntity> GetFranchiseAsync(long franchiseId, string mode);
+
+        /// <summary>
+        /// Метод отправит файл в папку и временно запишет в БД.
+        /// </summary>
+        /// <param name="form">Файлы.</param>
+        /// <returns>Список названий файлов.</returns>
+        Task<IEnumerable<string>> AddTempFilesBeforeCreateFranchiseAsync(IFormCollection form, string account);
     }
 }

@@ -114,5 +114,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица dbo.Breadcrumbs.
         /// </summary>
         public DbSet<BreadcrumbEntity> Breadcrumbs { get; set; }
+
+        /// <summary>
+        /// Таблица Franchises.TempFranchises.
+        /// </summary>
+        public DbSet<TempFranchiseEntity> TempFranchises { get; set; }
     }
 }

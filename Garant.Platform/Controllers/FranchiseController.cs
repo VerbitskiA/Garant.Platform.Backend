@@ -6,6 +6,7 @@ using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers
@@ -133,6 +134,19 @@ namespace Garant.Platform.Controllers
         public async Task<IActionResult> GetFranchiseAsync([FromBody] FranchiseInput franchiseInput)
         {
             var result = await _franchiseService.GetFranchiseAsync(franchiseInput.FranchiseId, franchiseInput.Mode);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод отправит файл в папку и временно запишет в БД.
+        /// </summary>
+        /// <param name="form">Файлы.</param>
+        [HttpPost]
+        [Route("temp-file")]
+        public async Task<IActionResult> AddTempFilesBeforeCreateFranchiseAsync([FromForm] IFormCollection form)
+        {
+            var result = await _franchiseService.AddTempFilesBeforeCreateFranchiseAsync(form, GetUserName());
 
             return Ok(result);
         }

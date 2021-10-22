@@ -9,6 +9,7 @@ using System.Linq;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Service.Service.Franchise
@@ -17,11 +18,13 @@ namespace Garant.Platform.Service.Service.Franchise
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IFtpService _ftpService;
+        private readonly IUserService _userService;
 
-        public FranchiseService(PostgreDbContext postgreDbContext, IFtpService ftpService)
+        public FranchiseService(PostgreDbContext postgreDbContext, IFtpService ftpService, IUserService userService)
         {
             _postgreDbContext = postgreDbContext;
             _ftpService = ftpService;
+            _userService = userService;
         }
 
         /// <summary>
@@ -737,6 +740,52 @@ namespace Garant.Platform.Service.Service.Franchise
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод отправит файл в папку и временно запишет в БД.
+        /// </summary>
+        /// <param name="form">Файлы.</param>
+        /// <returns>Список названий файлов.</returns>
+        public async Task<IEnumerable<string>> AddTempFilesBeforeCreateFranchiseAsync(IFormCollection form, string user)
+        {
+            try
+            {
+                var results = new List<string>();
+
+                // Отправит файлы на FTP-сервер.
+                if (form.Files.Count > 0)
+                {
+                    await _ftpService.UploadFilesFtpAsync(form);
+                }
+
+                // Найдет такого пользователя.
+                var findUser = await _userService.FindUserByCodeAsync(user);
+
+                if (findUser)
+                {
+                    // Запишет во временную таблицу какие названия файлов, которые добавили но еще не сохранили.
+                    foreach (var item in form.Files)
+                    {
+                        await _postgreDbContext.TempFranchises.AddAsync(new TempFranchiseEntity
+                        {
+                            FileName = item.FileName
+                        });
+
+                        results.Add(item.FileName);
+                    }
+                }
+
+                return results;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }

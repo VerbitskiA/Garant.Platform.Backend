@@ -113,5 +113,12 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="selectorPage"> Селектор страницы, для которой нужно сформировать хлебные крошки.</param>
         /// <returns>Список хлебных крошек.</returns>
         Task<IEnumerable<BreadcrumbOutput>> GetBreadcrumbsAsync(string selectorPage);
+
+        /// <summary>
+        /// Метод найдет пользователя по коду.
+        /// </summary>
+        /// <param name="code">Код.</param>
+        /// <returns>Флаг найден ли пользователь.</returns>
+        Task<bool> FindUserByCodeAsync(string code);
     }
 }
