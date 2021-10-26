@@ -28,11 +28,11 @@ namespace Garant.Platform.FTP.Service
         /// Метод загрузит файлы по FTP на сервер.
         /// </summary>
         /// <param name="files">Файлы для отправки.</param>
-        public async Task UploadFilesFtpAsync(IFormCollection files)
+        public async Task UploadFilesFtpAsync(IFormFileCollection files)
         {
             try
             {
-                if (files.Files.Count > 0)
+                if (files.Count > 0)
                 {
                     var host = _configuration.GetSection("FtpSettings:Host").Value;
                     var login = _configuration.GetSection("FtpSettings:Login").Value;
@@ -46,7 +46,7 @@ namespace Garant.Platform.FTP.Service
                     ftp.Connect();
 
                     // Закачать файлы на сервер в папку фронта (изображения).
-                    foreach (var file in files.Files)
+                    foreach (var file in files)
                     {
                         // Если файлы изображений или видео.
                         if (file.FileName.EndsWith(".png")

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Models.Entities.Franchise;
-using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Http;
 
@@ -73,9 +72,10 @@ namespace Garant.Platform.Core.Abstraction
         /// <summary>
         /// Метод создаст новую  или обновит существующую франшизу.
         /// </summary>
-        /// <param name="franchiseInput">Входная модель.</param>
+        /// <param name="franchiseFilesInput">Входные файлы.</param>
+        /// <param name="franchiseDataInput">Данные в строке json.</param>
         /// <returns>Данные франшизы.</returns>
-        Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(CreateUpdateFranchiseInput franchiseInput);
+        Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(IFormCollection franchiseFilesInput, string franchiseDataInput);
 
         /// <summary>
         /// Метод получит франшизу для просмотра или изменения.

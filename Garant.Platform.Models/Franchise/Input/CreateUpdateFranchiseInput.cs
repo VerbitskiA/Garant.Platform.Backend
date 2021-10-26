@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Models.Franchise.Input
 {
@@ -13,12 +12,12 @@ namespace Garant.Platform.Models.Franchise.Input
         /// <summary>
         /// Файлы изображений франшизы.
         /// </summary>
-        public IFormCollection UrlsDetails { get; set; }
+        //public IFormCollection UrlsDetails { get; set; }
 
         /// <summary>
         /// Файл логотипа франшизы.
         /// </summary>
-        public IFormCollection FileLogo { get; set; }
+        //public IFormCollection FileLogo { get; set; }
 
         /// <summary>
         /// Заголовок.
@@ -145,17 +144,17 @@ namespace Garant.Platform.Models.Franchise.Input
         /// <summary>
         /// Файл финансовой модели.
         /// </summary>
-        public IFormCollection FinModelFile { get; set; }
+        //public IFormCollection FinModelFile { get; set; }
 
         /// <summary>
         /// Файл презентации.
         /// </summary>
-        public IFormCollection PresentFile { get; set; }
+        //public IFormCollection PresentFile { get; set; }
 
         /// <summary>
         /// Фото франшизы.
         /// </summary>
-        public IFormCollection FranchisePhoto { get; set; }
+        //public IFormCollection FranchisePhoto { get; set; }
 
         /// <summary>
         /// Описание расчета.
@@ -180,7 +179,7 @@ namespace Garant.Platform.Models.Franchise.Input
         /// <summary>
         /// Фото обучения.
         /// </summary>
-        public IFormCollection TrainingPhoto { get; set; }
+        //public IFormCollection TrainingPhoto { get; set; }
 
         /// <summary>
         /// Пакеты франшизы (json).

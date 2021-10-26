@@ -12,6 +12,6 @@ namespace Garant.Platform.FTP.Abstraction
         /// Метод загрузит файлы по FTP на сервер.
         /// </summary>
         /// <param name="files">Файлы для отправки.</param>
-        Task UploadFilesFtpAsync(IFormCollection files);
+        Task UploadFilesFtpAsync(IFormFileCollection files);
     }
 }

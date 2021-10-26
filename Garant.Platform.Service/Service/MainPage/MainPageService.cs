@@ -261,11 +261,11 @@ namespace Garant.Platform.Service.Service.MainPage
 
                 foreach (var item in result)
                 {
-                    var value = JsonSerializer.Deserialize<SubCategory>(item.SubCategory);
-                    item.SubCategoryResult.Add(new SubCategory
-                    {
-                        Value = value?.Value
-                    });
+                    //var value = JsonSerializer.Deserialize<SubCategory>(item.SubCategory);
+                    //item.SubCategoryResult.Add(new SubCategory
+                    //{
+                    //    Value = value?.Value
+                    //});
 
                     item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
                 }

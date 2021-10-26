@@ -56,7 +56,7 @@ namespace Garant.Platform.Models.Franchise.Output
         /// </summary>
         public string SubCategory { get; set; }
 
-        public List<SubCategory> SubCategoryResult { get; set; } = new();
+        //public List<SubCategory> SubCategoryResult { get; set; } = new();
 
         /// <summary>
         /// Полная строка текста для вставки в одном поле.

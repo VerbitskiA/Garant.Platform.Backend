@@ -73,7 +73,7 @@ namespace Garant.Platform.Models.Entities.Franchise
         /// <summary>
         /// Подкатегория.
         /// </summary>
-        [Column("SubCategory", TypeName = "json")]
+        [Column("SubCategory", TypeName = "varchar(100)")]
         public string SubCategory { get; set; }
 
         /// <summary>

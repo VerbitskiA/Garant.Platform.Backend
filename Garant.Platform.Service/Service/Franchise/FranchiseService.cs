@@ -6,6 +6,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Franchise.Output;
 using System.Linq;
+using System.Text.Json;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
@@ -410,68 +411,135 @@ namespace Garant.Platform.Service.Service.Franchise
         /// <summary>
         /// Метод создаст новую  или обновит существующую франшизу.
         /// </summary>
-        /// <param name="franchiseInput">Входная модель.</param>
+        /// <param name="franchiseFilesInput">Входные файлы.</param>
+        /// <param name="franchiseDataInput">Данные в строке json.</param>
         /// <returns>Данные франшизы.</returns>
-        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(CreateUpdateFranchiseInput franchiseInput)
+        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(IFormCollection franchiseFilesInput, string franchiseDataInput)
         {
             try
             {
-                // Отправит файлы дополнительных фото франшизы на сервер по FTP.
-                if (franchiseInput.UrlsDetails.Count > 0)
+                var files = new FormCollection(null, franchiseFilesInput.Files).Files;
+                var franchiseInput = JsonSerializer.Deserialize<CreateUpdateFranchiseInput>(franchiseDataInput);
+                CreateUpdateFranchiseOutput result = null;
+
+                if (files.Any())
                 {
-                    await _ftpService.UploadFilesFtpAsync(franchiseInput.UrlsDetails);
+                    await _ftpService.UploadFilesFtpAsync(files);
                 }
 
-                // Отправит файл основного фото на сервер по FTP.
-                if (!string.IsNullOrEmpty(franchiseInput.FranchisePhoto.Files[0].FileName))
+                if (franchiseInput != null)
                 {
-                    await _ftpService.UploadFilesFtpAsync(franchiseInput.FranchisePhoto);
-                }
+                    //// Найдет франшизу с таким названием.
+                    var findFranchise = await FindFranchiseByTitle(franchiseInput.Title);
 
-                // Отправит фин.модель на сервер по FTP.
-                if (!string.IsNullOrEmpty(franchiseInput.FinModelFile.Files[0].FileName))
-                {
-                    await _ftpService.UploadFilesFtpAsync(franchiseInput.FinModelFile);
-                }
+                    var urlsDetails = new List<string>();
 
-                // Отправит лого на сервер по FTP.
-                if (!string.IsNullOrEmpty(franchiseInput.FileLogo.Files[0].FileName))
-                {
-                    await _ftpService.UploadFilesFtpAsync(franchiseInput.FileLogo);
-                }
-
-                // Отправит файл презентации на сервер по FTP.
-                if (!string.IsNullOrEmpty(franchiseInput.PresentFile.Files[0].FileName))
-                {
-                    await _ftpService.UploadFilesFtpAsync(franchiseInput.PresentFile);
-                }
-
-                // Отправит файл обучения на сервер по FTP.
-                if (!string.IsNullOrEmpty(franchiseInput.TrainingPhoto.Files[0].FileName))
-                {
-                    await _ftpService.UploadFilesFtpAsync(franchiseInput.TrainingPhoto);
-                }
-
-                // Найдет франшизу с таким названием.
-                var findFranchise = await FindFranchiseByTitle(franchiseInput.Title);
-
-                var urlsDetails = new List<string>();
-
-                // Запишет пути к доп.изображениям франшизы.
-                foreach (var item in franchiseInput.UrlsDetails.Files)
-                {
-                    urlsDetails.Add("../../../assets/images/" + item.FileName);
-                }
-
-                var lastFranchiseId = await _postgreDbContext.Franchises.MaxAsync(c => c.FranchiseId);
-                lastFranchiseId++;
-
-                // Создаст новую франшизу.
-                if (franchiseInput.IsNew && findFranchise == null)
-                {
-                    await _postgreDbContext.Franchises.AddAsync(new FranchiseEntity
+                    //// Запишет пути к доп.изображениям франшизы.
+                    foreach (var item in files.Where(c => c.Name.Equals("urlsDetails")))
                     {
-                        FranchiseId = lastFranchiseId,
+                        urlsDetails.Add("../../../assets/images/" + item.FileName);
+                    }
+
+                    var lastFranchiseId = await _postgreDbContext.Franchises.MaxAsync(c => c.FranchiseId);
+                    lastFranchiseId++;
+
+                    // Создаст новую франшизу.
+                    if (franchiseInput.IsNew && findFranchise == null)
+                    {
+                        await _postgreDbContext.Franchises.AddAsync(new FranchiseEntity
+                        {
+                            FranchiseId = lastFranchiseId,
+                            ActivityDetail = franchiseInput.ActivityDetail,
+                            BaseDate = DateTime.Now.Year,
+                            BusinessCount = franchiseInput.BusinessCount,
+                            Category = franchiseInput.Category,
+                            SubCategory = franchiseInput.SubCategory,
+                            DateCreate = DateTime.Now,
+                            DotCount = franchiseInput.DotCount,
+                            FinIndicators = franchiseInput.FinIndicators,
+                            FranchisePacks = franchiseInput.FranchisePacks,
+                            UrlsDetails = urlsDetails.ToArray(),
+                            UrlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName,
+                            NameFinIndicators = franchiseInput.FinIndicators,
+                            NameFinModelFile = files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
+                            NameFranchisePhoto = files.Where(c => c.Name.Equals("franchiseFile")).ToArray()[0].FileName,
+                            NamePresentFile = files.Where(c => c.Name.Equals("presentFile")).ToArray()[0].FileName,
+                            TrainingPhotoName = files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName,
+                            Title = franchiseInput.Title,
+                            Text = franchiseInput.Text,
+                            Price = franchiseInput.Price,
+                            ViewBusiness = franchiseInput.ViewBusiness,
+                            IsGarant = franchiseInput.IsGarant,
+                            ProfitMonth = franchiseInput.ProfitMonth,
+                            ProfitPrice = franchiseInput.ProfitPrice,
+                            Status = franchiseInput.Status,
+                            YearStart = franchiseInput.YearStart,
+                            GeneralInvest = franchiseInput.GeneralInvest,
+                            LumpSumPayment = franchiseInput.LumpSumPayment,
+                            Royalty = franchiseInput.Royalty,
+                            Payback = franchiseInput.Payback,
+                            LaunchDate = franchiseInput.LaunchDate,
+                            InvestInclude = franchiseInput.InvestInclude,
+                            Peculiarity = franchiseInput.Peculiarity,
+                            PaymentDetail = franchiseInput.PaymentDetail,
+                            TrainingDetails = franchiseInput.TrainingDetails,
+                            UrlVideo = franchiseInput.UrlVideo,
+                            Reviews = franchiseInput.Reviews
+                        });
+                    }
+
+                    // Обновит франшизу.
+                    else if (!franchiseInput.IsNew && findFranchise != null)
+                    {
+                        findFranchise.ActivityDetail = franchiseInput.ActivityDetail;
+                        findFranchise.BaseDate = DateTime.Now.Year;
+                        findFranchise.BusinessCount = franchiseInput.BusinessCount;
+                        findFranchise.Category = franchiseInput.Category;
+                        findFranchise.SubCategory = franchiseInput.SubCategory;
+                        findFranchise.DateCreate = DateTime.Now;
+                        findFranchise.DotCount = franchiseInput.DotCount;
+                        findFranchise.FinIndicators = franchiseInput.FinIndicators;
+                        findFranchise.FranchisePacks = franchiseInput.FranchisePacks;
+                        findFranchise.UrlsDetails = urlsDetails.ToArray();
+                        findFranchise.UrlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName;
+                        findFranchise.NameFinIndicators = franchiseInput.FinIndicators;
+                        findFranchise.NameFinModelFile =
+                            files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName;
+                        findFranchise.NamePresentFile =
+                            findFranchise.NameFranchisePhoto =
+                                files.Where(c => c.Name.Equals("franchiseFile")).ToArray()[0].FileName;
+                        findFranchise.NamePresentFile =
+                            files.Where(c => c.Name.Equals("presentFile")).ToArray()[0].FileName;
+                        findFranchise.TrainingPhotoName =
+                            files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName;
+                        findFranchise.Title = franchiseInput.Title;
+                        findFranchise.Text = franchiseInput.Text;
+                        findFranchise.Price = franchiseInput.Price;
+                        findFranchise.ViewBusiness = franchiseInput.ViewBusiness;
+                        findFranchise.IsGarant = franchiseInput.IsGarant;
+                        findFranchise.ProfitMonth = franchiseInput.ProfitMonth;
+                        findFranchise.ProfitPrice = franchiseInput.ProfitPrice;
+                        findFranchise.Status = franchiseInput.Status;
+                        findFranchise.YearStart = franchiseInput.YearStart;
+                        findFranchise.GeneralInvest = franchiseInput.GeneralInvest;
+                        findFranchise.LumpSumPayment = franchiseInput.LumpSumPayment;
+                        findFranchise.Royalty = franchiseInput.Royalty;
+                        findFranchise.Payback = franchiseInput.Payback;
+                        findFranchise.LaunchDate = franchiseInput.LaunchDate;
+                        findFranchise.InvestInclude = franchiseInput.InvestInclude;
+                        findFranchise.Peculiarity = franchiseInput.Peculiarity;
+                        findFranchise.PaymentDetail = franchiseInput.PaymentDetail;
+                        findFranchise.TrainingDetails = franchiseInput.TrainingDetails;
+                        findFranchise.UrlVideo = franchiseInput.UrlVideo;
+                        findFranchise.Reviews = franchiseInput.Reviews;
+
+                        _postgreDbContext.Update(findFranchise);
+                    }
+
+                    await _postgreDbContext.SaveChangesAsync();
+
+                    result = new CreateUpdateFranchiseOutput
+                    {
                         ActivityDetail = franchiseInput.ActivityDetail,
                         BaseDate = DateTime.Now.Year,
                         BusinessCount = franchiseInput.BusinessCount,
@@ -482,12 +550,12 @@ namespace Garant.Platform.Service.Service.Franchise
                         FinIndicators = franchiseInput.FinIndicators,
                         FranchisePacks = franchiseInput.FranchisePacks,
                         UrlsDetails = urlsDetails.ToArray(),
-                        UrlLogo = "../../../assets/images/" + franchiseInput.FileLogo.Files[0].FileName,
+                        FileLogoUrl = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName,
                         NameFinIndicators = franchiseInput.FinIndicators,
-                        NameFinModelFile = franchiseInput.FinModelFile.Files[0].FileName,
-                        NameFranchisePhoto = franchiseInput.FranchisePhoto.Files[0].FileName,
-                        NamePresentFile = franchiseInput.PresentFile.Files[0].FileName,
-                        TrainingPhotoName = franchiseInput.TrainingPhoto.Files[0].FileName,
+                        FinModelFileUrl = "/docs" + files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
+                        FranchisePhotoUrl = "../../../assets/images/" + files.Where(c => c.Name.Equals("franchiseFile")).ToArray()[0].FileName,
+                        PresentFileUrl = "/docs" + files.Where(c => c.Name.Equals("presentFile")).ToArray()[0].FileName,
+                        TrainingPhotoUrl = "../../../assets/images/" + files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName,
                         Title = franchiseInput.Title,
                         Text = franchiseInput.Text,
                         Price = franchiseInput.Price,
@@ -508,93 +576,8 @@ namespace Garant.Platform.Service.Service.Franchise
                         TrainingDetails = franchiseInput.TrainingDetails,
                         UrlVideo = franchiseInput.UrlVideo,
                         Reviews = franchiseInput.Reviews
-                    });
+                    };
                 }
-
-                // Обновит франшизу.
-                else if (!franchiseInput.IsNew && findFranchise != null)
-                {
-                    findFranchise.ActivityDetail = franchiseInput.ActivityDetail;
-                    findFranchise.BaseDate = DateTime.Now.Year;
-                    findFranchise.BusinessCount = franchiseInput.BusinessCount;
-                    findFranchise.Category = franchiseInput.Category;
-                    findFranchise.SubCategory = franchiseInput.SubCategory;
-                    findFranchise.DateCreate = DateTime.Now;
-                    findFranchise.DotCount = franchiseInput.DotCount;
-                    findFranchise.FinIndicators = franchiseInput.FinIndicators;
-                    findFranchise.FranchisePacks = franchiseInput.FranchisePacks;
-                    findFranchise.UrlsDetails = urlsDetails.ToArray();
-                    findFranchise.UrlLogo = "../../../assets/images/" + franchiseInput.FileLogo.Files[0].FileName;
-                    findFranchise.NameFinIndicators = franchiseInput.FinIndicators;
-                    findFranchise.NameFinModelFile = franchiseInput.FinModelFile.Files[0].FileName;
-                    findFranchise.NameFranchisePhoto = franchiseInput.FranchisePhoto.Files[0].FileName;
-                    findFranchise.NamePresentFile = franchiseInput.PresentFile.Files[0].FileName;
-                    findFranchise.TrainingPhotoName = franchiseInput.TrainingPhoto.Files[0].FileName;
-                    findFranchise.Title = franchiseInput.Title;
-                    findFranchise.Text = franchiseInput.Text;
-                    findFranchise.Price = franchiseInput.Price;
-                    findFranchise.ViewBusiness = franchiseInput.ViewBusiness;
-                    findFranchise.IsGarant = franchiseInput.IsGarant;
-                    findFranchise.ProfitMonth = franchiseInput.ProfitMonth;
-                    findFranchise.ProfitPrice = franchiseInput.ProfitPrice;
-                    findFranchise.Status = franchiseInput.Status;
-                    findFranchise.YearStart = franchiseInput.YearStart;
-                    findFranchise.GeneralInvest = franchiseInput.GeneralInvest;
-                    findFranchise.LumpSumPayment = franchiseInput.LumpSumPayment;
-                    findFranchise.Royalty = franchiseInput.Royalty;
-                    findFranchise.Payback = franchiseInput.Payback;
-                    findFranchise.LaunchDate = franchiseInput.LaunchDate;
-                    findFranchise.InvestInclude = franchiseInput.InvestInclude;
-                    findFranchise.Peculiarity = franchiseInput.Peculiarity;
-                    findFranchise.PaymentDetail = franchiseInput.PaymentDetail;
-                    findFranchise.TrainingDetails = franchiseInput.TrainingDetails;
-                    findFranchise.UrlVideo = franchiseInput.UrlVideo;
-                    findFranchise.Reviews = franchiseInput.Reviews;
-
-                    _postgreDbContext.Update(findFranchise);
-                }
-
-                await _postgreDbContext.SaveChangesAsync();
-
-                var result = new CreateUpdateFranchiseOutput
-                {
-                    ActivityDetail = franchiseInput.ActivityDetail,
-                    BaseDate = DateTime.Now.Year,
-                    BusinessCount = franchiseInput.BusinessCount,
-                    Category = franchiseInput.Category,
-                    SubCategory = franchiseInput.SubCategory,
-                    DateCreate = DateTime.Now,
-                    DotCount = franchiseInput.DotCount,
-                    FinIndicators = franchiseInput.FinIndicators,
-                    FranchisePacks = franchiseInput.FranchisePacks,
-                    UrlsDetails = urlsDetails.ToArray(),
-                    FileLogoUrl = "../../../assets/images/" + franchiseInput.FileLogo.Files[0].FileName,
-                    NameFinIndicators = franchiseInput.FinIndicators,
-                    FinModelFileUrl = "/docs" + franchiseInput.FinModelFile.Files[0].FileName,
-                    FranchisePhotoUrl = "../../../assets/images/" + franchiseInput.FranchisePhoto.Files[0].FileName,
-                    PresentFileUrl = "/docs" + franchiseInput.PresentFile.Files[0].FileName,
-                    TrainingPhotoUrl = "../../../assets/images/" + franchiseInput.TrainingPhoto.Files[0].FileName,
-                    Title = franchiseInput.Title,
-                    Text = franchiseInput.Text,
-                    Price = franchiseInput.Price,
-                    ViewBusiness = franchiseInput.ViewBusiness,
-                    IsGarant = franchiseInput.IsGarant,
-                    ProfitMonth = franchiseInput.ProfitMonth,
-                    ProfitPrice = franchiseInput.ProfitPrice,
-                    Status = franchiseInput.Status,
-                    YearStart = franchiseInput.YearStart,
-                    GeneralInvest = franchiseInput.GeneralInvest,
-                    LumpSumPayment = franchiseInput.LumpSumPayment,
-                    Royalty = franchiseInput.Royalty,
-                    Payback = franchiseInput.Payback,
-                    LaunchDate = franchiseInput.LaunchDate,
-                    InvestInclude = franchiseInput.InvestInclude,
-                    Peculiarity = franchiseInput.Peculiarity,
-                    PaymentDetail = franchiseInput.PaymentDetail,
-                    TrainingDetails = franchiseInput.TrainingDetails,
-                    UrlVideo = franchiseInput.UrlVideo,
-                    Reviews = franchiseInput.Reviews
-                };
 
                 return result;
             }
@@ -754,11 +737,12 @@ namespace Garant.Platform.Service.Service.Franchise
             try
             {
                 var results = new List<string>();
+                var files = new FormCollection(null, form.Files).Files;
 
                 // Отправит файлы на FTP-сервер.
-                if (form.Files.Count > 0)
+                if (files.Any())
                 {
-                    await _ftpService.UploadFilesFtpAsync(form);
+                    await _ftpService.UploadFilesFtpAsync(files);
                 }
 
                 // Найдет такого пользователя.
