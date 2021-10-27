@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
+using Garant.Platform.Models.Transition.Output;
 using Garant.Platform.Models.User.Output;
 
 namespace Garant.Platform.Core.Abstraction
@@ -120,5 +121,21 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="code">Код.</param>
         /// <returns>Id пользователя.</returns>
         Task<string> FindUserByCodeAsync(string code);
+
+        /// <summary>
+        /// Метод запишет переход пользователя.
+        /// </summary>
+        /// <param name="account">Логин или почта пользователя.</param>
+        /// <param name="transitionType">Тип перехода.</param>
+        /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <returns>Флаг записи перехода.</returns>
+        Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId);
+
+        /// <summary>
+        /// Метод получит переход пользователя.
+        /// </summary>
+        /// <param name="account">Логин или почта пользователя.</param>
+        /// <returns>Данные перехода.</returns>
+        Task<TransitionOutput> GetTransitionAsync(string account);
     }
 }

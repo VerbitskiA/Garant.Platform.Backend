@@ -1,11 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using Garant.Platform.Models.Franchise.Other;
 
 namespace Garant.Platform.Models.Franchise.Output
 {
     public class FranchiseOutput
     {
+        /// <summary>
+        /// Id франшизы.
+        /// </summary>
+        public long FranchiseId { get; set; }
+
         /// <summary>
         /// Путь к изображению.
         /// </summary>
@@ -77,5 +80,10 @@ namespace Garant.Platform.Models.Franchise.Output
         /// Режим просмотр или редактирование франшизы.
         /// </summary>
         public string Mode { get; set; }
+
+        /// <summary>
+        /// Сумма инвестиций.
+        /// </summary>
+        public string TotalInvest { get; set; }
     }
 }

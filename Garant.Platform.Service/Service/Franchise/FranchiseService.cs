@@ -48,7 +48,9 @@ namespace Garant.Platform.Service.Service.Franchise
                                         Title = p.Title,
                                         Url = p.Url,
                                         IsGarant = p.IsGarant,
-                                        ProfitPrice = p.ProfitPrice
+                                        ProfitPrice = p.ProfitPrice,
+                                        TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                                        FranchiseId = p.FranchiseId
                                     })
                     .ToListAsync();
 
@@ -764,6 +766,31 @@ namespace Garant.Platform.Service.Service.Franchise
                 }
 
                 return results;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод проверит существование франшизы.
+        /// </summary>
+        /// <param name="franchiseId">Id франшизы.</param>
+        /// <returns>Флаг успеха поиска.</returns>
+        public async Task<bool> CheckFranchiseAsync(long franchiseId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Franchises
+                    .Where(f => f.FranchiseId == franchiseId)
+                    .FirstOrDefaultAsync();
+
+                return result != null;
             }
 
             catch (Exception e)

@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Suggestion
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.GetSingleSuggestion(true, false));
-            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
+            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService, null);
             var result = await component.GetSingleSuggestion(true, false);
 
             Assert.IsTrue(result != null);
@@ -26,7 +26,7 @@ namespace Garant.Platform.Tests.Suggestion
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.GetAllSuggestionsAsync(false, true));
-            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
+            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService, null);
             var result = await component.GetAllSuggestionsAsync(false, true);
 
             Assert.IsTrue(result.Any());

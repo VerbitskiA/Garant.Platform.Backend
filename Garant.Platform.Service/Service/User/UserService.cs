@@ -9,10 +9,12 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Mailings.Abstraction;
+using Garant.Platform.Models.Entities.Transition;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
+using Garant.Platform.Models.Transition.Output;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,14 +32,16 @@ namespace Garant.Platform.Service.Service.User
         private readonly PostgreDbContext _postgreDbContext;
         private readonly ICommonService _commonService;
         private readonly IMailingService _mailingService;
+        private readonly IFranchiseService _franchiseService;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, ICommonService commonService, IMailingService mailingService)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, ICommonService commonService, IMailingService mailingService, IFranchiseService franchiseService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _postgreDbContext = postgreDbContext;
             _commonService = commonService;
             _mailingService = mailingService;
+            _franchiseService = franchiseService;
         }
 
         /// <summary>
@@ -694,6 +698,125 @@ namespace Garant.Platform.Service.Service.User
                 var result = await (from u in _postgreDbContext.Users
                                 where u.Code.Equals(data)
                                 select u.Id)
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод запишет переход пользователя.
+        /// </summary>
+        /// <param name="account">Логин или почта пользователя.</param>
+        /// <param name="transitionType">Тип перехода.</param>
+        /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <returns>Флаг записи перехода.</returns>
+        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(transitionType) || referenceId <= 0)
+                {
+                    return false;
+                }
+
+                var user = await FindUserByEmailOrPhoneNumberAsync(account);
+
+                // Если такого пользователя не найдено.
+                if (user == null)
+                {
+                    return false;
+                }
+
+                // Если переход франшизы.
+                if (transitionType.Equals("Franchise"))
+                {
+                    // Проверит существование такой франшизы.
+                    var findFranchise = await _franchiseService.CheckFranchiseAsync(referenceId);
+
+                    if (!findFranchise)
+                    {
+                        return false;
+                    }
+                }
+
+                // TODO: вернуться когда будет заведена таблица готового бизнеса.
+                // Если переход готового бизнеса.
+                //else if (expr)
+                //{
+                    
+                //}
+
+                // Проверит, есть ли уже переход у пользователя.
+                var findTransition = await _postgreDbContext.Transitions
+                    .Where(t => t.UserId.Equals(user.UserId))
+                    .FirstOrDefaultAsync();
+
+                // Если перехода нет, то добавит.
+                if (findTransition == null)
+                {
+                    await _postgreDbContext.Transitions.AddAsync(new TransitionEntity
+                    {
+                        UserId = user.UserId,
+                        TransitionType = transitionType,
+                        ReferenceId = referenceId
+                    });
+                }
+
+                // Если есть, то перезапишет его.
+                else
+                {
+                    var updateTransition = new TransitionEntity
+                    {
+                        UserId = user.UserId,
+                        TransitionType = transitionType,
+                        ReferenceId = referenceId
+                    };
+
+                    _postgreDbContext.Update(updateTransition);
+                }
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return true;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит переход пользователя.
+        /// </summary>
+        /// <param name="account">Логин или почта пользователя.</param>
+        /// <returns>Данные перехода.</returns>
+        public async Task<TransitionOutput> GetTransitionAsync(string account)
+        {
+            try
+            {
+                var user = await FindUserByEmailOrPhoneNumberAsync(account);
+
+                var result = await _postgreDbContext.Transitions
+                    .Where(t => t.UserId.Equals(user.UserId))
+                    .Select(t => new TransitionOutput
+                    {
+                        ReferenceId = t.ReferenceId,
+                        TransitionType = t.TransitionType,
+                        UserId = t.UserId
+                    })
                     .FirstOrDefaultAsync();
 
                 return result;

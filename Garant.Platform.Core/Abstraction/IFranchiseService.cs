@@ -91,5 +91,12 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="form">Файлы.</param>
         /// <returns>Список названий файлов.</returns>
         Task<IEnumerable<string>> AddTempFilesBeforeCreateFranchiseAsync(IFormCollection form, string account);
+
+        /// <summary>
+        /// Метод проверит существование франшизы.
+        /// </summary>
+        /// <param name="franchiseId">Id франшизы.</param>
+        /// <returns>Флаг успеха поиска.</returns>
+        Task<bool> CheckFranchiseAsync(long franchiseId);
     }
 }
