@@ -32,16 +32,16 @@ namespace Garant.Platform.Service.Service.User
         private readonly PostgreDbContext _postgreDbContext;
         private readonly ICommonService _commonService;
         private readonly IMailingService _mailingService;
-        private readonly IFranchiseService _franchiseService;
+        //private readonly IFranchiseService _franchiseService;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, ICommonService commonService, IMailingService mailingService, IFranchiseService franchiseService)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, ICommonService commonService, IMailingService mailingService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _postgreDbContext = postgreDbContext;
             _commonService = commonService;
             _mailingService = mailingService;
-            _franchiseService = franchiseService;
+            //_franchiseService = franchiseService;
         }
 
         /// <summary>
@@ -728,10 +728,28 @@ namespace Garant.Platform.Service.Service.User
                     return false;
                 }
 
-                var user = await FindUserByEmailOrPhoneNumberAsync(account);
+                var userId = string.Empty;
 
-                // Если такого пользователя не найдено.
-                if (user == null)
+                var findUser = await FindUserByEmailOrPhoneNumberAsync(account);
+
+                // Если такого пользователя не найдено, значит поищет по коду.
+                if (findUser == null)
+                {
+                    var findUserIdByCode = await FindUserByCodeAsync(account);
+
+                    if (!string.IsNullOrEmpty(findUserIdByCode))
+                    {
+                        userId = findUserIdByCode;
+                    }
+                }
+
+                else
+                {
+                    userId = findUser.UserId;
+                }
+
+                // Если никак не найдено.
+                if (findUser == null && string.IsNullOrEmpty(userId))
                 {
                     return false;
                 }
@@ -740,9 +758,11 @@ namespace Garant.Platform.Service.Service.User
                 if (transitionType.Equals("Franchise"))
                 {
                     // Проверит существование такой франшизы.
-                    var findFranchise = await _franchiseService.CheckFranchiseAsync(referenceId);
+                    var findFranchise = await _postgreDbContext.Franchises
+                        .Where(f => f.FranchiseId == referenceId)
+                        .FirstOrDefaultAsync();
 
-                    if (!findFranchise)
+                    if (findFranchise == null)
                     {
                         return false;
                     }
@@ -752,12 +772,12 @@ namespace Garant.Platform.Service.Service.User
                 // Если переход готового бизнеса.
                 //else if (expr)
                 //{
-                    
+
                 //}
 
                 // Проверит, есть ли уже переход у пользователя.
                 var findTransition = await _postgreDbContext.Transitions
-                    .Where(t => t.UserId.Equals(user.UserId))
+                    .Where(t => t.UserId.Equals(userId))
                     .FirstOrDefaultAsync();
 
                 // Если перехода нет, то добавит.
@@ -765,7 +785,7 @@ namespace Garant.Platform.Service.Service.User
                 {
                     await _postgreDbContext.Transitions.AddAsync(new TransitionEntity
                     {
-                        UserId = user.UserId,
+                        UserId = userId,
                         TransitionType = transitionType,
                         ReferenceId = referenceId
                     });
@@ -776,7 +796,7 @@ namespace Garant.Platform.Service.Service.User
                 {
                     var updateTransition = new TransitionEntity
                     {
-                        UserId = user.UserId,
+                        UserId = userId,
                         TransitionType = transitionType,
                         ReferenceId = referenceId
                     };
@@ -807,10 +827,34 @@ namespace Garant.Platform.Service.Service.User
         {
             try
             {
-                var user = await FindUserByEmailOrPhoneNumberAsync(account);
+                var findUser = await FindUserByEmailOrPhoneNumberAsync(account);
+
+                var userId = string.Empty;
+
+                // Если такого пользователя не найдено, значит поищет по коду.
+                if (findUser == null)
+                {
+                    var findUserIdByCode = await FindUserByCodeAsync(account);
+
+                    if (!string.IsNullOrEmpty(findUserIdByCode))
+                    {
+                        userId = findUserIdByCode;
+                    }
+                }
+
+                else
+                {
+                    userId = findUser.UserId;
+                }
+
+                // Если никак не найдено.
+                if (findUser == null && string.IsNullOrEmpty(userId))
+                {
+                    return null;
+                }
 
                 var result = await _postgreDbContext.Transitions
-                    .Where(t => t.UserId.Equals(user.UserId))
+                    .Where(t => t.UserId.Equals(userId))
                     .Select(t => new TransitionOutput
                     {
                         ReferenceId = t.ReferenceId,

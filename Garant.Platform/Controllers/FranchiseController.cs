@@ -116,7 +116,6 @@ namespace Garant.Platform.Controllers
         /// <param name="franchiseFilesInput">Входные файлы.</param>
         /// <param name="franchiseDataInput">Данные в строке json.</param>
         /// <returns>Данные франшизы.</returns>
-        [AllowAnonymous]
         [HttpPost, Route("create-update-franchise")]
         [ProducesResponseType(200, Type = typeof(CreateUpdateFranchiseOutput))]
         public async Task<IActionResult> CreateUpdateFranchiseAsync([FromForm] IFormCollection franchiseFilesInput, [FromForm] string franchiseDataInput)
@@ -144,7 +143,6 @@ namespace Garant.Platform.Controllers
         /// Метод отправит файл в папку и временно запишет в БД.
         /// </summary>
         /// <param name="files">Файлы.</param>
-        [AllowAnonymous]
         [HttpPost]
         [Route("temp-file")]
         public async Task<IActionResult> AddTempFilesBeforeCreateFranchiseAsync([FromForm] IFormCollection files)

@@ -89,7 +89,9 @@ namespace Garant.Platform.Service.Service.Franchise
                                         Text = p.Text,
                                         TextDoPrice = p.TextDoPrice,
                                         Title = p.Title,
-                                        Url = p.Url
+                                        Url = p.Url,
+                                        //TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                                        FranchiseId = p.FranchiseId
                                     })
                     .Take(4)
                     .ToListAsync();
@@ -126,7 +128,9 @@ namespace Garant.Platform.Service.Service.Franchise
                                        Title = p.Title,
                                        Url = p.Url,
                                        IsGarant = p.IsGarant,
-                                       ProfitPrice = p.ProfitPrice
+                                       ProfitPrice = p.ProfitPrice,
+                                       TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                                       FranchiseId = p.FranchiseId
                                    })
                     .Take(4)
                     .ToListAsync();
@@ -262,7 +266,9 @@ namespace Garant.Platform.Service.Service.Franchise
                                      Title = f.Title,
                                      Url = f.Url,
                                      IsGarant = f.IsGarant,
-                                     ProfitPrice = f.ProfitPrice
+                                     ProfitPrice = f.ProfitPrice,
+                                     TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
+                                     FranchiseId = f.FranchiseId
                                  })
                         .AsQueryable();
 
@@ -346,7 +352,9 @@ namespace Garant.Platform.Service.Service.Franchise
                                         Title = f.Title,
                                         Url = f.Url,
                                         IsGarant = f.IsGarant,
-                                        ProfitPrice = f.ProfitPrice
+                                        ProfitPrice = f.ProfitPrice,
+                                        TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
+                                        FranchiseId = f.FranchiseId
                                     })
                     .Take(10)
                     .ToListAsync();
@@ -393,7 +401,7 @@ namespace Garant.Platform.Service.Service.Franchise
                     .Take(10)
                     .ToListAsync();
 
-                foreach (var item in items)
+                foreach (FranchiseOutput item in items)
                 {
                     item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
                 }
@@ -669,13 +677,13 @@ namespace Garant.Platform.Service.Service.Franchise
         /// <param name="franchiseId">Id франшизы.</param>
         /// <param name="mode">Режим (Edit или View).</param>
         /// <returns>Данные франшизы.</returns>
-        public async Task<FranchiseEntity> GetFranchiseAsync(long franchiseId, string mode)
+        public async Task<FranchiseOutput> GetFranchiseAsync(long franchiseId, string mode)
         {
             try
             {
                 var result = await (from f in _postgreDbContext.Franchises
                                     where f.FranchiseId == franchiseId
-                                    select new FranchiseEntity
+                                    select new FranchiseOutput
                                     {
                                         FranchiseId = f.FranchiseId,
                                         ActivityDetail = f.ActivityDetail,
@@ -696,7 +704,7 @@ namespace Garant.Platform.Service.Service.Franchise
                                         TrainingPhotoName = f.TrainingPhotoName,
                                         Title = f.Title,
                                         Text = f.Text,
-                                        Price = f.Price,
+                                        Price = string.Format("{0:0,0}", f.Price),
                                         ViewBusiness = f.ViewBusiness,
                                         IsGarant = f.IsGarant,
                                         ProfitMonth = f.ProfitMonth,
@@ -713,7 +721,9 @@ namespace Garant.Platform.Service.Service.Franchise
                                         PaymentDetail = f.PaymentDetail,
                                         TrainingDetails = f.TrainingDetails,
                                         UrlVideo = f.UrlVideo,
-                                        Reviews = f.Reviews
+                                        Reviews = f.Reviews,
+                                        Mode = mode,
+                                        TotalInvest = string.Format("{0:0,0}", f.GeneralInvest)
                                     })
                     .FirstOrDefaultAsync();
 
@@ -766,31 +776,6 @@ namespace Garant.Platform.Service.Service.Franchise
                 }
 
                 return results;
-            }
-
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogError();
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Метод проверит существование франшизы.
-        /// </summary>
-        /// <param name="franchiseId">Id франшизы.</param>
-        /// <returns>Флаг успеха поиска.</returns>
-        public async Task<bool> CheckFranchiseAsync(long franchiseId)
-        {
-            try
-            {
-                var result = await _postgreDbContext.Franchises
-                    .Where(f => f.FranchiseId == franchiseId)
-                    .FirstOrDefaultAsync();
-
-                return result != null;
             }
 
             catch (Exception e)

@@ -14,9 +14,9 @@ namespace Garant.Platform.Tests.Transition
         public async Task GetTransitionAsyncTest()
         {
             var mock = new Mock<IUserService>();
-            var franchiseService = new FranchiseService(PostgreDbContext, null, UserService);
+            //var franchiseService = new FranchiseService(PostgreDbContext, null, UserService);
             mock.Setup(a => a.GetTransitionAsync("ivan@mail.ru"));
-            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService, franchiseService);
+            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
             var result = await component.GetTransitionAsync("ivan@mail.ru");
 
             Assert.IsTrue(result != null);

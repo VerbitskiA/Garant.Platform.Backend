@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Header
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.GetBreadcrumbsAsync("create-franchise"));
-            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService, null);
+            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
             var result = await component.GetBreadcrumbsAsync("create-franchise");
 
             Assert.IsTrue(result.Any());
