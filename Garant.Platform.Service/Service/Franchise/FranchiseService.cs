@@ -744,12 +744,13 @@ namespace Garant.Platform.Service.Service.Franchise
         /// </summary>
         /// <param name="form">Файлы.</param>
         /// <returns>Список названий файлов.</returns>
-        public async Task<IEnumerable<string>> AddTempFilesBeforeCreateFranchiseAsync(IFormCollection form, string user)
+        public async Task<IEnumerable<string>> AddTempFilesBeforeCreateFranchiseAsync(IFormCollection form, string account)
         {
             try
             {
                 var results = new List<string>();
                 var files = new FormCollection(null, form.Files).Files;
+                var userId = string.Empty;
 
                 // Отправит файлы на FTP-сервер.
                 if (files.Any())
@@ -758,7 +759,23 @@ namespace Garant.Platform.Service.Service.Franchise
                 }
 
                 // Найдет такого пользователя.
-                var userId = await _userService.FindUserByCodeAsync(user);
+                var findUser = await _userService.FindUserByEmailOrPhoneNumberAsync(account);
+
+                // Если такого пользователя не найдено, значит поищет по коду.
+                if (findUser == null)
+                {
+                    var findUserIdByCode = await _userService.FindUserByCodeAsync(account);
+
+                    if (!string.IsNullOrEmpty(findUserIdByCode))
+                    {
+                        userId = findUserIdByCode;
+                    }
+                }
+
+                else
+                {
+                    userId = findUser.UserId;
+                }
 
                 if (!string.IsNullOrEmpty(userId))
                 {
