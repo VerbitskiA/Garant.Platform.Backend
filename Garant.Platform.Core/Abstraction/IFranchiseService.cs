@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Output;
+using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Core.Abstraction
 {
@@ -66,5 +68,28 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <returns>Список отзывов.</returns>
         Task<IEnumerable<FranchiseOutput>> GetReviewsFranchisesAsync();
+
+        /// <summary>
+        /// Метод создаст новую  или обновит существующую франшизу.
+        /// </summary>
+        /// <param name="franchiseFilesInput">Входные файлы.</param>
+        /// <param name="franchiseDataInput">Данные в строке json.</param>
+        /// <returns>Данные франшизы.</returns>
+        Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(IFormCollection franchiseFilesInput, string franchiseDataInput);
+
+        /// <summary>
+        /// Метод получит франшизу для просмотра или изменения.
+        /// </summary>
+        /// <param name="franchiseId">Id франшизы.</param>
+        /// <param name="mode">Режим (Edit или View).</param>
+        /// <returns>Данные франшизы.</returns>
+        Task<FranchiseOutput> GetFranchiseAsync(long franchiseId, string mode);
+
+        /// <summary>
+        /// Метод отправит файл в папку и временно запишет в БД.
+        /// </summary>
+        /// <param name="form">Файлы.</param>
+        /// <returns>Список названий файлов.</returns>
+        Task<IEnumerable<string>> AddTempFilesBeforeCreateFranchiseAsync(IFormCollection form, string account);
     }
 }

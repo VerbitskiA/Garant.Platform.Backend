@@ -9,10 +9,12 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Mailings.Abstraction;
+using Garant.Platform.Models.Entities.Transition;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
+using Garant.Platform.Models.Transition.Output;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +32,7 @@ namespace Garant.Platform.Service.Service.User
         private readonly PostgreDbContext _postgreDbContext;
         private readonly ICommonService _commonService;
         private readonly IMailingService _mailingService;
+        //private readonly IFranchiseService _franchiseService;
 
         public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, ICommonService commonService, IMailingService mailingService)
         {
@@ -38,6 +41,7 @@ namespace Garant.Platform.Service.Service.User
             _postgreDbContext = postgreDbContext;
             _commonService = commonService;
             _mailingService = mailingService;
+            //_franchiseService = franchiseService;
         }
 
         /// <summary>
@@ -64,8 +68,9 @@ namespace Garant.Platform.Service.Service.User
 
                 var result = new ClaimOutput
                 {
-                    Email = email,
-                    Token = token
+                    User = email,
+                    Token = token,
+                    IsSuccess = true
                 };
 
                 return result;
@@ -122,7 +127,7 @@ namespace Garant.Platform.Service.Service.User
         /// </summary>
         /// <param name="code">Код подтверждения.</param>
         /// <returns>Статус проверки.</returns>
-        public async Task<bool> CheckAcceptCodeAsync(string code)
+        public async Task<ClaimOutput> CheckAcceptCodeAsync(string code)
         {
             try
             {
@@ -131,7 +136,33 @@ namespace Garant.Platform.Service.Service.User
                                   select u)
                     .FirstOrDefaultAsync();
 
-                return user != null;
+                var claim = GetIdentityClaim(code);
+
+                // Генерит токен юзеру.
+                var token = GenerateToken(claim).Result;
+
+                ClaimOutput result = null;
+
+                // Если пользователь найден.
+                if (user != null)
+                {
+                    result = new ClaimOutput
+                    {
+                        Token = token,
+                        User = user.PhoneNumber ?? user.Email,
+                        IsSuccess = true
+                    };
+                }
+
+                else
+                {
+                    result = new ClaimOutput
+                    {
+                        IsSuccess = false
+                    };
+                }
+
+                return result;
             }
 
             catch (Exception e)
@@ -563,6 +594,274 @@ namespace Garant.Platform.Service.Service.User
                                     })
                         .ToListAsync();
                 }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод обновит токен.
+        /// </summary>
+        /// <returns>Новый токен.</returns>
+        public async Task<ClaimOutput> GenerateTokenAsync()
+        {
+            try
+            {
+                var now = DateTime.UtcNow;
+                var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: new ClaimsIdentity().Claims,
+                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+                var result = new ClaimOutput
+                {
+                    Token = encodedJwt
+                };
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод сформирует хлебные крошки для страницы.
+        /// </summary>
+        /// <param name="selectorPage"> Селектор страницы, для которой нужно сформировать хлебные крошки.</param>
+        /// <returns>Список хлебных крошек.</returns>
+        public async Task<IEnumerable<BreadcrumbOutput>> GetBreadcrumbsAsync(string selectorPage)
+        {
+            try
+            {
+                var result = await (from b in _postgreDbContext.Breadcrumbs
+                                    where b.SelectorPage.Equals(selectorPage)
+                                    orderby b.Position
+                                    select new BreadcrumbOutput
+                                    {
+                                        Label = b.Label,
+                                        SelectorPage = b.SelectorPage,
+                                        Url = b.Url,
+                                        Position = b.Position
+                                    })
+                    .ToListAsync();
+
+                // Вычислит последний активный пункт цепочки хлебных крошек.
+                var maxPosition = result.Max(l => l.Position);
+
+                foreach (var item in result)
+                {
+                    if (item.Position == maxPosition)
+                    {
+                        item.IsCurrent = true;
+                    }
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод найдет пользователя по коду.
+        /// </summary>
+        /// <param name="data">Параметр поиска.</param>
+        /// <returns>Id пользователя.</returns>
+        public async Task<string> FindUserByCodeAsync(string data)
+        {
+            try
+            {
+                var result = await (from u in _postgreDbContext.Users
+                                where u.Code.Equals(data)
+                                select u.Id)
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод запишет переход пользователя.
+        /// </summary>
+        /// <param name="account">Логин или почта пользователя.</param>
+        /// <param name="transitionType">Тип перехода.</param>
+        /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <returns>Флаг записи перехода.</returns>
+        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(transitionType) || referenceId <= 0)
+                {
+                    return false;
+                }
+
+                var userId = string.Empty;
+
+                var findUser = await FindUserByEmailOrPhoneNumberAsync(account);
+
+                // Если такого пользователя не найдено, значит поищет по коду.
+                if (findUser == null)
+                {
+                    var findUserIdByCode = await FindUserByCodeAsync(account);
+
+                    if (!string.IsNullOrEmpty(findUserIdByCode))
+                    {
+                        userId = findUserIdByCode;
+                    }
+                }
+
+                else
+                {
+                    userId = findUser.UserId;
+                }
+
+                // Если никак не найдено.
+                if (findUser == null && string.IsNullOrEmpty(userId))
+                {
+                    return false;
+                }
+
+                // Если переход франшизы.
+                if (transitionType.Equals("Franchise"))
+                {
+                    // Проверит существование такой франшизы.
+                    var findFranchise = await _postgreDbContext.Franchises
+                        .Where(f => f.FranchiseId == referenceId)
+                        .FirstOrDefaultAsync();
+
+                    if (findFranchise == null)
+                    {
+                        return false;
+                    }
+                }
+
+                // TODO: вернуться когда будет заведена таблица готового бизнеса.
+                // Если переход готового бизнеса.
+                //else if (expr)
+                //{
+
+                //}
+
+                // Проверит, есть ли уже переход у пользователя.
+                var findTransition = await _postgreDbContext.Transitions
+                    .Where(t => t.UserId.Equals(userId))
+                    .FirstOrDefaultAsync();
+
+                // Если перехода нет, то добавит.
+                if (findTransition == null)
+                {
+                    await _postgreDbContext.Transitions.AddAsync(new TransitionEntity
+                    {
+                        UserId = userId,
+                        TransitionType = transitionType,
+                        ReferenceId = referenceId
+                    });
+                }
+
+                // Если есть, то перезапишет его.
+                else
+                {
+                    var updateTransition = new TransitionEntity
+                    {
+                        UserId = userId,
+                        TransitionType = transitionType,
+                        ReferenceId = referenceId
+                    };
+
+                    _postgreDbContext.Update(updateTransition);
+                }
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return true;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит переход пользователя.
+        /// </summary>
+        /// <param name="account">Логин или почта пользователя.</param>
+        /// <returns>Данные перехода.</returns>
+        public async Task<TransitionOutput> GetTransitionAsync(string account)
+        {
+            try
+            {
+                var findUser = await FindUserByEmailOrPhoneNumberAsync(account);
+
+                var userId = string.Empty;
+
+                // Если такого пользователя не найдено, значит поищет по коду.
+                if (findUser == null)
+                {
+                    var findUserIdByCode = await FindUserByCodeAsync(account);
+
+                    if (!string.IsNullOrEmpty(findUserIdByCode))
+                    {
+                        userId = findUserIdByCode;
+                    }
+                }
+
+                else
+                {
+                    userId = findUser.UserId;
+                }
+
+                // Если никак не найдено.
+                if (findUser == null && string.IsNullOrEmpty(userId))
+                {
+                    return null;
+                }
+
+                var result = await _postgreDbContext.Transitions
+                    .Where(t => t.UserId.Equals(userId))
+                    .Select(t => new TransitionOutput
+                    {
+                        ReferenceId = t.ReferenceId,
+                        TransitionType = t.TransitionType,
+                        UserId = t.UserId
+                    })
+                    .FirstOrDefaultAsync();
 
                 return result;
             }

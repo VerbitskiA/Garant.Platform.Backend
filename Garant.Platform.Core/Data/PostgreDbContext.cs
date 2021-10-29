@@ -9,6 +9,7 @@ using Garant.Platform.Models.Entities.LastBuy;
 using Garant.Platform.Models.Entities.Logger;
 using Garant.Platform.Models.Entities.News;
 using Garant.Platform.Models.Entities.Suggestion;
+using Garant.Platform.Models.Entities.Transition;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -109,5 +110,20 @@ namespace Garant.Platform.Core.Data
         /// Таблица Franchises.Categories.
         /// </summary>
         public DbSet<CategoryEntity> Categories { get; set; }
+
+        /// <summary>
+        /// Таблица dbo.Breadcrumbs.
+        /// </summary>
+        public DbSet<BreadcrumbEntity> Breadcrumbs { get; set; }
+
+        /// <summary>
+        /// Таблица Franchises.TempFranchises.
+        /// </summary>
+        public DbSet<TempFranchiseEntity> TempFranchises { get; set; }
+
+        /// <summary>
+        /// Таблица dbo.Transitions.
+        /// </summary>
+        public DbSet<TransitionEntity> Transitions { get; set; }
     }
 }

@@ -1,41 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Garant.Platform.Models.Franchise.Other;
+﻿using Garant.Platform.Models.Entities.Franchise;
 
 namespace Garant.Platform.Models.Franchise.Output
 {
-    public class FranchiseOutput
+    public class FranchiseOutput : FranchiseEntity
     {
-        /// <summary>
-        /// Путь к изображению.
-        /// </summary>
-        public string Url { get; set; }
-
-        /// <summary>
-        /// Заголовок.
-        /// </summary>
-        public string Title { get; set; }
-
-        /// <summary>
-        /// Текст описания.
-        /// </summary>
-        public string Text { get; set; }
-
-        /// <summary>
-        /// Цена.
-        /// </summary>
-        public string Price { get; set; }
-
-        /// <summary>
-        /// Дата создания.
-        /// </summary>
-        public DateTime DateCreate { get; set; }
-
-        /// <summary>
-        /// Текст до цены.
-        /// </summary>
-        public string TextDoPrice { get; set; }
-
         /// <summary>
         /// Кол-во дней.
         /// </summary>
@@ -47,30 +15,20 @@ namespace Garant.Platform.Models.Franchise.Output
         public string DayDeclination { get; set; }
 
         /// <summary>
-        /// Категория франшизы.
-        /// </summary>
-        public string Category { get; set; }
-
-        /// <summary>
-        /// Подкатегория.
-        /// </summary>
-        public string SubCategory { get; set; }
-
-        public List<SubCategory> SubCategoryResult { get; set; } = new();
-
-        /// <summary>
         /// Полная строка текста для вставки в одном поле.
         /// </summary>
         public string FullText { get; set; }
 
         /// <summary>
-        /// Покупка через гарант.
+        /// Режим просмотр или редактирование франшизы.
         /// </summary>
-        public bool IsGarant { get; set; }
+        public string Mode { get; set; }
 
         /// <summary>
-        /// Желаемая прибыль в мес.
+        /// Сумма инвестиций.
         /// </summary>
-        public double ProfitPrice { get; set; }
+        public string TotalInvest { get; set; }
+
+        public new string  Price { get; set; }
     }
 }

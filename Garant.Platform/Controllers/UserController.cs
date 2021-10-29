@@ -8,6 +8,8 @@ using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Mailing.Input;
 using Garant.Platform.Models.Suggestion.Input;
 using Garant.Platform.Models.Suggestion.Output;
+using Garant.Platform.Models.Transition.Input;
+using Garant.Platform.Models.Transition.Output;
 using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -71,7 +73,7 @@ namespace Garant.Platform.Controllers
         /// <returns>Статус проверки.</returns>
         [AllowAnonymous]
         [HttpPost, Route("check-code")]
-        [ProducesResponseType(200, Type = typeof(bool))]
+        [ProducesResponseType(200, Type = typeof(ClaimOutput))]
         public async Task<IActionResult> CheckAcceptCodeAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
         {
             var user = await _userService.CheckAcceptCodeAsync(sendAcceptCodeInput.Code);
@@ -163,6 +165,65 @@ namespace Garant.Platform.Controllers
         public async Task<IActionResult> GetAllSuggestionsAsync([FromBody] SuggestionInput suggestionInput)
         {
             var result = await _userService.GetAllSuggestionsAsync(suggestionInput.IsSingle, suggestionInput.IsAll);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод обновит токен.
+        /// </summary>
+        /// <returns>Новый токен.</returns>
+        [AllowAnonymous]
+        [HttpGet, Route("token")]
+        [ProducesResponseType(200, Type = typeof(ClaimOutput))]
+        public async Task<IActionResult> GenerateTokenAsync()
+        {
+            var result = await _userService.GenerateTokenAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод сформирует хлебные крошки для страницы.
+        /// </summary>
+        /// <param name="breadcrumbInput">Входная модель.</param>
+        /// <returns>Список хлебных крошек.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("get-breadcrumbs")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BreadcrumbOutput>))]
+        public async Task<IActionResult> GetBreadcrumbsAsync([FromBody] BreadcrumbInput breadcrumbInput)
+        {
+            var result = await _userService.GetBreadcrumbsAsync(breadcrumbInput.SelectorPage);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод запишет переход пользователя.
+        /// </summary>
+        /// <param name="transitionInput">Входная модель.</param>
+        /// <returns>Флаг записи перехода.</returns>
+        [HttpPost]
+        [Route("set-transition")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> SetTransitionAsync([FromBody] TransitionInput transitionInput)
+        {
+            var result = await _userService.SetTransitionAsync(GetUserName(), transitionInput.TransitionType, transitionInput.ReferenceId);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит переход пользователя.
+        /// </summary>
+        /// <returns>Данные перехода.</returns>
+        [HttpPost]
+        [Route("get-transition")]
+        [ProducesResponseType(200, Type = typeof(TransitionOutput))]
+        public async Task<IActionResult> GetTransitionAsync()
+        {
+            var result = await _userService.GetTransitionAsync(GetUserName());
 
             return Ok(result);
         }

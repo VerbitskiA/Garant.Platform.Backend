@@ -32,8 +32,11 @@ namespace Garant.Platform.Core.Utils
 
             var assemblies2 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Mailings"));
 
+            var assemblies3 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.FTP"));
+
             _builder.RegisterAssemblyTypes(assemblies1).AsImplementedInterfaces();
             _builder.RegisterAssemblyTypes(assemblies2).AsImplementedInterfaces();
+            _builder.RegisterAssemblyTypes(assemblies3).AsImplementedInterfaces();
 
             var assemblies = assemblies1.Union(assemblies2);
 

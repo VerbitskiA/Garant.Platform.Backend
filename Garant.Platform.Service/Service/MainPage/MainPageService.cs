@@ -165,12 +165,13 @@ namespace Garant.Platform.Service.Service.MainPage
         {
             try
             {
+                // TODO: переделать CountDays по аналогии как сделано у франшиз. Это поле должно быть вычисляемым и не храниться в БД. CountDays и DayDeclination убрать из БД а тут сделать CountDays вычисляемым.
                 var result = await (from res in _postgreDbContext.LastBuys
                                     select new LastBuyOutput
                                     {
                                         CountDays = res.CountDays,
                                         DateBuy = res.DateBuy,
-                                        DayDeclination = res.DayDeclination,
+                                        DayDeclination = "дня",
                                         Name = res.Name,
                                         Price = string.Format("{0:0,0}", res.Price),
                                         Text = res.Text,
@@ -245,9 +246,9 @@ namespace Garant.Platform.Service.Service.MainPage
                                     select new FranchiseOutput
                                     {
                                         Category = f.Category,
-                                        CountDays = f.CountDays,
+                                        CountDays = DateTime.Now.Day - f.DateCreate.Day,
+                                        DayDeclination = "дня",
                                         DateCreate = f.DateCreate,
-                                        DayDeclination = f.DayDeclination,
                                         Price = string.Format("{0:0,0}", f.Price),
                                         TextDoPrice = f.TextDoPrice,
                                         Text = f.Text,
@@ -260,11 +261,13 @@ namespace Garant.Platform.Service.Service.MainPage
 
                 foreach (var item in result)
                 {
-                    var value = JsonSerializer.Deserialize<SubCategory>(item.SubCategory);
-                    item.SubCategoryResult.Add(new SubCategory
-                    {
-                        Value = value?.Value
-                    });
+                    //var value = JsonSerializer.Deserialize<SubCategory>(item.SubCategory);
+                    //item.SubCategoryResult.Add(new SubCategory
+                    //{
+                    //    Value = value?.Value
+                    //});
+
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
                 }
 
                 return result;

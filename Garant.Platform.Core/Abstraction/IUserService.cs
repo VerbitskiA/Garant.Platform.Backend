@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
+using Garant.Platform.Models.Transition.Output;
 using Garant.Platform.Models.User.Output;
 
 namespace Garant.Platform.Core.Abstraction
@@ -25,7 +26,7 @@ namespace Garant.Platform.Core.Abstraction
         /// </summary>
         /// <param name="code">Код подтверждения.</param>
         /// <returns>Статус проверки.</returns>
-        Task<bool> CheckAcceptCodeAsync(string code);
+        Task<ClaimOutput> CheckAcceptCodeAsync(string code);
 
         /// <summary>
         /// Метод создаст нового пользователя.
@@ -100,5 +101,41 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="isAll">Получить все предложения.</param>
         /// <returns>Список предложений.</returns>
         Task<IEnumerable<SuggestionOutput>> GetAllSuggestionsAsync(bool isSingle, bool isAll);
+
+        /// <summary>
+        /// Метод обновит токен.
+        /// </summary>
+        /// <returns>Новый токен.</returns>
+        Task<ClaimOutput> GenerateTokenAsync();
+
+        /// <summary>
+        /// Метод сформирует хлебные крошки для страницы.
+        /// </summary>
+        /// <param name="selectorPage"> Селектор страницы, для которой нужно сформировать хлебные крошки.</param>
+        /// <returns>Список хлебных крошек.</returns>
+        Task<IEnumerable<BreadcrumbOutput>> GetBreadcrumbsAsync(string selectorPage);
+
+        /// <summary>
+        /// Метод найдет пользователя по коду.
+        /// </summary>
+        /// <param name="code">Код.</param>
+        /// <returns>Id пользователя.</returns>
+        Task<string> FindUserByCodeAsync(string code);
+
+        /// <summary>
+        /// Метод запишет переход пользователя.
+        /// </summary>
+        /// <param name="account">Логин или почта пользователя.</param>
+        /// <param name="transitionType">Тип перехода.</param>
+        /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <returns>Флаг записи перехода.</returns>
+        Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId);
+
+        /// <summary>
+        /// Метод получит переход пользователя.
+        /// </summary>
+        /// <param name="account">Логин или почта пользователя.</param>
+        /// <returns>Данные перехода.</returns>
+        Task<TransitionOutput> GetTransitionAsync(string account);
     }
 }
