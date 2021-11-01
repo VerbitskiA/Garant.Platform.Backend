@@ -37,7 +37,7 @@ namespace Garant.Platform.Service.Repository.Franchise
                                    {
                                        DateCreate = p.DateCreate,
                                        Price = string.Format("{0:0,0}", p.Price),
-                                       CountDays = DateTime.Now.Subtract(p.DateCreate),
+                                       CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
                                        DayDeclination = "дня",
                                        Text = p.Text,
                                        TextDoPrice = p.TextDoPrice,
@@ -108,7 +108,7 @@ namespace Garant.Platform.Service.Repository.Franchise
                                    {
                                        DateCreate = p.DateCreate,
                                        Price = string.Format("{0:0,0}", p.Price),
-                                       CountDays = DateTime.Now.Subtract(p.DateCreate),
+                                       CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
                                        DayDeclination = "дня",
                                        Text = p.Text,
                                        TextDoPrice = p.TextDoPrice,
@@ -242,7 +242,7 @@ namespace Garant.Platform.Service.Repository.Franchise
                                  {
                                      DateCreate = f.DateCreate,
                                      Price = string.Format("{0:0,0}", f.Price),
-                                     CountDays = DateTime.Now.Subtract(f.DateCreate),
+                                     CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
                                      DayDeclination = "дня",
                                      Text = f.Text,
                                      TextDoPrice = f.TextDoPrice,
@@ -274,7 +274,7 @@ namespace Garant.Platform.Service.Repository.Franchise
                                  {
                                      DateCreate = f.DateCreate,
                                      Price = string.Format("{0:0,0}", f.Price),
-                                     CountDays = DateTime.Now.Subtract(f.DateCreate),
+                                     CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
                                      DayDeclination = "дня",
                                      Text = f.Text,
                                      TextDoPrice = f.TextDoPrice,
@@ -323,7 +323,7 @@ namespace Garant.Platform.Service.Repository.Franchise
                                    {
                                        DateCreate = f.DateCreate,
                                        Price = string.Format("{0:0,0}", f.Price),
-                                       CountDays = DateTime.Now.Subtract(f.DateCreate),
+                                       CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
                                        DayDeclination = "дня",
                                        Text = f.Text,
                                        TextDoPrice = f.TextDoPrice,
@@ -362,7 +362,7 @@ namespace Garant.Platform.Service.Repository.Franchise
                                    {
                                        DateCreate = f.DateCreate,
                                        Price = string.Format("{0:0,0}", f.Price),
-                                       CountDays = DateTime.Now.Subtract(f.DateCreate),
+                                       CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
                                        DayDeclination = "дня",
                                        Text = f.Text,
                                        TextDoPrice = f.TextDoPrice,

@@ -7,7 +7,6 @@ using Garant.Platform.Models.Franchise.Output;
 using System.Linq;
 using System.Text.Json;
 using Garant.Platform.Core.Abstraction.Franchise;
-using Garant.Platform.Core.Abstraction.User;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Franchise.Input;
 using Microsoft.AspNetCore.Http;
@@ -19,14 +18,12 @@ namespace Garant.Platform.Service.Service.Franchise
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IFtpService _ftpService;
-        private readonly IUserService _userService;
         private readonly IFranchiseRepository _franchiseRepository;
 
-        public FranchiseService(PostgreDbContext postgreDbContext, IFtpService ftpService, IUserService userService, IFranchiseRepository franchiseRepository)
+        public FranchiseService(PostgreDbContext postgreDbContext, IFtpService ftpService, IFranchiseRepository franchiseRepository)
         {
             _postgreDbContext = postgreDbContext;
             _ftpService = ftpService;
-            _userService = userService;
             _franchiseRepository = franchiseRepository;
         }
 

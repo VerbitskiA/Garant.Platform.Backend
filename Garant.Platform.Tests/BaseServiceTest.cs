@@ -45,7 +45,7 @@ namespace Garant.Platform.Tests
 
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
             UserService = new UserService(null, null, PostgreDbContext, CommonService, MailingService, UserRepository);
-            FranchiseService = new FranchiseService(PostgreDbContext, null, UserService, FranchiseRepository);
+            FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);
         }
     }
 }

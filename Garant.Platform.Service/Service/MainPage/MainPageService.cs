@@ -244,7 +244,7 @@ namespace Garant.Platform.Service.Service.MainPage
                                     select new FranchiseOutput
                                     {
                                         Category = f.Category,
-                                        CountDays = DateTime.Now.Subtract(f.DateCreate),
+                                        CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
                                         DayDeclination = "дня",
                                         DateCreate = f.DateCreate,
                                         Price = string.Format("{0:0,0}", f.Price),
