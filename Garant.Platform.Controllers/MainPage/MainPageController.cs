@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Core.Abstraction.Franchise;
 using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
 using Garant.Platform.Models.Franchise.Output;
@@ -10,14 +11,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Garant.Platform.Controllers
+namespace Garant.Platform.Controllers.MainPage
 {
     /// <summary>
     /// Контроллер главной страницы.
     /// </summary>
     [ApiController, Route("main")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class MainPageController : BaseController
+    public class MainPageController : ControllerBase
     {
         private readonly IMainPageService _mainPageService;
         private readonly IFranchiseService _franchiseService;

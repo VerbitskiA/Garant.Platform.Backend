@@ -1,8 +1,12 @@
 ﻿using Autofac;
 using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Core.Abstraction.Franchise;
+using Garant.Platform.Core.Abstraction.User;
 using Garant.Platform.Core.Attributes;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Service.Pagination;
+using Garant.Platform.Service.Repository.Franchise;
+using Garant.Platform.Service.Repository.User;
 using Garant.Platform.Service.Service.Ad;
 using Garant.Platform.Service.Service.Blog;
 using Garant.Platform.Service.Service.Common;
@@ -24,6 +28,8 @@ namespace Garant.Platform.Service.AutofacModules
             // Сервис пользователя.
             builder.RegisterType<UserService>().Named<IUserService>("UserService");
             builder.RegisterType<UserService>().As<IUserService>();
+            builder.RegisterType<UserRepository>().Named<IUserRepository>("UserRepository");
+            builder.RegisterType<UserRepository>().As<IUserRepository>();
 
             // Общий сервис.
             builder.RegisterType<CommonService>().Named<ICommonService>("CommonService");
@@ -39,6 +45,8 @@ namespace Garant.Platform.Service.AutofacModules
             // Сервис франшиз.
             builder.RegisterType<FranchiseService>().Named<IFranchiseService>("FranchiseService");
             builder.RegisterType<FranchiseService>().As<IFranchiseService>();
+            builder.RegisterType<FranchiseRepository>().Named<IFranchiseRepository>("FranchiseRepository");
+            builder.RegisterType<FranchiseRepository>().As<IFranchiseRepository>();
 
             // Сервис объявлений.
             builder.RegisterType<AdService>().Named<IAdService>("AdService");

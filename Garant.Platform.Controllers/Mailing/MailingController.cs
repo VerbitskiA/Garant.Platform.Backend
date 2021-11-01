@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Garant.Platform.Controllers
+namespace Garant.Platform.Controllers.Mailing
 {
     /// <summary>
     /// Контроллер работы с рассылками.

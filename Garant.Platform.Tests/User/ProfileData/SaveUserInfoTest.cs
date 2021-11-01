@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Core.Abstraction.User;
 using Garant.Platform.Service.Service.User;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -14,7 +14,7 @@ namespace Garant.Platform.Tests.User.ProfileData
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.SaveUserInfoAsync("Иван", "Сергеевич", "Самара", "ivan@mail.ru", "111", "buy,sell"));
-            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
+            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService, UserRepository);
             var result = await component.SaveUserInfoAsync("Иван", "Сергеевич", "Самара", "ivan@mail.ru", "111", "buy,sell");
 
             Assert.IsNotNull(result);

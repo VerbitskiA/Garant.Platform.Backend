@@ -1,4 +1,5 @@
-﻿using Garant.Platform.Models.Entities.Franchise;
+﻿using System;
+using Garant.Platform.Models.Entities.Franchise;
 
 namespace Garant.Platform.Models.Franchise.Output
 {
@@ -7,7 +8,7 @@ namespace Garant.Platform.Models.Franchise.Output
         /// <summary>
         /// Кол-во дней.
         /// </summary>
-        public int CountDays { get; set; }
+        public TimeSpan CountDays { get; set; }
 
         /// <summary>
         /// Склонение дней.

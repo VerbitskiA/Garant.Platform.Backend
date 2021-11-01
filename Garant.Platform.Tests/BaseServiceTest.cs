@@ -1,5 +1,7 @@
 ﻿using Garant.Platform.Core.Data;
 using Garant.Platform.Mailings.Service;
+using Garant.Platform.Service.Repository.Franchise;
+using Garant.Platform.Service.Repository.User;
 using Garant.Platform.Service.Service.Common;
 using Garant.Platform.Service.Service.Franchise;
 using Garant.Platform.Service.Service.User;
@@ -21,6 +23,8 @@ namespace Garant.Platform.Tests
         protected CommonService CommonService;
         protected MailingService MailingService;
         protected FranchiseService FranchiseService;
+        protected FranchiseRepository FranchiseRepository;
+        protected UserRepository UserRepository;
 
         public BaseServiceTest()
         {
@@ -35,10 +39,13 @@ namespace Garant.Platform.Tests
             PostgreDbContext = new PostgreDbContext(optionsBuilder.Options);
 
             // Настройка экземпляров сервисов для тестов.
+            CommonService = new CommonService(PostgreDbContext, null);
+            UserRepository = new UserRepository(PostgreDbContext, CommonService);
+            FranchiseRepository = new FranchiseRepository(PostgreDbContext, UserRepository);
+
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
-            CommonService = new CommonService(PostgreDbContext, MailingService);
-            UserService = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
-            FranchiseService = new FranchiseService(PostgreDbContext, null, UserService);
+            UserService = new UserService(null, null, PostgreDbContext, CommonService, MailingService, UserRepository);
+            FranchiseService = new FranchiseService(PostgreDbContext, null, UserService, FranchiseRepository);
         }
     }
 }

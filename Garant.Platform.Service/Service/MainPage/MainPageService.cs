@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
-using Garant.Platform.Models.Franchise.Other;
 using Garant.Platform.Models.Franchise.Output;
 using Garant.Platform.Models.LastBuy.Output;
 using Microsoft.EntityFrameworkCore;
@@ -246,7 +244,7 @@ namespace Garant.Platform.Service.Service.MainPage
                                     select new FranchiseOutput
                                     {
                                         Category = f.Category,
-                                        CountDays = DateTime.Now.Day - f.DateCreate.Day,
+                                        CountDays = DateTime.Now.Subtract(f.DateCreate),
                                         DayDeclination = "дня",
                                         DateCreate = f.DateCreate,
                                         Price = string.Format("{0:0,0}", f.Price),
@@ -261,12 +259,6 @@ namespace Garant.Platform.Service.Service.MainPage
 
                 foreach (var item in result)
                 {
-                    //var value = JsonSerializer.Deserialize<SubCategory>(item.SubCategory);
-                    //item.SubCategoryResult.Add(new SubCategory
-                    //{
-                    //    Value = value?.Value
-                    //});
-
                     item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
                 }
 

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Core.Abstraction.Franchise;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Garant.Platform.Controllers
+namespace Garant.Platform.Controllers.Franchise
 {
     /// <summary>
     /// Контроллер франшиз.

@@ -6,39 +6,26 @@ using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
 using Garant.Platform.Models.User.Output;
 
-namespace Garant.Platform.Core.Abstraction
+namespace Garant.Platform.Core.Abstraction.User
 {
     /// <summary>
-    /// Абстракция сервиса пользователей.
+    /// Абстракция репозитория пользователя для работы с БД.
     /// </summary>
-    public interface IUserService
+    public interface IUserRepository
     {
         /// <summary>
-        /// Метод авторизует пользователя стандартным способом.
+        /// Метод найдет пользователя по email или номеру телефона.
         /// </summary>
-        /// <param name="email">Email.</param>
-        /// <param name="password">Пароль.</param>
-        /// <returns>Данные авторизованного пользователя.</returns>
-        Task<ClaimOutput> LoginAsync(string email, string password);
+        /// <param name="data">Email или номер телефона.</param>
+        /// <returns>Данные пользователя.</returns>
+        Task<UserOutput> FindUserByEmailOrPhoneNumberAsync(string data);
 
         /// <summary>
-        /// Метод проверит правильность кода подтверждения.
+        /// Метод найдет пользователя по коду.
         /// </summary>
-        /// <param name="code">Код подтверждения.</param>
-        /// <returns>Статус проверки.</returns>
-        Task<ClaimOutput> CheckAcceptCodeAsync(string code);
-
-        /// <summary>
-        /// Метод создаст нового пользователя.
-        /// </summary>
-        /// <param name="name">Имя.</param>
-        /// <param name="lastName">Фамилия.</param>
-        /// <param name="city">Город.</param>
-        /// <param name="email">Email.</param>
-        /// <param name="password">Пароль.</param>
-        /// <param name="role">Роль.</param>
-        /// <returns>Данные созданного пользователя.</returns>
-        Task<UserOutput> CreateAsync(string name, string lastName, string city, string email, string password, string role);
+        /// <param name="data">Параметр поиска.</param>
+        /// <returns>Id пользователя.</returns>
+        Task<string> FindUserByCodeAsync(string data);
 
         /// <summary>
         /// Метод получает список полей основного хидера.
@@ -63,21 +50,15 @@ namespace Garant.Platform.Core.Abstraction
         /// <param name="password">Пароль.</param>
         /// <param name="values">Причины регистрации разделенные запятой.</param>
         /// <returns>Данные пользователя.</returns>
-        Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values);
-
-        /// <summary>
-        /// Метод найдет пользователя по email или номеру телефона.
-        /// </summary>
-        /// <param name="data">Email или номер телефона.</param>
-        /// <returns>Данные пользователя.</returns>
-        Task<UserOutput> FindUserByEmailOrPhoneNumberAsync(string data);
+        Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email,
+            string password, string values, string guid);
 
         /// <summary>
         /// Метод найдет захэшированный пароль пользователя по логину или email или номеру телефона.
         /// </summary>
         /// <param name="data">Логин или email пользователя.</param>
         /// <returns>Захэшированный пароль.</returns>
-        Task<string> GetUserHashPassword(string data);
+        Task<string> GetUserHashPasswordAsync(string data);
 
         /// <summary>
         /// Метод подтвердит почту по временному коду (guid).
@@ -103,24 +84,11 @@ namespace Garant.Platform.Core.Abstraction
         Task<IEnumerable<SuggestionOutput>> GetAllSuggestionsAsync(bool isSingle, bool isAll);
 
         /// <summary>
-        /// Метод обновит токен.
-        /// </summary>
-        /// <returns>Новый токен.</returns>
-        Task<ClaimOutput> GenerateTokenAsync();
-
-        /// <summary>
         /// Метод сформирует хлебные крошки для страницы.
         /// </summary>
         /// <param name="selectorPage"> Селектор страницы, для которой нужно сформировать хлебные крошки.</param>
         /// <returns>Список хлебных крошек.</returns>
-        Task<IEnumerable<BreadcrumbOutput>> GetBreadcrumbsAsync(string selectorPage);
-
-        /// <summary>
-        /// Метод найдет пользователя по коду.
-        /// </summary>
-        /// <param name="code">Код.</param>
-        /// <returns>Id пользователя.</returns>
-        Task<string> FindUserByCodeAsync(string code);
+        Task<List<BreadcrumbOutput>> GetBreadcrumbsAsync(string selectorPage);
 
         /// <summary>
         /// Метод запишет переход пользователя.

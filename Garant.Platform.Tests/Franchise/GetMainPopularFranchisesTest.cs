@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Core.Abstraction.Franchise;
 using Garant.Platform.Service.Service.Franchise;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Franchise
         {
             var mock = new Mock<IFranchiseService>();
             mock.Setup(a => a.GetMainPopularFranchises());
-            var component = new FranchiseService(PostgreDbContext, null, UserService);
+            var component = new FranchiseService(PostgreDbContext, null, UserService, FranchiseRepository);
             var result = await component.GetMainPopularFranchises();
 
             Assert.IsTrue(result.Any());
@@ -26,7 +26,7 @@ namespace Garant.Platform.Tests.Franchise
         {
             var mock = new Mock<IFranchiseService>();
             mock.Setup(a => a.GetFranchisesListAsync());
-            var component = new FranchiseService(PostgreDbContext, null, UserService);
+            var component = new FranchiseService(PostgreDbContext, null, UserService, FranchiseRepository);
             var result = await component.GetFranchisesListAsync();
 
             Assert.IsTrue(result.Any());

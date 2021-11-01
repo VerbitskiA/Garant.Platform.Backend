@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Core.Abstraction.User;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Input;
@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Garant.Platform.Controllers
+namespace Garant.Platform.Controllers.User
 {
     /// <summary>
     /// Контроллер работы с пользователями сервиса.

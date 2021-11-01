@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Core.Abstraction.User;
 using Garant.Platform.Service.Service.User;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Header
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.InitHeaderAsync("Main"));
-            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
+            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService, UserRepository);
             var result = await component.InitHeaderAsync("Main");
 
             Assert.IsTrue(result.Any());
@@ -26,7 +26,7 @@ namespace Garant.Platform.Tests.Header
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.InitHeaderAsync("Dop"));
-            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
+            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService, UserRepository);
             var result = await component.InitHeaderAsync("Dop");
 
             Assert.IsTrue(result.Any());

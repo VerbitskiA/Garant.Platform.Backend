@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Http;
 
-namespace Garant.Platform.Core.Abstraction
+namespace Garant.Platform.Core.Abstraction.Franchise
 {
     /// <summary>
     /// Абстракция сервиса франшиз.

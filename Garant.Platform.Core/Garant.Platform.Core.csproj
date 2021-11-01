@@ -27,4 +27,8 @@
     <ProjectReference Include="..\Garant.Platform.Models\Garant.Platform.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repository\" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Core.Abstraction.User;
 using Garant.Platform.Service.Service.User;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Suggestion
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.GetSingleSuggestion(true, false));
-            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
+            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService, UserRepository);
             var result = await component.GetSingleSuggestion(true, false);
 
             Assert.IsTrue(result != null);
@@ -26,7 +26,7 @@ namespace Garant.Platform.Tests.Suggestion
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.GetAllSuggestionsAsync(false, true));
-            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService);
+            var component = new UserService(null, null, PostgreDbContext, CommonService, MailingService, UserRepository);
             var result = await component.GetAllSuggestionsAsync(false, true);
 
             Assert.IsTrue(result.Any());

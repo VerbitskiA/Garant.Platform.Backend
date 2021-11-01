@@ -4,7 +4,7 @@ using Garant.Platform.Models.Pagination.Input;
 using Garant.Platform.Models.Pagination.Output;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Garant.Platform.Controllers
+namespace Garant.Platform.Controllers.Pagination
 {
     /// <summary>
     /// Контроллер пагинации.
