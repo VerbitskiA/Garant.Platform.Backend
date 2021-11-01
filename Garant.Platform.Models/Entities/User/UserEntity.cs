@@ -7,7 +7,7 @@ namespace Garant.Platform.Models.Entities.User
     /// <summary>
     /// Класс сопоставляется с таблицей пользователей.
     /// </summary>
-    [Table("Users", Schema = "dbo")]
+    [Table("AspNetUsers")]
     public class UserEntity : IdentityUser
     {
         [Column("UserPassword", TypeName = "varchar(100)")]

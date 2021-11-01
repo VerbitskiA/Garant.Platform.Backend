@@ -3,6 +3,7 @@ using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Abstraction.Franchise;
 using Garant.Platform.Core.Abstraction.User;
 using Garant.Platform.Core.Attributes;
+using Garant.Platform.Core.Data;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Service.Pagination;
 using Garant.Platform.Service.Repository.Franchise;
@@ -47,6 +48,8 @@ namespace Garant.Platform.Service.AutofacModules
             builder.RegisterType<FranchiseService>().As<IFranchiseService>();
             builder.RegisterType<FranchiseRepository>().Named<IFranchiseRepository>("FranchiseRepository");
             builder.RegisterType<FranchiseRepository>().As<IFranchiseRepository>();
+
+            builder.RegisterType<PostgreDbContext>().InstancePerLifetimeScope();
 
             // Сервис объявлений.
             builder.RegisterType<AdService>().Named<IAdService>("AdService");
