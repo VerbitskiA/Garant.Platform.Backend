@@ -45,7 +45,7 @@ namespace Garant.Platform.Core.Utils
                             where type.IsClass && type.GetCustomAttribute<CommonModuleAttribute>() != null
                             select type).ToArray();
 
-            containerBuilderHandler?.Invoke(_builder);
+            containerBuilderHandler?.Invoke(_builder); 
 
             foreach (var module in _typeModules)
             {
