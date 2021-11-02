@@ -32,6 +32,11 @@ namespace Garant.Platform.Models.User.Output
         /// </summary>
         public string LastName { get; set; }
 
+        /// <summary>
+        /// Отчество.
+        /// </summary>
+        public string Patronymic { get; set; }
+
         public string City { get; set; }
 
         /// <summary>
@@ -43,5 +48,10 @@ namespace Garant.Platform.Models.User.Output
         /// Флаг наличия ответов на вопросы.
         /// </summary>
         public bool IsWriteQuestion { get; set; }
+
+        /// <summary>
+        /// Полные ФИО.
+        /// </summary>
+        public string FullName { get; set; }
     }
 }

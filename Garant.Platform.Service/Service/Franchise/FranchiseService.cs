@@ -262,8 +262,9 @@ namespace Garant.Platform.Service.Service.Franchise
         /// </summary>
         /// <param name="franchiseFilesInput">Входные файлы.</param>
         /// <param name="franchiseDataInput">Данные в строке json.</param>
+        /// <param name="account">Логин.</param>
         /// <returns>Данные франшизы.</returns>
-        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(IFormCollection franchiseFilesInput, string franchiseDataInput)
+        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(IFormCollection franchiseFilesInput, string franchiseDataInput, string account)
         {
             try
             {
@@ -294,7 +295,7 @@ namespace Garant.Platform.Service.Service.Franchise
                 lastFranchiseId++;
 
                 // Создаст или обновит франшизу.
-                result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput, lastFranchiseId, urlsDetails, files);
+                result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput, lastFranchiseId, urlsDetails, files, account);
 
                 return result;
             }

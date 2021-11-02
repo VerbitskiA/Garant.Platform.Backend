@@ -120,7 +120,7 @@ namespace Garant.Platform.Controllers.Franchise
         [ProducesResponseType(200, Type = typeof(CreateUpdateFranchiseOutput))]
         public async Task<IActionResult> CreateUpdateFranchiseAsync([FromForm] IFormCollection franchiseFilesInput, [FromForm] string franchiseDataInput)
         {
-            var result = await _franchiseService.CreateUpdateFranchiseAsync(franchiseFilesInput, franchiseDataInput);
+            var result = await _franchiseService.CreateUpdateFranchiseAsync(franchiseFilesInput, franchiseDataInput, GetUserName());
 
             return Ok(result);
         }

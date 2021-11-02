@@ -396,7 +396,7 @@ namespace Garant.Platform.Service.Repository.Franchise
         /// <returns>Данные франшизы.</returns>
         public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(
             CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, List<string> urlsDetails,
-            IFormFileCollection files)
+            IFormFileCollection files, string account)
         {
             try
             {
@@ -404,6 +404,26 @@ namespace Garant.Platform.Service.Repository.Franchise
 
                 if (franchiseInput != null)
                 {
+                    var userId = string.Empty;
+
+                    var findUser = await _userRepository.FindUserByEmailOrPhoneNumberAsync(account);
+
+                    // Если такого пользователя не найдено, значит поищет по коду.
+                    if (findUser == null)
+                    {
+                        var findUserIdByCode = await _userRepository.FindUserByCodeAsync(account);
+
+                        if (!string.IsNullOrEmpty(findUserIdByCode))
+                        {
+                            userId = findUserIdByCode;
+                        }
+                    }
+
+                    else
+                    {
+                        userId = findUser.UserId;
+                    }
+
                     // Найдет франшизу с таким названием.
                     var findFranchise = await FindFranchiseByTitleAsync(franchiseInput.Title);
 
@@ -449,7 +469,8 @@ namespace Garant.Platform.Service.Repository.Franchise
                             TrainingDetails = franchiseInput.TrainingDetails,
                             UrlVideo = franchiseInput.UrlVideo,
                             Reviews = franchiseInput.Reviews,
-                            TextDoPrice = "Сумма сделки:"
+                            TextDoPrice = "Сумма сделки:",
+                            UserId = userId
                         });
                     }
 
@@ -632,6 +653,21 @@ namespace Garant.Platform.Service.Repository.Franchise
         {
             try
             {
+                // Найдет кто создал франшизу.
+                var userId = await _postgreDbContext.Franchises
+                    .Where(f => f.FranchiseId == franchiseId)
+                    .Select(f => f.UserId)
+                    .FirstOrDefaultAsync();
+
+                // Найдет фио пользователя, создавшего франшизу.
+                var fio = await _postgreDbContext.Users
+                    .Where(u => u.Id.Equals(userId))
+                    .Select(u => new FranchiseOutput
+                    {
+                        FullName = (u.LastName ?? string.Empty) + " " + (u.FirstName ?? string.Empty) + " " + (u.Patronymic ?? string.Empty)
+                    })
+                    .FirstOrDefaultAsync();
+
                 var result = await (from f in _postgreDbContext.Franchises
                                     where f.FranchiseId == franchiseId
                                     select new FranchiseOutput
@@ -675,7 +711,8 @@ namespace Garant.Platform.Service.Repository.Franchise
                                         Reviews = f.Reviews,
                                         Mode = mode,
                                         TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
-                                        Url = f.Url
+                                        Url = f.Url,
+                                        FullName = fio.FullName
                                     })
                     .FirstOrDefaultAsync();
 

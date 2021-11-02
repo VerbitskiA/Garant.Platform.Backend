@@ -619,5 +619,70 @@ namespace Garant.Platform.Service.Repository.User
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит фио авторизованного пользователя.
+        /// </summary>
+        /// <param name="account">Аккаунт.</param>
+        /// <returns>Данные пользователя.</returns>
+        public async Task<UserOutput> GetUserFioAsync(string account)
+        {
+            try
+            {
+                UserOutput result = null;
+
+                // Ищет по логину.
+                result = await _postgreDbContext.Users
+                    .Where(u => u.UserName.Equals(account))
+                    .Select(u => new UserOutput
+                    {
+                        FirstName = u.FirstName,
+                        LastName = u.LastName,
+                        Patronymic = u.Patronymic,
+                        FullName = (u.LastName ?? string.Empty) + " " + (u.FirstName ?? string.Empty) + " " + (u.Patronymic ?? string.Empty)
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (result == null)
+                {
+                    // Ищет по почте.
+                    result = await _postgreDbContext.Users
+                        .Where(u => u.Email.Equals(account))
+                        .Select(u => new UserOutput
+                        {
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Patronymic = u.Patronymic,
+                            FullName = (u.LastName ?? string.Empty) + (u.FirstName ?? string.Empty) + (u.Patronymic ?? string.Empty)
+                        })
+                        .FirstOrDefaultAsync();
+                }
+
+                if (result == null)
+                {
+                    // Ищет по коду.
+                    result = await _postgreDbContext.Users
+                        .Where(u => u.Code.Equals(account))
+                        .Select(u => new UserOutput
+                        {
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Patronymic = u.Patronymic,
+                            FullName = (u.LastName ?? string.Empty) + (u.FirstName ?? string.Empty) + (u.Patronymic ?? string.Empty)
+                        })
+                        .FirstOrDefaultAsync();
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema; 
+using System.ComponentModel.DataAnnotations.Schema;
+using Garant.Platform.Models.Entities.User;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Garant.Platform.Models.Entities.Franchise
 {
@@ -246,5 +248,14 @@ namespace Garant.Platform.Models.Entities.Franchise
         /// </summary>
         [Column("Reviews", TypeName = "json")]
         public string Reviews { get; set; }
+
+        /// <summary>
+        /// FK на Id пользователя создавшего франшизу.
+        /// </summary>
+        [Column("UserId", TypeName = "text")]
+        [ForeignKey("Id")]
+        public string UserId { get; set; }
+
+        public UserEntity User { get; set; }
     }
 }

@@ -73,8 +73,9 @@ namespace Garant.Platform.Core.Abstraction.Franchise
         /// </summary>
         /// <param name="franchiseFilesInput">Входные файлы.</param>
         /// <param name="franchiseDataInput">Данные в строке json.</param>
+        /// <param name="account">Логин.</param>
         /// <returns>Данные франшизы.</returns>
-        Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(IFormCollection franchiseFilesInput, string franchiseDataInput);
+        Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(IFormCollection franchiseFilesInput, string franchiseDataInput, string account);
 
         /// <summary>
         /// Метод получит франшизу для просмотра или изменения.

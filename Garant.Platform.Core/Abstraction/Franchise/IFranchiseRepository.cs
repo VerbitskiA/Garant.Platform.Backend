@@ -78,10 +78,11 @@ namespace Garant.Platform.Core.Abstraction.Franchise
         /// <param name="franchiseInput">Входная модель.</param>
         /// <param name="lastFranchiseId">Id последней франшизы.</param>
         /// <param name="urlsDetails">Пути к доп.изображениям.</param>
+        /// <param name="account">Логин.</param>
         /// <returns>Данные франшизы.</returns>
         Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(
             CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, List<string> urlsDetails,
-            IFormFileCollection franchiseFilesInput);
+            IFormFileCollection franchiseFilesInput, string account);
 
         /// <summary>
         /// Метод найдет франшизу по названию.

@@ -105,5 +105,12 @@ namespace Garant.Platform.Core.Abstraction.User
         /// <param name="account">Логин или почта пользователя.</param>
         /// <returns>Данные перехода.</returns>
         Task<TransitionOutput> GetTransitionAsync(string account);
+
+        /// <summary>
+        /// Метод получит фио авторизованного пользователя.
+        /// </summary>
+        /// <param name="account">Аккаунт.</param>
+        /// <returns>Данные пользователя.</returns>
+        Task<UserOutput> GetUserFioAsync(string account);
     }
 }

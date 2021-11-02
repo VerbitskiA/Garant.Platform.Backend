@@ -4,13 +4,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Abstraction.User;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Mailings.Abstraction;
-using Garant.Platform.Models.Entities.Transition;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
@@ -31,16 +29,14 @@ namespace Garant.Platform.Service.Service.User
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly UserManager<UserEntity> _userManager;
         private readonly PostgreDbContext _postgreDbContext;
-        private readonly ICommonService _commonService;
         private readonly IMailingService _mailingService;
         private readonly IUserRepository _userRepository;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, ICommonService commonService, IMailingService mailingService, IUserRepository userRepository)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, IMailingService mailingService, IUserRepository userRepository)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _postgreDbContext = postgreDbContext;
-            _commonService = commonService;
             _mailingService = mailingService;
             _userRepository = userRepository;
         }
@@ -543,6 +539,29 @@ namespace Garant.Platform.Service.Service.User
             try
             {
                 var result = await _userRepository.GetTransitionAsync(account);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит фио авторизованного пользователя.
+        /// </summary>
+        /// <param name="account">Аккаунт.</param>
+        /// <returns>Данные пользователя.</returns>
+        public async Task<UserOutput> GetUserFioAsync(string account)
+        {
+            try
+            {
+                var result = await _userRepository.GetUserFioAsync(account);
 
                 return result;
             }

@@ -30,5 +30,10 @@ namespace Garant.Platform.Models.Franchise.Output
         public string TotalInvest { get; set; }
 
         public new string  Price { get; set; }
+
+        /// <summary>
+        /// Полное ФИО создавшего франшизу.
+        /// </summary>
+        public string FullName { get; set; }
     }
 }

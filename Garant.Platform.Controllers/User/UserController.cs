@@ -227,5 +227,19 @@ namespace Garant.Platform.Controllers.User
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит фио авторизованного пользователя.
+        /// </summary>
+        /// <returns>Данные пользователя.</returns>
+        [HttpPost]
+        [Route("user-fio")]
+        [ProducesResponseType(200, Type = typeof(UserOutput))]
+        public async Task<IActionResult> GetUserFioAsync()
+        {
+            var result = await _userService.GetUserFioAsync(GetUserName());
+
+            return Ok(result);
+        }
     }
 }
