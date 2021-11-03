@@ -99,7 +99,7 @@ namespace Garant.Platform.Models.Entities.Business
         /// <summary>
         /// Ссылка на сайт.
         /// </summary>
-        [Column("Share", TypeName = "numeric")]
+        [Column("Site", TypeName = "text")]
         public string Site { get; set; }
 
         /// <summary>
