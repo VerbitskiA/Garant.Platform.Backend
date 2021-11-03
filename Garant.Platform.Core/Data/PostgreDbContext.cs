@@ -1,6 +1,7 @@
 ﻿using Garant.Platform.Models.Entities.Actions;
 using Garant.Platform.Models.Entities.Add;
 using Garant.Platform.Models.Entities.Blog;
+using Garant.Platform.Models.Entities.Business;
 using Garant.Platform.Models.Entities.Category;
 using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Franchise;
@@ -125,5 +126,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица dbo.Transitions.
         /// </summary>
         public DbSet<TransitionEntity> Transitions { get; set; }
+
+        /// <summary>
+        /// Таблица Business.Businesses.
+        /// </summary>
+        public DbSet<BusinessEntity> Businesses { get; set; }
     }
 }
