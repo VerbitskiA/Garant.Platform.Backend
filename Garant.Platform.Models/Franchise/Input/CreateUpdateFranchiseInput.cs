@@ -10,16 +10,6 @@ namespace Garant.Platform.Models.Franchise.Input
         public long FranchiseId { get; set; }
 
         /// <summary>
-        /// Файлы изображений франшизы.
-        /// </summary>
-        //public IFormCollection UrlsDetails { get; set; }
-
-        /// <summary>
-        /// Файл логотипа франшизы.
-        /// </summary>
-        //public IFormCollection FileLogo { get; set; }
-
-        /// <summary>
         /// Заголовок.
         /// </summary>
         public string Title { get; set; }
@@ -142,21 +132,6 @@ namespace Garant.Platform.Models.Franchise.Input
         public string Peculiarity { get; set; }
 
         /// <summary>
-        /// Файл финансовой модели.
-        /// </summary>
-        //public IFormCollection FinModelFile { get; set; }
-
-        /// <summary>
-        /// Файл презентации.
-        /// </summary>
-        //public IFormCollection PresentFile { get; set; }
-
-        /// <summary>
-        /// Фото франшизы.
-        /// </summary>
-        //public IFormCollection FranchisePhoto { get; set; }
-
-        /// <summary>
         /// Описание расчета.
         /// </summary>
         public string PaymentDetail { get; set; }
@@ -175,11 +150,6 @@ namespace Garant.Platform.Models.Franchise.Input
         /// Описание обучения.
         /// </summary>
         public string TrainingDetails { get; set; }
-
-        /// <summary>
-        /// Фото обучения.
-        /// </summary>
-        //public IFormCollection TrainingPhoto { get; set; }
 
         /// <summary>
         /// Пакеты франшизы (json).

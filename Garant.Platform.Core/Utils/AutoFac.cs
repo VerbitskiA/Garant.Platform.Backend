@@ -28,15 +28,18 @@ namespace Garant.Platform.Core.Utils
 
             _builder = new ContainerBuilder();
 
-            var assemblies1 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Service"));
+            var assemblies1 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Services"));
 
             var assemblies2 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Mailings"));
 
             var assemblies3 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.FTP"));
 
+            var assemblies4 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Base"));
+
             _builder.RegisterAssemblyTypes(assemblies1).AsImplementedInterfaces();
             _builder.RegisterAssemblyTypes(assemblies2).AsImplementedInterfaces();
             _builder.RegisterAssemblyTypes(assemblies3).AsImplementedInterfaces();
+            _builder.RegisterAssemblyTypes(assemblies4).AsImplementedInterfaces();
 
             var assemblies = assemblies1.Union(assemblies2);
 

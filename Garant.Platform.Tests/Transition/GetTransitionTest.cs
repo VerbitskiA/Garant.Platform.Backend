@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction.User;
-using Garant.Platform.Service.Service.User;
+using Garant.Platform.Abstractions.User;
+using Garant.Platform.Services.Service.User;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

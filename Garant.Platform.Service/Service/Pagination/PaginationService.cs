@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Abstractions.Pagination;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Pagination.Output;
 using Microsoft.EntityFrameworkCore;
 
-namespace Garant.Platform.Service.Pagination
+namespace Garant.Platform.Services.Service.Pagination
 {
     /// <summary>
     /// Сервис пагинации.

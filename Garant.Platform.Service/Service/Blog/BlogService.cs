@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Blog.Output;
 using Microsoft.EntityFrameworkCore;
 
-namespace Garant.Platform.Service.Service.Blog
+namespace Garant.Platform.Services.Service.Blog
 {
     /// <summary>
     /// Сервис блогов и новостей.

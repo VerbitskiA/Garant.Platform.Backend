@@ -1,28 +1,29 @@
 ﻿using Autofac;
+using Garant.Platform.Abstractions.Blog;
+using Garant.Platform.Abstractions.Franchise;
+using Garant.Platform.Abstractions.MainPage;
+using Garant.Platform.Abstractions.Pagination;
+using Garant.Platform.Abstractions.User;
 using Garant.Platform.Core.Abstraction;
-using Garant.Platform.Core.Abstraction.Franchise;
-using Garant.Platform.Core.Abstraction.User;
 using Garant.Platform.Core.Attributes;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Models.Entities.User;
-using Garant.Platform.Service.Pagination;
 using Garant.Platform.Service.Repository.Franchise;
-using Garant.Platform.Service.Repository.User;
 using Garant.Platform.Service.Service.Ad;
-using Garant.Platform.Service.Service.Blog;
-using Garant.Platform.Service.Service.Common;
-using Garant.Platform.Service.Service.Franchise;
-using Garant.Platform.Service.Service.MainPage;
-using Garant.Platform.Service.Service.User;
+using Garant.Platform.Services.Service.Blog;
+using Garant.Platform.Services.Service.Franchise;
+using Garant.Platform.Services.Service.MainPage;
+using Garant.Platform.Services.Service.Pagination;
+using Garant.Platform.Services.Service.User;
 using Microsoft.AspNetCore.Identity;
 
-namespace Garant.Platform.Service.AutofacModules
+namespace Garant.Platform.Services.AutofacModules
 {
     /// <summary>
     /// Класс регистрации сервисов автофака.
     /// </summary>
     [CommonModule]
-    public sealed class CommonServicesModule : Module
+    public sealed class ServicesModule : Module
     {
         public static void InitModules(ContainerBuilder builder)
         {
@@ -33,8 +34,6 @@ namespace Garant.Platform.Service.AutofacModules
             builder.RegisterType<UserRepository>().As<IUserRepository>();
 
             // Общий сервис.
-            builder.RegisterType<CommonService>().Named<ICommonService>("CommonService");
-            builder.RegisterType<CommonService>().As<ICommonService>();
 
             builder.RegisterType<SignInManager<UserEntity>>().InstancePerLifetimeScope();
             builder.RegisterType<UserManager<UserEntity>>().InstancePerLifetimeScope();

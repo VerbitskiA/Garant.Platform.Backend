@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Abstractions.MainPage;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Actions.Output;
@@ -11,7 +11,7 @@ using Garant.Platform.Models.Franchise.Output;
 using Garant.Platform.Models.LastBuy.Output;
 using Microsoft.EntityFrameworkCore;
 
-namespace Garant.Platform.Service.Service.MainPage
+namespace Garant.Platform.Services.Service.MainPage
 {
     /// <summary>
     /// Сервис главной страницы.

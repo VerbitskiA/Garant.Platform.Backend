@@ -5,7 +5,7 @@ using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Http;
 
-namespace Garant.Platform.Core.Abstraction.Franchise
+namespace Garant.Platform.Abstractions.Franchise
 {
     /// <summary>
     /// Абстракция репозитория франшиз для работы с БД.

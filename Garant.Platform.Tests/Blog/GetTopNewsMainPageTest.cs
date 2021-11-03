@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
-using Garant.Platform.Service.Service.Blog;
+using Garant.Platform.Abstractions.Blog;
+using Garant.Platform.Services.Service.Blog;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

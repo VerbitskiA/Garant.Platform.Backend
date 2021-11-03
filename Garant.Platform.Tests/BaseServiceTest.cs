@@ -1,10 +1,9 @@
-﻿using Garant.Platform.Core.Data;
+﻿using Garant.Platform.Base.Service;
+using Garant.Platform.Core.Data;
 using Garant.Platform.Mailings.Service;
 using Garant.Platform.Service.Repository.Franchise;
-using Garant.Platform.Service.Repository.User;
-using Garant.Platform.Service.Service.Common;
-using Garant.Platform.Service.Service.Franchise;
-using Garant.Platform.Service.Service.User;
+using Garant.Platform.Services.Service.Franchise;
+using Garant.Platform.Services.Service.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -45,7 +44,7 @@ namespace Garant.Platform.Tests
 
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
             UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository);
-            FranchiseService = new FranchiseService(PostgreDbContext, null, UserService, FranchiseRepository);
+            FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);
         }
     }
 }

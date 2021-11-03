@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
@@ -11,7 +11,7 @@ using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Mailing.Output;
 using Microsoft.EntityFrameworkCore;
 
-namespace Garant.Platform.Service.Service.Common
+namespace Garant.Platform.Base.Service
 {
     /// <summary>
     /// Сервис общих методов.
