@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Garant.Platform.Models.Blog.Output;
 
-namespace Garant.Platform.Core.Abstraction
+namespace Garant.Platform.Abstractions.Blog
 {
     /// <summary>
     /// Абстракция сервиса блогов и новостей.

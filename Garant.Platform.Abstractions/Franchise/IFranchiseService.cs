@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Http;
 
-namespace Garant.Platform.Core.Abstraction.Franchise
+namespace Garant.Platform.Abstractions.Franchise
 {
     /// <summary>
     /// Абстракция сервиса франшиз.

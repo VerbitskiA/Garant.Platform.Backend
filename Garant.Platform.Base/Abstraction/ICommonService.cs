@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Models.Mailing.Output;
 
-namespace Garant.Platform.Core.Abstraction
+namespace Garant.Platform.Base.Abstraction
 {
     /// <summary>
     /// Абстракция общего сервиса.

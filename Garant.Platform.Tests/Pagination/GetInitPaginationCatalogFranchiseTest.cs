@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
-using Garant.Platform.Service.Pagination;
+using Garant.Platform.Abstractions.Pagination;
+using Garant.Platform.Services.Service.Pagination;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

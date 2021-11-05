@@ -6,27 +6,24 @@ using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Franchise.Output;
 using System.Linq;
 using System.Text.Json;
-using Garant.Platform.Core.Abstraction.Franchise;
-using Garant.Platform.Core.Abstraction.User;
+using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Franchise.Input;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace Garant.Platform.Service.Service.Franchise
+namespace Garant.Platform.Services.Service.Franchise
 {
     public sealed class FranchiseService : IFranchiseService
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IFtpService _ftpService;
-        private readonly IUserService _userService;
         private readonly IFranchiseRepository _franchiseRepository;
 
-        public FranchiseService(PostgreDbContext postgreDbContext, IFtpService ftpService, IUserService userService, IFranchiseRepository franchiseRepository)
+        public FranchiseService(PostgreDbContext postgreDbContext, IFtpService ftpService, IFranchiseRepository franchiseRepository)
         {
             _postgreDbContext = postgreDbContext;
             _ftpService = ftpService;
-            _userService = userService;
             _franchiseRepository = franchiseRepository;
         }
 
@@ -282,20 +279,12 @@ namespace Garant.Platform.Service.Service.Franchise
                     return null;
                 }
 
-                var urlsDetails = new List<string>();
-
-                // Запишет пути к доп.изображениям франшизы.
-                foreach (var item in files.Where(c => c.Name.Equals("urlsDetails")))
-                {
-                    urlsDetails.Add("../../../assets/images/" + item.FileName);
-                }
-
                 // Найдет последний Id франшизы и увеличит его на 1.
                 var lastFranchiseId = await _postgreDbContext.Franchises.MaxAsync(c => c.FranchiseId);
                 lastFranchiseId++;
 
                 // Создаст или обновит франшизу.
-                result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput, lastFranchiseId, urlsDetails, files, account);
+                result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput, lastFranchiseId, franchiseInput.UrlsFranchise, files, account);
 
                 return result;
             }

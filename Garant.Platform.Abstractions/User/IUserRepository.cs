@@ -6,7 +6,7 @@ using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
 using Garant.Platform.Models.User.Output;
 
-namespace Garant.Platform.Core.Abstraction.User
+namespace Garant.Platform.Abstractions.User
 {
     /// <summary>
     /// Абстракция репозитория пользователя для работы с БД.

@@ -5,7 +5,7 @@ using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Http;
 
-namespace Garant.Platform.Core.Abstraction.Franchise
+namespace Garant.Platform.Abstractions.Franchise
 {
     /// <summary>
     /// Абстракция репозитория франшиз для работы с БД.
@@ -81,7 +81,7 @@ namespace Garant.Platform.Core.Abstraction.Franchise
         /// <param name="account">Логин.</param>
         /// <returns>Данные франшизы.</returns>
         Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(
-            CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, List<string> urlsDetails,
+            CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, string[] urlsDetails,
             IFormFileCollection franchiseFilesInput, string account);
 
         /// <summary>

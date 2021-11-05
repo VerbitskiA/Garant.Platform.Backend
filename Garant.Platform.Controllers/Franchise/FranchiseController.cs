@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction.Franchise;
+using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
@@ -131,7 +131,7 @@ namespace Garant.Platform.Controllers.Franchise
         /// <param name="franchiseInput">Входная модель.</param>
         /// <returns></returns>
         [HttpPost, Route("get-franchise")]
-        [ProducesResponseType(200, Type = typeof(FranchiseEntity))]
+        [ProducesResponseType(200, Type = typeof(FranchiseOutput))]
         public async Task<IActionResult> GetFranchiseAsync([FromBody] FranchiseInput franchiseInput)
         {
             var result = await _franchiseService.GetFranchiseAsync(franchiseInput.FranchiseId, franchiseInput.Mode);

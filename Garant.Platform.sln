@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Models", "G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Core", "Garant.Platform.Core\Garant.Platform.Core.csproj", "{054520AD-5DBD-4651-9BB0-C92D0F8263C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Service", "Garant.Platform.Service\Garant.Platform.Service.csproj", "{9749F54C-8FB5-4BD2-B746-5A3A4AD9C9D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Services", "Garant.Platform.Service\Garant.Platform.Services.csproj", "{9749F54C-8FB5-4BD2-B746-5A3A4AD9C9D3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Tests", "Garant.Platform.Tests\Garant.Platform.Tests.csproj", "{40D6E603-2F2C-4A78-A0C5-5545C3044895}"
 EndProject
@@ -17,7 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Mailings", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.FTP", "Garant.Platform.FTP\Garant.Platform.FTP.csproj", "{BCF73B1F-ACA3-4CAF-A612-E74D446D3A21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Garant.Platform.Controllers", "Garant.Platform.Controllers\Garant.Platform.Controllers.csproj", "{19A02643-EA51-4EB2-8A5A-ADC111CCDE5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Controllers", "Garant.Platform.Controllers\Garant.Platform.Controllers.csproj", "{19A02643-EA51-4EB2-8A5A-ADC111CCDE5E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Abstractions", "Garant.Platform.Abstractions\Garant.Platform.Abstractions.csproj", "{62AB7C3B-B9D8-446C-B0B4-CA54616B1251}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Base", "Garant.Platform.Base\Garant.Platform.Base.csproj", "{B2239863-3F92-486C-AE5B-2D47FA5C28C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +61,14 @@ Global
 		{19A02643-EA51-4EB2-8A5A-ADC111CCDE5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19A02643-EA51-4EB2-8A5A-ADC111CCDE5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19A02643-EA51-4EB2-8A5A-ADC111CCDE5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62AB7C3B-B9D8-446C-B0B4-CA54616B1251}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62AB7C3B-B9D8-446C-B0B4-CA54616B1251}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62AB7C3B-B9D8-446C-B0B4-CA54616B1251}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62AB7C3B-B9D8-446C-B0B4-CA54616B1251}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2239863-3F92-486C-AE5B-2D47FA5C28C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2239863-3F92-486C-AE5B-2D47FA5C28C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2239863-3F92-486C-AE5B-2D47FA5C28C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2239863-3F92-486C-AE5B-2D47FA5C28C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

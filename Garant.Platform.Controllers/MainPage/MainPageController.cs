@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
-using Garant.Platform.Core.Abstraction.Franchise;
+using Garant.Platform.Abstractions.Franchise;
+using Garant.Platform.Abstractions.MainPage;
 using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
 using Garant.Platform.Models.Franchise.Output;

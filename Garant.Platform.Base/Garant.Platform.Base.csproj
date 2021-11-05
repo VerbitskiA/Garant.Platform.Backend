@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Garant.Platform.Core\Garant.Platform.Core.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Mailings\Garant.Platform.Mailings.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Models\Garant.Platform.Models.csproj" />
+  </ItemGroup>
+
+</Project>

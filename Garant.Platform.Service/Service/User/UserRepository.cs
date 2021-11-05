@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction;
-using Garant.Platform.Core.Abstraction.User;
+using Garant.Platform.Abstractions.User;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.Transition;
@@ -15,7 +15,7 @@ using Garant.Platform.Models.Transition.Output;
 using Garant.Platform.Models.User.Output;
 using Microsoft.EntityFrameworkCore;
 
-namespace Garant.Platform.Service.Repository.User
+namespace Garant.Platform.Services.Service.User
 {
     /// <summary>
     /// Репозиторий пользователей для работы с БД.

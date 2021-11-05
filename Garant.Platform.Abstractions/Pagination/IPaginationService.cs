@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Models.Pagination.Output;
 
-namespace Garant.Platform.Core.Abstraction
+namespace Garant.Platform.Abstractions.Pagination
 {
     /// <summary>
     /// Абстракция сервиса пагинации.

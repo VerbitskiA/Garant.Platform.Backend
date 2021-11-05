@@ -20,6 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Garant.Platform.Abstractions\Garant.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Base\Garant.Platform.Base.csproj" />
     <ProjectReference Include="..\Garant.Platform.Core\Garant.Platform.Core.csproj" />
     <ProjectReference Include="..\Garant.Platform.FTP\Garant.Platform.FTP.csproj" />
     <ProjectReference Include="..\Garant.Platform.Mailings\Garant.Platform.Mailings.csproj" />

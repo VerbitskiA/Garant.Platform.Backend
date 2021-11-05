@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction.User;
+using Garant.Platform.Abstractions.User;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Garant.Platform.Service.Service.User
+namespace Garant.Platform.Services.Service.User
 {
     /// <summary>
     /// Сервис пользователя.

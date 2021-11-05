@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Garant.Platform.Core.Abstraction.Franchise;
-using Garant.Platform.Core.Abstraction.User;
+using Garant.Platform.Abstractions.Franchise;
+using Garant.Platform.Abstractions.User;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.Franchise;
@@ -395,7 +395,7 @@ namespace Garant.Platform.Service.Repository.Franchise
         /// <param name="urlsDetails">Пути к доп.изображениям.</param>
         /// <returns>Данные франшизы.</returns>
         public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(
-            CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, List<string> urlsDetails,
+            CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, string[] urlsDetails,
             IFormFileCollection files, string account)
         {
             try
@@ -772,6 +772,8 @@ namespace Garant.Platform.Service.Repository.Franchise
 
                         results.Add("../../../assets/images/" + item.FileName);
                     }
+
+                    await _postgreDbContext.SaveChangesAsync();
                 }
 
                 return results;

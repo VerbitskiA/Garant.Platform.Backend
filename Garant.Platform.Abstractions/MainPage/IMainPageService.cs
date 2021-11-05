@@ -5,7 +5,7 @@ using Garant.Platform.Models.Category.Output;
 using Garant.Platform.Models.Franchise.Output;
 using Garant.Platform.Models.LastBuy.Output;
 
-namespace Garant.Platform.Core.Abstraction
+namespace Garant.Platform.Abstractions.MainPage
 {
     /// <summary>
     /// Абстракция сервиса главной страницы.
