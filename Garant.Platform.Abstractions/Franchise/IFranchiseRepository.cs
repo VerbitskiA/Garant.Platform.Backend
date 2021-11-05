@@ -81,7 +81,7 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="account">Логин.</param>
         /// <returns>Данные франшизы.</returns>
         Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(
-            CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, List<string> urlsDetails,
+            CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, string[] urlsDetails,
             IFormFileCollection franchiseFilesInput, string account);
 
         /// <summary>

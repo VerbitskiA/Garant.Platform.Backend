@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
+using Garant.Platform.Models.Entities.Business;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -50,6 +52,20 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         public async Task<IActionResult> AddTempFilesBeforeCreateBusinessAsync([FromForm] IFormCollection files)
         {
             var result = await _businessService.AddTempFilesBeforeCreateBusinessAsync(files, GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит бизнес для просмотра или изменения.
+        /// </summary>
+        /// <param name="businessInput">Входная модель.</param>
+        /// <returns></returns>
+        [HttpPost, Route("get-business")]
+        [ProducesResponseType(200, Type = typeof(BusinessOutput))]
+        public async Task<IActionResult> GetFranchiseAsync([FromBody] BusinessInput businessInput)
+        {
+            var result = await _businessService.GetBusinessAsync(businessInput.BusinessId, businessInput.Mode);
 
             return Ok(result);
         }

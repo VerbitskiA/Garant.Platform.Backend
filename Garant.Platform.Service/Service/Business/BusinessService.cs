@@ -55,14 +55,6 @@ namespace Garant.Platform.Services.Service.Business
                     return null;
                 }
 
-                //var urlsBusiness = new List<string>();
-
-                //// Запишет пути к доп.изображениям бизнеса.
-                //foreach (var item in files.Where(c => c.Name.Equals("urlsBusiness")))
-                //{
-                //    urlsBusiness.Add("../../../assets/images/" + item.FileName);
-                //}
-
                 long lastBusinessId = 1000000;
 
                 // Если в таблице нет записей, то добавленная первая будет иметь id 1000000.
@@ -117,6 +109,34 @@ namespace Garant.Platform.Services.Service.Business
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит франшизу для просмотра или изменения.
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <param name="mode">Режим (Edit или View).</param>
+        /// <returns>Данные бизнеса.</returns>
+        public async Task<BusinessOutput> GetBusinessAsync(long businessId, string mode)
+        {
+            try
+            {
+                var result = await _businessRepository.GetBusinessAsync(businessId, mode);
+
+                // Приведет к числу и потом к строке чтобы убрать передние нули, если они будут.
+                var newPrice = Convert.ToInt32(result.Price);
+                result.Price = newPrice.ToString();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }

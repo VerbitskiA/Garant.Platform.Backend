@@ -9,6 +9,7 @@ using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
 using Garant.Platform.Models.Entities.Business;
+using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -111,7 +112,6 @@ namespace Garant.Platform.Services.Service.Business
                     // Обновит бизнес.
                     else if (!businessInput.IsNew && findBusiness != null)
                     {
-                        findBusiness.BusinessId = lastBusinessId;
                         findBusiness.ActivityDetail = businessInput.ActivityDetail;
                         findBusiness.ActivityPhotoName =
                             files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName;
@@ -142,7 +142,6 @@ namespace Garant.Platform.Services.Service.Business
                             files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName;
                         findBusiness.UrlVideo = businessInput.UrlVideo;
                         findBusiness.IsGarant = businessInput.IsGarant;
-                        findBusiness.UserId = userId;
                         findBusiness.DateCreate = DateTime.Now;
                         findBusiness.TextDoPrice = "Стоимость:";
                         findBusiness.Category = businessInput.Category;
@@ -303,6 +302,81 @@ namespace Garant.Platform.Services.Service.Business
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит франшизу для просмотра или изменения.
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <param name="mode">Режим (Edit или View).</param>
+        /// <returns>Данные бизнеса.</returns>
+        public async Task<BusinessOutput> GetBusinessAsync(long businessId, string mode)
+        {
+            try
+            {
+                // Найдет кто создал бизнес.
+                var userId = await _postgreDbContext.Businesses
+                    .Where(f => f.BusinessId == businessId)
+                    .Select(f => f.UserId)
+                    .FirstOrDefaultAsync();
+
+                // Найдет фио пользователя, создавшего франшизу.
+                var fio = await _postgreDbContext.Users
+                    .Where(u => u.Id.Equals(userId))
+                    .Select(u => new FranchiseOutput
+                    {
+                        FullName = (u.LastName ?? string.Empty) + " " + (u.FirstName ?? string.Empty) + " " + (u.Patronymic ?? string.Empty)
+                    })
+                    .FirstOrDefaultAsync();
+
+                var result = await (from b in _postgreDbContext.Businesses
+                                    where b.BusinessId == businessId
+                                    select new BusinessOutput
+                                    {
+                                        ActivityDetail = b.ActivityDetail,
+                                        ActivityPhotoName = b.ActivityPhotoName,
+                                        Address = b.Address,
+                                        Assets = b.Assets,
+                                        AssetsPhotoName = b.AssetsPhotoName,
+                                        BusinessAge = b.BusinessAge,
+                                        BusinessId = b.BusinessId,
+                                        BusinessName = b.BusinessName,
+                                        EmployeeCountYear = b.EmployeeCountYear,
+                                        Form = b.Form,
+                                        Status = b.Status,
+                                        Price = string.Format("{0:0,0}", b.Price),
+                                        UrlsBusiness = b.UrlsBusiness,
+                                        TurnPrice = b.TurnPrice,
+                                        ProfitPrice = b.ProfitPrice,
+                                        Payback = b.Payback,
+                                        Profitability = b.Profitability,
+                                        InvestPrice = b.InvestPrice,
+                                        Text = b.Text,
+                                        Share = b.Share,
+                                        Site = b.Site,
+                                        Peculiarity = b.Peculiarity,
+                                        NameFinModelFile = b.NameFinModelFile,
+                                        ReasonsSale = b.ReasonsSale,
+                                        ReasonsSalePhotoName = b.ReasonsSalePhotoName,
+                                        UrlVideo = b.UrlVideo,
+                                        IsGarant = b.IsGarant,
+                                        UserId = b.UserId,
+                                        DateCreate = b.DateCreate,
+                                        Category = b.Category,
+                                        SubCategory = b.SubCategory
+                                    })
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }

@@ -15,6 +15,11 @@ namespace Garant.Platform.Models.Franchise.Input
         public string Title { get; set; }
 
         /// <summary>
+        /// Массив с именами изображений франшизы.
+        /// </summary>
+        public string[] UrlsFranchise { get; set; }
+
+        /// <summary>
         /// Текст описания.
         /// </summary>
         public string Text { get; set; }

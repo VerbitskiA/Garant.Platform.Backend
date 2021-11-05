@@ -395,7 +395,7 @@ namespace Garant.Platform.Service.Repository.Franchise
         /// <param name="urlsDetails">Пути к доп.изображениям.</param>
         /// <returns>Данные франшизы.</returns>
         public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(
-            CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, List<string> urlsDetails,
+            CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, string[] urlsDetails,
             IFormFileCollection files, string account)
         {
             try
