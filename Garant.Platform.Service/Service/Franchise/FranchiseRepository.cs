@@ -772,6 +772,8 @@ namespace Garant.Platform.Service.Repository.Franchise
 
                         results.Add("../../../assets/images/" + item.FileName);
                     }
+
+                    await _postgreDbContext.SaveChangesAsync();
                 }
 
                 return results;

@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Garant.Platform.Models.Entities.User;
 
 namespace Garant.Platform.Models.Entities.Business
 {
@@ -167,5 +169,35 @@ namespace Garant.Platform.Models.Entities.Business
         /// </summary>
         [Column("IsGarant", TypeName = "bool")]
         public bool IsGarant { get; set; }
+
+        [ForeignKey("Id")]
+        [Column("UserId", TypeName = "text")]
+        public string UserId { get; set; }
+
+        public UserEntity User { get; set; }
+
+        /// <summary>
+        /// Дата создания карточки готового бизнеса.
+        /// </summary>
+        [Column("DateCreate", TypeName = "timestamp")]
+        public DateTime DateCreate { get; set; }
+
+        /// <summary>
+        /// Текст до цены.
+        /// </summary>
+        [Column("TextDoPrice", TypeName = "varchar(100)")]
+        public string TextDoPrice { get; set; }
+
+        /// <summary>
+        /// Категория готового бизнеса.
+        /// </summary>
+        [Column("Category", TypeName = "varchar(300)")]
+        public string Category { get; set; }
+
+        /// <summary>
+        /// Подкатегория готового бизнеса.
+        /// </summary>
+        [Column("SubCategory", TypeName = "varchar(300)")]
+        public string SubCategory { get; set; }
     }
 }

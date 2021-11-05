@@ -131,5 +131,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица Business.Businesses.
         /// </summary>
         public DbSet<BusinessEntity> Businesses { get; set; }
+
+        /// <summary>
+        /// Таблица Business.TempBusinesses.
+        /// </summary>
+        public DbSet<TempBusinessEntity> TempBusinesses { get; set; }
     }
 }

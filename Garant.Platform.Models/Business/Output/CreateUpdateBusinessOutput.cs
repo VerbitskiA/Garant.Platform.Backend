@@ -1,9 +1,11 @@
-﻿namespace Garant.Platform.Models.Business.Input
+﻿using System;
+
+namespace Garant.Platform.Models.Business.Output
 {
     /// <summary>
-    /// Класс входной модели создания или изменения карточки бизнеса.
+    /// Класс выходной модели создания или изменения карточки бизнеса.
     /// </summary>
-    public class CreateUpdateBusinessInput
+    public class CreateUpdateBusinessOutput
     {
         /// <summary>
         /// PK.
@@ -138,18 +140,13 @@
         public bool IsGarant { get; set; }
 
         /// <summary>
-        /// Новая ли франшиза.
+        /// Дата создания.
         /// </summary>
-        public bool IsNew { get; set; }
+        public DateTime DateCreate { get; set; }
 
         /// <summary>
-        /// Категория франшизы.
+        /// Текст до цены.
         /// </summary>
-        public string Category { get; set; }
-
-        /// <summary>
-        /// Подкатегория.
-        /// </summary>
-        public string SubCategory { get; set; }
+        public string TextDoPrice { get; set; }
     }
 }

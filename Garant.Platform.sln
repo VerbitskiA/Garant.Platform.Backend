@@ -19,9 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.FTP", "Gara
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Controllers", "Garant.Platform.Controllers\Garant.Platform.Controllers.csproj", "{19A02643-EA51-4EB2-8A5A-ADC111CCDE5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Garant.Platform.Abstractions", "Garant.Platform.Abstractions\Garant.Platform.Abstractions.csproj", "{62AB7C3B-B9D8-446C-B0B4-CA54616B1251}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Abstractions", "Garant.Platform.Abstractions\Garant.Platform.Abstractions.csproj", "{62AB7C3B-B9D8-446C-B0B4-CA54616B1251}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Garant.Platform.Base", "Garant.Platform.Base\Garant.Platform.Base.csproj", "{B2239863-3F92-486C-AE5B-2D47FA5C28C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Base", "Garant.Platform.Base\Garant.Platform.Base.csproj", "{B2239863-3F92-486C-AE5B-2D47FA5C28C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
