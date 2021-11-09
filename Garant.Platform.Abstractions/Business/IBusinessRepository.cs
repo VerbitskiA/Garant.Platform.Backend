@@ -34,5 +34,23 @@ namespace Garant.Platform.Abstractions.Business
         /// <param name="mode">Режим (Edit или View).</param>
         /// <returns>Данные бизнеса.</returns>
         Task<BusinessOutput> GetBusinessAsync(long businessId, string mode);
+
+        /// <summary>
+        /// Метод получит список категорий бизнеса.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        Task<IEnumerable<GetBusinessCategoryOutput>> GetBusinessCategoriesAsync();
+
+        /// <summary>
+        /// Метод получит список подкатегорий бизнеса.
+        /// </summary>
+        /// <returns>Список подкатегорий.</returns>
+        Task<IEnumerable<BusinessSubCategoryOutput>> GetSubBusinessCategoryListAsync();
+
+        /// <summary>
+        /// Метод получит список городов.
+        /// </summary>
+        /// <returns>Список городов.</returns>
+        Task<IEnumerable<BusinessCitiesOutput>> GetCitiesListAsync();
     }
 }

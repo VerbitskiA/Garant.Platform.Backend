@@ -163,18 +163,18 @@ namespace Garant.Platform.Service.Repository.Franchise
         }
 
         /// <summary>
-        /// Метод получит список категорий бизнеса.
+        /// Метод получит список категорий франшиз.
         /// </summary>
         /// <returns>Список категорий.</returns>
         public async Task<IEnumerable<CategoryOutput>> GetFranchisesCategoriesListAsync()
         {
             try
             {
-                var result = await (from c in _postgreDbContext.Categories
+                var result = await (from c in _postgreDbContext.FranchiseCategories
                                     select new CategoryOutput
                                     {
-                                        CategoryCode = c.CategoryCode,
-                                        CategoryName = c.CategoryName
+                                        CategoryCode = c.FranchiseCategoryCode,
+                                        CategoryName = c.FranchiseCategoryName
                                     })
                     .ToListAsync();
 
@@ -777,6 +777,62 @@ namespace Garant.Platform.Service.Repository.Franchise
                 }
 
                 return results;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список категорий франшиз.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        public async Task<IEnumerable<CategoryOutput>> GetCategoryListAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.FranchiseCategories
+                    .Select(fc => new CategoryOutput
+                    {
+                        CategoryCode = fc.FranchiseCategoryCode,
+                        CategoryName = fc.FranchiseCategoryName
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список подкатегорий франшиз.
+        /// </summary>
+        /// <returns>Список подкатегорий.</returns>
+        public async Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.FranchiseSubCategories
+                    .Select(fc => new SubCategoryOutput
+                    {
+                        SubCategoryCode = fc.FranchiseSubCategoryCode,
+                        SubCategoryName = fc.FranchiseSubCategoryName
+                    })
+                    .ToListAsync();
+
+                return result;
             }
 
             catch (Exception e)

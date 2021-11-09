@@ -140,5 +140,71 @@ namespace Garant.Platform.Services.Service.Business
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список категорий бизнеса.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        public async Task<IEnumerable<GetBusinessCategoryOutput>> GetBusinessCategoriesAsync()
+        {
+            try
+            {
+                var result = await _businessRepository.GetBusinessCategoriesAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список подкатегорий бизнеса.
+        /// </summary>
+        /// <returns>Список подкатегорий.</returns>
+        public async Task<IEnumerable<BusinessSubCategoryOutput>> GetSubBusinessCategoryListAsync()
+        {
+            try
+            {
+                var result = await _businessRepository.GetSubBusinessCategoryListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список городов.
+        /// </summary>
+        /// <returns>Список городов.</returns>
+        public async Task<IEnumerable<BusinessCitiesOutput>> GetCitiesListAsync()
+        {
+            try
+            {
+                var result = await _businessRepository.GetCitiesListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

@@ -380,5 +380,89 @@ namespace Garant.Platform.Services.Service.Business
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список категорий бизнеса.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        public async Task<IEnumerable<GetBusinessCategoryOutput>> GetBusinessCategoriesAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.BusinessCategories
+                    .Select(fc => new GetBusinessCategoryOutput
+                    {
+                        CategoryCode = fc.BusinessCode,
+                        CategoryName = fc.BusinessName
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список подкатегорий бизнеса.
+        /// </summary>
+        /// <returns>Список подкатегорий.</returns>
+        public async Task<IEnumerable<BusinessSubCategoryOutput>> GetSubBusinessCategoryListAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.BusinessSubCategories
+                    .Select(fc => new BusinessSubCategoryOutput
+                    {
+                        SubCategoryCode = fc.BusinessSubCategoryCode,
+                        SubCategoryName = fc.BusinessSubCategoryName
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список городов.
+        /// </summary>
+        /// <returns>Список городов.</returns>
+        public async Task<IEnumerable<BusinessCitiesOutput>> GetCitiesListAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.BusinessCities
+                    .Select(fc => new BusinessCitiesOutput
+                    {
+                        BusinessCityCode = fc.BusinessCityCode,
+                        BusinessCityName = fc.BusinessCityName
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

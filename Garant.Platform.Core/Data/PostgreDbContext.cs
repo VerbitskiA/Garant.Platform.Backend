@@ -2,7 +2,6 @@
 using Garant.Platform.Models.Entities.Add;
 using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.Business;
-using Garant.Platform.Models.Entities.Category;
 using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Entities.Header;
@@ -108,9 +107,9 @@ namespace Garant.Platform.Core.Data
         public DbSet<ViewBusinessEntity> ViewBusiness { get; set; }
 
         /// <summary>
-        /// Таблица Franchises.Categories.
+        /// Таблица Franchises.FranchiseCategories.
         /// </summary>
-        public DbSet<CategoryEntity> Categories { get; set; }
+        public DbSet<FranchiseCategoryEntity> FranchiseCategories { get; set; }
 
         /// <summary>
         /// Таблица dbo.Breadcrumbs.
@@ -136,5 +135,20 @@ namespace Garant.Platform.Core.Data
         /// Таблица Business.TempBusinesses.
         /// </summary>
         public DbSet<TempBusinessEntity> TempBusinesses { get; set; }
+
+        /// <summary>
+        /// Таблица Franchises.FranchiseSubCategories.
+        /// </summary>
+        public DbSet<FranchiseSubCategoryEntity> FranchiseSubCategories { get; set; }
+
+        /// <summary>
+        /// Таблица Business.BusinessSubCategories
+        /// </summary>
+        public DbSet<BusinessSubCategoryEntity> BusinessSubCategories { get; set; }
+
+        /// <summary>
+        /// Таблица Business.BusinessCities
+        /// </summary>
+        public DbSet<BusinessCitiesEntity> BusinessCities { get; set; }
     }
 }

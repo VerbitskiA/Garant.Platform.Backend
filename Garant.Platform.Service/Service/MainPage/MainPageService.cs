@@ -40,7 +40,7 @@ namespace Garant.Platform.Services.Service.MainPage
                                         orderby c.Column
                                         select new BusinessCategoryOutput
                                         {
-                                            Name = c.Name,
+                                            Name = c.BusinessName,
                                             Position = c.Position,
                                             Column = c.Column,
                                             Url = c.Url

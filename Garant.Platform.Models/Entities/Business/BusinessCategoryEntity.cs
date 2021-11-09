@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Garant.Platform.Models.Entities.Category
+namespace Garant.Platform.Models.Entities.Business
 {
     /// <summary>
     /// Класс сопоставляется с таблицей категорий бизнеса Business.BusinessCategories.
@@ -34,9 +34,15 @@ namespace Garant.Platform.Models.Entities.Category
         public int Position { get; set; }
 
         /// <summary>
-        /// Название категории.
+        /// Код категории бизнеса.
         /// </summary>
-        [Column("Name", TypeName = "varchar(200)")]
-        public string Name { get; set; }
+        [Column("BusinessCode", TypeName = "varchar(100)")]
+        public string BusinessCode { get; set; }
+
+        /// <summary>
+        /// Название категории бизнеса.
+        /// </summary>
+        [Column("BusinessName", TypeName = "varchar(200)")]
+        public string BusinessName { get; set; }
     }
 }

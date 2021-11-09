@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
-using Garant.Platform.Models.Entities.Business;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -66,6 +65,48 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         public async Task<IActionResult> GetFranchiseAsync([FromBody] BusinessInput businessInput)
         {
             var result = await _businessService.GetBusinessAsync(businessInput.BusinessId, businessInput.Mode);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список категорий бизнеса.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        [HttpPost]
+        [Route("category-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<GetBusinessCategoryOutput>))]
+        public async Task<IActionResult> GetBusinessCategoriesAsync()
+        {
+            var result = await _businessService.GetBusinessCategoriesAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список подкатегорий бизнеса.
+        /// </summary>
+        /// <returns>Список подкатегорий.</returns>
+        [HttpPost]
+        [Route("subcategory-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessSubCategoryOutput>))]
+        public async Task<IActionResult> GetBusinessSubCategoryListAsync()
+        {
+            var result = await _businessService.GetSubBusinessCategoryListAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список городов.
+        /// </summary>
+        /// <returns>Список городов.</returns>
+        [HttpPost]
+        [Route("cities-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessCitiesOutput>))]
+        public async Task<IActionResult> GetCitiesListAsync()
+        {
+            var result = await _businessService.GetCitiesListAsync();
 
             return Ok(result);
         }

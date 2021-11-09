@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Franchise;
-using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -148,6 +147,32 @@ namespace Garant.Platform.Controllers.Franchise
         public async Task<IActionResult> AddTempFilesBeforeCreateFranchiseAsync([FromForm] IFormCollection files)
         {
             var result = await _franchiseService.AddTempFilesBeforeCreateFranchiseAsync(files, GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список категорий франшиз.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        [HttpPost]
+        [Route("category-list")]
+        public async Task<IActionResult> GetCategoryListAsync()
+        {
+            var result = await _franchiseService.GetCategoryListAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список подкатегорий франшиз.
+        /// </summary>
+        /// <returns>Список подкатегорий.</returns>
+        [HttpPost]
+        [Route("subcategory-list")]
+        public async Task<IActionResult> GetSubCategoryListAsync()
+        {
+            var result = await _franchiseService.GetSubCategoryListAsync();
 
             return Ok(result);
         }

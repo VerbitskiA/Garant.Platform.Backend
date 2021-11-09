@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Garant.Platform.Models.Franchise.Output
+﻿namespace Garant.Platform.Models.Franchise.Output
 {
     /// <summary>
     /// Класс выходной модели категорий бизнеса.
@@ -10,7 +8,7 @@ namespace Garant.Platform.Models.Franchise.Output
         /// <summary>
         /// Guid код категории бизнеса.
         /// </summary>
-        public Guid CategoryCode { get; set; }
+        public string CategoryCode { get; set; }
 
         /// <summary>
         /// Вид бизнеса.

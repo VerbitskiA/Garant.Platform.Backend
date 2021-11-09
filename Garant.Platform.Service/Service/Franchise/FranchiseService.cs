@@ -352,5 +352,49 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список категорий франшиз.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        public async Task<IEnumerable<CategoryOutput>> GetCategoryListAsync()
+        {
+            try
+            {
+                var result = await _franchiseRepository.GetCategoryListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список подкатегорий франшиз.
+        /// </summary>
+        /// <returns>Список подкатегорий.</returns>
+        public async Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync()
+        {
+            try
+            {
+                var result = await _franchiseRepository.GetSubCategoryListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

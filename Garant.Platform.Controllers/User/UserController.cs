@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.User;
-using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Input;
 using Garant.Platform.Models.Header.Output;
@@ -14,7 +13,6 @@ using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers.User
@@ -27,14 +25,10 @@ namespace Garant.Platform.Controllers.User
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
-        private readonly SignInManager<UserEntity> _signInManager;
-        private readonly UserManager<UserEntity> _userManager;
 
-        public UserController(IUserService userService, SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _signInManager = signInManager;
-            _userManager = userManager;
         }
 
         /// <summary>
