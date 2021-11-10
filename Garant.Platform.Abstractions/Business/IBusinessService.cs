@@ -63,5 +63,21 @@ namespace Garant.Platform.Abstractions.Business
         /// </summary>
         /// <returns>Список бизнеса.</returns>
         Task<IEnumerable<PopularBusinessOutput>> GetBusinessListAsync();
+
+        /// <summary>
+        /// Метод получит список бизнеса на основе фильтров.
+        /// </summary>
+        /// <param name="categoryCode">Категория.</param>
+        /// <param name="cityCode">Город.</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <returns>Список бизнеса.</returns>
+        Task<IEnumerable<BusinessOutput>> FilterBusinessesAsync(string categoryCode, string cityCode, double minPrice, double maxPrice);
+
+        /// <summary>
+        /// Метод получит новый бизнес, который был создан в текущем месяце.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        Task<IEnumerable<BusinessOutput>> GetNewBusinesseListAsync();
     }
 }

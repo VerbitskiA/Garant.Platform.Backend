@@ -38,5 +38,10 @@ namespace Garant.Platform.Models.Business.Output
         /// Полное ФИО создавшего бизнес.
         /// </summary>
         public string FullName { get; set; }
+
+        /// <summary>
+        /// Путь к изображению.
+        /// </summary>
+        public string Url { get; set; }
     }
 }

@@ -315,10 +315,10 @@ namespace Garant.Platform.Service.Repository.Franchise
         {
             try
             {
-                var year = DateTime.Now.Year;
+                var month = DateTime.Now.Month;
 
                 var items = await (from f in _postgreDbContext.Franchises
-                                   where f.DateCreate.Year == year
+                                   where f.DateCreate.Month == month
                                    select new FranchiseOutput
                                    {
                                        DateCreate = f.DateCreate,
