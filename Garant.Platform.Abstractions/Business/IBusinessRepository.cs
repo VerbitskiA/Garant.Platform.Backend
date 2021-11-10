@@ -52,5 +52,17 @@ namespace Garant.Platform.Abstractions.Business
         /// </summary>
         /// <returns>Список городов.</returns>
         Task<IEnumerable<BusinessCitiesOutput>> GetCitiesListAsync();
+
+        /// <summary>
+        /// Метод получит список популярного бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        Task<IEnumerable<PopularBusinessOutput>> GetPopularBusinessAsync();
+
+        /// <summary>
+        /// Метод получит список бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        Task<IEnumerable<PopularBusinessOutput>> GetBusinessListAsync();
     }
 }

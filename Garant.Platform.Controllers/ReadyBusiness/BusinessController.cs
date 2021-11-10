@@ -110,5 +110,33 @@ namespace Garant.Platform.Controllers.ReadyBusiness
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит список популярного бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        [HttpPost]
+        [Route("popular-business")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<PopularBusinessOutput>))]
+        public async Task<IActionResult> GetPopularBusinessAsync()
+        {
+            var result = await _businessService.GetPopularBusinessAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        [HttpPost]
+        [Route("catalog-business")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<PopularBusinessOutput>))]
+        public async Task<IActionResult> GetBusinessListAsync()
+        {
+            var result = await _businessService.GetBusinessListAsync();
+
+            return Ok(result);
+        }
     }
 }

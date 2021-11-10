@@ -46,5 +46,33 @@ namespace Garant.Platform.Controllers.Pagination
 
             return Ok(paginationData);
         }
+
+        /// <summary>
+        /// Метод пагинации на ините каталога бизнеса.
+        /// </summary>
+        /// <param name="pageIdx">Номер страницы. По дефолту 1.</param>
+        /// <returns>Данные пагинации.</returns>
+        [HttpPost, Route("init-catalog-business")]
+        [ProducesResponseType(200, Type = typeof(IndexOutput))]
+        public async Task<IActionResult> GetInitPaginationCatalogBusinessAsync([FromBody] PaginationInput paginationInput)
+        {
+            var paginationData = await _paginationService.GetInitPaginationCatalogBusinessAsync(paginationInput.PageNumber);
+
+            return Ok(paginationData);
+        }
+
+        /// <summary>
+        /// Метод получения пагинации франшиз в каталоге.
+        /// </summary>
+        /// <param name="pageIdx">Номер страницы. По дефолту 1.</param>
+        /// <returns>Данные пагинации.</returns>
+        [HttpPost, Route("catalog-business")]
+        [ProducesResponseType(200, Type = typeof(IndexOutput))]
+        public async Task<IActionResult> GetPaginationCatalogBusinessAsync([FromBody] PaginationInput paginationInput)
+        {
+            var paginationData = await _paginationService.GetPaginationCatalogBusinessAsync(paginationInput.PageNumber, paginationInput.CountRows);
+
+            return Ok(paginationData);
+        }
     }
 }
