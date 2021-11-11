@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Garant.Platform.Models.Entities.User
@@ -62,5 +63,11 @@ namespace Garant.Platform.Models.Entities.User
         /// </summary>
         [Column("UserId", TypeName = "varchar(50)")]
         public string UserId { get; set; }
+
+        /// <summary>
+        /// Дата рождения.
+        /// </summary>
+        [Column("DateBirth", TypeName = "timestamp")]
+        public DateTime DateBirth { get; set; }
     }
 }
