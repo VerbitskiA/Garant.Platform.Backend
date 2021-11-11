@@ -137,5 +137,12 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="account">Аккаунт.</param>
         /// <returns>Данные пользователя.</returns>
         Task<UserOutput> GetUserFioAsync(string account);
+
+        /// <summary>
+        /// Метод проверит, заполнил ил пользователь данные о себе. 
+        /// </summary>
+        /// <param name="account">Пользователь.</param>
+        /// <returns>Флаг проверки.</returns>
+        Task<bool> IsWriteProfileDataAsync(string account);
     }
 }
