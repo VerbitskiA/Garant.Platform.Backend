@@ -605,5 +605,34 @@ namespace Garant.Platform.Services.Service.User
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод сохранит данные формы профиля пользователя.
+        /// </summary>
+        /// <param name="firstName">Имя.</param>
+        /// <param name="lastName">Фамилия.</param>
+        /// <param name="email">Почта.</param>
+        /// <param name="dateBirth">Дата рождения.</param>
+        /// <param name="patronymic">Отчество.</param>
+        /// <param name="typeForm">Тип формы.</param>
+        /// <param name="account">Логин или Email.</param>
+        /// <returns>Данные формы.</returns>
+        public async Task<UserInformationOutput> SaveProfileFormAsync(string firstName, string lastName, string email, DateTime dateBirth, string patronymic, string typeForm, string account)
+        {
+            try
+            {
+                var result = await _userRepository.SaveProfileFormAsync(firstName, lastName, email, dateBirth, patronymic, typeForm, account);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }

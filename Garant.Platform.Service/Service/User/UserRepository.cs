@@ -41,7 +41,7 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var result = await (from u in _postgreDbContext.Users
-                                    where u.Email.Equals(data) || u.PhoneNumber.Equals(data)
+                                    where u.Email.Equals(data)
                                     select new UserOutput
                                     {
                                         Email = u.Email,
@@ -54,6 +54,24 @@ namespace Garant.Platform.Services.Service.User
                                         UserId = u.Id
                                     })
                     .FirstOrDefaultAsync();
+
+                if (result == null)
+                {
+                    result = await (from u in _postgreDbContext.Users
+                            where u.PhoneNumber.Equals(data)
+                            select new UserOutput
+                            {
+                                Email = u.Email,
+                                PhoneNumber = u.PhoneNumber,
+                                DateRegister = u.DateRegister,
+                                FirstName = u.FirstName,
+                                LastName = u.LastName,
+                                City = u.City,
+                                IsWriteQuestion = u.IsWriteQuestion,
+                                UserId = u.Id
+                            })
+                        .FirstOrDefaultAsync();
+                }
 
                 return result;
             }
@@ -716,6 +734,11 @@ namespace Garant.Platform.Services.Service.User
                     }
                 }
 
+                else
+                {
+                    userId = findUser.UserId;
+                }
+
                 return userId;
             }
 
@@ -750,6 +773,119 @@ namespace Garant.Platform.Services.Service.User
                 }
 
                 return user != null;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод сохранит данные формы профиля пользователя.
+        /// </summary>
+        /// <param name="firstName">Имя.</param>
+        /// <param name="lastName">Фамилия.</param>
+        /// <param name="email">Почта.</param>
+        /// <param name="dateBirth">Дата рождения.</param>
+        /// <param name="patronymic">Отчество.</param>
+        /// <param name="typeForm">Тип формы.</param>
+        /// <param name="account">Логин или Email.</param>
+        /// <returns>Данные формы.</returns>
+        public async Task<UserInformationOutput> SaveProfileFormAsync(string firstName, string lastName, string email, DateTime dateBirth, string patronymic, string typeForm, string account)
+        {
+            try
+            {
+                var userId = await FindUserIdUniverseAsync(account);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return null;
+                }
+
+                // Выберет запись с данными информации о пользователе.
+                var userData = await _postgreDbContext.UsersInformation
+                    .Where(i => i.UserId.Equals(userId))
+                    .FirstOrDefaultAsync();
+
+                if (userData == null)
+                {
+                    return null;
+                }
+
+                // Обновит данные.
+                var userInformation = new UserInformationEntity
+                {
+                    FirstName = userData.FirstName,
+                    LastName = userData.LastName,
+                    Email = userData.Email,
+                    PhoneNumber = userData.PhoneNumber,
+                    City = userData.City,
+                    DateBirth = userData.DateBirth,
+                    Patronymic = userData.Patronymic
+                };
+
+                _postgreDbContext.Update(userInformation);
+                await _postgreDbContext.SaveChangesAsync();
+
+                var result = new UserInformationOutput
+                {
+                    FirstName = userData.FirstName,
+                    LastName = userData.LastName,
+                    Email = userData.Email,
+                    PhoneNumber = userData.PhoneNumber,
+                    City = userData.City,
+                    DateBirth = userData.DateBirth,
+                    Patronymic = userData.Patronymic
+                };
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод универсально найдет все данные пользователя.
+        /// </summary>
+        /// <param name="account">Все данные для авторизации.</param>
+        /// <returns>Данные пользователя.</returns>
+        public async Task<UserEntity> FindUserUniverseAsync(string account)
+        {
+            try
+            {
+                var userId = string.Empty;
+
+                var findUser = await FindUserByEmailOrPhoneNumberAsync(account);
+
+                // Если такого пользователя не найдено, значит поищет по коду.
+                if (findUser == null)
+                {
+                    var findUserIdByCode = await FindUserByCodeAsync(account);
+
+                    if (!string.IsNullOrEmpty(findUserIdByCode))
+                    {
+                        userId = findUserIdByCode;
+                    }
+                }
+
+                else
+                {
+                    userId = findUser.UserId;
+                }
+
+                var result = await _postgreDbContext.Users.Where(u => u.Id.Equals(userId)).FirstOrDefaultAsync();
+
+                return result;
             }
 
             catch (Exception e)

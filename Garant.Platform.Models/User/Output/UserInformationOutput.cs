@@ -1,4 +1,6 @@
-﻿namespace Garant.Platform.Models.User.Output
+﻿using System;
+
+namespace Garant.Platform.Models.User.Output
 {
     /// <summary>
     /// Класс выходной модели для добавления доп. информации пользователя.
@@ -26,9 +28,29 @@
         public string Email { get; set; }
 
         /// <summary>
-        /// Название причины регистрации разделенные запятыми.
+        /// Пароль.
+        /// </summary>
+        public string Password { get; set; }
+
+        /// <summary>
+        /// Название причин регистрации разделенные запятыми.
         /// </summary>
         public string Values { get; set; }
+
+        /// <summary>
+        /// Тип формы, данные которой нужно сохранить.
+        /// </summary>
+        public string TypeForm { get; set; }
+
+        /// <summary>
+        /// Отчество.
+        /// </summary>
+        public string Patronymic { get; set; }
+
+        /// <summary>
+        /// Дата рождения.
+        /// </summary>
+        public DateTime DateBirth { get; set; }
 
         /// <summary>
         /// Номер телефона.

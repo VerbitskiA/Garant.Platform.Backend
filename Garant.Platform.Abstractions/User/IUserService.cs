@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
@@ -144,5 +145,18 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="account">Пользователь.</param>
         /// <returns>Флаг проверки.</returns>
         Task<bool> IsWriteProfileDataAsync(string account);
+
+        /// <summary>
+        /// Метод сохранит данные формы профиля пользователя.
+        /// </summary>
+        /// <param name="firstName">Имя.</param>
+        /// <param name="lastName">Фамилия.</param>
+        /// <param name="email">Почта.</param>
+        /// <param name="dateBirth">Дата рождения.</param>
+        /// <param name="patronymic">Отчество.</param>
+        /// <param name="typeForm">Тип формы.</param>
+        /// <param name="account">Логин или Email.</param>
+        /// <returns>Данные формы.</returns>
+        Task<UserInformationOutput> SaveProfileFormAsync(string firstName, string lastName, string email, DateTime dateBirth, string patronymic, string typeForm, string account);
     }
 }

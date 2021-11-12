@@ -69,5 +69,11 @@ namespace Garant.Platform.Models.Entities.User
         /// </summary>
         [Column("DateBirth", TypeName = "timestamp")]
         public DateTime DateBirth { get; set; }
+
+        /// <summary>
+        /// Отчество.
+        /// </summary>
+        [Column("Patronymic", TypeName = "varchar(200)")]
+        public string Patronymic { get; set; }
     }
 }

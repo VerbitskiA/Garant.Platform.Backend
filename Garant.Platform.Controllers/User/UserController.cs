@@ -249,5 +249,20 @@ namespace Garant.Platform.Controllers.User
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод сохранит данные формы профиля пользователя.
+        /// </summary>
+        /// <param name="userInformationInput">Входная модель.</param>
+        /// <returns>Данные формы.</returns>
+        [HttpPost]
+        [Route("save-profile-info")]
+        [ProducesResponseType(200, Type = typeof(UserInformationOutput))]
+        public async Task<IActionResult> SaveProfileFormAsync([FromBody] UserInformationInput userInformationInput)
+        {
+            var result = await _userService.SaveProfileFormAsync(userInformationInput.FirstName, userInformationInput.LastName, userInformationInput.Email, userInformationInput.DateBirth, userInformationInput.Patronymic, userInformationInput.TypeForm, GetUserName());
+
+            return Ok(result);
+        }
     }
 }
