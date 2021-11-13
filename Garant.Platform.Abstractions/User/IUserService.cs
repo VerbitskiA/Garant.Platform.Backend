@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
 using Garant.Platform.Models.User.Output;
+using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Abstractions.User
 {
@@ -149,14 +149,10 @@ namespace Garant.Platform.Abstractions.User
         /// <summary>
         /// Метод сохранит данные формы профиля пользователя.
         /// </summary>
-        /// <param name="firstName">Имя.</param>
-        /// <param name="lastName">Фамилия.</param>
-        /// <param name="email">Почта.</param>
-        /// <param name="dateBirth">Дата рождения.</param>
-        /// <param name="patronymic">Отчество.</param>
-        /// <param name="typeForm">Тип формы.</param>
+        /// <param name="documentFile">Название документа.</param>
+        /// <param name="userInformationInput">Входная модель.</param>
         /// <param name="account">Логин или Email.</param>
         /// <returns>Данные формы.</returns>
-        Task<UserInformationOutput> SaveProfileFormAsync(string firstName, string lastName, string email, DateTime dateBirth, string patronymic, string typeForm, string account);
+        Task<UserInformationOutput> SaveProfileFormAsync(IFormCollection documentFile, string userInformationInput, string account);
     }
 }

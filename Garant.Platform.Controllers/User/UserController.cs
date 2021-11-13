@@ -13,6 +13,7 @@ using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers.User
@@ -258,9 +259,9 @@ namespace Garant.Platform.Controllers.User
         [HttpPost]
         [Route("save-profile-info")]
         [ProducesResponseType(200, Type = typeof(UserInformationOutput))]
-        public async Task<IActionResult> SaveProfileFormAsync([FromBody] UserInformationInput userInformationInput)
+        public async Task<IActionResult> SaveProfileFormAsync([FromForm] IFormCollection documentFile, [FromForm] string userInformationInput)
         {
-            var result = await _userService.SaveProfileFormAsync(userInformationInput.FirstName, userInformationInput.LastName, userInformationInput.Email, userInformationInput.DateBirth, userInformationInput.Patronymic, userInformationInput.TypeForm, GetUserName());
+            var result = await _userService.SaveProfileFormAsync(documentFile, userInformationInput, GetUserName());
 
             return Ok(result);
         }

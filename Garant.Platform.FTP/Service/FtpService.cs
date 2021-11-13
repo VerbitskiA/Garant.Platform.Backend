@@ -61,7 +61,9 @@ namespace Garant.Platform.FTP.Service
                         else if (file.FileName.EndsWith(".docx")
                             || file.FileName.EndsWith(".xlsx")
                             || file.FileName.EndsWith(".pdf")
-                            || file.FileName.EndsWith(".pptx"))
+                            || file.FileName.EndsWith(".pptx")
+                            || file.FileName.EndsWith(".doc")
+                            || file.FileName.EndsWith(".xls"))
                         {
                             ftp.SetWorkingDirectory("/docs");
                         }

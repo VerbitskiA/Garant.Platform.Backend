@@ -12,6 +12,7 @@ using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
+using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 using Microsoft.EntityFrameworkCore;
 
@@ -787,15 +788,11 @@ namespace Garant.Platform.Services.Service.User
         /// <summary>
         /// Метод сохранит данные формы профиля пользователя.
         /// </summary>
-        /// <param name="firstName">Имя.</param>
-        /// <param name="lastName">Фамилия.</param>
-        /// <param name="email">Почта.</param>
-        /// <param name="dateBirth">Дата рождения.</param>
-        /// <param name="patronymic">Отчество.</param>
-        /// <param name="typeForm">Тип формы.</param>
+        /// <param name="userInformationInput">Входная модель.</param>
         /// <param name="account">Логин или Email.</param>
+        /// <param name="documentName">Название документа.</param>
         /// <returns>Данные формы.</returns>
-        public async Task<UserInformationOutput> SaveProfileFormAsync(string firstName, string lastName, string email, DateTime dateBirth, string patronymic, string typeForm, string account)
+        public async Task<UserInformationOutput> SaveProfileFormAsync(UserInformationInput userInformationInput, string account, string documentName)
         {
             try
             {
@@ -816,30 +813,55 @@ namespace Garant.Platform.Services.Service.User
                     return null;
                 }
 
-                // Обновит данные.
-                var userInformation = new UserInformationEntity
-                {
-                    FirstName = userData.FirstName,
-                    LastName = userData.LastName,
-                    Email = userData.Email,
-                    PhoneNumber = userData.PhoneNumber,
-                    City = userData.City,
-                    DateBirth = userData.DateBirth,
-                    Patronymic = userData.Patronymic
-                };
+                UserInformationEntity newuUserInformation = null;
 
-                _postgreDbContext.Update(userInformation);
+                if (userInformationInput.TypeForm.Equals("MainData"))
+                {
+                    userData.FirstName = userInformationInput.FirstName;
+                    userData.LastName = userInformationInput.LastName;
+                    userData.Email = userInformationInput.Email;
+                    userData.PhoneNumber = userInformationInput.PhoneNumber;
+                    userData.City = userInformationInput.City;
+                    userData.DateBirth = userInformationInput.DateBirth;
+                    userData.Patronymic = userInformationInput.Patronymic;
+                }
+
+                else if (userInformationInput.TypeForm.Equals("Requisites"))
+                {
+                    userData.Inn = userInformationInput.Inn;
+                    userData.Pc = userInformationInput.Pc;
+                    userData.PassportSerial = userInformationInput.PassportSerial;
+                    userData.PassportNumber = userInformationInput.PassportNumber;
+                    userData.DateGive = userInformationInput.DateGive;
+                    userData.WhoGive = userInformationInput.WhoGive;
+                    userData.Code = userInformationInput.Code;
+                    userData.AddressRegister = userInformationInput.AddressRegister;
+                    userData.DocumentName = documentName;
+                }
+
+                // Обновит данные.
+                _postgreDbContext.UsersInformation.Update(userData);
                 await _postgreDbContext.SaveChangesAsync();
 
                 var result = new UserInformationOutput
                 {
+                    Inn = userData.Inn,
+                    Pc = userData.Pc,
+                    PassportSerial = userData.PassportSerial,
+                    PassportNumber = userData.PassportNumber,
+                    DateGive = userData.DateGive,
+                    WhoGive = userData.WhoGive,
+                    Code = userData.Code,
+                    AddressRegister = userData.AddressRegister,
+                    DocumentName = documentName,
                     FirstName = userData.FirstName,
                     LastName = userData.LastName,
                     Email = userData.Email,
                     PhoneNumber = userData.PhoneNumber,
                     City = userData.City,
                     DateBirth = userData.DateBirth,
-                    Patronymic = userData.Patronymic
+                    Patronymic = userData.Patronymic,
+                    Password = userData.Password
                 };
 
                 return result;

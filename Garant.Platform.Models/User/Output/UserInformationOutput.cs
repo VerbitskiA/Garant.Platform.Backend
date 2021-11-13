@@ -33,19 +33,19 @@ namespace Garant.Platform.Models.User.Output
         public string Password { get; set; }
 
         /// <summary>
-        /// Название причин регистрации разделенные запятыми.
+        /// Номер телефона.
+        /// </summary>
+        public string PhoneNumber { get; set; }
+
+        /// <summary>
+        /// Значения разделенные запятой.
         /// </summary>
         public string Values { get; set; }
 
         /// <summary>
-        /// Тип формы, данные которой нужно сохранить.
+        /// Id пользователя.
         /// </summary>
-        public string TypeForm { get; set; }
-
-        /// <summary>
-        /// Отчество.
-        /// </summary>
-        public string Patronymic { get; set; }
+        public string UserId { get; set; }
 
         /// <summary>
         /// Дата рождения.
@@ -53,8 +53,53 @@ namespace Garant.Platform.Models.User.Output
         public DateTime DateBirth { get; set; }
 
         /// <summary>
-        /// Номер телефона.
+        /// Отчество.
         /// </summary>
-        public string PhoneNumber { get; set; }
+        public string Patronymic { get; set; }
+
+        /// <summary>
+        /// ИНН.
+        /// </summary>
+        public int? Inn { get; set; }
+
+        /// <summary>
+        /// Расчетный счет.
+        /// </summary>
+        public int? Pc { get; set; }
+
+        /// <summary>
+        /// Серия паспорта.
+        /// </summary>
+        public int? PassportSerial { get; set; }
+
+        /// <summary>
+        /// Номер паспорта.
+        /// </summary>
+        public int? PassportNumber { get; set; }
+
+        /// <summary>
+        /// Дата выдачи паспорта.
+        /// </summary>
+        public DateTime? DateGive { get; set; }
+
+        /// <summary>
+        /// Кем выдан паспорт.
+        /// </summary>
+        public string WhoGive { get; set; }
+
+        /// <summary>
+        /// Код паспорта.
+        /// </summary>
+        public string Code { get; set; }
+
+        /// <summary>
+        /// Адрес регистрации.
+        /// </summary>
+        public string AddressRegister { get; set; }
+
+        /// <summary>
+        /// Название документа.
+        /// </summary>
+        public string DocumentName { get; set; }
     }
 }

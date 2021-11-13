@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
+using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -31,14 +35,16 @@ namespace Garant.Platform.Services.Service.User
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IMailingService _mailingService;
         private readonly IUserRepository _userRepository;
+        private readonly IFtpService _ftpService;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, IMailingService mailingService, IUserRepository userRepository)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, IMailingService mailingService, IUserRepository userRepository, IFtpService ftpService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _postgreDbContext = postgreDbContext;
             _mailingService = mailingService;
             _userRepository = userRepository;
+            _ftpService = ftpService;
         }
 
         /// <summary>
@@ -609,19 +615,25 @@ namespace Garant.Platform.Services.Service.User
         /// <summary>
         /// Метод сохранит данные формы профиля пользователя.
         /// </summary>
-        /// <param name="firstName">Имя.</param>
-        /// <param name="lastName">Фамилия.</param>
-        /// <param name="email">Почта.</param>
-        /// <param name="dateBirth">Дата рождения.</param>
-        /// <param name="patronymic">Отчество.</param>
-        /// <param name="typeForm">Тип формы.</param>
+        /// <param name="documentFile">Название документа.</param>
+        /// <param name="userInformationInput">Входная модель.</param>
         /// <param name="account">Логин или Email.</param>
         /// <returns>Данные формы.</returns>
-        public async Task<UserInformationOutput> SaveProfileFormAsync(string firstName, string lastName, string email, DateTime dateBirth, string patronymic, string typeForm, string account)
+        public async Task<UserInformationOutput> SaveProfileFormAsync(IFormCollection documentFile, string userInformationJson, string account)
         {
             try
             {
-                var result = await _userRepository.SaveProfileFormAsync(firstName, lastName, email, dateBirth, patronymic, typeForm, account);
+                UserInformationOutput result = null;
+
+                // Загрузит документ на сервер.
+                await _ftpService.UploadFilesFtpAsync(documentFile.Files);
+
+                var userInformationInput = JsonSerializer.Deserialize<UserInformationInput>(userInformationJson);
+
+                if (userInformationInput != null)
+                {
+                    result = await _userRepository.SaveProfileFormAsync(userInformationInput, account, documentFile.Files[0].FileName);
+                }
 
                 return result;
             }

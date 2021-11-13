@@ -1,5 +1,6 @@
 ﻿using Garant.Platform.Base.Service;
 using Garant.Platform.Core.Data;
+using Garant.Platform.FTP.Service;
 using Garant.Platform.Mailings.Service;
 using Garant.Platform.Service.Repository.Franchise;
 using Garant.Platform.Services.Service.Franchise;
@@ -24,6 +25,7 @@ namespace Garant.Platform.Tests
         protected FranchiseService FranchiseService;
         protected FranchiseRepository FranchiseRepository;
         protected UserRepository UserRepository;
+        protected FtpService FtpService;
 
         public BaseServiceTest()
         {
@@ -36,6 +38,7 @@ namespace Garant.Platform.Tests
             var optionsBuilder = new DbContextOptionsBuilder<PostgreDbContext>();
             optionsBuilder.UseNpgsql(PostgreConfigString);
             PostgreDbContext = new PostgreDbContext(optionsBuilder.Options);
+            FtpService = new FtpService(AppConfiguration, PostgreDbContext);
 
             // Настройка экземпляров сервисов для тестов.
             CommonService = new CommonService(PostgreDbContext, null);
@@ -43,7 +46,7 @@ namespace Garant.Platform.Tests
             FranchiseRepository = new FranchiseRepository(PostgreDbContext, UserRepository);
 
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
-            UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository);
+            UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService);
             FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);
         }
     }

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
+using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 
 namespace Garant.Platform.Abstractions.User
@@ -132,16 +132,17 @@ namespace Garant.Platform.Abstractions.User
         /// <summary>
         /// Метод сохранит данные формы профиля пользователя.
         /// </summary>
-        /// <param name="firstName">Имя.</param>
-        /// <param name="lastName">Фамилия.</param>
-        /// <param name="email">Почта.</param>
-        /// <param name="dateBirth">Дата рождения.</param>
-        /// <param name="patronymic">Отчество.</param>
-        /// <param name="typeForm">Тип формы.</param>
+        /// <param name="userInformationInput">Входная модель.</param>
         /// <param name="account">Логин или Email.</param>
+        /// <param name="documentName">Название документа.</param>
         /// <returns>Данные формы.</returns>
-        Task<UserInformationOutput> SaveProfileFormAsync(string firstName, string lastName, string email, DateTime dateBirth, string patronymic, string typeForm, string account);
+        Task<UserInformationOutput> SaveProfileFormAsync(UserInformationInput userInformationInput, string account, string documentName);
 
+        /// <summary>
+        /// Метод найдет все данные пользователя.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns>Данные пользователя.</returns>
         Task<UserEntity> FindUserUniverseAsync(string account);
     }
 }

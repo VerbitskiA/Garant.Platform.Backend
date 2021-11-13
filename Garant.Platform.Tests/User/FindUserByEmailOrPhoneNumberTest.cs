@@ -14,7 +14,7 @@ namespace Garant.Platform.Tests.User
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.FindUserByEmailOrPhoneNumberAsync("ivan@mail.ru"));
-            var component = new UserService(null, null, PostgreDbContext, MailingService, UserRepository);
+            var component = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService);
             var result = await component.FindUserByEmailOrPhoneNumberAsync("ivan@mail.ru");
 
             Assert.IsNotNull(result);
