@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Garant.Platform.Models.User.Output
+﻿namespace Garant.Platform.Models.User.Output
 {
     /// <summary>
     /// Класс выходной модели для добавления доп. информации пользователя.
@@ -101,5 +99,15 @@ namespace Garant.Platform.Models.User.Output
         /// Название документа.
         /// </summary>
         public string DocumentName { get; set; }
+
+        /// <summary>
+        /// Кол-во времени на сайте.
+        /// </summary>
+        public string CountTimeSite { get; set; }
+
+        /// <summary>
+        /// Кол-во объявлений.
+        /// </summary>
+        public int CountAd { get; set; }
     }
 }

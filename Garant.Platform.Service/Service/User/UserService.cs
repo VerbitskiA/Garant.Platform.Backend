@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.User;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
@@ -36,8 +38,9 @@ namespace Garant.Platform.Services.Service.User
         private readonly IMailingService _mailingService;
         private readonly IUserRepository _userRepository;
         private readonly IFtpService _ftpService;
+        private readonly ICommonService _commonService;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, IMailingService mailingService, IUserRepository userRepository, IFtpService ftpService)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, IMailingService mailingService, IUserRepository userRepository, IFtpService ftpService, ICommonService commonService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -45,6 +48,7 @@ namespace Garant.Platform.Services.Service.User
             _mailingService = mailingService;
             _userRepository = userRepository;
             _ftpService = ftpService;
+            _commonService = commonService;
         }
 
         /// <summary>
@@ -624,15 +628,20 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 UserInformationOutput result = null;
+                var fileName = string.Empty;
 
                 // Загрузит документ на сервер.
-                await _ftpService.UploadFilesFtpAsync(documentFile.Files);
+                if (documentFile.Files.Any())
+                {
+                    await _ftpService.UploadFilesFtpAsync(documentFile.Files);
+                    fileName = documentFile.Files[0].FileName;
+                }
 
                 var userInformationInput = JsonSerializer.Deserialize<UserInformationInput>(userInformationJson);
 
                 if (userInformationInput != null)
                 {
-                    result = await _userRepository.SaveProfileFormAsync(userInformationInput, account, documentFile.Files[0].FileName);
+                    result = await _userRepository.SaveProfileFormAsync(userInformationInput, account, fileName);
                 }
 
                 return result;
@@ -657,6 +666,64 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var result = await _userRepository.GetProfileInfoAsync(account);
+
+                if (result != null)
+                {
+                    var user = await _userRepository.FindUserUniverseAsync(account);
+
+                    result.Password = null;
+
+                    // Вычислит кол-во времени на сайте.
+                    if (user != null)
+                    {
+                        // Вычислит года.
+                        var calcYear = DateTime.Now.Year - user.DateRegister.Year;
+
+                        // Вычислит месяцы.
+                        var calcMonth = await _commonService.GetSubtractMonthAsync(user.DateRegister, DateTime.Now);
+
+                        if (calcYear == 0)
+                        {
+                            result.CountTimeSite = calcMonth.ToString(CultureInfo.InvariantCulture) + " мес.";
+                        }
+
+                        else
+                        {
+                            // Если 12 мес, то прибавит 1 год.
+                            if ((int)calcMonth == 12)
+                            {
+                                calcYear++;
+                                result.CountTimeSite = calcYear + " г.";
+                            }
+
+                            else
+                            {
+                                result.CountTimeSite = calcYear + " г." + calcMonth + " мес.";
+                            }
+                        }
+
+                        // Вычислит кол-во объявлений пользователя.
+                        var userId = await _userRepository.FindUserIdUniverseAsync(account);
+
+                        if (!string.IsNullOrEmpty(userId))
+                        {
+                            // Вычислит кол-во опубликованных объявлений франшиз + кол-во опубликованного бизнеса.
+                            // Кол-во франшиз.
+                            var countFranchises = await _postgreDbContext.Franchises
+                                .Where(f => f.UserId.Equals(userId))
+                                .CountAsync();
+
+                            //// Кол-во бизнеса.
+                            var countBusinesses = await _postgreDbContext.Businesses
+                                .Where(f => f.UserId.Equals(userId))
+                                .CountAsync();
+
+                            // Всего.
+                            var countAd = countFranchises + countBusinesses;
+                            result.CountAd = countAd;
+                        }
+                    }
+                }
 
                 return result;
             }

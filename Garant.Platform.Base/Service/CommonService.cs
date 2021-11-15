@@ -199,5 +199,56 @@ namespace Garant.Platform.Base.Service
 
             return await Task.FromResult(Convert.ToBase64String(dst));
         }
+
+        /// <summary>
+        /// Метод вычислит кол-во месяцев между датами.
+        /// </summary>
+        /// <param name="startDate">Дата начала.</param>
+        /// <param name="endDate">Текущая дата.</param>
+        /// <returns>Кол-во месяцев округленное до целого.</returns>
+        public async Task<double> GetSubtractMonthAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                var dt1 = new DateTime(startDate.Year, startDate.Month, startDate.Day);
+                var dt2 = new DateTime(endDate.Year, endDate.Month, endDate.Day);
+
+                if (dt1 > dt2 || dt1 == dt2)
+                {
+                    return 0;
+                }
+
+                double days = (dt2 - dt1).TotalDays;
+                double mnt = 0;
+
+                while (days != 0)
+                {
+                    var inMnt = DateTime.DaysInMonth(dt1.Year, dt1.Month);
+
+                    if (days >= inMnt)
+                    {
+                        days -= inMnt;
+                        ++mnt;
+                        dt1 = dt1.AddMonths(1);
+                    }
+
+                    else
+                    {
+                        mnt += days / inMnt;
+                        days = 0;
+                    }
+                }
+
+                return await Task.FromResult(Math.Round(mnt));
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }
