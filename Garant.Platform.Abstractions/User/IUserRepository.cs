@@ -151,5 +151,11 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="account">Логин или email пользователя.</param>
         /// <returns>Данные профиля.</returns>
         Task<UserInformationOutput> GetProfileInfoAsync(string account);
+
+        /// <summary>
+        /// Метод получит список меню для пунктов ЛК.
+        /// </summary>
+        /// <returns>Список пунктов ЛК.</returns>
+        Task<IEnumerable<ProfileNavigationOutput>> GetProfileMenuListAsync();
     }
 }

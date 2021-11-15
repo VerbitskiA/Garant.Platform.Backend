@@ -736,5 +736,27 @@ namespace Garant.Platform.Services.Service.User
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список меню для пунктов ЛК.
+        /// </summary>
+        /// <returns>Список пунктов ЛК.</returns>
+        public async Task<IEnumerable<ProfileNavigationOutput>> GetProfileMenuListAsync()
+        {
+            try
+            {
+                var result = await _userRepository.GetProfileMenuListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }

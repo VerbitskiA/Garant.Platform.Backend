@@ -150,5 +150,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица Business.BusinessCities
         /// </summary>
         public DbSet<BusinessCitiesEntity> BusinessCities { get; set; }
+
+        /// <summary>
+        /// Таблица dbo.ProfileNavigations.
+        /// </summary>
+        public DbSet<ProfileNavigationEntity> ProfileNavigations { get; set; }
     }
 }

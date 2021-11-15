@@ -279,5 +279,19 @@ namespace Garant.Platform.Controllers.User
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит список меню для пунктов ЛК.
+        /// </summary>
+        /// <returns>Список пунктов ЛК.</returns>
+        [HttpPost]
+        [Route("profile-menu")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ProfileNavigationOutput>))]
+        public async Task<IActionResult> GetProfileMenuListAsync()
+        {
+            var result = await _userService.GetProfileMenuListAsync();
+
+            return Ok(result);
+        }
     }
 }
