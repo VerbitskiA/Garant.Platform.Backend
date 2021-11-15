@@ -154,5 +154,12 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="account">Логин или Email.</param>
         /// <returns>Данные формы.</returns>
         Task<UserInformationOutput> SaveProfileFormAsync(IFormCollection documentFile, string userInformationInput, string account);
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя.
+        /// </summary>
+        /// <param name="account">Логин или email пользователя.</param>
+        /// <returns>Данные профиля.</returns>
+        Task<UserInformationOutput> GetProfileInfoAsync(string account);
     }
 }

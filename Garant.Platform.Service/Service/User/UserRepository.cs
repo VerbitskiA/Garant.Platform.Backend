@@ -813,8 +813,7 @@ namespace Garant.Platform.Services.Service.User
                     return null;
                 }
 
-                UserInformationEntity newuUserInformation = null;
-
+                // Для главной формы.
                 if (userInformationInput.TypeForm.Equals("MainData"))
                 {
                     userData.FirstName = userInformationInput.FirstName;
@@ -826,6 +825,7 @@ namespace Garant.Platform.Services.Service.User
                     userData.Patronymic = userInformationInput.Patronymic;
                 }
 
+                // Для формы реквизитов.
                 else if (userInformationInput.TypeForm.Equals("Requisites"))
                 {
                     userData.Inn = userInformationInput.Inn;
@@ -849,7 +849,7 @@ namespace Garant.Platform.Services.Service.User
                     Pc = userData.Pc,
                     PassportSerial = userData.PassportSerial,
                     PassportNumber = userData.PassportNumber,
-                    DateGive = userData.DateGive,
+                    DateGive = Convert.ToDateTime(userData.DateGive).ToString("yyyy-MM-dd"),
                     WhoGive = userData.WhoGive,
                     Code = userData.Code,
                     AddressRegister = userData.AddressRegister,
@@ -859,7 +859,7 @@ namespace Garant.Platform.Services.Service.User
                     Email = userData.Email,
                     PhoneNumber = userData.PhoneNumber,
                     City = userData.City,
-                    DateBirth = userData.DateBirth,
+                    DateBirth = userData.DateBirth.ToString("yyyy-MM-dd"),
                     Patronymic = userData.Patronymic,
                     Password = userData.Password
                 };
@@ -915,6 +915,58 @@ namespace Garant.Platform.Services.Service.User
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя.
+        /// </summary>
+        /// <param name="account">Логин или email пользователя.</param>
+        /// <returns>Данные профиля.</returns>
+        public async Task<UserInformationOutput> GetProfileInfoAsync(string account)
+        {
+            try
+            {
+                var userId = await FindUserIdUniverseAsync(account);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return null;
+                }
+
+                var profileData = await _postgreDbContext.UsersInformation
+                    .Where(i => i.UserId.Equals(userId))
+                    .Select(i => new UserInformationOutput
+                    {
+                        Inn = i.Inn,
+                        Pc = i.Pc,
+                        PassportSerial = i.PassportSerial,
+                        PassportNumber = i.PassportNumber,
+                        DateGive = Convert.ToDateTime(i.DateGive).ToString("yyyy-MM-dd"),
+                        WhoGive = i.WhoGive,
+                        Code = i.Code,
+                        AddressRegister = i.AddressRegister,
+                        DocumentName = i.DocumentName,
+                        FirstName = i.FirstName,
+                        LastName = i.LastName,
+                        Email = i.Email,
+                        PhoneNumber = i.PhoneNumber,
+                        City = i.City,
+                        DateBirth = i.DateBirth.ToString("yyyy-MM-dd"),
+                        Patronymic = i.Patronymic,
+                        Values = i.Values
+                    })
+                    .FirstOrDefaultAsync();
+
+                return profileData;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }

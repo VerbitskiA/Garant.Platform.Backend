@@ -265,5 +265,19 @@ namespace Garant.Platform.Controllers.User
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя.
+        /// </summary>
+        /// <returns>Данные профиля.</returns>
+        [HttpPost]
+        [Route("get-profile-info")]
+        [ProducesResponseType(200, Type = typeof(UserInformationOutput))]
+        public async Task<IActionResult> GetProfileInfoAsync()
+        {
+            var result = await _userService.GetProfileInfoAsync(GetUserName());
+
+            return Ok(result);
+        }
     }
 }

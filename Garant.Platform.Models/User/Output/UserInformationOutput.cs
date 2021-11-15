@@ -50,7 +50,7 @@ namespace Garant.Platform.Models.User.Output
         /// <summary>
         /// Дата рождения.
         /// </summary>
-        public DateTime DateBirth { get; set; }
+        public string DateBirth { get; set; }
 
         /// <summary>
         /// Отчество.
@@ -80,7 +80,7 @@ namespace Garant.Platform.Models.User.Output
         /// <summary>
         /// Дата выдачи паспорта.
         /// </summary>
-        public DateTime? DateGive { get; set; }
+        public string DateGive { get; set; }
 
         /// <summary>
         /// Кем выдан паспорт.

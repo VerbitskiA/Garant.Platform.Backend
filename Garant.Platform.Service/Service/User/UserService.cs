@@ -646,5 +646,28 @@ namespace Garant.Platform.Services.Service.User
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя.
+        /// </summary>
+        /// <param name="account">Логин или email пользователя.</param>
+        /// <returns>Данные профиля.</returns>
+        public async Task<UserInformationOutput> GetProfileInfoAsync(string account)
+        {
+            try
+            {
+                var result = await _userRepository.GetProfileInfoAsync(account);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }
