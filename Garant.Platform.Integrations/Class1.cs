@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Garant.Platform.Messaging
+namespace Garant.Platform.Integrations
 {
     public class Class1
     {

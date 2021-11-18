@@ -1,6 +1,6 @@
 ﻿using Autofac;
-using Garant.Platform.Commerce.Abstraction;
-using Garant.Platform.Commerce.Service;
+using Garant.Platform.Commerce.Abstraction.ЮKassa;
+using Garant.Platform.Commerce.Service.ЮKassa;
 using Garant.Platform.Core.Attributes;
 
 namespace Garant.Platform.Commerce.AutofacModules
@@ -13,9 +13,9 @@ namespace Garant.Platform.Commerce.AutofacModules
     {
         public static void InitModules(ContainerBuilder builder)
         {
-            // Сервис платежных систем.
-            builder.RegisterType<CommerceService>().Named<ICommerceService>("CommerceService");
-            builder.RegisterType<CommerceService>().As<ICommerceService>();
+            // Сервис платежной системы ЮKassa.
+            builder.RegisterType<ЮKassaService>().Named<IЮKassaService>("ЮKassaService");
+            builder.RegisterType<ЮKassaService>().As<IЮKassaService>();
         }
     }
 }

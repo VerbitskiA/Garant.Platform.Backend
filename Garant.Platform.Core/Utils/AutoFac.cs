@@ -36,12 +36,27 @@ namespace Garant.Platform.Core.Utils
 
             var assemblies4 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Base"));
 
+            var assemblies5 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Integrations"));
+
+            var assemblies6 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Commerce"));
+
+            var assemblies7 = GetAssembliesFromApplicationBaseDirectory(x => x.FullName.StartsWith("Garant.Platform.Messaging"));
+
             _builder.RegisterAssemblyTypes(assemblies1).AsImplementedInterfaces();
             _builder.RegisterAssemblyTypes(assemblies2).AsImplementedInterfaces();
             _builder.RegisterAssemblyTypes(assemblies3).AsImplementedInterfaces();
             _builder.RegisterAssemblyTypes(assemblies4).AsImplementedInterfaces();
+            _builder.RegisterAssemblyTypes(assemblies5).AsImplementedInterfaces();
+            _builder.RegisterAssemblyTypes(assemblies6).AsImplementedInterfaces();
+            _builder.RegisterAssemblyTypes(assemblies7).AsImplementedInterfaces();
 
-            var assemblies = assemblies1.Union(assemblies2);
+            var assemblies = assemblies1
+                .Union(assemblies2)
+                .Union(assemblies3)
+                .Union(assemblies4)
+                .Union(assemblies5)
+                .Union(assemblies6)
+                .Union(assemblies7);
 
             _typeModules = (from assembly in assemblies
                             from type in assembly.GetTypes()
