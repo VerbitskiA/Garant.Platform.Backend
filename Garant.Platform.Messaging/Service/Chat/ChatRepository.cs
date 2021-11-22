@@ -153,8 +153,18 @@ namespace Garant.Platform.Messaging.Service.Chat
         {
             try
             {
+                long lastDialogId = 1000000;
+
+                if (await _postgreDbContext.MainInfoDialogs.AnyAsync())
+                {
+                    // Найдет последний диалог.
+                    lastDialogId = await _postgreDbContext.MainInfoDialogs.MaxAsync(d => d.DialogId);
+                    lastDialogId++;
+                }
+
                 await _postgreDbContext.MainInfoDialogs.AddAsync(new MainInfoDialogEntity
                 {
+                    DialogId = lastDialogId,
                     DialogName = dialogName,
                     Created = dateCreated
                 });
