@@ -52,5 +52,12 @@ namespace Garant.Platform.Abstractions.Business
         /// </summary>
         /// <returns>Список городов.</returns>
         Task<IEnumerable<BusinessCitiesOutput>> GetCitiesListAsync();
+
+        /// <summary>
+        /// Метод получит заголовок бизнеса по Id пользователя.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Заголовок бизнеса.</returns>
+        Task<string> GetBusinessTitleAsync(string userId);
     }
 }

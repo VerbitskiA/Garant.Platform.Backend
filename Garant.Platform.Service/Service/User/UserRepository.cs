@@ -1001,5 +1001,50 @@ namespace Garant.Platform.Services.Service.User
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя по его Id.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные профиля.</returns>
+        public async Task<UserInformationOutput> GetUserProfileInfoByIdAsync(string userId)
+        {
+            try
+            {
+                var profileData = await _postgreDbContext.UsersInformation
+                    .Where(i => i.UserId.Equals(userId))
+                    .Select(i => new UserInformationOutput
+                    {
+                        Inn = i.Inn,
+                        Pc = i.Pc,
+                        PassportSerial = i.PassportSerial,
+                        PassportNumber = i.PassportNumber,
+                        DateGive = Convert.ToDateTime(i.DateGive).ToString("yyyy-MM-dd"),
+                        WhoGive = i.WhoGive,
+                        Code = i.Code,
+                        AddressRegister = i.AddressRegister,
+                        DocumentName = i.DocumentName,
+                        FirstName = i.FirstName,
+                        LastName = i.LastName,
+                        Email = i.Email,
+                        PhoneNumber = i.PhoneNumber,
+                        City = i.City,
+                        DateBirth = i.DateBirth.ToString("yyyy-MM-dd"),
+                        Patronymic = i.Patronymic,
+                        Values = i.Values
+                    })
+                    .FirstOrDefaultAsync();
+
+                return profileData;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }

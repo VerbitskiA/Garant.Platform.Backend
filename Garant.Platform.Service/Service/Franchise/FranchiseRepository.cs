@@ -12,7 +12,7 @@ using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
-namespace Garant.Platform.Service.Repository.Franchise
+namespace Garant.Platform.Services.Service.Franchise
 {
     /// <summary>
     /// Репозиторий франшиз для работы с БД.
@@ -833,6 +833,32 @@ namespace Garant.Platform.Service.Repository.Franchise
                     .ToListAsync();
 
                 return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит заголовок франшизы по Id пользователя.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Заголовок франшизы.</returns>
+        public async Task<string> GetFranchiseTitleAsync(string userId)
+        {
+            try
+            {
+                var title = await _postgreDbContext.Franchises
+                    .Where(f => f.UserId.Equals(userId))
+                    .Select(f => f.Title)
+                    .FirstOrDefaultAsync();
+
+                return title;
             }
 
             catch (Exception e)

@@ -2,7 +2,8 @@
 using Garant.Platform.Core.Data;
 using Garant.Platform.FTP.Service;
 using Garant.Platform.Mailings.Service;
-using Garant.Platform.Service.Repository.Franchise;
+using Garant.Platform.Messaging.Service.Chat;
+using Garant.Platform.Services.Service.Business;
 using Garant.Platform.Services.Service.Franchise;
 using Garant.Platform.Services.Service.User;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,8 @@ namespace Garant.Platform.Tests
         protected FranchiseRepository FranchiseRepository;
         protected UserRepository UserRepository;
         protected FtpService FtpService;
+        protected BusinessRepository BusinessRepository;
+        protected ChatRepository ChatRepository;
 
         public BaseServiceTest()
         {
@@ -48,6 +51,8 @@ namespace Garant.Platform.Tests
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
             UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
             FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);
+            BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository);
+            ChatRepository = new ChatRepository(PostgreDbContext);
         }
     }
 }
