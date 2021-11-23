@@ -4,8 +4,6 @@ using Garant.Platform.FTP.Service;
 using Garant.Platform.Mailings.Service;
 using Garant.Platform.Messaging.Service.Chat;
 using Garant.Platform.Services.Service.Business;
-using Garant.Platform.Service.Repository.Franchise;
-using Garant.Platform.Services.Service.Business;
 using Garant.Platform.Services.Service.Franchise;
 using Garant.Platform.Services.Service.Pagination;
 using Garant.Platform.Services.Service.User;
@@ -32,7 +30,6 @@ namespace Garant.Platform.Tests
         protected FtpService FtpService;
         protected BusinessRepository BusinessRepository;
         protected ChatRepository ChatRepository;
-        protected BusinessRepository BusinessRepository;
         protected PaginationRepository PaginationRepository;
 
         public BaseServiceTest()
