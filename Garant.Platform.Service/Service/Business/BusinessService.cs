@@ -206,5 +206,107 @@ namespace Garant.Platform.Services.Service.Business
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список популярного бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        public async Task<IEnumerable<PopularBusinessOutput>> GetPopularBusinessAsync()
+        {
+            try
+            {
+                var result = await _businessRepository.GetPopularBusinessAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        public async Task<IEnumerable<PopularBusinessOutput>> GetBusinessListAsync()
+        {
+            try
+            {
+                var result = await _businessRepository.GetBusinessListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список бизнеса на основе фильтров.
+        /// </summary>
+        /// <param name="categoryCode">Категория.</param>
+        /// <param name="cityCode">Город.</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <returns>Список бизнеса.</returns>
+        public async Task<IEnumerable<BusinessOutput>> FilterBusinessesAsync(string categoryCode, string cityCode, double minPrice, double maxPrice)
+        {
+            try
+            {
+                var result = await _businessRepository.FilterBusinessesAsync(categoryCode, cityCode, minPrice, maxPrice);
+
+                foreach (var item in result)
+                {
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит новый бизнес, который был создан в текущем месяце.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        public async Task<IEnumerable<BusinessOutput>> GetNewBusinesseListAsync()
+        {
+            try
+            {
+                var result = await _businessRepository.GetNewBusinesseListAsync();
+
+                foreach (var item in result)
+                {
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

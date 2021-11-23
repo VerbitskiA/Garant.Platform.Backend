@@ -490,5 +490,165 @@ namespace Garant.Platform.Services.Service.Business
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список популярного бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        public async Task<IEnumerable<PopularBusinessOutput>> GetPopularBusinessAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.Businesses
+                    .Select(b => new PopularBusinessOutput
+                    {
+                        DateCreate = b.DateCreate,
+                        Price = string.Format("{0:0,0}", b.Price),
+                        CountDays = DateTime.Now.Day - b.DateCreate.Day,
+                        DayDeclination = "дня",
+                        Text = b.Text,
+                        TextDoPrice = b.TextDoPrice,
+                        Title = b.BusinessName,
+                        Url = b.UrlsBusiness[0],
+                        TotalInvest = string.Format("{0:0,0}", b.InvestPrice),
+                        BusinessId = b.BusinessId
+                    })
+                    .Take(4)
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        public async Task<IEnumerable<PopularBusinessOutput>> GetBusinessListAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.Businesses
+                    .Select(b => new PopularBusinessOutput
+                    {
+                        DateCreate = b.DateCreate,
+                        Price = string.Format("{0:0,0}", b.Price),
+                        CountDays = DateTime.Now.Day - b.DateCreate.Day,
+                        DayDeclination = "дня",
+                        Text = b.Text,
+                        TextDoPrice = b.TextDoPrice,
+                        Title = b.BusinessName,
+                        Url = b.UrlsBusiness[0],
+                        TotalInvest = string.Format("{0:0,0}", b.InvestPrice),
+                        BusinessId = b.BusinessId
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список бизнеса на основе фильтров.
+        /// </summary>
+        /// <param name="categoryCode">Категория.</param>
+        /// <param name="cityCode">Город.</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <returns>Список бизнеса.</returns>
+        public async Task<List<BusinessOutput>> FilterBusinessesAsync(string categoryCode, string cityCode, double minPrice, double maxPrice)
+        {
+            try
+            {
+                var result = await (from f in _postgreDbContext.Businesses
+                                    where f.Category.Equals(categoryCode)
+                                          && f.BusinessCity.Equals(cityCode)
+                                          && (f.Price <= maxPrice && f.Price >= minPrice)
+                                    orderby f.BusinessId
+                                    select new BusinessOutput
+                                    {
+                                        Category = f.Category,
+                                        CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                        DayDeclination = "дня",
+                                        DateCreate = f.DateCreate,
+                                        Price = string.Format("{0:0,0}", f.Price),
+                                        TextDoPrice = f.TextDoPrice,
+                                        Text = f.Text,
+                                        SubCategory = f.SubCategory,
+                                        BusinessName = f.BusinessName,
+                                        Url = f.UrlsBusiness[0]
+                                    })
+                    .Take(4)
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит новый бизнес, который был создан в текущем месяце.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        public async Task<List<BusinessOutput>> GetNewBusinesseListAsync()
+        {
+            try
+            {
+                var month = DateTime.Now.Month;
+
+                var items = await (from f in _postgreDbContext.Businesses
+                                   where f.DateCreate.Month == month
+                                   select new BusinessOutput
+                                   {
+                                       DateCreate = f.DateCreate,
+                                       Price = string.Format("{0:0,0}", f.Price),
+                                       CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                       DayDeclination = "дня",
+                                       Text = f.Text,
+                                       TextDoPrice = f.TextDoPrice,
+                                       BusinessName = f.BusinessName,
+                                       Url = f.UrlsBusiness[0],
+                                       IsGarant = f.IsGarant,
+                                       ProfitPrice = f.ProfitPrice,
+                                       TotalInvest = string.Format("{0:0,0}", f.Price),
+                                       BusinessId = f.BusinessId
+                                   })
+                    .Take(10)
+                    .ToListAsync();
+
+                return items;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }
