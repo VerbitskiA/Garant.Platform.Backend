@@ -528,12 +528,14 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="account">Логин или почта пользователя.</param>
         /// <param name="transitionType">Тип перехода.</param>
         /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <param name="otherId">Id другого пользователя.</param>
+        /// <param name="typeItem">Тип предмета обсуждения.</param>
         /// <returns>Флаг записи перехода.</returns>
-        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId)
+        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId, string otherId, string typeItem)
         {
             try
             {
-                var result = await _userRepository.SetTransitionAsync(account, transitionType, referenceId);
+                var result = await _userRepository.SetTransitionAsync(account, transitionType, referenceId, otherId, typeItem);
 
                 return result;
             }

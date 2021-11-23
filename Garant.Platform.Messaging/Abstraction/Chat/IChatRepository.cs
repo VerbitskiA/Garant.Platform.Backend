@@ -82,5 +82,12 @@ namespace Garant.Platform.Messaging.Abstraction.Chat
         /// <param name="dialogId">Id диалога.</param>
         /// <returns>Последнее сообщение.</returns>
         Task<string> GetLastMessageAsync(long dialogId);
+
+        /// <summary>
+        /// Метод получит дату начала диалога.
+        /// </summary>
+        /// <param name="dialogId">Id диалога.</param>
+        /// <returns>Дата начала диалога.</returns>
+        Task<string> GetDialogStartDate(long dialogId);
     }
 }

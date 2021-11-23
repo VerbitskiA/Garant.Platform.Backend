@@ -204,7 +204,7 @@ namespace Garant.Platform.Controllers.User
         [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<IActionResult> SetTransitionAsync([FromBody] TransitionInput transitionInput)
         {
-            var result = await _userService.SetTransitionAsync(GetUserName(), transitionInput.TransitionType, transitionInput.ReferenceId);
+            var result = await _userService.SetTransitionAsync(GetUserName(), transitionInput.TransitionType, transitionInput.ReferenceId, transitionInput.OtherId, transitionInput.TypeItem);
 
             return Ok(result);
         }

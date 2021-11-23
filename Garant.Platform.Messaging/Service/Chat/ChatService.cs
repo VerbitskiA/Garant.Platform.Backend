@@ -196,6 +196,7 @@ namespace Garant.Platform.Messaging.Service.Chat
                 {
                     messagesList.FirstName = user.FirstName;
                     messagesList.LastName = user.LastName;
+                    messagesList.FullName = messagesList.FirstName + " " + messagesList.LastName;
                 }
 
                 // Запишет заголовок предмета обсуждения (т.е заголовок франшизы или бизнеса).
@@ -210,6 +211,10 @@ namespace Garant.Platform.Messaging.Service.Chat
                 {
                     messagesList.ChatItemName = await _businessRepository.GetBusinessTitleAsync(ownerId);
                 }
+
+                // Запишет дату начала диалога.
+                var startDate = await _chatRepository.GetDialogStartDate(Convert.ToInt64(dialogId));
+                messagesList.DateStartDialog = startDate;
 
                 return messagesList;
             }

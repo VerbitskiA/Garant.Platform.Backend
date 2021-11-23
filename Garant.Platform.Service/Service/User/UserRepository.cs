@@ -482,8 +482,10 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="account">Логин или почта пользователя.</param>
         /// <param name="transitionType">Тип перехода.</param>
         /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <param name="otherId">Id другого пользователя.</param>
+        /// <param name="typeItem">Тип предмета обсуждения.</param>
         /// <returns>Флаг записи перехода.</returns>
-        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId)
+        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId, string otherId, string typeItem)
         {
             try
             {
@@ -552,27 +554,29 @@ namespace Garant.Platform.Services.Service.User
                     .FirstOrDefaultAsync();
 
                 // Если перехода нет, то добавит.
+                var transition = new TransitionEntity
+                {
+                    UserId = userId,
+                    TransitionType = transitionType,
+                    ReferenceId = referenceId
+                };
+
+                // Доп. проверки для чата.
+                if (!string.IsNullOrEmpty(otherId) && !string.IsNullOrEmpty(typeItem))
+                {
+                    transition.OtherId = otherId;
+                    transition.TypeItem = typeItem;
+                }
+
                 if (findTransition == null)
                 {
-                    await _postgreDbContext.Transitions.AddAsync(new TransitionEntity
-                    {
-                        UserId = userId,
-                        TransitionType = transitionType,
-                        ReferenceId = referenceId
-                    });
+                    await _postgreDbContext.Transitions.AddAsync(transition);
                 }
 
                 // Если есть, то перезапишет его.
                 else
                 {
-                    var updateTransition = new TransitionEntity
-                    {
-                        UserId = userId,
-                        TransitionType = transitionType,
-                        ReferenceId = referenceId
-                    };
-
-                    _postgreDbContext.Update(updateTransition);
+                    _postgreDbContext.Update(transition);
                 }
 
                 await _postgreDbContext.SaveChangesAsync();
@@ -624,13 +628,19 @@ namespace Garant.Platform.Services.Service.User
                     return null;
                 }
 
+                // Найдет Id последнего перехода у пользователя.
+                var maxTransitionId = await _postgreDbContext.Transitions.MaxAsync(t => t.TransitionId);
+
                 var result = await _postgreDbContext.Transitions
                     .Where(t => t.UserId.Equals(userId))
+                    .Where(t => t.TransitionId == maxTransitionId)
                     .Select(t => new TransitionOutput
                     {
                         ReferenceId = t.ReferenceId,
                         TransitionType = t.TransitionType,
-                        UserId = t.UserId
+                        UserId = t.UserId,
+                        OtherId = t.OtherId,
+                        TypeItem = t.TypeItem
                     })
                     .FirstOrDefaultAsync();
 

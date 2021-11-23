@@ -122,8 +122,10 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="account">Логин или почта пользователя.</param>
         /// <param name="transitionType">Тип перехода.</param>
         /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <param name="otherId">Id другого пользователя.</param>
+        /// <param name="typeItem">Тип предмета обсуждения.</param>
         /// <returns>Флаг записи перехода.</returns>
-        Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId);
+        Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId, string otherId, string typeItem);
 
         /// <summary>
         /// Метод получит переход пользователя.

@@ -329,5 +329,32 @@ namespace Garant.Platform.Messaging.Service.Chat
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит дату начала диалога.
+        /// </summary>
+        /// <param name="dialogId">Id диалога.</param>
+        /// <returns>Дата начала диалога.</returns>
+        public async Task<string> GetDialogStartDate(long dialogId)
+        {
+            try
+            {
+                // Найдет дату начала диалога.
+                var result = await _postgreDbContext.MainInfoDialogs
+                    .Where(d => d.DialogId == dialogId)
+                    .Select(d => d.Created.ToString("f"))
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

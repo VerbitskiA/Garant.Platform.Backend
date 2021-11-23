@@ -33,13 +33,18 @@ namespace Garant.Platform.Messaging.Models.Chat.Output
         public string LastName { get; set; }
 
         /// <summary>
-        /// Логин пользователя.
+        /// Полное имя пользователя.
         /// </summary>
-        public string UserName { get; set; } = string.Empty;
+        public string FullName { get; set; }
 
         /// <summary>
         /// Название предмета чата.
         /// </summary>
         public string ChatItemName { get; set; }
+
+        /// <summary>
+        /// Дата начала диалога.
+        /// </summary>
+        public string DateStartDialog { get; set; }
     }
 }
