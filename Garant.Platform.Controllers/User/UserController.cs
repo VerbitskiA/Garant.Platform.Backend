@@ -235,5 +235,19 @@ namespace Garant.Platform.Controllers.User
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод проверит, заполнил ил пользователь данные о себе. 
+        /// </summary>
+        /// <returns>Флаг проверки.</returns>
+        [HttpPost]
+        [Route("check-profile-data")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> IsWriteProfileDataAsync()
+        {
+            var result = await _userService.IsWriteProfileDataAsync(GetUserName());
+
+            return Ok(result);
+        }
     }
 }

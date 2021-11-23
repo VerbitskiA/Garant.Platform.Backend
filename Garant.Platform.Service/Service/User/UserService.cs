@@ -63,11 +63,15 @@ namespace Garant.Platform.Services.Service.User
                 // Генерит токен юзеру.
                 var token = GenerateToken(claim).Result;
 
+                // Проверит, заполнял ли пользователь данные о себе.
+                var isWrite = await IsWriteProfileDataAsync(email);
+
                 var result = new ClaimOutput
                 {
                     User = email,
                     Token = token,
-                    IsSuccess = true
+                    IsSuccess = true,
+                    IsWriteProfileData = isWrite
                 };
 
                 return result;
@@ -143,11 +147,15 @@ namespace Garant.Platform.Services.Service.User
                 // Если пользователь найден.
                 if (user != null)
                 {
+                    // Проверит, заполнял ли пользователь данные о себе.
+                    var isWrite = await IsWriteProfileDataAsync(user.Email ?? user.PhoneNumber ?? code);
+
                     result = new ClaimOutput
                     {
                         Token = token,
                         User = user.PhoneNumber ?? user.Email,
-                        IsSuccess = true
+                        IsSuccess = true,
+                        IsWriteProfileData = isWrite
                     };
                 }
 
@@ -562,6 +570,29 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var result = await _userRepository.GetUserFioAsync(account);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод проверит, заполнил ил пользователь данные о себе. 
+        /// </summary>
+        /// <param name="account">Пользователь.</param>
+        /// <returns>Флаг проверки.</returns>
+        public async Task<bool> IsWriteProfileDataAsync(string account)
+        {
+            try
+            {
+                var result = await _userRepository.IsWriteProfileDataAsync(account);
 
                 return result;
             }

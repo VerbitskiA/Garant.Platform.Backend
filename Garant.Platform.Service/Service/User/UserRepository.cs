@@ -513,12 +513,19 @@ namespace Garant.Platform.Services.Service.User
                     }
                 }
 
-                // TODO: вернуться когда будет заведена таблица готового бизнеса.
                 // Если переход готового бизнеса.
-                //else if (expr)
-                //{
+                else if (transitionType.Equals("Business"))
+                {
+                    // Проверит существование такого бизнеса.
+                    var findBusiness = await _postgreDbContext.Businesses
+                        .Where(f => f.BusinessId == referenceId)
+                        .FirstOrDefaultAsync();
 
-                //}
+                    if (findBusiness == null)
+                    {
+                        return false;
+                    }
+                }
 
                 // Проверит, есть ли уже переход у пользователя.
                 var findTransition = await _postgreDbContext.Transitions
@@ -674,6 +681,75 @@ namespace Garant.Platform.Services.Service.User
                 }
 
                 return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод универсально найдет Id пользователя.
+        /// </summary>
+        /// <param name="account">Данные для авторизации.</param>
+        /// <returns>Id пользователя.</returns>
+        public async Task<string> FindUserIdUniverseAsync(string account)
+        {
+            try
+            {
+                var userId = string.Empty;
+
+                var findUser = await FindUserByEmailOrPhoneNumberAsync(account);
+
+                // Если такого пользователя не найдено, значит поищет по коду.
+                if (findUser == null)
+                {
+                    var findUserIdByCode = await FindUserByCodeAsync(account);
+
+                    if (!string.IsNullOrEmpty(findUserIdByCode))
+                    {
+                        userId = findUserIdByCode;
+                    }
+                }
+
+                return userId;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод проверит, заполнил ил пользователь данные о себе. 
+        /// </summary>
+        /// <param name="account">Пользователь.</param>
+        /// <returns>Флаг проверки.</returns>
+        public async Task<bool> IsWriteProfileDataAsync(string account)
+        {
+            try
+            {
+                // Найдет пользователя.
+                var userId = await FindUserIdUniverseAsync(account);
+                UserInformationEntity user = null;
+
+                // Проверит, заполнял ли он данные о себе.
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    user = await _postgreDbContext.UsersInformation
+                        .Where(u => u.UserId.Equals(userId))
+                        .FirstOrDefaultAsync();
+                }
+
+                return user != null;
             }
 
             catch (Exception e)
