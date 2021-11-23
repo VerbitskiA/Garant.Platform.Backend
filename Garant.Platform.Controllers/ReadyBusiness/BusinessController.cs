@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
+using Garant.Platform.Models.Search.Input;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -107,6 +108,63 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         public async Task<IActionResult> GetCitiesListAsync()
         {
             var result = await _businessService.GetCitiesListAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список популярного бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        [HttpPost]
+        [Route("popular-business")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<PopularBusinessOutput>))]
+        public async Task<IActionResult> GetPopularBusinessAsync()
+        {
+            var result = await _businessService.GetPopularBusinessAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список бизнеса.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        [HttpPost]
+        [Route("catalog-business")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<PopularBusinessOutput>))]
+        public async Task<IActionResult> GetBusinessListAsync()
+        {
+            var result = await _businessService.GetBusinessListAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список бизнеса на основе фильтров.
+        /// </summary>
+        /// <param name="quickSearchInput">Входная модель.</param>
+        /// <returns>Список бизнеса.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("filter")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
+        public async Task<IActionResult> FilterBusinessesAsync([FromBody] QuickSearchInput quickSearchInput)
+        {
+            var result = await _businessService.FilterBusinessesAsync(quickSearchInput.CategoryCode, quickSearchInput.CityCode, quickSearchInput.MinPrice, quickSearchInput.MaxPrice);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит новый бизнес, который был создан в текущем месяце.
+        /// </summary>
+        /// <returns>Список бизнеса.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("new-business")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
+        public async Task<IActionResult> GetNewFranchisesAsync()
+        {
+            var result = await _businessService.GetNewBusinesseListAsync();
 
             return Ok(result);
         }

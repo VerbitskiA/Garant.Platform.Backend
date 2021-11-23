@@ -199,5 +199,11 @@ namespace Garant.Platform.Models.Entities.Business
         /// </summary>
         [Column("SubCategory", TypeName = "varchar(300)")]
         public string SubCategory { get; set; }
+
+        /// <summary>
+        /// Город.
+        /// </summary>
+        [Column("BusinessCity", TypeName = "varchar(200)")]
+        public string BusinessCity { get; set; }
     }
 }
