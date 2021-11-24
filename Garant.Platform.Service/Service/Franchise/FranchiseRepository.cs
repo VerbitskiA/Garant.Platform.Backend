@@ -627,9 +627,76 @@ namespace Garant.Platform.Services.Service.Franchise
                         PaymentDetail = f.PaymentDetail,
                         TrainingDetails = f.TrainingDetails,
                         UrlVideo = f.UrlVideo,
-                        Reviews = f.Reviews
+                        Reviews = f.Reviews,
+                        Url = f.Url
                     })
                     .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод найдет франшизу по Id пользователя.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные франшизы.</returns>
+        public async Task<FranchiseEntity> FindFranchiseByUserIdAsync(string userId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Franchises
+                   .Where(f => f.UserId.Equals(userId))
+                   .Select(f => new FranchiseEntity
+                   {
+                       FranchiseId = f.FranchiseId,
+                       ActivityDetail = f.ActivityDetail,
+                       BaseDate = f.BaseDate,
+                       BusinessCount = f.BusinessCount,
+                       Category = f.Category,
+                       SubCategory = f.SubCategory,
+                       DateCreate = f.DateCreate,
+                       DotCount = f.DotCount,
+                       FinIndicators = f.FinIndicators,
+                       FranchisePacks = f.FranchisePacks,
+                       UrlsDetails = f.UrlsDetails,
+                       UrlLogo = f.UrlLogo,
+                       NameFinIndicators = f.FinIndicators,
+                       NameFinModelFile = f.NameFinModelFile,
+                       NameFranchisePhoto = f.NameFranchisePhoto,
+                       NamePresentFile = f.NamePresentFile,
+                       TrainingPhotoName = f.TrainingPhotoName,
+                       Title = f.Title,
+                       Text = f.Text,
+                       Price = f.Price,
+                       ViewBusiness = f.ViewBusiness,
+                       IsGarant = f.IsGarant,
+                       ProfitMonth = f.ProfitMonth,
+                       ProfitPrice = f.ProfitPrice,
+                       Status = f.Status,
+                       YearStart = f.YearStart,
+                       GeneralInvest = f.GeneralInvest,
+                       LumpSumPayment = f.LumpSumPayment,
+                       Royalty = f.Royalty,
+                       Payback = f.Payback,
+                       LaunchDate = f.LaunchDate,
+                       InvestInclude = f.InvestInclude,
+                       Peculiarity = f.Peculiarity,
+                       PaymentDetail = f.PaymentDetail,
+                       TrainingDetails = f.TrainingDetails,
+                       UrlVideo = f.UrlVideo,
+                       Reviews = f.Reviews,
+                       Url = f.Url
+                   })
+                   .FirstOrDefaultAsync();
 
                 return result;
             }

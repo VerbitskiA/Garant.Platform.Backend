@@ -89,5 +89,13 @@ namespace Garant.Platform.Messaging.Abstraction.Chat
         /// <param name="dialogId">Id диалога.</param>
         /// <returns>Дата начала диалога.</returns>
         Task<string> GetDialogStartDate(long dialogId);
+
+        /// <summary>
+        /// Метод найдет диалог, в котором есть оба участника.
+        /// </summary>
+        /// <param name="userId">Id текущего пользователя.</param>
+        /// <param name="otherId">Id другого пользователя.</param>
+        /// <returns>Id диалога.</returns>
+        Task<long> FindDialogIdWithEqualMembers(string userId, string otherId);
     }
 }

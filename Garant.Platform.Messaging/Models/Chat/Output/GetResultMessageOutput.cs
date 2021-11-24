@@ -46,5 +46,15 @@ namespace Garant.Platform.Messaging.Models.Chat.Output
         /// Дата начала диалога.
         /// </summary>
         public string DateStartDialog { get; set; }
+
+        /// <summary>
+        /// Id диалога.
+        /// </summary>
+        public long DialogId { get; set; }
+
+        /// <summary>
+        /// Путь к изображению предмета обсуждения.
+        /// </summary>
+        public string Url { get; set; }
     }
 }

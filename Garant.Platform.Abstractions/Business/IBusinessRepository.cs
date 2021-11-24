@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
+using Garant.Platform.Models.Entities.Business;
 using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Abstractions.Business
@@ -34,6 +35,20 @@ namespace Garant.Platform.Abstractions.Business
         /// <param name="mode">Режим (Edit или View).</param>
         /// <returns>Данные бизнеса.</returns>
         Task<BusinessOutput> GetBusinessAsync(long businessId, string mode);
+
+        /// <summary>
+        /// Метод получит бизнес по заголовку.
+        /// </summary>
+        /// <param name="title">Заголовок бизнеса.</param>
+        /// <returns>Данные бизнеса.</returns>
+        Task<BusinessEntity> GetBusinessAsync(string title);
+
+        /// <summary>
+        /// Метод получит бизнес по Id пользователя.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные бизнеса.</returns>
+        Task<BusinessEntity> GetBusinessByUserIdAsync(string userId);
 
         /// <summary>
         /// Метод получит список категорий бизнеса.
