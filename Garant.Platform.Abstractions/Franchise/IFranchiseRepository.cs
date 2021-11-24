@@ -100,6 +100,13 @@ namespace Garant.Platform.Abstractions.Franchise
         Task<FranchiseOutput> GetFranchiseAsync(long franchiseId, string mode);
 
         /// <summary>
+        /// Метод найдет франшизу по Id пользователя.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные франшизы.</returns>
+        Task<FranchiseEntity> FindFranchiseByUserIdAsync(string userId);
+
+        /// <summary>
         /// Метод отправит файл в папку и временно запишет в БД.
         /// </summary>
         /// <param name="files">Файлы.</param>

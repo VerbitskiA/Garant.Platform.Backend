@@ -107,15 +107,12 @@ namespace Garant.Platform.Messaging.Service.Chat
             try
             {
                 var messagesList = new GetResultMessageOutput();
+                bool isFindDialog = false;
+                var chatItemName = string.Empty;
+                var urlPath = string.Empty;
 
                 // Найдет Id текущего пользователя.
                 var userId = await _userRepository.FindUserIdUniverseAsync(account);
-
-                // Если dialogId не передан, попробует найти диалог с таким пользователем иначе.
-                //if (dialogId == null)
-                //{
-
-                //}
 
                 // Ищет Id диалога с текущим пользователем и с владельцем/представителем, на чат с которым нажали. Затем сравнит их DialogId, если он совпадает, значит текущий пользователь общается с владельцем/представителем.
                 if (!string.IsNullOrEmpty(ownerId))
@@ -126,8 +123,23 @@ namespace Garant.Platform.Messaging.Service.Chat
                     // Выберет id диалога владельца/представителя.
                     var ownerDialogId = await _chatRepository.FindDialogIdAsync(ownerId);
 
+                    // Если диалоги не найдены, то искать иначе.
+                    if (currentDialogId == 0 && ownerDialogId == 0)
+                    {
+                        isFindDialog = false;
+                    }
+
+                    // Найдет диалог, в котором есть оба участника.
+                    var findDialogId = await _chatRepository.FindDialogIdWithEqualMembers(userId, ownerId);
+
+                    if (findDialogId > 0)
+                    {
+                        isFindDialog = true;
+                        ownerDialogId = findDialogId;
+                    }
+
                     // Сравнит DialogId текущего пользователя с владельцем/представителем. Если они равны, значит текущий пользователь общается с владельцем/представителем и возьмет DialogId этого чата.
-                    if (currentDialogId != ownerDialogId || currentDialogId <= 0 && ownerDialogId <= 0)
+                    if (currentDialogId != ownerDialogId && currentDialogId > 0 && ownerDialogId > 0 && !isFindDialog)
                     {
                         // Создаст новый диалог.
                         await _chatRepository.CreateDialogAsync(string.Empty, DateTime.Now);
@@ -202,17 +214,48 @@ namespace Garant.Platform.Messaging.Service.Chat
                 if (typeItem.Equals("Franchise"))
                 {
                     messagesList.ChatItemName = await _franchiseRepository.GetFranchiseTitleAsync(ownerId);
+                    urlPath = messagesList.ChatItemName;
                 }
 
                 // Найдет заголовок бизнеса.
                 else if (typeItem.Equals("Business"))
                 {
                     messagesList.ChatItemName = await _businessRepository.GetBusinessTitleAsync(ownerId);
+                    urlPath = messagesList.ChatItemName;
+                }
+
+                // Если не передано Id обоих пользователей, то найдет участников по одному userId, затем найдет предмет обсуждения.
+                else if (typeItem.Equals("Chat") && string.IsNullOrEmpty(ownerId))
+                {
+                    var members = await _chatRepository.GetDialogMembersAsync(Convert.ToInt64(dialogId));
+                    var currentUserId = members.FirstOrDefault(m => !m.Equals(userId));
+
+                    // Пробует найти среди франшиз.
+                    chatItemName = await _franchiseRepository.GetFranchiseTitleAsync(currentUserId);
+
+                    // Если среди франшиз найденно, то найти изображение франшизы.
+                    if (!string.IsNullOrEmpty(chatItemName))
+                    {
+                        var franchiseData = await _franchiseRepository.FindFranchiseByTitleAsync(chatItemName);
+                        urlPath = franchiseData.Url;
+                    }
+
+                    // Если нфраншизу не нашел, то пробует найти среди бизнеса.
+                    if (string.IsNullOrEmpty(chatItemName))
+                    {
+                        chatItemName = await _businessRepository.GetBusinessTitleAsync(currentUserId);
+                        var businessData = await _businessRepository.GetBusinessAsync(chatItemName);
+                        urlPath = businessData.UrlsBusiness.FirstOrDefault();
+                    }
+
+                    messagesList.ChatItemName = chatItemName;
                 }
 
                 // Запишет дату начала диалога.
                 var startDate = await _chatRepository.GetDialogStartDate(Convert.ToInt64(dialogId));
                 messagesList.DateStartDialog = startDate;
+                messagesList.DialogId = Convert.ToInt64(dialogId);
+                messagesList.Url = urlPath;
 
                 return messagesList;
             }
@@ -236,6 +279,7 @@ namespace Garant.Platform.Messaging.Service.Chat
             try
             {
                 var result = new List<DialogOutput>();
+                var urlPath = string.Empty;
 
                 // Найдет Id текущего пользователя, для которого нужно получить список диалогов.
                 var userId = await _userRepository.FindUserIdUniverseAsync(account);
@@ -246,7 +290,7 @@ namespace Garant.Platform.Messaging.Service.Chat
                 // Если диалоги не найдены, то вернет пустой массив.
                 if (!dialogs.Any())
                 {
-                    return Array.Empty<DialogOutput>();
+                    return result;
                 }
 
                 foreach (var dialog in dialogs)
@@ -286,6 +330,27 @@ namespace Garant.Platform.Messaging.Service.Chat
 
                     // Форматирует дату убрав секунды.
                     dialog.Created = Convert.ToDateTime(dialog.Created).ToString("g");
+
+                    // Пробует найди путь к изображению франшизы.
+                    var franchiseData = await _franchiseRepository.FindFranchiseByUserIdAsync(otherUserId);
+
+                    if (franchiseData != null)
+                    {
+                        urlPath = franchiseData.Url;
+                    }
+
+                    // Иначе пробует найти среди бинеса.
+                    else
+                    {
+                        var businessData = await _businessRepository.GetBusinessByUserIdAsync(otherUserId);
+
+                        if (businessData != null)
+                        {
+                            urlPath = businessData.UrlsBusiness.FirstOrDefault();
+                        }
+                    }
+
+                    dialog.Url = urlPath;
                     result.Add(dialog);
                 }
 

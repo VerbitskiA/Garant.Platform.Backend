@@ -356,5 +356,32 @@ namespace Garant.Platform.Messaging.Service.Chat
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод найдет диалог, в котором есть оба участника.
+        /// </summary>
+        /// <param name="userId">Id текущего пользователя.</param>
+        /// <param name="otherId">Id другого пользователя.</param>
+        /// <returns>Id диалога.</returns>
+        public async Task<long> FindDialogIdWithEqualMembers(string userId, string otherId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.DialogMembers
+                    .Where(d => d.Id.Equals(userId) && d.Id.Equals(otherId))
+                    .Select(d => d.DialogId)
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }

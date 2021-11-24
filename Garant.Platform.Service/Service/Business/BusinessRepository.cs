@@ -203,47 +203,117 @@ namespace Garant.Platform.Services.Service.Business
         /// </summary>
         /// <param name="title">Название карточки готового бизнеса.</param>
         /// <returns>Данные карточки готового бизнеса.</returns>
-        private async Task<BusinessEntity> GetBusinessAsync(string title)
+        public async Task<BusinessEntity> GetBusinessAsync(string title)
         {
-            var result = await _postgreDbContext.Businesses
-                .Where(b => b.BusinessName.Equals(title))
-                .Select(b => new BusinessEntity
-                {
-                    ActivityDetail = b.ActivityDetail,
-                    ActivityPhotoName = b.ActivityPhotoName,
-                    Address = b.Address,
-                    Assets = b.Assets,
-                    AssetsPhotoName = b.AssetsPhotoName,
-                    BusinessAge = b.BusinessAge,
-                    BusinessId = b.BusinessId,
-                    BusinessName = b.BusinessName,
-                    EmployeeCountYear = b.EmployeeCountYear,
-                    Form = b.Form,
-                    Status = b.Status,
-                    Price = b.Price,
-                    UrlsBusiness = b.UrlsBusiness,
-                    TurnPrice = b.TurnPrice,
-                    ProfitPrice = b.ProfitPrice,
-                    Payback = b.Payback,
-                    Profitability = b.Profitability,
-                    InvestPrice = b.InvestPrice,
-                    Text = b.Text,
-                    Share = b.Share,
-                    Site = b.Site,
-                    Peculiarity = b.Peculiarity,
-                    NameFinModelFile = b.NameFinModelFile,
-                    ReasonsSale = b.ReasonsSale,
-                    ReasonsSalePhotoName = b.ReasonsSalePhotoName,
-                    UrlVideo = b.UrlVideo,
-                    IsGarant = b.IsGarant,
-                    UserId = b.UserId,
-                    DateCreate = b.DateCreate,
-                    Category = b.Category,
-                    SubCategory = b.SubCategory
-                })
-                .FirstOrDefaultAsync();
+            try
+            {
+                var result = await _postgreDbContext.Businesses
+                    .Where(b => b.BusinessName.Equals(title))
+                    .Select(b => new BusinessEntity
+                    {
+                        ActivityDetail = b.ActivityDetail,
+                        ActivityPhotoName = b.ActivityPhotoName,
+                        Address = b.Address,
+                        Assets = b.Assets,
+                        AssetsPhotoName = b.AssetsPhotoName,
+                        BusinessAge = b.BusinessAge,
+                        BusinessId = b.BusinessId,
+                        BusinessName = b.BusinessName,
+                        EmployeeCountYear = b.EmployeeCountYear,
+                        Form = b.Form,
+                        Status = b.Status,
+                        Price = b.Price,
+                        UrlsBusiness = b.UrlsBusiness,
+                        TurnPrice = b.TurnPrice,
+                        ProfitPrice = b.ProfitPrice,
+                        Payback = b.Payback,
+                        Profitability = b.Profitability,
+                        InvestPrice = b.InvestPrice,
+                        Text = b.Text,
+                        Share = b.Share,
+                        Site = b.Site,
+                        Peculiarity = b.Peculiarity,
+                        NameFinModelFile = b.NameFinModelFile,
+                        ReasonsSale = b.ReasonsSale,
+                        ReasonsSalePhotoName = b.ReasonsSalePhotoName,
+                        UrlVideo = b.UrlVideo,
+                        IsGarant = b.IsGarant,
+                        UserId = b.UserId,
+                        DateCreate = b.DateCreate,
+                        Category = b.Category,
+                        SubCategory = b.SubCategory
+                    })
+                    .FirstOrDefaultAsync();
 
-            return result;
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит бизнес по Id пользователя.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные бизнеса.</returns>
+        public async Task<BusinessEntity> GetBusinessByUserIdAsync(string userId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Businesses
+                    .Where(b => b.UserId.Equals(userId))
+                    .Select(b => new BusinessEntity
+                    {
+                        ActivityDetail = b.ActivityDetail,
+                        ActivityPhotoName = b.ActivityPhotoName,
+                        Address = b.Address,
+                        Assets = b.Assets,
+                        AssetsPhotoName = b.AssetsPhotoName,
+                        BusinessAge = b.BusinessAge,
+                        BusinessId = b.BusinessId,
+                        BusinessName = b.BusinessName,
+                        EmployeeCountYear = b.EmployeeCountYear,
+                        Form = b.Form,
+                        Status = b.Status,
+                        Price = b.Price,
+                        UrlsBusiness = b.UrlsBusiness,
+                        TurnPrice = b.TurnPrice,
+                        ProfitPrice = b.ProfitPrice,
+                        Payback = b.Payback,
+                        Profitability = b.Profitability,
+                        InvestPrice = b.InvestPrice,
+                        Text = b.Text,
+                        Share = b.Share,
+                        Site = b.Site,
+                        Peculiarity = b.Peculiarity,
+                        NameFinModelFile = b.NameFinModelFile,
+                        ReasonsSale = b.ReasonsSale,
+                        ReasonsSalePhotoName = b.ReasonsSalePhotoName,
+                        UrlVideo = b.UrlVideo,
+                        IsGarant = b.IsGarant,
+                        UserId = b.UserId,
+                        DateCreate = b.DateCreate,
+                        Category = b.Category,
+                        SubCategory = b.SubCategory
+                    })
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
         }
 
         /// <summary>
@@ -307,7 +377,7 @@ namespace Garant.Platform.Services.Service.Business
         }
 
         /// <summary>
-        /// Метод получит франшизу для просмотра или изменения.
+        /// Метод получит бизнес для просмотра или изменения.
         /// </summary>
         /// <param name="businessId">Id бизнеса.</param>
         /// <param name="mode">Режим (Edit или View).</param>

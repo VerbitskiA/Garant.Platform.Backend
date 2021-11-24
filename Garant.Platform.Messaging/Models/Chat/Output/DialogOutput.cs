@@ -68,5 +68,10 @@ namespace Garant.Platform.Messaging.Models.Chat.Output
         /// Имя + фамилия.
         /// </summary>
         public string FullName { get; set; }
+
+        /// <summary>
+        /// Путь к изображению предмета диалога.
+        /// </summary>
+        public string Url { get; set; }
     }
 }
