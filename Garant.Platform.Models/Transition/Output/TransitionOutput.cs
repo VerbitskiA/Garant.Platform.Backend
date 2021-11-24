@@ -19,5 +19,9 @@
         /// Id франшизы или готового бизнеса.
         /// </summary>
         public long ReferenceId { get; set; }
+
+        public string OtherId { get; set; }
+
+        public string TypeItem { get; set; }
     }
 }

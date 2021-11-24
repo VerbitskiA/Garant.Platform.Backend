@@ -12,6 +12,7 @@ using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
+using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,7 +42,7 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var result = await (from u in _postgreDbContext.Users
-                                    where u.Email.Equals(data) || u.PhoneNumber.Equals(data)
+                                    where u.Email.Equals(data)
                                     select new UserOutput
                                     {
                                         Email = u.Email,
@@ -54,6 +55,24 @@ namespace Garant.Platform.Services.Service.User
                                         UserId = u.Id
                                     })
                     .FirstOrDefaultAsync();
+
+                if (result == null)
+                {
+                    result = await (from u in _postgreDbContext.Users
+                            where u.PhoneNumber.Equals(data)
+                            select new UserOutput
+                            {
+                                Email = u.Email,
+                                PhoneNumber = u.PhoneNumber,
+                                DateRegister = u.DateRegister,
+                                FirstName = u.FirstName,
+                                LastName = u.LastName,
+                                City = u.City,
+                                IsWriteQuestion = u.IsWriteQuestion,
+                                UserId = u.Id
+                            })
+                        .FirstOrDefaultAsync();
+                }
 
                 return result;
             }
@@ -463,8 +482,10 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="account">Логин или почта пользователя.</param>
         /// <param name="transitionType">Тип перехода.</param>
         /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <param name="otherId">Id другого пользователя.</param>
+        /// <param name="typeItem">Тип предмета обсуждения.</param>
         /// <returns>Флаг записи перехода.</returns>
-        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId)
+        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId, string otherId, string typeItem)
         {
             try
             {
@@ -533,27 +554,29 @@ namespace Garant.Platform.Services.Service.User
                     .FirstOrDefaultAsync();
 
                 // Если перехода нет, то добавит.
+                var transition = new TransitionEntity
+                {
+                    UserId = userId,
+                    TransitionType = transitionType,
+                    ReferenceId = referenceId
+                };
+
+                // Доп. проверки для чата.
+                if (!string.IsNullOrEmpty(otherId) && !string.IsNullOrEmpty(typeItem))
+                {
+                    transition.OtherId = otherId;
+                    transition.TypeItem = typeItem;
+                }
+
                 if (findTransition == null)
                 {
-                    await _postgreDbContext.Transitions.AddAsync(new TransitionEntity
-                    {
-                        UserId = userId,
-                        TransitionType = transitionType,
-                        ReferenceId = referenceId
-                    });
+                    await _postgreDbContext.Transitions.AddAsync(transition);
                 }
 
                 // Если есть, то перезапишет его.
                 else
                 {
-                    var updateTransition = new TransitionEntity
-                    {
-                        UserId = userId,
-                        TransitionType = transitionType,
-                        ReferenceId = referenceId
-                    };
-
-                    _postgreDbContext.Update(updateTransition);
+                    _postgreDbContext.Update(transition);
                 }
 
                 await _postgreDbContext.SaveChangesAsync();
@@ -605,13 +628,19 @@ namespace Garant.Platform.Services.Service.User
                     return null;
                 }
 
+                // Найдет Id последнего перехода у пользователя.
+                var maxTransitionId = await _postgreDbContext.Transitions.MaxAsync(t => t.TransitionId);
+
                 var result = await _postgreDbContext.Transitions
                     .Where(t => t.UserId.Equals(userId))
+                    .Where(t => t.TransitionId == maxTransitionId)
                     .Select(t => new TransitionOutput
                     {
                         ReferenceId = t.ReferenceId,
                         TransitionType = t.TransitionType,
-                        UserId = t.UserId
+                        UserId = t.UserId,
+                        OtherId = t.OtherId,
+                        TypeItem = t.TypeItem
                     })
                     .FirstOrDefaultAsync();
 
@@ -716,6 +745,11 @@ namespace Garant.Platform.Services.Service.User
                     }
                 }
 
+                else
+                {
+                    userId = findUser.UserId;
+                }
+
                 return userId;
             }
 
@@ -757,6 +791,268 @@ namespace Garant.Platform.Services.Service.User
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод сохранит данные формы профиля пользователя.
+        /// </summary>
+        /// <param name="userInformationInput">Входная модель.</param>
+        /// <param name="account">Логин или Email.</param>
+        /// <param name="documentName">Название документа.</param>
+        /// <returns>Данные формы.</returns>
+        public async Task<UserInformationOutput> SaveProfileFormAsync(UserInformationInput userInformationInput, string account, string documentName)
+        {
+            try
+            {
+                var userId = await FindUserIdUniverseAsync(account);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return null;
+                }
+
+                // Выберет запись с данными информации о пользователе.
+                var userData = await _postgreDbContext.UsersInformation
+                    .Where(i => i.UserId.Equals(userId))
+                    .FirstOrDefaultAsync();
+
+                if (userData == null)
+                {
+                    return null;
+                }
+
+                // Для главной формы.
+                if (userInformationInput.TypeForm.Equals("MainData"))
+                {
+                    userData.FirstName = userInformationInput.FirstName;
+                    userData.LastName = userInformationInput.LastName;
+                    userData.Email = userInformationInput.Email;
+                    userData.PhoneNumber = userInformationInput.PhoneNumber;
+                    userData.City = userInformationInput.City;
+                    userData.DateBirth = userInformationInput.DateBirth;
+                    userData.Patronymic = userInformationInput.Patronymic;
+                }
+
+                // Для формы реквизитов.
+                else if (userInformationInput.TypeForm.Equals("Requisites"))
+                {
+                    userData.Inn = userInformationInput.Inn;
+                    userData.Pc = userInformationInput.Pc;
+                    userData.PassportSerial = userInformationInput.PassportSerial;
+                    userData.PassportNumber = userInformationInput.PassportNumber;
+                    userData.DateGive = userInformationInput.DateGive;
+                    userData.WhoGive = userInformationInput.WhoGive;
+                    userData.Code = userInformationInput.Code;
+                    userData.AddressRegister = userInformationInput.AddressRegister;
+                    userData.DocumentName = documentName;
+                }
+
+                // Обновит данные.
+                _postgreDbContext.UsersInformation.Update(userData);
+                await _postgreDbContext.SaveChangesAsync();
+
+                var result = new UserInformationOutput
+                {
+                    Inn = userData.Inn,
+                    Pc = userData.Pc,
+                    PassportSerial = userData.PassportSerial,
+                    PassportNumber = userData.PassportNumber,
+                    DateGive = Convert.ToDateTime(userData.DateGive).ToString("yyyy-MM-dd"),
+                    WhoGive = userData.WhoGive,
+                    Code = userData.Code,
+                    AddressRegister = userData.AddressRegister,
+                    DocumentName = documentName,
+                    FirstName = userData.FirstName,
+                    LastName = userData.LastName,
+                    Email = userData.Email,
+                    PhoneNumber = userData.PhoneNumber,
+                    City = userData.City,
+                    DateBirth = userData.DateBirth.ToString("yyyy-MM-dd"),
+                    Patronymic = userData.Patronymic,
+                    Password = userData.Password
+                };
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод универсально найдет все данные пользователя.
+        /// </summary>
+        /// <param name="account">Все данные для авторизации.</param>
+        /// <returns>Данные пользователя.</returns>
+        public async Task<UserEntity> FindUserUniverseAsync(string account)
+        {
+            try
+            {
+                var userId = string.Empty;
+
+                var findUser = await FindUserByEmailOrPhoneNumberAsync(account);
+
+                // Если такого пользователя не найдено, значит поищет по коду.
+                if (findUser == null)
+                {
+                    var findUserIdByCode = await FindUserByCodeAsync(account);
+
+                    if (!string.IsNullOrEmpty(findUserIdByCode))
+                    {
+                        userId = findUserIdByCode;
+                    }
+                }
+
+                else
+                {
+                    userId = findUser.UserId;
+                }
+
+                var result = await _postgreDbContext.Users.Where(u => u.Id.Equals(userId)).FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя.
+        /// </summary>
+        /// <param name="account">Логин или email пользователя.</param>
+        /// <returns>Данные профиля.</returns>
+        public async Task<UserInformationOutput> GetProfileInfoAsync(string account)
+        {
+            try
+            {
+                var userId = await FindUserIdUniverseAsync(account);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return null;
+                }
+
+                var profileData = await _postgreDbContext.UsersInformation
+                    .Where(i => i.UserId.Equals(userId))
+                    .Select(i => new UserInformationOutput
+                    {
+                        Inn = i.Inn,
+                        Pc = i.Pc,
+                        PassportSerial = i.PassportSerial,
+                        PassportNumber = i.PassportNumber,
+                        DateGive = Convert.ToDateTime(i.DateGive).ToString("yyyy-MM-dd"),
+                        WhoGive = i.WhoGive,
+                        Code = i.Code,
+                        AddressRegister = i.AddressRegister,
+                        DocumentName = i.DocumentName,
+                        FirstName = i.FirstName,
+                        LastName = i.LastName,
+                        Email = i.Email,
+                        PhoneNumber = i.PhoneNumber,
+                        City = i.City,
+                        DateBirth = i.DateBirth.ToString("yyyy-MM-dd"),
+                        Patronymic = i.Patronymic,
+                        Values = i.Values
+                    })
+                    .FirstOrDefaultAsync();
+
+                return profileData;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список меню для пунктов ЛК.
+        /// </summary>
+        /// <returns>Список пунктов ЛК.</returns>
+        public async Task<IEnumerable<ProfileNavigationOutput>> GetProfileMenuListAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.ProfileNavigations
+                    .Select(n => new ProfileNavigationOutput
+                    {
+                        IsHide = n.IsHide,
+                        NavigationLink = n.NavigationLink,
+                        NavigationText = n.NavigationText,
+                        Position = n.Position
+                    })
+                    .OrderBy(o => o.Position)
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя по его Id.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные профиля.</returns>
+        public async Task<UserInformationOutput> GetUserProfileInfoByIdAsync(string userId)
+        {
+            try
+            {
+                var profileData = await _postgreDbContext.UsersInformation
+                    .Where(i => i.UserId.Equals(userId))
+                    .Select(i => new UserInformationOutput
+                    {
+                        Inn = i.Inn,
+                        Pc = i.Pc,
+                        PassportSerial = i.PassportSerial,
+                        PassportNumber = i.PassportNumber,
+                        DateGive = Convert.ToDateTime(i.DateGive).ToString("yyyy-MM-dd"),
+                        WhoGive = i.WhoGive,
+                        Code = i.Code,
+                        AddressRegister = i.AddressRegister,
+                        DocumentName = i.DocumentName,
+                        FirstName = i.FirstName,
+                        LastName = i.LastName,
+                        Email = i.Email,
+                        PhoneNumber = i.PhoneNumber,
+                        City = i.City,
+                        DateBirth = i.DateBirth.ToString("yyyy-MM-dd"),
+                        Patronymic = i.Patronymic,
+                        Values = i.Values
+                    })
+                    .FirstOrDefaultAsync();
+
+                return profileData;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }

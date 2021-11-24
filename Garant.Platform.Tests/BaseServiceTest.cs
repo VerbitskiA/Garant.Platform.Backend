@@ -1,7 +1,8 @@
 ﻿using Garant.Platform.Base.Service;
 using Garant.Platform.Core.Data;
+using Garant.Platform.FTP.Service;
 using Garant.Platform.Mailings.Service;
-using Garant.Platform.Service.Repository.Franchise;
+using Garant.Platform.Messaging.Service.Chat;
 using Garant.Platform.Services.Service.Business;
 using Garant.Platform.Services.Service.Franchise;
 using Garant.Platform.Services.Service.Pagination;
@@ -26,7 +27,9 @@ namespace Garant.Platform.Tests
         protected FranchiseService FranchiseService;
         protected FranchiseRepository FranchiseRepository;
         protected UserRepository UserRepository;
+        protected FtpService FtpService;
         protected BusinessRepository BusinessRepository;
+        protected ChatRepository ChatRepository;
         protected PaginationRepository PaginationRepository;
 
         public BaseServiceTest()
@@ -40,6 +43,7 @@ namespace Garant.Platform.Tests
             var optionsBuilder = new DbContextOptionsBuilder<PostgreDbContext>();
             optionsBuilder.UseNpgsql(PostgreConfigString);
             PostgreDbContext = new PostgreDbContext(optionsBuilder.Options);
+            FtpService = new FtpService(AppConfiguration, PostgreDbContext);
 
             // Настройка экземпляров сервисов для тестов.
             CommonService = new CommonService(PostgreDbContext, null);
@@ -49,8 +53,10 @@ namespace Garant.Platform.Tests
             PaginationRepository = new PaginationRepository(PostgreDbContext);
 
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
-            UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository);
+            UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
             FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);
+            BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository);
+            ChatRepository = new ChatRepository(PostgreDbContext);
         }
     }
 }

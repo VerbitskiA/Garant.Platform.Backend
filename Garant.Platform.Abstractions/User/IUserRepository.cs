@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
+using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 
 namespace Garant.Platform.Abstractions.User
@@ -96,8 +98,10 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="account">Логин или почта пользователя.</param>
         /// <param name="transitionType">Тип перехода.</param>
         /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <param name="otherId">Id другого пользователя.</param>
+        /// <param name="typeItem">Тип предмета обсуждения.</param>
         /// <returns>Флаг записи перехода.</returns>
-        Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId);
+        Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId, string otherId, string typeItem);
 
         /// <summary>
         /// Метод получит переход пользователя.
@@ -126,5 +130,41 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="account">Пользователь.</param>
         /// <returns>Флаг проверки.</returns>
         Task<bool> IsWriteProfileDataAsync(string account);
+
+        /// <summary>
+        /// Метод сохранит данные формы профиля пользователя.
+        /// </summary>
+        /// <param name="userInformationInput">Входная модель.</param>
+        /// <param name="account">Логин или Email.</param>
+        /// <param name="documentName">Название документа.</param>
+        /// <returns>Данные формы.</returns>
+        Task<UserInformationOutput> SaveProfileFormAsync(UserInformationInput userInformationInput, string account, string documentName);
+
+        /// <summary>
+        /// Метод найдет все данные пользователя.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns>Данные пользователя.</returns>
+        Task<UserEntity> FindUserUniverseAsync(string account);
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя.
+        /// </summary>
+        /// <param name="account">Логин или email пользователя.</param>
+        /// <returns>Данные профиля.</returns>
+        Task<UserInformationOutput> GetProfileInfoAsync(string account);
+
+        /// <summary>
+        /// Метод получит список меню для пунктов ЛК.
+        /// </summary>
+        /// <returns>Список пунктов ЛК.</returns>
+        Task<IEnumerable<ProfileNavigationOutput>> GetProfileMenuListAsync();
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя по его Id.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные профиля.</returns>
+        Task<UserInformationOutput> GetUserProfileInfoByIdAsync(string userId);
     }
 }

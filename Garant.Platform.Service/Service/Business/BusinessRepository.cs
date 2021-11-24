@@ -466,6 +466,32 @@ namespace Garant.Platform.Services.Service.Business
         }
 
         /// <summary>
+        /// Метод получит заголовок бизнеса по Id пользователя.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Заголовок бизнеса.</returns>
+        public async Task<string> GetBusinessTitleAsync(string userId)
+        {
+            try
+            {
+                var title = await _postgreDbContext.Businesses
+                    .Where(f => f.UserId.Equals(userId))
+                    .Select(f => f.BusinessName)
+                    .FirstOrDefaultAsync();
+
+                return title;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Метод получит список популярного бизнеса.
         /// </summary>
         /// <returns>Список бизнеса.</returns>

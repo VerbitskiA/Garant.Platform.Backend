@@ -32,5 +32,17 @@ namespace Garant.Platform.Models.Entities.Transition
         /// </summary>
         [Column("ReferenceId", TypeName = "bigint")]
         public long ReferenceId { get; set; }
+
+        /// <summary>
+        /// Id другого пользователя.
+        /// </summary>
+        [Column("OtherId", TypeName = "text")]
+        public string OtherId { get; set; }
+
+        /// <summary>
+        /// Тип обсуждения.
+        /// </summary>
+        [Column("TypeItem", TypeName = "varchar(100)")]
+        public string TypeItem { get; set; }
     }
 }

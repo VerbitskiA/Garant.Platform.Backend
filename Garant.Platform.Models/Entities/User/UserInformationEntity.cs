@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Garant.Platform.Models.Entities.User
@@ -62,5 +63,71 @@ namespace Garant.Platform.Models.Entities.User
         /// </summary>
         [Column("UserId", TypeName = "varchar(50)")]
         public string UserId { get; set; }
+
+        /// <summary>
+        /// Дата рождения.
+        /// </summary>
+        [Column("DateBirth", TypeName = "timestamp")]
+        public DateTime DateBirth { get; set; }
+
+        /// <summary>
+        /// Отчество.
+        /// </summary>
+        [Column("Patronymic", TypeName = "varchar(200)")]
+        public string Patronymic { get; set; }
+
+        /// <summary>
+        /// ИНН.
+        /// </summary>
+        [Column("Inn", TypeName = "int")]
+        public int? Inn { get; set; }
+
+        /// <summary>
+        /// Расчетный счет.
+        /// </summary>
+        [Column("Pc", TypeName = "int")]
+        public int? Pc { get; set; }
+
+        /// <summary>
+        /// Серия паспорта.
+        /// </summary>
+        [Column("PassportSerial", TypeName = "int")]
+        public int? PassportSerial { get; set; }
+
+        /// <summary>
+        /// Номер паспорта.
+        /// </summary>
+        [Column("PassportNumber", TypeName = "int")]
+        public int? PassportNumber { get; set; }
+
+        /// <summary>
+        /// Дата выдачи паспорта.
+        /// </summary>
+        [Column("DateGive", TypeName = "timestamp")]
+        public DateTime? DateGive { get; set; }
+
+        /// <summary>
+        /// Кем выдан паспорт.
+        /// </summary>
+        [Column("WhoGive", TypeName = "varchar(400)")]
+        public string WhoGive { get; set; }
+
+        /// <summary>
+        /// Код паспорта.
+        /// </summary>
+        [Column("Code", TypeName = "varchar(100)")]
+        public string Code { get; set; }
+
+        /// <summary>
+        /// Адрес регистрации.
+        /// </summary>
+        [Column("AddressRegister", TypeName = "varchar(400)")]
+        public string AddressRegister { get; set; }
+
+        /// <summary>
+        /// Название документа.
+        /// </summary>
+        [Column("DocumentName", TypeName = "varchar(400)")]
+        public string DocumentName { get; set; }
     }
 }
