@@ -108,16 +108,14 @@ namespace Garant.Platform.Messaging.Service.Chat
             {
                 var messagesList = new GetResultMessageOutput();
 
-                // Если dialogId не передан, значит нужно открыть пустой чат.
-                //if (dialogId == null)
-                //{
-                //    messagesList.DialogState = DialogStateEnum.None.ToString();
-
-                //    return messagesList;
-                //}
-
                 // Найдет Id текущего пользователя.
                 var userId = await _userRepository.FindUserIdUniverseAsync(account);
+
+                // Если dialogId не передан, попробует найти диалог с таким пользователем иначе.
+                //if (dialogId == null)
+                //{
+
+                //}
 
                 // Ищет Id диалога с текущим пользователем и с владельцем/представителем, на чат с которым нажали. Затем сравнит их DialogId, если он совпадает, значит текущий пользователь общается с владельцем/представителем.
                 if (!string.IsNullOrEmpty(ownerId))

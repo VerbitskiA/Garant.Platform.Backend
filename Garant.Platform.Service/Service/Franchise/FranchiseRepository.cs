@@ -712,7 +712,8 @@ namespace Garant.Platform.Services.Service.Franchise
                                         Mode = mode,
                                         TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
                                         Url = f.Url,
-                                        FullName = fio.FullName
+                                        FullName = fio.FullName,
+                                        UserId = f.UserId
                                     })
                     .FirstOrDefaultAsync();
 
