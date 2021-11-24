@@ -8,4 +8,5 @@ Garant.Platform.Backend - API-сервисы проекта по покупке 
 <strong>БД:</strong> Postgres.<br/>
 <strong>DI:</strong> Autofac.<br/>
 <strong>CI/CD:</strong> Github, TeamCity.<br/>
+<strong>Работа с очередями сообщений:</strong> RabbitMQ + SignalR.<br/>
 <strong>OC:</strong> Linux (CentOS).<br/>
