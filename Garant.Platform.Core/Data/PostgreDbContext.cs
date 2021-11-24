@@ -2,6 +2,7 @@
 using Garant.Platform.Models.Entities.Add;
 using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.Business;
+using Garant.Platform.Models.Entities.Chat;
 using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Entities.Header;
@@ -150,5 +151,25 @@ namespace Garant.Platform.Core.Data
         /// Таблица Business.BusinessCities
         /// </summary>
         public DbSet<BusinessCitiesEntity> BusinessCities { get; set; }
+
+        /// <summary>
+        /// Таблица dbo.ProfileNavigations.
+        /// </summary>
+        public DbSet<ProfileNavigationEntity> ProfileNavigations { get; set; }
+
+        /// <summary>
+        /// Таблица Communications.MainInfoDialogs.
+        /// </summary>
+        public DbSet<MainInfoDialogEntity> MainInfoDialogs { get; set; }
+
+        /// <summary>
+        /// Таблица Communications.DialogMessages.
+        /// </summary>
+        public DbSet<DialogMessageEntity> DialogMessages { get; set; }
+
+        /// <summary>
+        /// Таблица Communications.DialogMembers
+        /// </summary>
+        public DbSet<DialogMemberEntity> DialogMembers { get; set; }
     }
 }

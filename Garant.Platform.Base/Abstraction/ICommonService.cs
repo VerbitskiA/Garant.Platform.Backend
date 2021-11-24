@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Garant.Platform.Models.Mailing.Output;
 
 namespace Garant.Platform.Base.Abstraction
@@ -21,5 +22,13 @@ namespace Garant.Platform.Base.Abstraction
         /// <param name="password">Исходный пароль без хэша.</param>
         /// <returns>Хэш пароля.</returns>
         Task<string> HashPasswordAsync(string password);
+
+        /// <summary>
+        /// Метод вычислит кол-во месяцев между датами.
+        /// </summary>
+        /// <param name="start">Дата начала.</param>
+        /// <param name="end">Текущая дата.</param>
+        /// <returns>Кол-во месяцев округленное до целого.</returns>
+        Task<double> GetSubtractMonthAsync(DateTime startDate, DateTime endDate);
     }
 }

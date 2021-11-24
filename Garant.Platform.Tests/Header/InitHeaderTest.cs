@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Header
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.InitHeaderAsync("Main"));
-            var component = new UserService(null, null, PostgreDbContext, MailingService, UserRepository);
+            var component = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
             var result = await component.InitHeaderAsync("Main");
 
             Assert.IsTrue(result.Any());
@@ -26,7 +26,7 @@ namespace Garant.Platform.Tests.Header
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.InitHeaderAsync("Dop"));
-            var component = new UserService(null, null, PostgreDbContext, MailingService, UserRepository);
+            var component = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
             var result = await component.InitHeaderAsync("Dop");
 
             Assert.IsTrue(result.Any());

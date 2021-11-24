@@ -117,5 +117,12 @@ namespace Garant.Platform.Abstractions.Franchise
         /// </summary>
         /// <returns>Список подкатегорий.</returns>
         Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync();
+
+        /// <summary>
+        /// Метод получит заголовок франшизы по Id пользователя.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Заголовок франшизы.</returns>
+        Task<string> GetFranchiseTitleAsync(string userId);
     }
 }

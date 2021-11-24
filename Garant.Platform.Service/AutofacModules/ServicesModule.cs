@@ -8,7 +8,6 @@ using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Attributes;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Models.Entities.User;
-using Garant.Platform.Service.Repository.Franchise;
 using Garant.Platform.Service.Service.Ad;
 using Garant.Platform.Services.Service.Blog;
 using Garant.Platform.Services.Service.Franchise;

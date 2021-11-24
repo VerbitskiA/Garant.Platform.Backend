@@ -14,7 +14,7 @@ namespace Garant.Platform.Controllers
             // Запишет логин в куки и вернет фронту.
             if (!HttpContext.Request.Cookies.ContainsKey("name"))
             {
-                HttpContext.Response.Cookies.Append("name", HttpContext?.User?.Identity?.Name ?? string.Empty);
+                HttpContext.Response.Cookies.Append("user", HttpContext?.User?.Identity?.Name ?? string.Empty);
             }
 
             return HttpContext?.User?.Identity?.Name ?? GetLoginFromCookie();
@@ -27,7 +27,7 @@ namespace Garant.Platform.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         private string GetLoginFromCookie()
         {
-            return HttpContext.Request.Cookies["name"];
+            return HttpContext.Request.Cookies["user"];
         }
     }
 }

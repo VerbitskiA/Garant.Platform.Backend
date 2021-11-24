@@ -5,6 +5,7 @@ using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
 using Garant.Platform.Models.User.Output;
+using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Abstractions.User
 {
@@ -121,8 +122,10 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="account">Логин или почта пользователя.</param>
         /// <param name="transitionType">Тип перехода.</param>
         /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <param name="otherId">Id другого пользователя.</param>
+        /// <param name="typeItem">Тип предмета обсуждения.</param>
         /// <returns>Флаг записи перехода.</returns>
-        Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId);
+        Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId, string otherId, string typeItem);
 
         /// <summary>
         /// Метод получит переход пользователя.
@@ -144,5 +147,27 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="account">Пользователь.</param>
         /// <returns>Флаг проверки.</returns>
         Task<bool> IsWriteProfileDataAsync(string account);
+
+        /// <summary>
+        /// Метод сохранит данные формы профиля пользователя.
+        /// </summary>
+        /// <param name="documentFile">Название документа.</param>
+        /// <param name="userInformationInput">Входная модель.</param>
+        /// <param name="account">Логин или Email.</param>
+        /// <returns>Данные формы.</returns>
+        Task<UserInformationOutput> SaveProfileFormAsync(IFormCollection documentFile, string userInformationInput, string account);
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя.
+        /// </summary>
+        /// <param name="account">Логин или email пользователя.</param>
+        /// <returns>Данные профиля.</returns>
+        Task<UserInformationOutput> GetProfileInfoAsync(string account);
+
+        /// <summary>
+        /// Метод получит список меню для пунктов ЛК.
+        /// </summary>
+        /// <returns>Список пунктов ЛК.</returns>
+        Task<IEnumerable<ProfileNavigationOutput>> GetProfileMenuListAsync();
     }
 }

@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.User;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
+using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -31,14 +37,18 @@ namespace Garant.Platform.Services.Service.User
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IMailingService _mailingService;
         private readonly IUserRepository _userRepository;
+        private readonly IFtpService _ftpService;
+        private readonly ICommonService _commonService;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, IMailingService mailingService, IUserRepository userRepository)
+        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, IMailingService mailingService, IUserRepository userRepository, IFtpService ftpService, ICommonService commonService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _postgreDbContext = postgreDbContext;
             _mailingService = mailingService;
             _userRepository = userRepository;
+            _ftpService = ftpService;
+            _commonService = commonService;
         }
 
         /// <summary>
@@ -518,12 +528,14 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="account">Логин или почта пользователя.</param>
         /// <param name="transitionType">Тип перехода.</param>
         /// <param name="referenceId">Id франшизы или готового бизнеса.</param>
+        /// <param name="otherId">Id другого пользователя.</param>
+        /// <param name="typeItem">Тип предмета обсуждения.</param>
         /// <returns>Флаг записи перехода.</returns>
-        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId)
+        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId, string otherId, string typeItem)
         {
             try
             {
-                var result = await _userRepository.SetTransitionAsync(account, transitionType, referenceId);
+                var result = await _userRepository.SetTransitionAsync(account, transitionType, referenceId, otherId, typeItem);
 
                 return result;
             }
@@ -602,6 +614,149 @@ namespace Garant.Platform.Services.Service.User
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод сохранит данные формы профиля пользователя.
+        /// </summary>
+        /// <param name="documentFile">Название документа.</param>
+        /// <param name="userInformationInput">Входная модель.</param>
+        /// <param name="account">Логин или Email.</param>
+        /// <returns>Данные формы.</returns>
+        public async Task<UserInformationOutput> SaveProfileFormAsync(IFormCollection documentFile, string userInformationJson, string account)
+        {
+            try
+            {
+                UserInformationOutput result = null;
+                var fileName = string.Empty;
+
+                // Загрузит документ на сервер.
+                if (documentFile.Files.Any())
+                {
+                    await _ftpService.UploadFilesFtpAsync(documentFile.Files);
+                    fileName = documentFile.Files[0].FileName;
+                }
+
+                var userInformationInput = JsonSerializer.Deserialize<UserInformationInput>(userInformationJson);
+
+                if (userInformationInput != null)
+                {
+                    result = await _userRepository.SaveProfileFormAsync(userInformationInput, account, fileName);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя.
+        /// </summary>
+        /// <param name="account">Логин или email пользователя.</param>
+        /// <returns>Данные профиля.</returns>
+        public async Task<UserInformationOutput> GetProfileInfoAsync(string account)
+        {
+            try
+            {
+                var result = await _userRepository.GetProfileInfoAsync(account);
+
+                if (result != null)
+                {
+                    var user = await _userRepository.FindUserUniverseAsync(account);
+
+                    result.Password = null;
+
+                    // Вычислит кол-во времени на сайте.
+                    if (user != null)
+                    {
+                        // Вычислит года.
+                        var calcYear = DateTime.Now.Year - user.DateRegister.Year;
+
+                        // Вычислит месяцы.
+                        var calcMonth = await _commonService.GetSubtractMonthAsync(user.DateRegister, DateTime.Now);
+
+                        if (calcYear == 0)
+                        {
+                            result.CountTimeSite = calcMonth.ToString(CultureInfo.InvariantCulture) + " мес.";
+                        }
+
+                        else
+                        {
+                            // Если 12 мес, то прибавит 1 год.
+                            if ((int)calcMonth == 12)
+                            {
+                                calcYear++;
+                                result.CountTimeSite = calcYear + " г.";
+                            }
+
+                            else
+                            {
+                                result.CountTimeSite = calcYear + " г." + calcMonth + " мес.";
+                            }
+                        }
+
+                        // Вычислит кол-во объявлений пользователя.
+                        var userId = await _userRepository.FindUserIdUniverseAsync(account);
+
+                        if (!string.IsNullOrEmpty(userId))
+                        {
+                            // Вычислит кол-во опубликованных объявлений франшиз + кол-во опубликованного бизнеса.
+                            // Кол-во франшиз.
+                            var countFranchises = await _postgreDbContext.Franchises
+                                .Where(f => f.UserId.Equals(userId))
+                                .CountAsync();
+
+                            //// Кол-во бизнеса.
+                            var countBusinesses = await _postgreDbContext.Businesses
+                                .Where(f => f.UserId.Equals(userId))
+                                .CountAsync();
+
+                            // Всего.
+                            var countAd = countFranchises + countBusinesses;
+                            result.CountAd = countAd;
+                        }
+                    }
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список меню для пунктов ЛК.
+        /// </summary>
+        /// <returns>Список пунктов ЛК.</returns>
+        public async Task<IEnumerable<ProfileNavigationOutput>> GetProfileMenuListAsync()
+        {
+            try
+            {
+                var result = await _userRepository.GetProfileMenuListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }

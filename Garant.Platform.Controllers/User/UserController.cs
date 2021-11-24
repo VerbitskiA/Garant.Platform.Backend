@@ -13,6 +13,7 @@ using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers.User
@@ -203,7 +204,7 @@ namespace Garant.Platform.Controllers.User
         [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<IActionResult> SetTransitionAsync([FromBody] TransitionInput transitionInput)
         {
-            var result = await _userService.SetTransitionAsync(GetUserName(), transitionInput.TransitionType, transitionInput.ReferenceId);
+            var result = await _userService.SetTransitionAsync(GetUserName(), transitionInput.TransitionType, transitionInput.ReferenceId, transitionInput.OtherId, transitionInput.TypeItem);
 
             return Ok(result);
         }
@@ -246,6 +247,49 @@ namespace Garant.Platform.Controllers.User
         public async Task<IActionResult> IsWriteProfileDataAsync()
         {
             var result = await _userService.IsWriteProfileDataAsync(GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод сохранит данные формы профиля пользователя.
+        /// </summary>
+        /// <param name="userInformationInput">Входная модель.</param>
+        /// <returns>Данные формы.</returns>
+        [HttpPost]
+        [Route("save-profile-info")]
+        [ProducesResponseType(200, Type = typeof(UserInformationOutput))]
+        public async Task<IActionResult> SaveProfileFormAsync([FromForm] IFormCollection documentFile, [FromForm] string userInformationInput)
+        {
+            var result = await _userService.SaveProfileFormAsync(documentFile, userInformationInput, GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит информацию профиля пользователя.
+        /// </summary>
+        /// <returns>Данные профиля.</returns>
+        [HttpPost]
+        [Route("get-profile-info")]
+        [ProducesResponseType(200, Type = typeof(UserInformationOutput))]
+        public async Task<IActionResult> GetProfileInfoAsync()
+        {
+            var result = await _userService.GetProfileInfoAsync(GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список меню для пунктов ЛК.
+        /// </summary>
+        /// <returns>Список пунктов ЛК.</returns>
+        [HttpPost]
+        [Route("profile-menu")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ProfileNavigationOutput>))]
+        public async Task<IActionResult> GetProfileMenuListAsync()
+        {
+            var result = await _userService.GetProfileMenuListAsync();
 
             return Ok(result);
         }
