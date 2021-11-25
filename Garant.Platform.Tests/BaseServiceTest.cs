@@ -48,14 +48,14 @@ namespace Garant.Platform.Tests
             // Настройка экземпляров сервисов для тестов.
             CommonService = new CommonService(PostgreDbContext, null);
             UserRepository = new UserRepository(PostgreDbContext, CommonService);
-            FranchiseRepository = new FranchiseRepository(PostgreDbContext, UserRepository);
-            BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository);
+            FranchiseRepository = new FranchiseRepository(PostgreDbContext, UserRepository, CommonService);
+            BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
             PaginationRepository = new PaginationRepository(PostgreDbContext);
 
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
             UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
             FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);
-            BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository);
+            BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
             ChatRepository = new ChatRepository(PostgreDbContext);
         }
     }

@@ -245,7 +245,7 @@ namespace Garant.Platform.Messaging.Service.Chat
                     {
                         chatItemName = await _businessRepository.GetBusinessTitleAsync(currentUserId);
                         var businessData = await _businessRepository.GetBusinessAsync(chatItemName);
-                        urlPath = businessData.UrlsBusiness.FirstOrDefault();
+                        urlPath = businessData.UrlsBusiness;
                     }
 
                     messagesList.ChatItemName = chatItemName;
@@ -346,7 +346,7 @@ namespace Garant.Platform.Messaging.Service.Chat
 
                         if (businessData != null)
                         {
-                            urlPath = businessData.UrlsBusiness.FirstOrDefault();
+                            urlPath = businessData.UrlsBusiness;
                         }
                     }
 

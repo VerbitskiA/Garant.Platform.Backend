@@ -30,5 +30,12 @@ namespace Garant.Platform.Base.Abstraction
         /// <param name="end">Текущая дата.</param>
         /// <returns>Кол-во месяцев округленное до целого.</returns>
         Task<double> GetSubtractMonthAsync(DateTime startDate, DateTime endDate);
+
+        /// <summary>
+        /// Метод соединит в строку из массива строк разделяя запятой.
+        /// </summary>
+        /// <param name="arr">Исходный массив строк.</param>
+        /// <returns>Строка со значениями массива.</returns>
+        Task<string> JoinArrayWithDelimeterAsync(string[] arr);
     }
 }

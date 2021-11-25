@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
@@ -240,6 +241,43 @@ namespace Garant.Platform.Base.Service
                 }
 
                 return await Task.FromResult(Math.Round(mnt));
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод соединит в строку из массива строк разделяя запятой.
+        /// </summary>
+        /// <param name="arr">Исходный массив строк.</param>
+        /// <returns>Строка со значениями массива.</returns>
+        public async Task<string> JoinArrayWithDelimeterAsync(string[] arr)
+        {
+            try
+            {
+                var builder = new StringBuilder();
+                var delimiter = string.Empty;
+                var urls = string.Empty;
+
+                if (arr.Any())
+                {
+                    foreach (var url in arr)
+                    {
+                        builder.Append(delimiter);
+                        builder.Append(url);
+                        delimiter = ",";
+                    }
+
+                    urls = builder.ToString();
+                }
+
+                return await Task.FromResult(urls);
             }
 
             catch (Exception e)

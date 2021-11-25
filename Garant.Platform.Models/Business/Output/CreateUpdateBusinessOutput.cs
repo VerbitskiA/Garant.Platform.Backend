@@ -20,7 +20,7 @@ namespace Garant.Platform.Models.Business.Output
         /// <summary>
         /// Массив с именами изображений готового бизнеса.
         /// </summary>
-        public string[] UrlsBusiness { get; set; }
+        public string UrlsBusiness { get; set; }
 
         /// <summary>
         /// Статус или должность.

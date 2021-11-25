@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.User;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.Franchise;
@@ -21,11 +22,13 @@ namespace Garant.Platform.Services.Service.Franchise
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IUserRepository _userRepository;
+        private readonly ICommonService _commonService;
 
-        public FranchiseRepository(PostgreDbContext postgreDbContext, IUserRepository userRepository)
+        public FranchiseRepository(PostgreDbContext postgreDbContext, IUserRepository userRepository, ICommonService commonService)
         {
             _postgreDbContext = postgreDbContext;
             _userRepository = userRepository;
+            _commonService = commonService;
         }
 
         public async Task<List<FranchiseOutput>> GetFranchisesAsync()
@@ -426,6 +429,7 @@ namespace Garant.Platform.Services.Service.Franchise
 
                     // Найдет франшизу с таким названием.
                     var findFranchise = await FindFranchiseByTitleAsync(franchiseInput.Title);
+                    var urls = await _commonService.JoinArrayWithDelimeterAsync(franchiseInput.UrlsFranchise);
 
                     // Создаст новую франшизу.
                     if (franchiseInput.IsNew && findFranchise == null)
@@ -442,7 +446,7 @@ namespace Garant.Platform.Services.Service.Franchise
                             DotCount = franchiseInput.DotCount,
                             FinIndicators = franchiseInput.FinIndicators,
                             FranchisePacks = franchiseInput.FranchisePacks,
-                            UrlsDetails = urlsDetails.ToArray(),
+                            //UrlsDetails = urlsDetails.ToArray(),
                             UrlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName,
                             NameFinIndicators = franchiseInput.FinIndicators,
                             NameFinModelFile = files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
@@ -470,7 +474,8 @@ namespace Garant.Platform.Services.Service.Franchise
                             UrlVideo = franchiseInput.UrlVideo,
                             Reviews = franchiseInput.Reviews,
                             TextDoPrice = "Сумма сделки:",
-                            UserId = userId
+                            UserId = userId,
+                            Url = urls
                         });
                     }
 
@@ -486,7 +491,7 @@ namespace Garant.Platform.Services.Service.Franchise
                         findFranchise.DotCount = franchiseInput.DotCount;
                         findFranchise.FinIndicators = franchiseInput.FinIndicators;
                         findFranchise.FranchisePacks = franchiseInput.FranchisePacks;
-                        findFranchise.UrlsDetails = urlsDetails.ToArray();
+                        //findFranchise.UrlsDetails = urlsDetails.ToArray();
                         findFranchise.UrlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName;
                         findFranchise.NameFinIndicators = franchiseInput.FinIndicators;
                         findFranchise.NameFinModelFile =
@@ -519,6 +524,7 @@ namespace Garant.Platform.Services.Service.Franchise
                         findFranchise.UrlVideo = franchiseInput.UrlVideo;
                         findFranchise.Reviews = franchiseInput.Reviews;
                         findFranchise.TextDoPrice = "Сумма сделки:";
+                        findFranchise.Url = urls;
 
                         _postgreDbContext.Update(findFranchise);
                     }
@@ -536,7 +542,7 @@ namespace Garant.Platform.Services.Service.Franchise
                         DotCount = franchiseInput.DotCount,
                         FinIndicators = franchiseInput.FinIndicators,
                         FranchisePacks = franchiseInput.FranchisePacks,
-                        UrlsDetails = urlsDetails.ToArray(),
+                        //UrlsDetails = urlsDetails.ToArray(),
                         FileLogoUrl = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName,
                         NameFinIndicators = franchiseInput.FinIndicators,
                         FinModelFileUrl = "/docs" + files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,

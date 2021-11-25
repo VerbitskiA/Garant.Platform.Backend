@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.User;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Business.Input;
@@ -22,11 +23,13 @@ namespace Garant.Platform.Services.Service.Business
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IUserRepository _userRepository;
+        private readonly ICommonService _commonService;
 
-        public BusinessRepository(PostgreDbContext postgreDbContext, IUserRepository userRepository)
+        public BusinessRepository(PostgreDbContext postgreDbContext, IUserRepository userRepository, ICommonService commonService)
         {
             _postgreDbContext = postgreDbContext;
             _userRepository = userRepository;
+            _commonService = commonService;
         }
 
         /// <summary>
@@ -68,6 +71,7 @@ namespace Garant.Platform.Services.Service.Business
                     
                     // Найдет бизнес с таким названием.
                     var findBusiness = await GetBusinessAsync(businessInput.BusinessName);
+                    var urls = await _commonService.JoinArrayWithDelimeterAsync(urlsBusiness);
 
                     // Создаст новый бизнес.
                     if (businessInput.IsNew && findBusiness == null)
@@ -86,7 +90,7 @@ namespace Garant.Platform.Services.Service.Business
                             Form = businessInput.Form,
                             Status = businessInput.Status,
                             Price = businessInput.Price,
-                            UrlsBusiness = urlsBusiness.ToArray(),
+                            UrlsBusiness = urls,
                             TurnPrice = businessInput.TurnPrice,
                             ProfitPrice = businessInput.ProfitPrice,
                             Payback = businessInput.Payback,
@@ -125,7 +129,7 @@ namespace Garant.Platform.Services.Service.Business
                         findBusiness.Form = businessInput.Form;
                         findBusiness.Status = businessInput.Status;
                         findBusiness.Price = businessInput.Price;
-                        findBusiness.UrlsBusiness = urlsBusiness.ToArray();
+                        findBusiness.UrlsBusiness = urls;
                         findBusiness.TurnPrice = businessInput.TurnPrice;
                         findBusiness.ProfitPrice = businessInput.ProfitPrice;
                         findBusiness.Payback = businessInput.Payback;
@@ -166,7 +170,7 @@ namespace Garant.Platform.Services.Service.Business
                         Form = businessInput.Form,
                         Status = businessInput.Status,
                         Price = businessInput.Price,
-                        UrlsBusiness = urlsBusiness.ToArray(),
+                        UrlsBusiness = urls,
                         TurnPrice = businessInput.TurnPrice,
                         ProfitPrice = businessInput.ProfitPrice,
                         Payback = businessInput.Payback,
@@ -579,7 +583,7 @@ namespace Garant.Platform.Services.Service.Business
                         Text = b.Text,
                         TextDoPrice = b.TextDoPrice,
                         Title = b.BusinessName,
-                        Url = b.UrlsBusiness[0],
+                        Url = b.UrlsBusiness,
                         TotalInvest = string.Format("{0:0,0}", b.InvestPrice),
                         BusinessId = b.BusinessId
                     })
@@ -616,7 +620,7 @@ namespace Garant.Platform.Services.Service.Business
                         Text = b.Text,
                         TextDoPrice = b.TextDoPrice,
                         Title = b.BusinessName,
-                        Url = b.UrlsBusiness[0],
+                        Url = b.UrlsBusiness,
                         TotalInvest = string.Format("{0:0,0}", b.InvestPrice),
                         BusinessId = b.BusinessId
                     })
@@ -662,7 +666,7 @@ namespace Garant.Platform.Services.Service.Business
                                         Text = f.Text,
                                         SubCategory = f.SubCategory,
                                         BusinessName = f.BusinessName,
-                                        Url = f.UrlsBusiness[0]
+                                        Url = f.UrlsBusiness
                                     })
                     .Take(4)
                     .ToListAsync();
@@ -700,7 +704,7 @@ namespace Garant.Platform.Services.Service.Business
                                        Text = f.Text,
                                        TextDoPrice = f.TextDoPrice,
                                        BusinessName = f.BusinessName,
-                                       Url = f.UrlsBusiness[0],
+                                       Url = f.UrlsBusiness,
                                        IsGarant = f.IsGarant,
                                        ProfitPrice = f.ProfitPrice,
                                        TotalInvest = string.Format("{0:0,0}", f.Price),

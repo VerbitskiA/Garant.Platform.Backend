@@ -26,8 +26,8 @@ namespace Garant.Platform.Models.Entities.Business
         /// <summary>
         /// Массив с именами изображений готового бизнеса.
         /// </summary>
-        [Column("UrlsBusiness", TypeName = "text[]")]
-        public string[] UrlsBusiness { get; set; }
+        [Column("UrlsBusiness", TypeName = "text")]
+        public string UrlsBusiness { get; set; }
 
         /// <summary>
         /// Статус или должность.
