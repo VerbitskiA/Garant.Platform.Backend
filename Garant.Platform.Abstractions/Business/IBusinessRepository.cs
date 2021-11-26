@@ -102,5 +102,12 @@ namespace Garant.Platform.Abstractions.Business
         /// </summary>
         /// <returns>Список бизнеса.</returns>
         Task<List<BusinessOutput>> GetNewBusinesseListAsync();
+
+        /// <summary>
+        /// Метод найдет среди бизнеса по запросу.
+        /// </summary>
+        /// <param name="searchText">Текст поиска.</param>
+        /// <returns>Список с результатами.</returns>
+        Task<IEnumerable<BusinessOutput>> SearchByBusinessesAsync(string searchText);
     }
 }

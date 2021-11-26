@@ -943,5 +943,45 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод найдет среди франшиз по запросу.
+        /// </summary>
+        /// <param name="searchText">Текст поиска.</param>
+        /// <returns>Список с результатами.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> SearchByFranchisesAsync(string searchText)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Franchises
+                    .Where(f => f.Title.Contains(searchText) || f.ActivityDetail.Contains(searchText))
+                    .Select(f => new FranchiseOutput
+                    {
+                        DateCreate = f.DateCreate,
+                        Price = string.Format("{0:0,0}", f.Price),
+                        CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                        DayDeclination = "дня",
+                        Text = f.Text,
+                        TextDoPrice = f.TextDoPrice,
+                        Title = f.Title,
+                        Url = f.Url,
+                        IsGarant = f.IsGarant,
+                        ProfitPrice = f.ProfitPrice,
+                        TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
+                        FranchiseId = f.FranchiseId
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }
