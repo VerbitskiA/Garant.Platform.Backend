@@ -29,11 +29,11 @@ namespace Garant.Platform.Controllers.Search
         /// <param name="searchInput">Входная модель.</param>
         /// <returns>Список с результатами.</returns>
         [HttpPost]
-        [Route("search-franchises")]
+        [Route("search-data")]
         [ProducesResponseType(200, Type = typeof(IEnumerable))]
-        public async Task<IActionResult> SearchByFranchisesAsync([FromBody] SearchInput searchInput)
+        public async Task<IActionResult> SearchAsync([FromBody] SearchInput searchInput)
         {
-            var result = await _searchService.SearchByFranchisesAsync(searchInput.SearchType, searchInput.SearchText);
+            var result = await _searchService.SearchAsync(searchInput.SearchType, searchInput.SearchText);
 
             return Ok(result);
         }

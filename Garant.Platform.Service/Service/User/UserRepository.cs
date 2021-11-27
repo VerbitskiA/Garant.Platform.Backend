@@ -489,7 +489,7 @@ namespace Garant.Platform.Services.Service.User
         {
             try
             {
-                if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(transitionType) || referenceId <= 0)
+                if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(transitionType))
                 {
                     return false;
                 }

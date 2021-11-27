@@ -26,12 +26,12 @@ namespace Garant.Platform.Services.Service.Search
         }
 
         /// <summary>
-        /// Метод найдет среди франшиз по запросу.
+        /// Метод найдет данные по запросу.
         /// </summary>
         /// <param name="searchType">Тип поиска.</param>
         /// <param name="searchText">Текст поиска.</param>
         /// <returns>Список с результатами.</returns>
-        public async Task<IEnumerable> SearchByFranchisesAsync(string searchType, string searchText)
+        public async Task<IEnumerable> SearchAsync(string searchType, string searchText)
         {
             try
             {
@@ -43,12 +43,12 @@ namespace Garant.Platform.Services.Service.Search
                     searchText = searchText.Trim();
                 }
 
-                if (searchType.Equals("Franchise"))
+                if (searchType.Equals("franchise"))
                 {
                     result = await _franchiseRepository.SearchByFranchisesAsync(searchText);
                 }
 
-                if (searchType.Equals("Business"))
+                if (searchType.Equals("business"))
                 {
                     result = await _businessRepository.SearchByBusinessesAsync(searchText);
                 }

@@ -9,11 +9,11 @@ namespace Garant.Platform.Abstractions.Search
     public interface ISearchService
     {
         /// <summary>
-        /// Метод найдет среди франшиз по запросу.
+        /// Метод найдет данные по запросу.
         /// </summary>
         /// <param name="searchType">Тип поиска.</param>
         /// <param name="searchText">Текст поиска.</param>
         /// <returns>Список с результатами.</returns>
-        Task<IEnumerable> SearchByFranchisesAsync(string searchType, string searchText);
+        Task<IEnumerable> SearchAsync(string searchType, string searchText);
     }
 }
