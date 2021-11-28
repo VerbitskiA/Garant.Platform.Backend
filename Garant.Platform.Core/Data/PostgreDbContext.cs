@@ -171,5 +171,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица Communications.DialogMembers
         /// </summary>
         public DbSet<DialogMemberEntity> DialogMembers { get; set; }
+
+        /// <summary>
+        /// Таблица Franchises.RequestsFranchises.
+        /// </summary>
+        public DbSet<RequestFranchise> RequestsFranchises { get; set; }
     }
 }
