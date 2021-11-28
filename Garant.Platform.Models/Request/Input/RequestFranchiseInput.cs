@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Garant.Platform.Models.Request.Input
+﻿namespace Garant.Platform.Models.Request.Input
 {
     /// <summary>
     /// Класс входной модели создания заявки франшизы.

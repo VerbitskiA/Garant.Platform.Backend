@@ -37,6 +37,12 @@ namespace Garant.Platform.Services.Request
             {
                 var result = await _franchiseRepository.CreateRequestFranchiseAsync(userName, phone, city, account, franchiseId);
 
+                if (result != null)
+                {
+                    result.IsSuccessCreatedRequest = true;
+                    result.StatusText = "Ваша заявка успешно отправлена на модерацию.";
+                }
+
                 return result;
             }
 

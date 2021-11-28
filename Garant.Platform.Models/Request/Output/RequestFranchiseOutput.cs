@@ -41,5 +41,15 @@ namespace Garant.Platform.Models.Request.Output
         /// Id франшизы, по которой оставлена заявка.
         /// </summary>
         public long FranchiseId { get; set; }
+
+        /// <summary>
+        /// Флаг успешно ли добавление.
+        /// </summary>
+        public bool IsSuccessCreatedRequest { get; set; }
+
+        /// <summary>
+        /// Текст после добавления заявки.
+        /// </summary>
+        public string StatusText { get; set; }
     }
 }
