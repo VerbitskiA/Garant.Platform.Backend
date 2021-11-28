@@ -3,6 +3,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.FTP.Service;
 using Garant.Platform.Mailings.Service;
 using Garant.Platform.Messaging.Service.Chat;
+using Garant.Platform.Services.Request;
 using Garant.Platform.Services.Service.Business;
 using Garant.Platform.Services.Service.Franchise;
 using Garant.Platform.Services.Service.Pagination;
@@ -31,6 +32,7 @@ namespace Garant.Platform.Tests
         protected BusinessRepository BusinessRepository;
         protected ChatRepository ChatRepository;
         protected PaginationRepository PaginationRepository;
+        protected RequestService RequestService;
 
         public BaseServiceTest()
         {
@@ -57,6 +59,7 @@ namespace Garant.Platform.Tests
             FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);
             BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
             ChatRepository = new ChatRepository(PostgreDbContext);
+            RequestService = new RequestService(FranchiseRepository, BusinessRepository, PostgreDbContext);
         }
     }
 }

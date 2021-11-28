@@ -3,6 +3,7 @@ using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.MainPage;
 using Garant.Platform.Abstractions.Pagination;
+using Garant.Platform.Abstractions.Request;
 using Garant.Platform.Abstractions.Search;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Core.Abstraction;
@@ -10,6 +11,7 @@ using Garant.Platform.Core.Attributes;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Service.Service.Ad;
+using Garant.Platform.Services.Request;
 using Garant.Platform.Services.Service.Blog;
 using Garant.Platform.Services.Service.Franchise;
 using Garant.Platform.Services.Service.MainPage;
@@ -66,6 +68,10 @@ namespace Garant.Platform.Services.AutofacModules
             // Сервис поиска.
             builder.RegisterType<SearchService>().Named<ISearchService>("PaginationService");
             builder.RegisterType<SearchService>().As<ISearchService>();
+
+            // Сервис заявок.
+            builder.RegisterType<RequestService>().Named<IRequestService>("RequestService");
+            builder.RegisterType<RequestService>().As<IRequestService>();
         }
     }
 }
