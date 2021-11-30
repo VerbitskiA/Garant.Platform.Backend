@@ -54,5 +54,37 @@ namespace Garant.Platform.Services.Request
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод создаст заявку бизнеса.
+        /// </summary>
+        /// <param name="userName">Имя пользователя.</param>
+        /// <param name="phone">Телефон.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
+        /// <param name="businessId">Id бизнеса, по которому оставлена заявка.</param>
+        /// <returns>Данные заявки.</returns>
+        public async Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string account, long businessId)
+        {
+            try
+            {
+                var result = await _businessRepository.CreateRequestBusinessAsync(userName, phone, account, businessId);
+
+                if (result != null)
+                {
+                    result.IsSuccessCreatedRequest = true;
+                    result.StatusText = "Ваша заявка успешно отправлена на модерацию.";
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }

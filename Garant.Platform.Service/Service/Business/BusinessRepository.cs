@@ -10,7 +10,9 @@ using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
 using Garant.Platform.Models.Entities.Business;
+using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Output;
+using Garant.Platform.Models.Request.Output;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -752,6 +754,54 @@ namespace Garant.Platform.Services.Service.Business
                         BusinessId = f.BusinessId
                     })
                     .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод создаст заявку бизнеса.
+        /// </summary>
+        /// <param name="userName">Имя пользователя.</param>
+        /// <param name="phone">Телефон.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
+        /// <param name="businessId">Id бизнеса, по которому оставлена заявка.</param>
+        /// <returns>Данные заявки.</returns>
+        public async Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string account, long businessId)
+        {
+            try
+            {
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+                var now = DateTime.Now;
+
+                var addRequestData = new RequestBusinessEntity
+                {
+                    UserId = userId,
+                    DateCreate = now,
+                    Phone = phone,
+                    UserName = userName,
+                    BusinessId = businessId
+                };
+
+                await _postgreDbContext.RequestsBusinesses.AddAsync(addRequestData);
+                await _postgreDbContext.SaveChangesAsync();
+
+                var result = new RequestBusinessOutput
+                {
+                    UserId = userId,
+                    DateCreate = now,
+                    Phone = phone,
+                    UserName = userName,
+                    BusinessId = businessId
+                };
 
                 return result;
             }

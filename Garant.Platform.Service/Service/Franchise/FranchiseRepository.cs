@@ -1001,7 +1001,7 @@ namespace Garant.Platform.Services.Service.Franchise
                 var userId = await _userRepository.FindUserIdUniverseAsync(account);
                 var now = DateTime.Now;
 
-                var addRequestData = new RequestFranchise
+                var addRequestData = new RequestFranchiseEntity
                 {
                     UserId = userId,
                     City = city,

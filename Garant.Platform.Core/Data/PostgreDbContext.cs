@@ -175,6 +175,11 @@ namespace Garant.Platform.Core.Data
         /// <summary>
         /// Таблица Franchises.RequestsFranchises.
         /// </summary>
-        public DbSet<RequestFranchise> RequestsFranchises { get; set; }
+        public DbSet<RequestFranchiseEntity> RequestsFranchises { get; set; }
+
+        /// <summary>
+        /// Таблица Business.RequestsBusinesses.
+        /// </summary>
+        public DbSet<RequestBusinessEntity> RequestsBusinesses { get; set; }
     }
 }

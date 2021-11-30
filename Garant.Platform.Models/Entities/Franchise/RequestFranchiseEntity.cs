@@ -9,7 +9,7 @@ namespace Garant.Platform.Models.Entities.Franchise
     /// Класс сопоставляется с таблицей списком заявок для франшиз Franchises.RequestsFranchises.
     /// </summary>
     [Table("RequestsFranchises", Schema = "Franchises")]
-    public class RequestFranchise
+    public class RequestFranchiseEntity
     {
         /// <summary>
         /// PK.

@@ -37,5 +37,20 @@ namespace Garant.Platform.Controllers.Request
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод создаст заявку бизнеса.
+        /// </summary>
+        /// <param name="requestFranchiseInput">Входная модель.</param>
+        /// <returns>Данные заявки.</returns>
+        [HttpPost]
+        [Route("create-request-business")]
+        [ProducesResponseType(200, Type = typeof(RequestBusinessOutput))]
+        public async Task<IActionResult> CreateRequestBusinessAsync([FromBody] RequestBusinessInput requestBusinessInput)
+        {
+            var result = await _requestService.CreateRequestBusinessAsync(requestBusinessInput.UserName, requestBusinessInput.Phone, GetUserName(), requestBusinessInput.BusinessId);
+
+            return Ok(result);
+        }
     }
 }

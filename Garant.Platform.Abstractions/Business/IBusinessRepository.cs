@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
 using Garant.Platform.Models.Entities.Business;
+using Garant.Platform.Models.Request.Output;
 using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Abstractions.Business
@@ -109,5 +110,15 @@ namespace Garant.Platform.Abstractions.Business
         /// <param name="searchText">Текст поиска.</param>
         /// <returns>Список с результатами.</returns>
         Task<IEnumerable<BusinessOutput>> SearchByBusinessesAsync(string searchText);
+
+        /// <summary>
+        /// Метод создаст заявку бизнеса.
+        /// </summary>
+        /// <param name="userName">Имя пользователя.</param>
+        /// <param name="phone">Телефон.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
+        /// <param name="businessId">Id бизнеса, по которому оставлена заявка.</param>
+        /// <returns>Данные заявки.</returns>
+        Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string account, long businessId);
     }
 }
