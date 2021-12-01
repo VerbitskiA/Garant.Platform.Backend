@@ -724,5 +724,45 @@ namespace Garant.Platform.Services.Service.Business
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод найдет среди бизнеса по запросу.
+        /// </summary>
+        /// <param name="searchText">Текст поиска.</param>
+        /// <returns>Список с результатами.</returns>
+        public async Task<IEnumerable<BusinessOutput>> SearchByBusinessesAsync(string searchText)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Businesses
+                    .Where(f => f.BusinessName.Contains(searchText) || f.ActivityDetail.Contains(searchText))
+                    .Select(f => new BusinessOutput
+                    {
+                        DateCreate = f.DateCreate,
+                        Price = string.Format("{0:0,0}", f.Price),
+                        CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                        DayDeclination = "дня",
+                        Text = f.Text,
+                        TextDoPrice = f.TextDoPrice,
+                        BusinessName = f.BusinessName,
+                        Url = f.UrlsBusiness,
+                        IsGarant = f.IsGarant,
+                        ProfitPrice = f.ProfitPrice,
+                        TotalInvest = string.Format("{0:0,0}", f.Price),
+                        BusinessId = f.BusinessId
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }

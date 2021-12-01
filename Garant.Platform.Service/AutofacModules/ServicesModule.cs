@@ -3,6 +3,7 @@ using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.MainPage;
 using Garant.Platform.Abstractions.Pagination;
+using Garant.Platform.Abstractions.Search;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Attributes;
@@ -13,6 +14,7 @@ using Garant.Platform.Services.Service.Blog;
 using Garant.Platform.Services.Service.Franchise;
 using Garant.Platform.Services.Service.MainPage;
 using Garant.Platform.Services.Service.Pagination;
+using Garant.Platform.Services.Service.Search;
 using Garant.Platform.Services.Service.User;
 using Microsoft.AspNetCore.Identity;
 
@@ -60,6 +62,10 @@ namespace Garant.Platform.Services.AutofacModules
             // Сервис пагинации.
             builder.RegisterType<PaginationService>().Named<IPaginationService>("PaginationService");
             builder.RegisterType<PaginationService>().As<IPaginationService>();
+
+            // Сервис поиска.
+            builder.RegisterType<SearchService>().Named<ISearchService>("PaginationService");
+            builder.RegisterType<SearchService>().As<ISearchService>();
         }
     }
 }
