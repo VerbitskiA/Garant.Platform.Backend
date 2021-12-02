@@ -10,7 +10,6 @@ using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
 using Garant.Platform.Models.Entities.Business;
-using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Output;
 using Garant.Platform.Models.Request.Output;
 using Microsoft.AspNetCore.Http;

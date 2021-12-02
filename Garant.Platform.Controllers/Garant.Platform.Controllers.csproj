@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Garant.Platform.Commerce\Garant.Platform.Commerce.csproj" />
     <ProjectReference Include="..\Garant.Platform.Core\Garant.Platform.Core.csproj" />
     <ProjectReference Include="..\Garant.Platform.Messaging\Garant.Platform.Messaging.csproj" />
     <ProjectReference Include="..\Garant.Platform.Models\Garant.Platform.Models.csproj" />

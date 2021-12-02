@@ -3,6 +3,7 @@ using Garant.Platform.Models.Entities.Add;
 using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.Business;
 using Garant.Platform.Models.Entities.Chat;
+using Garant.Platform.Models.Entities.Commerce;
 using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Entities.Header;
@@ -181,5 +182,15 @@ namespace Garant.Platform.Core.Data
         /// Таблица Business.RequestsBusinesses.
         /// </summary>
         public DbSet<RequestBusinessEntity> RequestsBusinesses { get; set; }
+
+        /// <summary>
+        /// Таблица Commerce.Orders.
+        /// </summary>
+        public DbSet<OrderEntity> Orders { get; set; }
+
+        /// <summary>
+        /// Таблица Logs.Transactions.
+        /// </summary>
+        public DbSet<TransactionEntity> Transactions { get; set; }
     }
 }
