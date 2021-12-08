@@ -46,7 +46,7 @@ namespace Garant.Platform.Models.Entities.Commerce
         /// <summary>
         /// Цена.
         /// </summary>
-        [Column("DateCreate", TypeName = "numeric")]
+        [Column("Amount", TypeName = "numeric")]
         public double Amount { get; set; }
 
         /// <summary>

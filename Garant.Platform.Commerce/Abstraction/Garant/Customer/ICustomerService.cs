@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Garant.Platform.Commerce.Models.Garant.Output;
-using Garant.Platform.Commerce.Models.Tinkoff.Input;
+﻿using System.Threading.Tasks;
+using Garant.Platform.Commerce.Models.Tinkoff.Output;
 
 namespace Garant.Platform.Commerce.Abstraction.Garant.Customer
 {
@@ -13,12 +11,11 @@ namespace Garant.Platform.Commerce.Abstraction.Garant.Customer
         /// <summary>
         /// Метод холдирует платеж на определенный срок, пока не получит подтверждения оплаты.
         /// </summary>
-        /// <param name="orderId">Id заказа в Гаранте.</param>
+        /// <param name="originalId">Id франшизы или бизнеса.</param>
         /// <param name="amount">Сумма к оплате.</param>
-        /// <param name="endDate">Дата действия холдирования.</param>
-        /// <param name="description">Объект с описанием.</param>
-        /// <param name="redirectUrl">Ссылка редиректа после успешного холдирования.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
+        /// <param name="orderType">Тип заказа.</param>
         /// <returns>Данные холдирования платежа.</returns>
-        Task<PaymentActionOutput> HoldPaymentAsync(long orderId, double amount, DateTime endDate, Description description, string redirectUrl);
+        Task<HoldPaymentOutput> HoldPaymentAsync(long originalId, double amount, string account, string orderType);
     }
 }

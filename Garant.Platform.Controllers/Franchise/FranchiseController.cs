@@ -133,7 +133,7 @@ namespace Garant.Platform.Controllers.Franchise
         [ProducesResponseType(200, Type = typeof(FranchiseOutput))]
         public async Task<IActionResult> GetFranchiseAsync([FromBody] FranchiseInput franchiseInput)
         {
-            var result = await _franchiseService.GetFranchiseAsync(franchiseInput.FranchiseId, franchiseInput.Mode);
+            var result = await _franchiseService.GetFranchiseAsync(franchiseInput.FranchiseId);
 
             return Ok(result);
         }
