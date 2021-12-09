@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.User;
@@ -6,6 +7,7 @@ using Garant.Platform.Commerce.Abstraction.Garant;
 using Garant.Platform.Commerce.Models.Garant.Output;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Commerce.Service.Garant
 {
@@ -36,9 +38,11 @@ namespace Garant.Platform.Commerce.Service.Garant
         {
             try
             {
+                var result = new InitGarantDataOutput();
+                var userName = await _userRepository.GetUserFioAsync(account);
+
                 // Найдет Id владельца предмета обсуждения (т.е франшизы или бизнеса).
                 var userId = await _userRepository.FindUserIdUniverseAsync(account);
-                var result = new InitGarantDataOutput();
 
                 // Если заявка франшизы, то сравнит Id с владельцем франшизы.
                 if (orderType.Equals("Franchise"))
@@ -53,6 +57,8 @@ namespace Garant.Platform.Commerce.Service.Garant
                         // Если нужно подтянуть данные не владельца предмета сделки.
                         if (!isOwner)
                         {
+                            var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
+
                             result = new InitGarantDataOutput
                             {
                                 TotalAmount = franchise.TotalInvest,
@@ -81,39 +87,54 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 ImageUrl = franchise.Url.Split(",")[0],
                                 Amount = Convert.ToDouble(franchise.TotalInvest),
                                 OtherUserRole = "Продавец",
-                                Role = "Покупатель (Вы)"
+                                Role = "Покупатель (Вы)",
+                                FullName = userName.FullName,
+                                OtherUserFullName = otherAccount.FirstName + " " + otherAccount.LastName
                             };
                         }
 
-                        // Если нужно подтянуть данные владельца предмета сделки.
-                        result = new InitGarantDataOutput
+                        else
                         {
-                            TotalAmount = franchise.TotalInvest,
-                            BlackBlockText = @"Покупатель холдировал средства и теперь необходима помощь в создании договора? Юрист сервиса GoBizy готов помочь в составлении
+                            // Найдет Id пользователя, который оставил заявку.
+                            var otherUserId = await _postgreDbContext.RequestsFranchises
+                                .Where(f => f.FranchiseId == franchise.FranchiseId)
+                                .Select(f => f.UserId)
+                                .FirstOrDefaultAsync();
+
+                            var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
+
+                            // Если нужно подтянуть данные владельца предмета сделки.
+                            result = new InitGarantDataOutput
+                            {
+                                TotalAmount = franchise.TotalInvest,
+                                BlackBlockText = @"Покупатель холдировал средства и теперь необходима помощь в создании договора? Юрист сервиса GoBizy готов помочь в составлении
 основного договора по продаже бизнеса и составления актов приема-передачи.",
-                            BlackBlockTitle = "Помощь юриста",
-                            BlackBlueButtonText = "Пригласить юриста в сделку",
-                            BlackButtonText = "Не сейчас",
-                            BlockLeftTitle = "Покупка бизнеса онлайн",
-                            BlockLeftSumTitle = "На общую сумму",
-                            BlockRightStatusText = @"Покупатель подтвердил свою платежеспособность и холдировал (сервис удержал сумму как посредник) сумму указанную в карточке вашего готового бизнеса. Таким образом стороны застрахованы от неплатежеспособных приобретателей. Теперь вам нужно подтвердить продажу, если это еще актуально.",
-                            BlockRightStatusTitle = "Холдирование средств",
-                            BlockRightSumTitle = "Общая сумма",
-                            BlockRightTitle = "Подтверждение покупательской способности",
-                            DocumentBlockTitle = "Документы сделки",
-                            MainItemTitle = "Предмет сделки",
-                            ItemTitle = franchise.Title,
-                            ContinueButtonText = "Перейти к согласованию этапов",
-                            ButtonActionText = $"Подтвердить продажу на {franchise.TotalInvest} ₽",
-                            ImageUrl = franchise.Url.Split(",")[0],
-                            Amount = Convert.ToDouble(franchise.TotalInvest),
-                            Role = "Продавец (Вы)",
-                            OtherUserRole = "Покупатель",
-                            ButtonCancel = "Отменить",
-                            BlockDocumentsTemplatesName = "Шаблоны документов",
-                            BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
-                            BlockDocumentDealName = "Документы сделки"
-                        };
+                                BlackBlockTitle = "Помощь юриста",
+                                BlackBlueButtonText = "Пригласить юриста в сделку",
+                                BlackButtonText = "Не сейчас",
+                                BlockLeftTitle = "Покупка бизнеса онлайн",
+                                BlockLeftSumTitle = "На общую сумму",
+                                BlockRightStatusText = @"Покупатель подтвердил свою платежеспособность и холдировал (сервис удержал сумму как посредник) сумму указанную в карточке вашего готового бизнеса. Таким образом стороны застрахованы от неплатежеспособных приобретателей. Теперь вам нужно подтвердить продажу, если это еще актуально.",
+                                BlockRightStatusTitle = "Холдирование средств",
+                                BlockRightSumTitle = "Общая сумма",
+                                BlockRightTitle = "Подтверждение покупательской способности",
+                                DocumentBlockTitle = "Документы сделки",
+                                MainItemTitle = "Предмет сделки",
+                                ItemTitle = franchise.Title,
+                                ContinueButtonText = "Перейти к согласованию этапов",
+                                ButtonActionText = $"Подтвердить продажу на {franchise.TotalInvest} ₽",
+                                ImageUrl = franchise.Url.Split(",")[0],
+                                Amount = Convert.ToDouble(franchise.TotalInvest),
+                                Role = "Продавец (Вы)",
+                                OtherUserRole = "Покупатель",
+                                ButtonCancel = "Отменить",
+                                BlockDocumentsTemplatesName = "Шаблоны документов",
+                                BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
+                                BlockDocumentDealName = "Документы сделки",
+                                FullName = userName.FullName,
+                                OtherUserFullName = otherAccount.FirstName + " " + otherAccount.LastName
+                            };
+                        }
                     }
                 }
 

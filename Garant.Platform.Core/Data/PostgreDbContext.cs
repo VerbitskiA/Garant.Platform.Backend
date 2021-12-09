@@ -197,5 +197,15 @@ namespace Garant.Platform.Core.Data
         /// Таблица ссылок возвратов dbo.ReturnUrls.
         /// </summary>
         public DbSet<ReturnUrl> ReturnUrls { get; set; }
+
+        /// <summary>
+        /// Таблица Commerce.Deals.
+        /// </summary>
+        public DbSet<DealEntity> Deals { get; set; }
+
+        /// <summary>
+        /// Таблица Commerce.DealIterations
+        /// </summary>
+        public DbSet<DealIterationEntity> DealIterations { get; set; }
     }
 }
