@@ -20,11 +20,13 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IConfiguration _configuration;
+        private readonly ITinkoffRepository _tinkoffRepository;
 
-        public TinkoffService(PostgreDbContext postgreDbContext)
+        public TinkoffService(PostgreDbContext postgreDbContext, ITinkoffRepository tinkoffRepository)
         {
             _postgreDbContext = postgreDbContext;
             _configuration = AutoFac.Resolve<IConfiguration>();
+            _tinkoffRepository = tinkoffRepository;
         }
 
         /// <summary>
@@ -45,6 +47,9 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 request.ContentType = "application/json";
                 request.Headers.Add("Authorization", _configuration["TinkoffSandbox:Authorization"]);
 
+                // Получит ссылку на оплату.
+                var link = await _tinkoffRepository.GetReturnForPaymentUrlAsync();
+
                 var sendData = new HoldPaymentInput
                 {
                     Amount = amount,
@@ -55,7 +60,7 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                     },
                     EndDate = endDate.ToString("o"),
                     OrderId = orderId.ToString(),
-                    RedirectUrl = "https://myshop.ru/invoice",
+                    RedirectUrl = link,
                     Shop = new Shop
                     {
                         Id = _configuration["TinkoffSandbox:ShopSettings:Id"],
@@ -63,18 +68,13 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                     }
                 };
 
-                await using (var streamWriter = new StreamWriter(await request.GetRequestStreamAsync()))
-                {
-                    string json = JsonSerializer.Serialize(sendData);
-                    await streamWriter.WriteAsync(json);
-                }
+                await using var streamWriter = new StreamWriter(await request.GetRequestStreamAsync());
+                string json = JsonSerializer.Serialize(sendData);
+                await streamWriter.WriteAsync(json);
 
                 var httpResponse = await request.GetResponseAsync();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    var result = await streamReader.ReadToEndAsync();
-                    Console.WriteLine();
-                }
+                using var streamReader = new StreamReader(httpResponse.GetResponseStream());
+                var result = await streamReader.ReadToEndAsync();
 
                 return null;
             }

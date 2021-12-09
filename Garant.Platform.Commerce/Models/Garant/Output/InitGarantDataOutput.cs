@@ -124,5 +124,35 @@
         /// Цена.
         /// </summary>
         public double Amount { get; set; }
+
+        /// <summary>
+        /// Текст кнопки отмены.
+        /// </summary>
+        public string ButtonCancel { get; set; }
+
+        /// <summary>
+        /// Название блоа с шаблонами документов.
+        /// </summary>
+        public string BlockDocumentsTemplatesName { get; set; }
+
+        /// <summary>
+        /// Текст пояснения блока с шаблонами документов.
+        /// </summary>
+        public string BlockDocumentsTemplatesDetail { get; set; }
+
+        /// <summary>
+        /// Список названий документов шаблонов документов.
+        /// </summary>
+        public string BlockDocumentsTemplatesFileNames { get; set; }
+
+        /// <summary>
+        /// Название блока документов сделки.
+        /// </summary>
+        public string BlockDocumentDealName { get; set; }
+
+        /// <summary>
+        /// Список названий документов сделки разделенных запятой.
+        /// </summary>
+        public string BlockDocumentDealFileNames { get; set; }
     }
 }

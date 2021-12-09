@@ -192,5 +192,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица Logs.Transactions.
         /// </summary>
         public DbSet<TransactionEntity> Transactions { get; set; }
+
+        /// <summary>
+        /// Таблица ссылок возвратов dbo.ReturnUrls.
+        /// </summary>
+        public DbSet<ReturnUrl> ReturnUrls { get; set; }
     }
 }

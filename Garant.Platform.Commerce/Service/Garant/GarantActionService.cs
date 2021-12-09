@@ -50,7 +50,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         // Сравнит Id.
                         var isOwner = userId.Equals(franchise.UserId);
 
-                        // Если зашел покупатель (не владелец) франшизы, то подтянет данные для покупателя.
+                        // Если нужно подтянуть данные не владельца предмета сделки.
                         if (!isOwner)
                         {
                             result = new InitGarantDataOutput
@@ -79,9 +79,41 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 ContinueButtonText = "Перейти к согласованию этапов",
                                 ButtonActionText = $"Холдировать сумму - {franchise.TotalInvest} ₽",
                                 ImageUrl = franchise.Url.Split(",")[0],
-                                Amount = Convert.ToDouble(franchise.TotalInvest)
+                                Amount = Convert.ToDouble(franchise.TotalInvest),
+                                OtherUserRole = "Продавец",
+                                Role = "Покупатель (Вы)"
                             };
                         }
+
+                        // Если нужно подтянуть данные владельца предмета сделки.
+                        result = new InitGarantDataOutput
+                        {
+                            TotalAmount = franchise.TotalInvest,
+                            BlackBlockText = @"Покупатель холдировал средства и теперь необходима помощь в создании договора? Юрист сервиса GoBizy готов помочь в составлении
+основного договора по продаже бизнеса и составления актов приема-передачи.",
+                            BlackBlockTitle = "Помощь юриста",
+                            BlackBlueButtonText = "Пригласить юриста в сделку",
+                            BlackButtonText = "Не сейчас",
+                            BlockLeftTitle = "Покупка бизнеса онлайн",
+                            BlockLeftSumTitle = "На общую сумму",
+                            BlockRightStatusText = @"Покупатель подтвердил свою платежеспособность и холдировал (сервис удержал сумму как посредник) сумму указанную в карточке вашего готового бизнеса. Таким образом стороны застрахованы от неплатежеспособных приобретателей. Теперь вам нужно подтвердить продажу, если это еще актуально.",
+                            BlockRightStatusTitle = "Холдирование средств",
+                            BlockRightSumTitle = "Общая сумма",
+                            BlockRightTitle = "Подтверждение покупательской способности",
+                            DocumentBlockTitle = "Документы сделки",
+                            MainItemTitle = "Предмет сделки",
+                            ItemTitle = franchise.Title,
+                            ContinueButtonText = "Перейти к согласованию этапов",
+                            ButtonActionText = $"Подтвердить продажу на {franchise.TotalInvest} ₽",
+                            ImageUrl = franchise.Url.Split(",")[0],
+                            Amount = Convert.ToDouble(franchise.TotalInvest),
+                            Role = "Продавец (Вы)",
+                            OtherUserRole = "Покупатель",
+                            ButtonCancel = "Отменить",
+                            BlockDocumentsTemplatesName = "Шаблоны документов",
+                            BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
+                            BlockDocumentDealName = "Документы сделки"
+                        };
                     }
                 }
 
