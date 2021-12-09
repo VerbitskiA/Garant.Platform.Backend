@@ -48,5 +48,11 @@ namespace Garant.Platform.Models.Entities.Commerce
         /// </summary>
         [Column("Position", TypeName = "int")]
         public int Position { get; set; }
+
+        /// <summary>
+        /// Описание этапа.
+        /// </summary>
+        [Column("IterationDetail", TypeName = "varchar(150)")]
+        public string IterationDetail { get; set; }
     }
 }

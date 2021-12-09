@@ -154,5 +154,15 @@
         /// Список названий документов сделки разделенных запятой.
         /// </summary>
         public string BlockDocumentDealFileNames { get; set; }
+
+        /// <summary>
+        /// Id предмета сделки.
+        /// </summary>
+        public long ItemDealId { get; set; }
+
+        /// <summary>
+        /// Тип предмета сделки (франшиза или бизнес).
+        /// </summary>
+        public string ItemDealType { get; set; }
     }
 }

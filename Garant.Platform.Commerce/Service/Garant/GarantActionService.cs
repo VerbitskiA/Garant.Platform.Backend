@@ -61,6 +61,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             result = new InitGarantDataOutput
                             {
+                                ItemDealId = franchise.FranchiseId,
                                 TotalAmount = franchise.TotalInvest,
                                 BlackBlockText = @"Как доверить посреднику большую сумму? Холдирование – это временная блокировка (замораживание) определенной суммы на банковском счете.
 Осуществляется банком-эмитентом в момент авторизации на срок, в течение которого проводит расчеты банк-эквайер. Деньги не поступают
@@ -89,7 +90,8 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 OtherUserRole = "Продавец",
                                 Role = "Покупатель (Вы)",
                                 FullName = userName.FullName,
-                                OtherUserFullName = otherAccount.FirstName + " " + otherAccount.LastName
+                                OtherUserFullName = otherAccount.FirstName + " " + otherAccount.LastName,
+                                ItemDealType = orderType
                             };
                         }
 
@@ -106,6 +108,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                             // Если нужно подтянуть данные владельца предмета сделки.
                             result = new InitGarantDataOutput
                             {
+                                ItemDealId = franchise.FranchiseId,
                                 TotalAmount = franchise.TotalInvest,
                                 BlackBlockText = @"Покупатель холдировал средства и теперь необходима помощь в создании договора? Юрист сервиса GoBizy готов помочь в составлении
 основного договора по продаже бизнеса и составления актов приема-передачи.",
@@ -132,7 +135,8 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
                                 BlockDocumentDealName = "Документы сделки",
                                 FullName = userName.FullName,
-                                OtherUserFullName = otherAccount.FirstName + " " + otherAccount.LastName
+                                OtherUserFullName = otherAccount.FirstName + " " + otherAccount.LastName,
+                                ItemDealType = orderType
                             };
                         }
                     }

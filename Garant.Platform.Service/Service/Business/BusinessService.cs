@@ -114,12 +114,12 @@ namespace Garant.Platform.Services.Service.Business
         }
 
         /// <summary>
-        /// Метод получит франшизу для просмотра или изменения.
+        /// Метод получит бизнес для просмотра или изменения.
         /// </summary>
         /// <param name="businessId">Id бизнеса.</param>
         /// <param name="mode">Режим (Edit или View).</param>
         /// <returns>Данные бизнеса.</returns>
-        public async Task<BusinessOutput> GetBusinessAsync(long businessId, string mode)
+        public async Task<BusinessOutput> GetBusinessAsync(long businessId, string mode = null)
         {
             try
             {
