@@ -39,7 +39,8 @@ namespace Garant.Platform.Commerce.Service.Garant
             try
             {
                 var result = new InitGarantDataOutput();
-                var userName = await _userRepository.GetUserFioAsync(account);
+                var currentUserId = await _userRepository.FindUserIdUniverseAsync(account);
+                var userName = await _userRepository.GetUserProfileInfoByIdAsync(currentUserId);
 
                 // Найдет Id владельца предмета обсуждения (т.е франшизы или бизнеса).
                 var userId = await _userRepository.FindUserIdUniverseAsync(account);
@@ -84,12 +85,13 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 MainItemTitle = "Предмет сделки",
                                 ItemTitle = franchise.Title,
                                 ContinueButtonText = "Перейти к согласованию этапов",
-                                ButtonActionText = $"Холдировать сумму - {franchise.TotalInvest} ₽",
+                                //ButtonActionText = $"Холдировать сумму - {franchise.TotalInvest} ₽",
+                                ButtonActionText = string.Empty,
                                 ImageUrl = franchise.Url.Split(",")[0],
                                 Amount = Convert.ToDouble(franchise.TotalInvest),
                                 OtherUserRole = "Продавец",
                                 Role = "Покупатель (Вы)",
-                                FullName = userName.FullName,
+                                FullName = userName.FirstName + " " + userName.LastName,
                                 OtherUserFullName = otherAccount.FirstName + " " + otherAccount.LastName,
                                 ItemDealType = orderType
                             };
@@ -134,7 +136,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 BlockDocumentsTemplatesName = "Шаблоны документов",
                                 BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
                                 BlockDocumentDealName = "Документы сделки",
-                                FullName = userName.FullName,
+                                FullName = userName.FirstName + " " + userName.LastName,
                                 OtherUserFullName = otherAccount.FirstName + " " + otherAccount.LastName,
                                 ItemDealType = orderType
                             };

@@ -13,7 +13,6 @@ namespace Garant.Platform.Models.Entities.Commerce
         /// PK.
         /// </summary>
         [Key]
-        [Column("DealId", TypeName = "bigserial")]
         public long DealId { get; set; }
 
         /// <summary>

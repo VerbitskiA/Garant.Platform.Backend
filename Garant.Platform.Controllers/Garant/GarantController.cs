@@ -1,8 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Commerce.Abstraction.Garant;
 using Garant.Platform.Commerce.Abstraction.Garant.Customer;
+using Garant.Platform.Commerce.Abstraction.Garant.Vendor;
 using Garant.Platform.Commerce.Models.Garant.Input;
 using Garant.Platform.Commerce.Models.Garant.Output;
+using Garant.Platform.Models.Commerce.Input;
+using Garant.Platform.Models.Commerce.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +22,13 @@ namespace Garant.Platform.Controllers.Garant
     {
         private readonly IGarantActionService _garantActionService;
         private readonly ICustomerService _customerService;
+        private readonly IVendorService _vendorService;
 
-        public GarantController(IGarantActionService _garantActionervice, ICustomerService customerService)
+        public GarantController(IGarantActionService _garantActionervice, ICustomerService customerService, IVendorService vendorService)
         {
             _garantActionService = _garantActionervice;
             _customerService = customerService;
+            _vendorService = vendorService;
         }
 
         /// <summary>
@@ -51,6 +56,21 @@ namespace Garant.Platform.Controllers.Garant
         public async Task<IActionResult> HoldPaymentAsync([FromBody] HoldPaymentInput holdPaymentInput)
         {
             var result = await _customerService.HoldPaymentAsync(holdPaymentInput.OriginalId, holdPaymentInput.Amount, GetUserName(), holdPaymentInput.OrderType);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод подтвердит продажу в сделке.
+        /// </summary>
+        /// <param name="dealInput">Входная модель.</param>
+        /// <returns>Данные сделки.</returns>
+        [HttpPost]
+        [Route("accept-deal")]
+        [ProducesResponseType(200, Type = typeof(DealOutput))]
+        public async Task<IActionResult> AcceptDealAsync([FromBody] DealInput dealInput)
+        {
+            var result = await _vendorService.AcceptActualDealAsync(dealInput.DealItemId, dealInput.OrderType, GetUserName());
 
             return Ok(result);
         }

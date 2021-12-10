@@ -20,8 +20,8 @@ namespace Garant.Platform.Models.Entities.Commerce
         /// FK на сделку.
         /// </summary>
         [ForeignKey("DealId")]
-        [Column("DealIteration", TypeName = "bigint")]
-        public long DealIteration { get; set; }
+        [Column("DealId", TypeName = "bigint")]
+        public long DealId { get; set; }
 
         public DealEntity Deal { get; set; }
 

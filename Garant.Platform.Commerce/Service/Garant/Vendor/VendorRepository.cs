@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Commerce.Abstraction.Garant.Vendor;
@@ -36,17 +37,25 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
             {
                 long dealId = 1000000;
 
-                var lastDealId = await _postgreDbContext.Deals.MaxAsync(d => d.DealId);
+                var lastDealId = await _postgreDbContext.Deals
+                    .OrderBy(o => o.DealId)
+                    .Select(d => d.DealId)
+                    .LastOrDefaultAsync();
 
-                if (lastDealId >= 0)
+                if (lastDealId <= 0)
                 {
-                    dealId = lastDealId;
+                    lastDealId = dealId;
+                }
+
+                else
+                {
+                    lastDealId++;
                 }
 
                 // Создаст сделку.
                 var addDeal = new DealEntity
                 {
-                    DealId = dealId,
+                    DealId = lastDealId,
                     DealItemId = itemDealId,
                     UserId = userId,
                     IsCompletedDeal = false
@@ -56,7 +65,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
                 await _postgreDbContext.SaveChangesAsync();
 
                 // Добавит этапы сделки.
-                var dealIterations = InitIterationsDeal(dealId);
+                var dealIterations = InitIterationsDeal(lastDealId);
 
                 // Добавит список этапов сделки.
                 await _postgreDbContext.DealIterations.AddRangeAsync(dealIterations);
@@ -109,8 +118,8 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
                     NumberIteration = 1,
                     IterationName = "Холдирование суммы",
                     Position = 1,
-                    DealIteration = dealId,
-                    IterationDetail = "Необходимо для подтвердждения покупательской способности"
+                    DealId = dealId,
+                    IterationDetail = "Необходимо для подтверждения покупательской способности"
                 },
 
                 new DealIterationEntity
@@ -118,7 +127,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
                     NumberIteration = 2,
                     IterationName = "Согласование этапов сделки",
                     Position = 2,
-                    DealIteration = dealId,
+                    DealId = dealId,
                     IterationDetail = "Перед согласованием договора следует договориться об этапах"
                 },
 
@@ -127,7 +136,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
                     NumberIteration = 3,
                     IterationName = "Согласование договора",
                     Position = 3,
-                    DealIteration = dealId,
+                    DealId = dealId,
                     IterationDetail = "Согласование всех деталей договора"
                 },
 
@@ -136,7 +145,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
                     NumberIteration = 4,
                     IterationName = "Оплата и исполнение этапов сделки",
                     Position = 4,
-                    DealIteration = dealId,
+                    DealId = dealId,
                     IterationDetail = "Получение оплаты, исполнение продажи каждого этапа"
                 }
             };
