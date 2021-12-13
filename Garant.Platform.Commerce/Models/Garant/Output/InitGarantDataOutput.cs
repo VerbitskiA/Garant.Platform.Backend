@@ -1,4 +1,6 @@
-﻿namespace Garant.Platform.Commerce.Models.Garant.Output
+﻿using Garant.Platform.Messaging.Models.Chat.Output;
+
+namespace Garant.Platform.Commerce.Models.Garant.Output
 {
     /// <summary>
     /// Класс выходной модели на ините Гаранта.
@@ -164,5 +166,15 @@
         /// Тип предмета сделки (франшиза или бизнес).
         /// </summary>
         public string ItemDealType { get; set; }
+
+        /// <summary>
+        /// Id другого пользователя.
+        /// </summary>
+        public string OtherId { get; set; }
+
+        /// <summary>
+        /// Данные чата.
+        /// </summary>
+        public GetResultMessageOutput ChatData { get; set; }
     }
 }

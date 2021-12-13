@@ -42,5 +42,20 @@ namespace Garant.Platform.Commerce.Models.Garant.Input
         /// Id исходного товара (Id франшизы или бизнеса).
         /// </summary>
         public long OriginalId { get; set; }
+
+        /// <summary>
+        /// Номер этапа.
+        /// </summary>
+        public int Stage { get; set; }
+
+        /// <summary>
+        /// Флаг чата.
+        /// </summary>
+        public bool IsChat { get; set; }
+
+        /// <summary>
+        /// Id другого пользователя.
+        /// </summary>
+        public string OtherId { get; set; }
     }
 }
