@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Franchise;
@@ -9,6 +10,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Messaging.Abstraction.Chat;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Garant.Platform.Commerce.Service.Garant
 {
@@ -58,6 +60,8 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                     if (franchise != null)
                     {
+                        var iterationList = JsonConvert.DeserializeObject<List<ConvertInvestIncludePriceOutput>>(franchise.InvestInclude);
+
                         // Сравнит Id.
                         var isOwner = userId.Equals(franchise.UserId);
 
@@ -69,7 +73,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                             result = new InitGarantDataOutput
                             {
                                 ItemDealId = franchise.FranchiseId,
-                                TotalAmount = franchise.TotalInvest,
+                                TotalAmount = string.Format("{0:0,0}", franchise.TotalInvest),
                                 BlackBlockText = @"Как доверить посреднику большую сумму? Холдирование – это временная блокировка (замораживание) определенной суммы на банковском счете.
 Осуществляется банком-эмитентом в момент авторизации на срок, в течение которого проводит расчеты банк-эквайер. Деньги не поступают
 на счет нашего юридического лица, а удерживаются банком / эквайрингом “Название”.
@@ -159,13 +163,12 @@ namespace Garant.Platform.Commerce.Service.Garant
                             {
                                 ItemDealId = franchise.FranchiseId,
                                 TotalAmount = franchise.TotalInvest,
-                                BlackBlockText = @"Как доверить посреднику большую сумму? Холдирование – это временная блокировка (замораживание) определенной суммы на банковском счете.
-Осуществляется банком-эмитентом в момент авторизации на срок, в течение которого проводит расчеты банк-эквайер. Деньги не поступают
-на счет нашего юридического лица, а удерживаются банком / эквайрингом “Название”.
+                                BlackBlockText = @"Этапы сделки планируются автоматически - прикрепляются из карточки бизнеса, а именно из раздела “Входит в стоимость бизнеса”. 
+Однако, если что-то вас не устраивает вы можете согласовать иные этапы с продавцом - воспользуйтесь чатом для связи с продавцом.
 
-Чекбокс приравнивается к подписанному договору простой электронной подписью, однако вы можете запросить подписанные документы
-с нашей стороны о намерениях или о соглашении.",
-                                BlackBlockTitle = "Мои гарантии и что такое холдирование?",
+Если вы не уверены в собственных юридических знаниях, то можете пригласить в сделку юриста от нашего сервиса для помощи с составлением
+договора.",
+                                BlackBlockTitle = "Сделка спланирована автоматически",
                                 BlackBlueButtonText = "Запросить договор от GoBizy",
                                 BlackButtonText = "Не сейчас",
                                 BlockLeftTitle = "Покупка бизнеса онлайн",
@@ -179,9 +182,8 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 DocumentBlockTitle = "Документы сделки",
                                 MainItemTitle = "Предмет сделки",
                                 ItemTitle = franchise.Title,
-                                ContinueButtonText = "Перейти к согласованию этапов",
-                                //ButtonActionText = $"Холдировать сумму - {franchise.TotalInvest} ₽",
-                                ButtonActionText = string.Empty,
+                                ContinueButtonText = "Перейти к согласованию договора",
+                                ButtonActionText = "Принять",
                                 ImageUrl = franchise.Url.Split(",")[0],
                                 Amount = Convert.ToDouble(franchise.TotalInvest),
                                 OtherUserRole = "Продавец",
@@ -189,7 +191,9 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 FullName = userName.FirstName + " " + userName.LastName,
                                 OtherUserFullName = otherAccount.FirstName + " " + otherAccount.LastName,
                                 ItemDealType = orderType,
-                                OtherId = userId
+                                OtherId = userId,
+                                InvestInclude = franchise.InvestInclude,
+                                IterationList = iterationList
                             };
                         }
 
@@ -227,20 +231,22 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 DocumentBlockTitle = "Документы сделки",
                                 MainItemTitle = "Предмет сделки",
                                 ItemTitle = franchise.Title,
-                                ContinueButtonText = "Перейти к согласованию этапов",
-                                ButtonActionText = $"Подтвердить продажу на {franchise.TotalInvest} ₽",
+                                ContinueButtonText = "Перейти к согласованию договора",
+                                ButtonActionText = "Отправить покупателю",
                                 ImageUrl = franchise.Url.Split(",")[0],
                                 Amount = Convert.ToDouble(franchise.TotalInvest),
                                 Role = "Продавец (Вы)",
                                 OtherUserRole = "Покупатель",
-                                ButtonCancel = "Отменить",
+                                ButtonCancel = "Изменить",
                                 BlockDocumentsTemplatesName = "Шаблоны документов",
                                 BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
                                 BlockDocumentDealName = "Документы сделки",
                                 FullName = userName.FirstName + " " + userName.LastName,
                                 OtherUserFullName = otherAccount.FirstName + " " + otherAccount.LastName,
                                 ItemDealType = orderType,
-                                OtherId = otherUserId
+                                OtherId = otherUserId,
+                                InvestInclude = franchise.InvestInclude,
+                                IterationList = iterationList
                             };
                         }
 

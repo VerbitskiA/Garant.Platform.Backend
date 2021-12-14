@@ -1,4 +1,5 @@
-﻿using Garant.Platform.Messaging.Models.Chat.Output;
+﻿using System.Collections.Generic;
+using Garant.Platform.Messaging.Models.Chat.Output;
 
 namespace Garant.Platform.Commerce.Models.Garant.Output
 {
@@ -176,5 +177,12 @@ namespace Garant.Platform.Commerce.Models.Garant.Output
         /// Данные чата.
         /// </summary>
         public GetResultMessageOutput ChatData { get; set; }
+
+        /// <summary>
+        /// Входит в инвестиции (json).
+        /// </summary>
+        public string InvestInclude { get; set; }
+
+        public List<ConvertInvestIncludePriceOutput> IterationList { get; set; } = new();
     }
 }
