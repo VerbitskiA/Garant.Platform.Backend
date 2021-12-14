@@ -1,5 +1,5 @@
 # Garant.Platform.Backend
-Garant.Platform.Backend - API-сервисы маркетплейса для онлайн-франшиз.
+Garant.Platform.Backend - API-сервисы маркетплейса для покупки и продажи франшиз и бизнеса.
 
 # Стек проекта бэка:
 <strong>Серверный язык:</strong> C#, ASP.NET Core Web API (.NET 5).<br/>
