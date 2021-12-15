@@ -4,6 +4,7 @@ using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.Business;
 using Garant.Platform.Models.Entities.Chat;
 using Garant.Platform.Models.Entities.Commerce;
+using Garant.Platform.Models.Entities.Document;
 using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Entities.Header;
@@ -207,5 +208,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица Commerce.DealIterations
         /// </summary>
         public DbSet<DealIterationEntity> DealIterations { get; set; }
+
+        /// <summary>
+        /// Таблица Documents.Documents.
+        /// </summary>
+        public DbSet<DocumentEntity> Documents { get; set; }
     }
 }
