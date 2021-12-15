@@ -430,7 +430,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 Если вы не уверены в собственных юридических знаниях, то можете пригласить в сделку юриста от нашего сервиса для помощи с составлением
 договора.",
                 BlackBlockTitle = "Сделка спланирована автоматически",
-                BlackBlueButtonText = "Запросить договор от GoBizy",
+                BlackBlueButtonText = "Пригласить в сделку юриста",
                 BlackButtonText = "Не сейчас",
                 BlockLeftTitle = "Покупка бизнеса онлайн",
                 BlockLeftSumTitle = "На общую сумму",
@@ -456,7 +456,13 @@ namespace Garant.Platform.Commerce.Service.Garant
                 ItemDealType = orderType,
                 OtherId = userId,
                 InvestInclude = investInclude,
-                IterationList = iterationList
+                IterationList = iterationList,
+                BlockDocumentsTemplatesName = "Шаблоны документов",
+                BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
+                ContractTitle = "Основной договор",
+                ContractDetail = "Скан согласованного договора",
+                ButtonActionTextContract = "Утвердить договор",
+                ContractText = @"Прикрепите согласованный файл в формате .pdf и ожидайте подтверждения от продавца"
             };
 
             if (isChat && !string.IsNullOrEmpty(userId))
@@ -518,7 +524,14 @@ namespace Garant.Platform.Commerce.Service.Garant
                 ItemDealType = orderType,
                 OtherId = userId,
                 InvestInclude = investInclude,
-                IterationList = iterationList
+                IterationList = iterationList,
+                BlockDocumentsTemplatesName = "Шаблоны документов",
+                BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
+                ContractTitle = "Основной договор",
+                ContractDetail = "Скан согласованного договора",
+                ButtonActionTextContract = "Отправить на согласование покупателю",
+                ContractText = @"Прикрепите подписанный вашей стороной файл в формате .pdf и ожидайте подтверждения от продавца. После утверждения договора вы получите оплату
+ за первый этап сделки."
             };
 
             if (isChat && !string.IsNullOrEmpty(userId))

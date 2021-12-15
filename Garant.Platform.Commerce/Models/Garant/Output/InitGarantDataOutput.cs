@@ -184,5 +184,25 @@ namespace Garant.Platform.Commerce.Models.Garant.Output
         public string InvestInclude { get; set; }
 
         public List<ConvertInvestIncludePriceOutput> IterationList { get; set; } = new();
+
+        /// <summary>
+        /// Заголовок блока с основным договором.
+        /// </summary>
+        public string ContractTitle { get; set; }
+
+        /// <summary>
+        /// Описание блока с основным договором.
+        /// </summary>
+        public string ContractDetail { get; set; }
+
+        /// <summary>
+        /// Основной текст блока основного договора.
+        /// </summary>
+        public string ContractText { get; set; }
+
+        /// <summary>
+        /// Текст кнопки события основного договора.
+        /// </summary>
+        public string ButtonActionTextContract { get; set; }
     }
 }
