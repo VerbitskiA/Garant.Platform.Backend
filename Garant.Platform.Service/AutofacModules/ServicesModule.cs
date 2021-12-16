@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Garant.Platform.Abstractions.Blog;
+using Garant.Platform.Abstractions.Document;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.MainPage;
 using Garant.Platform.Abstractions.Pagination;
@@ -11,6 +12,7 @@ using Garant.Platform.Core.Attributes;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Service.Service.Ad;
+using Garant.Platform.Services.Document;
 using Garant.Platform.Services.Request;
 using Garant.Platform.Services.Service.Blog;
 using Garant.Platform.Services.Service.Franchise;
@@ -72,6 +74,12 @@ namespace Garant.Platform.Services.AutofacModules
             // Сервис заявок.
             builder.RegisterType<RequestService>().Named<IRequestService>("RequestService");
             builder.RegisterType<RequestService>().As<IRequestService>();
+
+            // Сервис документов.
+            builder.RegisterType<DocumentService>().Named<IDocumentService>("DocumentService");
+            builder.RegisterType<DocumentService>().As<IDocumentService>();
+            builder.RegisterType<DocumentRepository>().Named<IDocumentRepository>("DocumentRepository");
+            builder.RegisterType<DocumentRepository>().As<IDocumentRepository>();
         }
     }
 }

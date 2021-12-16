@@ -25,7 +25,7 @@ namespace Garant.Platform.Models.Entities.Document
         public string DocumentName { get; set; }
 
         /// <summary>
-        /// Id франшизы или бизнеса, к которому принадлежит документ.
+        /// Id предмета сделки (франшизы или бизнеса), которому принадлежит документ.
         /// </summary>
         [Column("DocumentItemId", TypeName = "bigint")]
         public long DocumentItemId { get; set; }
@@ -48,6 +48,18 @@ namespace Garant.Platform.Models.Entities.Document
         /// </summary>
         [Column("DateCreate", TypeName = "timestamp")]
         public DateTime DateCreate { get; set; }
+
+        /// <summary>
+        /// Флаг документа сделки.
+        /// </summary>
+        [Column("IsDealDocument", TypeName = "bool")]
+        public bool IsDealDocument { get; set; }
+
+        /// <summary>
+        /// Флаг подтвержден ли документ сделки.
+        /// </summary>
+        [Column("IsAcceptDocument", TypeName = "bool")]
+        public bool? IsAcceptDocument { get; set; }
 
         public UserEntity User { get; set; }
     }
