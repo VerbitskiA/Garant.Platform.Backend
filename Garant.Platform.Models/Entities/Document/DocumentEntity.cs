@@ -61,6 +61,12 @@ namespace Garant.Platform.Models.Entities.Document
         [Column("IsAcceptDocument", TypeName = "bool")]
         public bool? IsAcceptDocument { get; set; }
 
+        /// <summary>
+        /// Отправлен ли документ продавцу.
+        /// </summary>
+        [Column("IsSend", TypeName = "bool")]
+        public bool? IsSend { get; set; }
+
         public UserEntity User { get; set; }
     }
 }

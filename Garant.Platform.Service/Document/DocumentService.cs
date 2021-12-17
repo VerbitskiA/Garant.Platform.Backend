@@ -58,7 +58,32 @@ namespace Garant.Platform.Services.Document
                     await _ftpService.UploadFilesFtpAsync(files.Files);
                 }
 
-                return result ?? new DocumentOutput();
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод отправит документ основного договора продавца на согласование покупателю.
+        /// </summary>
+        /// <param name="documentItemId">Id документа.</param>
+        /// <param name="isDealDocument">Является ли документом сделки.</param>
+        /// <param name="documentType">Тип документа.</param>
+        /// <returns>Флаг успеха.</returns>
+        public async Task<bool> SendDocumentVendorAsync(long documentItemId, bool isDealDocument, string documentType)
+        {
+            try
+            {
+                var result = await _documentRepository.SetSendStatusDocumentVendorAsync(documentItemId, isDealDocument, documentType);
+
+                return result;
             }
 
             catch (Exception e)

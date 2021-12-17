@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Document;
+using Garant.Platform.Models.Document.Input;
 using Garant.Platform.Models.Document.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -16,10 +17,12 @@ namespace Garant.Platform.Controllers.Document
     public class DocumentController : BaseController
     {
         private readonly IDocumentService _documentService;
+        private readonly IDocumentRepository _documentRepository;
 
-        public DocumentController(IDocumentService documentService)
+        public DocumentController(IDocumentService documentService, IDocumentRepository documentRepository)
         {
             _documentService = documentService;
+            _documentRepository = documentRepository;
         }
 
         /// <summary>
@@ -38,9 +41,33 @@ namespace Garant.Platform.Controllers.Document
             return Ok(result);
         }
 
-        //public async Task<IActionResult> SendDocumentVendorAsync()
-        //{
-        //    return Ok();
-        //}
+        /// <summary>
+        /// Метод отправит документ основного договора продавца на согласование покупателю.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Флаг успеха.</returns>
+        [HttpPost]
+        [Route("send-vendor-document-deal")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> SendMainDealDocumentVendorAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentService.SendDocumentVendorAsync(documentInput.DocumentItemId, documentInput.IsDealDocument, documentInput.DocumentType);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит название документа, который отправлен на согласование покупателю.
+        /// </summary>
+        /// <returns>Название документа.</returns>
+        [HttpPost]
+        [Route("get-attachment-document-deal-name")]
+        [ProducesResponseType(200, Type = typeof(DocumentOutput))]
+        public async Task<IActionResult> GetAttachmentNameDocumentDealAsync()
+        {
+            var result = await _documentRepository.GetAttachmentNameDocumentDealAsync(GetUserName());
+
+            return Ok(result);
+        }
     }
 }
