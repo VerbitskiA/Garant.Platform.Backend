@@ -9,7 +9,7 @@ namespace Garant.Platform.Models.Entities.Franchise
     /// Класс сопоставляется с таблицей списком заявок для франшиз Franchises.RequestsFranchises.
     /// </summary>
     [Table("RequestsFranchises", Schema = "Franchises")]
-    public class RequestFranchise
+    public class RequestFranchiseEntity
     {
         /// <summary>
         /// PK.
@@ -28,7 +28,7 @@ namespace Garant.Platform.Models.Entities.Franchise
         /// <summary>
         /// Имя пользователя.
         /// </summary>
-        [Column("UserName", TypeName = "text")]
+        [Column("UserName", TypeName = "varchar(150)")]
         public string UserName { get; set; }
 
         /// <summary>
@@ -49,6 +49,15 @@ namespace Garant.Platform.Models.Entities.Franchise
         [Column("DateCreate", TypeName = "timestamp")]
         public DateTime DateCreate { get; set; }
 
+        /// <summary>
+        /// Id франшизы, по которой оставлена заявка.
+        /// </summary>
+        [ForeignKey("FranchiseId")]
+        [Column("FranchiseId", TypeName = "bigint")]
+        public long FranchiseId { get; set; }
+
         public UserEntity User { get; set; }
+
+        public FranchiseEntity Franchise { get; set; }
     }
 }

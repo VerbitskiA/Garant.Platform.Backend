@@ -304,7 +304,7 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="franchiseId">Id франшизы.</param>
         /// <param name="mode">Режим (Edit или View).</param>
         /// <returns>Данные франшизы.</returns>
-        public async Task<FranchiseOutput> GetFranchiseAsync(long franchiseId, string mode)
+        public async Task<FranchiseOutput> GetFranchiseAsync(long franchiseId, string mode = null)
         {
             try
             {

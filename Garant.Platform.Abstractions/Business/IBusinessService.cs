@@ -27,12 +27,12 @@ namespace Garant.Platform.Abstractions.Business
         Task<IEnumerable<string>> AddTempFilesBeforeCreateBusinessAsync(IFormCollection form, string account);
 
         /// <summary>
-        /// Метод получит франшизу для просмотра или изменения.
+        /// Метод получит бизнес для просмотра или изменения.
         /// </summary>
         /// <param name="businessId">Id бизнеса.</param>
         /// <param name="mode">Режим (Edit или View).</param>
         /// <returns>Данные бизнеса.</returns>
-        Task<BusinessOutput> GetBusinessAsync(long businessId, string mode);
+        Task<BusinessOutput> GetBusinessAsync(long businessId, string mode = null);
 
         /// <summary>
         /// Метод получит список категорий бизнеса.

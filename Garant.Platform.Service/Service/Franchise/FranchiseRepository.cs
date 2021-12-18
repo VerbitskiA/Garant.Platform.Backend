@@ -10,6 +10,7 @@ using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
+using Garant.Platform.Models.Request.Output;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -971,6 +972,57 @@ namespace Garant.Platform.Services.Service.Franchise
                         FranchiseId = f.FranchiseId
                     })
                     .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод создаст заявку франшизы.
+        /// </summary>
+        /// <param name="userName">Имя пользователя.</param>
+        /// <param name="phone">Телефон.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
+        /// <param name="franchiseId">Id франшизы, по которой оставлена заявка.</param>
+        /// <returns>Данные заявки.</returns>
+        public async Task<RequestFranchiseOutput> CreateRequestFranchiseAsync(string userName, string phone, string city, string account, long franchiseId)
+        {
+            try
+            {
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+                var now = DateTime.Now;
+
+                var addRequestData = new RequestFranchiseEntity
+                {
+                    UserId = userId,
+                    City = city,
+                    DateCreate = now,
+                    Phone = phone,
+                    UserName = userName,
+                    FranchiseId = franchiseId
+                };
+
+                await _postgreDbContext.RequestsFranchises.AddAsync(addRequestData);
+                await _postgreDbContext.SaveChangesAsync();
+
+                var result = new RequestFranchiseOutput
+                {
+                    UserId = userId,
+                    City = city,
+                    DateCreate = now,
+                    Phone = phone,
+                    UserName = userName,
+                    FranchiseId = franchiseId
+                };
 
                 return result;
             }

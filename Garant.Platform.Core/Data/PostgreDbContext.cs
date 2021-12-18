@@ -3,6 +3,8 @@ using Garant.Platform.Models.Entities.Add;
 using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.Business;
 using Garant.Platform.Models.Entities.Chat;
+using Garant.Platform.Models.Entities.Commerce;
+using Garant.Platform.Models.Entities.Document;
 using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Entities.Header;
@@ -175,6 +177,41 @@ namespace Garant.Platform.Core.Data
         /// <summary>
         /// Таблица Franchises.RequestsFranchises.
         /// </summary>
-        public DbSet<RequestFranchise> RequestsFranchises { get; set; }
+        public DbSet<RequestFranchiseEntity> RequestsFranchises { get; set; }
+
+        /// <summary>
+        /// Таблица Business.RequestsBusinesses.
+        /// </summary>
+        public DbSet<RequestBusinessEntity> RequestsBusinesses { get; set; }
+
+        /// <summary>
+        /// Таблица Commerce.Orders.
+        /// </summary>
+        public DbSet<OrderEntity> Orders { get; set; }
+
+        /// <summary>
+        /// Таблица Logs.Transactions.
+        /// </summary>
+        public DbSet<TransactionEntity> Transactions { get; set; }
+
+        /// <summary>
+        /// Таблица ссылок возвратов dbo.ReturnUrls.
+        /// </summary>
+        public DbSet<ReturnUrl> ReturnUrls { get; set; }
+
+        /// <summary>
+        /// Таблица Commerce.Deals.
+        /// </summary>
+        public DbSet<DealEntity> Deals { get; set; }
+
+        /// <summary>
+        /// Таблица Commerce.DealIterations
+        /// </summary>
+        public DbSet<DealIterationEntity> DealIterations { get; set; }
+
+        /// <summary>
+        /// Таблица Documents.Documents.
+        /// </summary>
+        public DbSet<DocumentEntity> Documents { get; set; }
     }
 }

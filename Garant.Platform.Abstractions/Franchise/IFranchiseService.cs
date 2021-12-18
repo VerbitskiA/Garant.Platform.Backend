@@ -83,7 +83,7 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="franchiseId">Id франшизы.</param>
         /// <param name="mode">Режим (Edit или View).</param>
         /// <returns>Данные франшизы.</returns>
-        Task<FranchiseOutput> GetFranchiseAsync(long franchiseId, string mode);
+        Task<FranchiseOutput> GetFranchiseAsync(long franchiseId, string mode = null);
 
         /// <summary>
         /// Метод отправит файл в папку и временно запишет в БД.

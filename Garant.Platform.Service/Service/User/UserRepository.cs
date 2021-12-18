@@ -576,7 +576,7 @@ namespace Garant.Platform.Services.Service.User
                 // Если есть, то перезапишет его.
                 else
                 {
-                    _postgreDbContext.Update(transition);
+                    _postgreDbContext.Transitions.Update(transition);
                 }
 
                 await _postgreDbContext.SaveChangesAsync();

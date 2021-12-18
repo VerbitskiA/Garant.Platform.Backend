@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
 using Garant.Platform.Models.Franchise.Output;
+using Garant.Platform.Models.Request.Output;
 using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Abstractions.Franchise
@@ -138,5 +139,17 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="searchText">Текст поиска.</param>
         /// <returns>Список с результатами.</returns>
         Task<IEnumerable<FranchiseOutput>> SearchByFranchisesAsync(string searchText);
+
+        /// <summary>
+        /// Метод создаст заявку франшизы.
+        /// </summary>
+        /// <param name="userName">Имя пользователя.</param>
+        /// <param name="phone">Телефон.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
+        /// <param name="franchiseId">Id франшизы, по которой оставлена заявка.</param>
+        /// <returns>Данные заявки.</returns>
+        Task<RequestFranchiseOutput> CreateRequestFranchiseAsync(string userName, string phone,
+            string city, string account, long franchiseId);
     }
 }
