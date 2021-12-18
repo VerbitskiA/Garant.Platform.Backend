@@ -48,7 +48,8 @@ namespace Garant.Platform.Services.Document
                     DocumentName = fileName,
                     DocumentType = documentType,
                     IsDealDocument = isDealDocument,
-                    IsAcceptDocument = false,
+                    IsApproveDocument = false,
+                    IsRejectDocument = false,
                     UserId = userId,
                     IsSend = false
                 };

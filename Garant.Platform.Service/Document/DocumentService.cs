@@ -29,7 +29,7 @@ namespace Garant.Platform.Services.Document
         }
 
         /// <summary>
-        /// Метод прикрепит документ к сделке.
+        /// Метод прикрепит документ продавца к сделке.
         /// </summary>
         /// <param name="files">Файлы документов.</param>
         /// <param name="documentData">Входная модель.</param>

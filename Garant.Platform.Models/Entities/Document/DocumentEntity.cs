@@ -58,8 +58,20 @@ namespace Garant.Platform.Models.Entities.Document
         /// <summary>
         /// Флаг подтвержден ли документ сделки.
         /// </summary>
-        [Column("IsAcceptDocument", TypeName = "bool")]
-        public bool? IsAcceptDocument { get; set; }
+        [Column("IsApproveDocument", TypeName = "bool")]
+        public bool? IsApproveDocument { get; set; }
+
+        /// <summary>
+        /// Флаг отклонен ли документ сделки.
+        /// </summary>
+        [Column("IsRejectDocument", TypeName = "bool")]
+        public bool? IsRejectDocument { get; set; }
+
+        /// <summary>
+        /// Причина отклонения.
+        /// </summary>
+        [Column("CommentReject", TypeName = "text")]
+        public string CommentReject { get; set; }
 
         /// <summary>
         /// Отправлен ли документ продавцу.

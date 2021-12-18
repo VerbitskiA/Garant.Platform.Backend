@@ -204,5 +204,10 @@ namespace Garant.Platform.Commerce.Models.Garant.Output
         /// Текст кнопки события основного договора.
         /// </summary>
         public string ButtonActionTextContract { get; set; }
+
+        /// <summary>
+        /// Дополнительный комментарий.
+        /// </summary>
+        public string DopComment { get; set; }
     }
 }

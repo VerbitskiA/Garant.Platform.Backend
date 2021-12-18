@@ -129,12 +129,18 @@ namespace Garant.Platform.Commerce.Service.Garant
                             return franchise3IterationsNotOwnerList;
                         }
 
-                        //// Если этап 3 и владелец.
+                        // Если этап 3 и владелец.
                         else if (isOwner && stage == 3)
                         {
-                            var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
+                            // Найдет Id пользователя, который оставил заявку.
+                            var otherUserId = await _postgreDbContext.RequestsFranchises
+                                .Where(f => f.FranchiseId == franchise.FranchiseId)
+                                .Select(f => f.UserId)
+                                .FirstOrDefaultAsync();
 
-                            var franchise3IterationsOwnerList = await GetDataFranchise3IterationOwner(franchise.FranchiseId, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account);
+                            var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
+
+                            var franchise3IterationsOwnerList = await GetDataFranchise3IterationOwner(franchise.FranchiseId, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account);
 
                             return franchise3IterationsOwnerList;
                         }
@@ -507,18 +513,18 @@ namespace Garant.Platform.Commerce.Service.Garant
                 BlockLeftSumTitle = "На общую сумму",
                 BlockRightStatusText = @"По правилам нашего сервиса продавец сам или посредством привлечения своих юристов составляет и отправляет договор на согласование 
 покупателю. Если у вас нет собственных юристов или опыта в создании договора - пригласите юриста со стороны нашего сервиса.",
-                BlockRightStatusTitle = "Холдирование средств",
+                BlockRightStatusTitle = "Договор от покупателя",
                 BlockRightSumTitle = "Общая сумма",
                 BlockRightTitle = "Согласование договора",
                 DocumentBlockTitle = "Документы сделки",
                 MainItemTitle = "Предмет сделки",
                 ItemTitle = title,
                 ContinueButtonText = "Перейти к исполнению этапов",
-                ButtonActionText = "Отправить на согласование покупателю",
+                ButtonActionText = "Договор на проверку от продавца",
                 ImageUrl = url,
                 Amount = Convert.ToDouble(totalInvest),
-                OtherUserRole = "Продавец",
-                Role = "Покупатель (Вы)",
+                OtherUserRole = "Покупатель",
+                Role = "Продавец (Вы)",
                 FullName = firstName + " " + lastName,
                 OtherUserFullName = otherFirstName + " " + otherLastName,
                 ItemDealType = orderType,
@@ -531,7 +537,8 @@ namespace Garant.Platform.Commerce.Service.Garant
                 ContractDetail = "Скан согласованного договора",
                 ButtonActionTextContract = "Отправить на согласование покупателю",
                 ContractText = @"Прикрепите подписанный вашей стороной файл в формате .pdf и ожидайте подтверждения от продавца. После утверждения договора вы получите оплату
- за первый этап сделки."
+ за первый этап сделки.",
+                DopComment = "Вы получите договор в ответ после отправки и утверждения со стороны покупателя."
             };
 
             if (isChat && !string.IsNullOrEmpty(userId))
