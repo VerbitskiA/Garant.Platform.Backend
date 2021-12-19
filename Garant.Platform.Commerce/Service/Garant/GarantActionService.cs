@@ -445,14 +445,14 @@ namespace Garant.Platform.Commerce.Service.Garant
 
 Если вы не уверены в собственных юридических знаниях, то можете пригласить в сделку юриста от нашего сервиса для помощи с составлением
 договора.",
-                BlockRightStatusTitle = "Холдирование средств",
+                BlockRightStatusTitle = "Основной договор",
                 BlockRightSumTitle = "Общая сумма",
                 BlockRightTitle = "Согласование договора",
                 DocumentBlockTitle = "Документы сделки",
                 MainItemTitle = "Предмет сделки",
                 ItemTitle = title,
                 ContinueButtonText = "Оплатить первый этап и получению этапов",
-                ButtonActionText = "Утвердить договор",
+                ButtonActionText = "Договор утвержден",
                 ImageUrl = url,
                 Amount = Convert.ToDouble(totalInvest),
                 OtherUserRole = "Продавец",
@@ -466,9 +466,13 @@ namespace Garant.Platform.Commerce.Service.Garant
                 BlockDocumentsTemplatesName = "Шаблоны документов",
                 BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
                 ContractTitle = "Основной договор",
-                ContractDetail = "Скан согласованного договора",
+                ContractDetail = "Договор на проверку от продавца",
                 ButtonActionTextContract = "Утвердить договор",
-                ContractText = @"Прикрепите согласованный файл в формате .pdf и ожидайте подтверждения от продавца"
+                ButtonRejectDocumentText = "Отклонить договор",
+                ContractText = @"Скачайте и проверьте договор присланный продавцом",
+                BlockCustomerComment = "Прикрепите скан согласованного договора",
+                ButtonApproveDocumentText = "Отправить подписанный договор продавцу в ответ",
+                IsOwner = false
             };
 
             if (isChat && !string.IsNullOrEmpty(userId))
@@ -538,7 +542,10 @@ namespace Garant.Platform.Commerce.Service.Garant
                 ButtonActionTextContract = "Отправить на согласование покупателю",
                 ContractText = @"Прикрепите подписанный вашей стороной файл в формате .pdf и ожидайте подтверждения от продавца. После утверждения договора вы получите оплату
  за первый этап сделки.",
-                DopComment = "Вы получите договор в ответ после отправки и утверждения со стороны покупателя."
+                BlockCustomerComment = "Вы получите договор в ответ после отправки и утверждения со стороны покупателя.",
+                ButtonApproveDocumentText = "Согласен с договором от покупателя",
+                ButtonRejectDocumentText = "Отклонить договор",
+                IsOwner = true
             };
 
             if (isChat && !string.IsNullOrEmpty(userId))

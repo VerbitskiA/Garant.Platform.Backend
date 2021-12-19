@@ -63,9 +63,39 @@ namespace Garant.Platform.Controllers.Document
         [HttpPost]
         [Route("get-attachment-document-deal-name")]
         [ProducesResponseType(200, Type = typeof(DocumentOutput))]
-        public async Task<IActionResult> GetAttachmentNameDocumentDealAsync()
+        public async Task<IActionResult> GetAttachmentNameDocumentVendorDealAsync([FromBody] DocumentInput documentInput)
         {
-            var result = await _documentRepository.GetAttachmentNameDocumentDealAsync(GetUserName());
+            var result = await _documentRepository.GetAttachmentNameDocumentVendorDealAsync(documentInput.DocumentItemId);
+
+            return Ok(result);
+        }
+
+
+        /// <summary>
+        /// Метод проверит, подтвердил ли покупатель договор продавца.
+        /// </summary>
+        /// <returns>Флаг проверки.</returns>
+        [HttpPost]
+        [Route("check-approve-document-vendor")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> CheckApproveDocumentVendorAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentRepository.CheckApproveDocumentVendorAsync(documentInput.DocumentItemId, GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод подтвердит договор продавца.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Флаг подтверждения.</returns>
+        [HttpPost]
+        [Route("approve-document-vendor")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> ApproveDocumentVendorAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentRepository.ApproveDocumentVendorAsync(documentInput.DocumentItemId);
 
             return Ok(result);
         }

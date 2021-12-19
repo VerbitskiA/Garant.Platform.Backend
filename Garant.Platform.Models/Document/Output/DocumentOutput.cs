@@ -8,6 +8,11 @@ namespace Garant.Platform.Models.Document.Output
     public class DocumentOutput
     {
         /// <summary>
+        /// Id документа.
+        /// </summary>
+        public long DocumentId { get; set; }
+
+        /// <summary>
         /// Название документа.
         /// </summary>
         public string DocumentName { get; set; }
