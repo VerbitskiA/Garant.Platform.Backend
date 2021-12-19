@@ -26,7 +26,7 @@ namespace Garant.Platform.Controllers.Document
         }
 
         /// <summary>
-        /// Метод прикрепит документ к сделке.
+        /// Метод прикрепит документ продавца к сделке.
         /// </summary>
         /// <param name="files">Файлы сделки.</param>
         /// <param name="documentData">Входной модель.</param>
@@ -70,7 +70,6 @@ namespace Garant.Platform.Controllers.Document
             return Ok(result);
         }
 
-
         /// <summary>
         /// Метод проверит, подтвердил ли покупатель договор продавца.
         /// </summary>
@@ -96,6 +95,37 @@ namespace Garant.Platform.Controllers.Document
         public async Task<IActionResult> ApproveDocumentVendorAsync([FromBody] DocumentInput documentInput)
         {
             var result = await _documentRepository.ApproveDocumentVendorAsync(documentInput.DocumentItemId);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод отправит документ основного договора продавца на согласование покупателю.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Флаг успеха.</returns>
+        [HttpPost]
+        [Route("send-customer-document-deal")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> SendMainDealDocumentCustomerAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentService.SendMainDealDocumentCustomerAsync(documentInput.DocumentItemId, documentInput.IsDealDocument, documentInput.DocumentType);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод прикрепит документ к сделке.
+        /// </summary>
+        /// <param name="files">Файлы сделки.</param>
+        /// <param name="documentData">Входной модель.</param>
+        /// <returns>Данные файлов.</returns>
+        [HttpPost]
+        [Route("attachment-customer-document-deal")]
+        [ProducesResponseType(200, Type = typeof(DocumentOutput))]
+        public async Task<IActionResult> AttachmentCustomerDocumentDealAsync([FromForm] IFormCollection files, [FromForm] string documentData)
+        {
+            var result = await _documentService.AttachmentCustomerDocumentDealAsync(files, documentData, GetUserName());
 
             return Ok(result);
         }

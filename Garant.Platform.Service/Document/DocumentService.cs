@@ -94,5 +94,72 @@ namespace Garant.Platform.Services.Document
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод отправит документ согласованного покупателем договора продавцу.
+        /// </summary>
+        /// <param name="documentItemId">Id документа.</param>
+        /// <param name="isDealDocument">Является ли документом сделки.</param>
+        /// <param name="documentType">Тип документа.</param>
+        /// <returns>Флаг успеха.</returns>
+        public async Task<bool> SendMainDealDocumentCustomerAsync(long documentItemId, bool isDealDocument, string documentType)
+        {
+            try
+            {
+                var result = await _documentRepository.SetSendStatusDocumentCustomerAsync(documentItemId, isDealDocument, documentType);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод прикрепит документ покупателя к сделке.
+        /// </summary>
+        /// <param name="files">Файлы документов.</param>
+        /// <param name="documentData">Входная модель.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
+        /// <returns>Данные документов.</returns>
+        public async Task<DocumentOutput> AttachmentCustomerDocumentDealAsync(IFormCollection files, string documentData, string account)
+        {
+            try
+            {
+                DocumentOutput result = null;
+
+                if (files.Files.Any())
+                {
+                    var documentInput = JsonConvert.DeserializeObject<DocumentInput>(documentData);
+
+                    if (documentInput != null)
+                    {
+                        // Запишет документы в БД.
+                        result = await _documentRepository.AddCustomerDocumentAsync(files.Files[0].FileName, documentInput.DocumentItemId, documentInput.DocumentType, true, account);
+                    }
+                }
+
+                if (result != null)
+                {
+                    // Загрузит документы на сервер.
+                    await _ftpService.UploadFilesFtpAsync(files.Files);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }

@@ -26,5 +26,23 @@ namespace Garant.Platform.Abstractions.Document
         /// <param name="documentType">Тип документа.</param>
         /// <returns>Флаг успеха.</returns>
         Task<bool> SendDocumentVendorAsync(long documentItemId, bool isDealDocument, string documentType);
+
+        /// <summary>
+        /// Метод отправит документ согласованного покупателем договора продавцу.
+        /// </summary>
+        /// <param name="documentItemId">Id документа.</param>
+        /// <param name="isDealDocument">Является ли документом сделки.</param>
+        /// <param name="documentType">Тип документа.</param>
+        /// <returns>Флаг успеха.</returns>
+        Task<bool> SendMainDealDocumentCustomerAsync(long documentItemId, bool isDealDocument, string documentType);
+
+        /// <summary>
+        /// Метод прикрепит документ покупателя к сделке.
+        /// </summary>
+        /// <param name="files">Файлы документов.</param>
+        /// <param name="documentData">Входная модель.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
+        /// <returns>Данные документов.</returns>
+        Task<DocumentOutput> AttachmentCustomerDocumentDealAsync(IFormCollection files, string documentData, string account);
     }
 }
