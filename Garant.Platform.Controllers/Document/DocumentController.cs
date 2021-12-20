@@ -94,7 +94,7 @@ namespace Garant.Platform.Controllers.Document
         [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<IActionResult> ApproveDocumentVendorAsync([FromBody] DocumentInput documentInput)
         {
-            var result = await _documentRepository.ApproveDocumentVendorAsync(documentInput.DocumentItemId);
+            var result = await _documentRepository.ApproveDocumentVendorAsync(documentInput.DocumentItemId, GetUserName());
 
             return Ok(result);
         }
@@ -126,6 +126,21 @@ namespace Garant.Platform.Controllers.Document
         public async Task<IActionResult> AttachmentCustomerDocumentDealAsync([FromForm] IFormCollection files, [FromForm] string documentData)
         {
             var result = await _documentService.AttachmentCustomerDocumentDealAsync(files, documentData, GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод подтвердит договор покупателя.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Флаг подтверждения.</returns>
+        [HttpPost]
+        [Route("approve-document-customer")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> ApproveDocumentCustomerAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentRepository.ApproveDocumentCustomerAsync(documentInput.DocumentItemId, GetUserName());
 
             return Ok(result);
         }

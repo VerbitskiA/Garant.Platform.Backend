@@ -9,7 +9,7 @@ namespace Garant.Platform.Tests.Document
         [TestMethod]
         public async Task ApproveDocumentVendorAsyncTest()
         {
-            var result = await DocumentRepository.ApproveDocumentVendorAsync(1000005);
+            var result = await DocumentRepository.ApproveDocumentVendorAsync(1000005, "sierra_93@mail.ru");
 
             Assert.IsTrue(result);
         }

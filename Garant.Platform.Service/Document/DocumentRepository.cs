@@ -194,8 +194,9 @@ namespace Garant.Platform.Services.Document
         /// Метод подтвердит договор продавца.
         /// </summary>
         /// <param name="documentItemId">Id предмета сделки.</param>
+        /// <param name="account">Аккаунт.</param>
         /// <returns>Флаг проверки.</returns>
-        public async Task<bool> ApproveDocumentVendorAsync(long documentItemId)
+        public async Task<bool> ApproveDocumentVendorAsync(long documentItemId, string account)
         {
             try
             {
@@ -205,8 +206,10 @@ namespace Garant.Platform.Services.Document
                     throw new EmptyDocumentItemIdException();
                 }
 
+                var userId = _userRepository.FindUserIdUniverseAsync(account);
+
                 var result = await _postgreDbContext.Documents
-                    .Where(d => d.DocumentItemId == documentItemId && (d.IsSend ?? false))
+                    .Where(d => d.DocumentItemId == documentItemId && (d.IsSend ?? false) && d.UserId.Equals(userId))
                     .FirstOrDefaultAsync();
 
                 // Если документ найден, то подтвердит его.
@@ -323,6 +326,49 @@ namespace Garant.Platform.Services.Document
                 var result = JsonConvert.DeserializeObject<DocumentOutput>(jsonString);
 
                 return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод подтвердит договор покупателя.
+        /// </summary>
+        /// <param name="documentItemId">Id предмета сделки.</param>
+        /// <param name="account">Аккаунт.</param>
+        /// <returns>Флаг проверки.</returns>
+        public async Task<bool> ApproveDocumentCustomerAsync(long documentItemId, string account)
+        {
+            try
+            {
+                // Если не передан Id документа предмета сделки.
+                if (documentItemId <= 0)
+                {
+                    throw new EmptyDocumentItemIdException();
+                }
+
+                var userId = _userRepository.FindUserIdUniverseAsync(account);
+
+                var result = await _postgreDbContext.Documents
+                    .Where(d => d.DocumentItemId == documentItemId && (d.IsSend ?? false) && d.UserId.Equals(userId))
+                    .FirstOrDefaultAsync();
+
+                // Если документ найден, то подтвердит его.
+                if (result != null)
+                {
+                    result.IsApproveDocument = true;
+                    await _postgreDbContext.SaveChangesAsync();
+
+                    return true;
+                }
+
+                return false;
             }
 
             catch (Exception e)

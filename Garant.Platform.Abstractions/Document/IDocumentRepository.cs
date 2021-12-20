@@ -47,8 +47,9 @@ namespace Garant.Platform.Abstractions.Document
         /// Метод подтвердит договор продавца.
         /// </summary>
         /// <param name="documentItemId">Id предмета сделки.</param>
+        /// <param name="account">Аккаунт.</param>
         /// <returns>Флаг проверки.</returns>
-        Task<bool> ApproveDocumentVendorAsync(long documentItemId);
+        Task<bool> ApproveDocumentVendorAsync(long documentItemId, string account);
 
         /// <summary>
         /// Метод запишет в true флаг отправки согласованного документа продавца.
@@ -69,5 +70,13 @@ namespace Garant.Platform.Abstractions.Document
         /// <param name="account">Аккаунт.</param>
         /// <returns>Данные документа.</returns>
         Task<DocumentOutput> AddCustomerDocumentAsync(string fileName, long documentItemId, string documentType, bool isDealDocument, string account);
+
+        /// <summary>
+        /// Метод подтвердит договор покупателя.
+        /// </summary>
+        /// <param name="documentItemId">Id предмета сделки.</param>
+        /// <param name="account">Аккаунт.</param>
+        /// <returns>Флаг проверки.</returns>
+        Task<bool> ApproveDocumentCustomerAsync(long documentItemId, string account);
     }
 }
