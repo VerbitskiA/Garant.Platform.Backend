@@ -19,9 +19,9 @@ namespace Garant.Platform.Tests.Document
         public async Task CheckIsTrueApproveDocumentVendorAsyncTest()
         {
             var mock = new Mock<IDocumentRepository>();
-            mock.Setup(a => a.CheckApproveDocumentVendorAsync(1000005, "sierra_93@mail.ru"));
+            mock.Setup(a => a.CheckApproveDocumentVendorAsync(1000005));
             var component = new DocumentRepository(PostgreDbContext, UserRepository);
-            var result = await component.CheckApproveDocumentVendorAsync(1000005, "sierra_93@mail.ru");
+            var result = await component.CheckApproveDocumentVendorAsync(1000005);
 
             Assert.IsTrue(result);
         }
@@ -33,9 +33,9 @@ namespace Garant.Platform.Tests.Document
         public async Task CheckIsFalseApproveDocumentVendorAsyncTest()
         {
             var mock = new Mock<IDocumentRepository>();
-            mock.Setup(a => a.CheckApproveDocumentVendorAsync(1000005, "sierra_93@mail.ru"));
+            mock.Setup(a => a.CheckApproveDocumentVendorAsync(1000005));
             var component = new DocumentRepository(PostgreDbContext, UserRepository);
-            var result = await component.CheckApproveDocumentVendorAsync(1000005, "sierra_93@mail.ru");
+            var result = await component.CheckApproveDocumentVendorAsync(1000005);
 
             Assert.IsFalse(result);
         }
