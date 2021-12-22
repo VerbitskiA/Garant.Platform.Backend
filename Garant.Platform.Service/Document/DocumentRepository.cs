@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Document;
@@ -424,6 +425,44 @@ namespace Garant.Platform.Services.Document
                     .FirstOrDefaultAsync();
 
                 return checkApprove ?? false;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///  Метод получит список документов сделки.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <returns>Список документов.</returns>
+        public async Task<IEnumerable<DocumentOutput>> GetDocumentsDealAsync(long documentItemId)
+        {
+            try
+            {
+                // Если не передан Id сделки.
+                if (documentItemId <= 0)
+                {
+                    throw new EmptyDocumentItemIdException();
+                }
+
+                var documents = await _postgreDbContext.Documents
+                    .Where(d => d.DocumentItemId == documentItemId
+                                && new[] { "DocumentVendor", "DocumentCustomer" }.Contains(d.DocumentType))
+                    .OrderBy(d => d.DateCreate)
+                    .Select(d => new DocumentOutput
+                    {
+                        DocumentName = d.DocumentName,
+                        DateCreate = d.DateCreate.ToString("d")
+                    })
+                    .ToListAsync();
+
+                return documents;
             }
 
             catch (Exception e)

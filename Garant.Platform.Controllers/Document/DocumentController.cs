@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Document;
 using Garant.Platform.Models.Document.Input;
 using Garant.Platform.Models.Document.Output;
@@ -169,6 +170,21 @@ namespace Garant.Platform.Controllers.Document
         public async Task<IActionResult> GetAttachmentNameDocumentCustomerDealAsync([FromBody] DocumentInput documentInput)
         {
             var result = await _documentRepository.GetAttachmentNameDocumentCustomerDealAsync(documentInput.DocumentItemId);
+
+            return Ok(result);
+        }
+        
+        /// <summary>
+        /// Метод получит список документов сделки.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Список документов.</returns>
+        [HttpPost]
+        [Route("get-documents-deal")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<DocumentOutput>))]
+        public async Task<IActionResult> GetDocumentsDealAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentRepository.GetDocumentsDealAsync(documentInput.DocumentItemId);
 
             return Ok(result);
         }

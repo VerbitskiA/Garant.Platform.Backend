@@ -35,7 +35,7 @@ namespace Garant.Platform.Models.Document.Output
         /// <summary>
         /// Дата прикрепления документа.
         /// </summary>
-        public DateTime DateCreate { get; set; }
+        public string DateCreate { get; set; }
 
         /// <summary>
         /// Флаг документа сделки.

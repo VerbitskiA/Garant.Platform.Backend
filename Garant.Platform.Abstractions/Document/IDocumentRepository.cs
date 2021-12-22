@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Garant.Platform.Models.Document.Output;
 
 namespace Garant.Platform.Abstractions.Document
@@ -90,5 +91,12 @@ namespace Garant.Platform.Abstractions.Document
         /// </summary>
         /// <returns>Флаг проверки.</returns>
         Task<bool> CheckApproveDocumentCustomerAsync(long documentItemId);
+
+        /// <summary>
+        ///  Метод получит список документов сделки.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <returns>Список документов.</returns>
+        Task<IEnumerable<DocumentOutput>> GetDocumentsDealAsync(long documentItemId);
     }
 }
