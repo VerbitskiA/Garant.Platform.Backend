@@ -524,7 +524,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                 MainItemTitle = "Предмет сделки",
                 ItemTitle = title,
                 ContinueButtonText = "Перейти к исполнению этапов",
-                ButtonActionText = "Договор на проверку от продавца",
+                ButtonActionText = "Договор на согласовании",
                 ImageUrl = url,
                 Amount = Convert.ToDouble(totalInvest),
                 OtherUserRole = "Покупатель",

@@ -61,7 +61,7 @@ namespace Garant.Platform.Controllers.Document
         /// </summary>
         /// <returns>Название документа.</returns>
         [HttpPost]
-        [Route("get-attachment-document-deal-name")]
+        [Route("get-attachment-document-vendor-deal-name")]
         [ProducesResponseType(200, Type = typeof(DocumentOutput))]
         public async Task<IActionResult> GetAttachmentNameDocumentVendorDealAsync([FromBody] DocumentInput documentInput)
         {
@@ -79,7 +79,21 @@ namespace Garant.Platform.Controllers.Document
         [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<IActionResult> CheckApproveDocumentVendorAsync([FromBody] DocumentInput documentInput)
         {
-            var result = await _documentRepository.CheckApproveDocumentVendorAsync(documentInput.DocumentItemId, GetUserName());
+            var result = await _documentRepository.CheckApproveDocumentVendorAsync(documentInput.DocumentItemId);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод проверит, подтвердил ли продавец договор покупателя.
+        /// </summary>
+        /// <returns>Флаг проверки.</returns>
+        [HttpPost]
+        [Route("check-approve-document-customer")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> CheckApproveDocumentCustomerAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentRepository.CheckApproveDocumentCustomerAsync(documentInput.DocumentItemId);
 
             return Ok(result);
         }
@@ -140,7 +154,21 @@ namespace Garant.Platform.Controllers.Document
         [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<IActionResult> ApproveDocumentCustomerAsync([FromBody] DocumentInput documentInput)
         {
-            var result = await _documentRepository.ApproveDocumentCustomerAsync(documentInput.DocumentItemId, GetUserName());
+            var result = await _documentRepository.ApproveDocumentCustomerAsync(documentInput.DocumentItemId);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит название документа, который отправлен на согласование покупателю.
+        /// </summary>
+        /// <returns>Название документа.</returns>
+        [HttpPost]
+        [Route("get-attachment-document-customer-deal-name")]
+        [ProducesResponseType(200, Type = typeof(DocumentOutput))]
+        public async Task<IActionResult> GetAttachmentNameDocumentCustomerDealAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentRepository.GetAttachmentNameDocumentCustomerDealAsync(documentInput.DocumentItemId);
 
             return Ok(result);
         }
