@@ -29,7 +29,7 @@ namespace Garant.Platform
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddApplicationPart(typeof(Controllers.MainPage.MainPageController).Assembly); 
+            services.AddControllers().AddControllersAsServices();
 
             services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
             {
