@@ -224,5 +224,10 @@ namespace Garant.Platform.Commerce.Models.Garant.Output
         /// Является ли роль владельцем.
         /// </summary>
         public bool IsOwner { get; set; }
+
+        /// <summary>
+        /// Дата начала сделки.
+        /// </summary>
+        public string DateStartDeal { get; set; }
     }
 }
