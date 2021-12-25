@@ -148,5 +148,10 @@ namespace Garant.Platform.Models.Business.Output
         /// Текст до цены.
         /// </summary>
         public string TextDoPrice { get; set; }
+
+        /// <summary>
+        /// Город бизнеса.
+        /// </summary>
+        public string BusinessCity { get; set; }
     }
 }

@@ -110,7 +110,8 @@ namespace Garant.Platform.Services.Service.Business
                             DateCreate = DateTime.Now,
                             TextDoPrice = "Стоимость:",
                             Category = businessInput.Category,
-                            SubCategory = businessInput.SubCategory
+                            SubCategory = businessInput.SubCategory,
+                            BusinessCity = businessInput.BusinessCity
                         });
                     }
 
@@ -151,6 +152,7 @@ namespace Garant.Platform.Services.Service.Business
                         findBusiness.TextDoPrice = "Стоимость:";
                         findBusiness.Category = businessInput.Category;
                         findBusiness.SubCategory = businessInput.SubCategory;
+                        findBusiness.BusinessCity = businessInput.BusinessCity;
 
                         _postgreDbContext.Update(findBusiness);
                     }
@@ -187,7 +189,8 @@ namespace Garant.Platform.Services.Service.Business
                         UrlVideo = businessInput.UrlVideo,
                         IsGarant = businessInput.IsGarant,
                         DateCreate = DateTime.Now,
-                        TextDoPrice = "Стоимость:"
+                        TextDoPrice = "Стоимость:",
+                        BusinessCity = businessInput.BusinessCity
                     };
                 }
 

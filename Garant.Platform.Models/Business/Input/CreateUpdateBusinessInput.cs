@@ -151,5 +151,10 @@
         /// Подкатегория.
         /// </summary>
         public string SubCategory { get; set; }
+
+        /// <summary>
+        /// Город бизнеса.
+        /// </summary>
+        public string BusinessCity { get; set; }
     }
 }
