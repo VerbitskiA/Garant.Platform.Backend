@@ -98,5 +98,16 @@ namespace Garant.Platform.Abstractions.Document
         /// <param name="documentItemId">Id сделки.</param>
         /// <returns>Список документов.</returns>
         Task<IEnumerable<DocumentOutput>> GetDocumentsDealAsync(long documentItemId);
+
+        /// <summary>
+        /// Метод запишет в БД документ акта.
+        /// </summary>
+        /// <param name="fileName">Имя файла.</param>
+        /// <param name="documentItemId">Id предмета сделки (франшизы или бизнеса).</param>
+        /// <param name="documentType">Тип документа.</param>
+        /// <param name="isDealDocument">Флаг документа сделки.</param>
+        /// <param name="account">Аккаунт.</param>
+        /// <returns>Данные документа.</returns>
+        Task<DocumentOutput> AddDocumentActAsync(string fileName, long documentItemId, string documentType, bool isDealDocument, string account);
     }
 }

@@ -44,5 +44,14 @@ namespace Garant.Platform.Abstractions.Document
         /// <param name="account">Аккаунт пользователя.</param>
         /// <returns>Данные документов.</returns>
         Task<DocumentOutput> AttachmentCustomerDocumentDealAsync(IFormCollection files, string documentData, string account);
+
+        /// <summary>
+        /// Метод прикрепит акт к сделке.
+        /// </summary>
+        /// <param name="files">Файлы документов.</param>
+        /// <param name="documentData">Входная модель.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
+        /// <returns>Данные документов.</returns>
+        Task<DocumentOutput> AttachmentActAsync(IFormCollection files, string documentData, string account);
     }
 }

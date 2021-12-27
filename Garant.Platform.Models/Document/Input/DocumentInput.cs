@@ -19,5 +19,10 @@
         /// Тип документа.
         /// </summary>
         public string DocumentType { get; set; }
+
+        /// <summary>
+        /// Номер этапа.
+        /// </summary>
+        public int Iteration { get; set; }
     }
 }

@@ -59,7 +59,8 @@ namespace Garant.Platform.Services.Document
                     IsApproveDocument = false,
                     IsRejectDocument = false,
                     UserId = userId,
-                    IsSend = false
+                    IsSend = false,
+                    IsPay = null
                 };
 
                 // Обновит документ.
@@ -463,6 +464,72 @@ namespace Garant.Platform.Services.Document
                     .ToListAsync();
 
                 return documents;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод запишет в БД документ акта.
+        /// </summary>
+        /// <param name="fileName">Имя файла.</param>
+        /// <param name="documentItemId">Id предмета сделки (франшизы или бизнеса).</param>
+        /// <param name="documentType">Тип документа.</param>
+        /// <param name="isDealDocument">Флаг документа сделки.</param>
+        /// <param name="account">Аккаунт.</param>
+        /// <returns>Данные документа.</returns>
+        public async Task<DocumentOutput> AddDocumentActAsync(string fileName, long documentItemId, string documentType, bool isDealDocument, string account)
+        {
+            try
+            {
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+
+                // Поищет такой документ в БД и обновит если он уже был добавлен.
+                var getDocument = await _postgreDbContext.Documents
+                    .AsNoTracking()
+                    .Where(d => d.DocumentItemId == documentItemId && d.DocumentType.Equals(documentType))
+                    .FirstOrDefaultAsync();
+
+                var document = new DocumentEntity
+                {
+                    DateCreate = DateTime.Now,
+                    DocumentItemId = documentItemId,
+                    DocumentName = fileName,
+                    DocumentType = documentType,
+                    IsDealDocument = isDealDocument,
+                    IsApproveDocument = false,
+                    IsRejectDocument = false,
+                    UserId = userId,
+                    IsSend = true,
+                    IsPay = false
+                };
+
+                // Обновит документ.
+                if (getDocument != null)
+                {
+                    getDocument.DocumentId = document.DocumentId;
+
+                    _postgreDbContext.Documents.Update(document);
+                    await _postgreDbContext.SaveChangesAsync();
+                }
+
+                // Добавит новый документ.
+                else
+                {
+                    await _postgreDbContext.Documents.AddAsync(document);
+                    await _postgreDbContext.SaveChangesAsync();
+                }
+
+                var jsonString = JsonConvert.SerializeObject(document);
+                var result = JsonConvert.DeserializeObject<DocumentOutput>(jsonString);
+
+                return result;
             }
 
             catch (Exception e)

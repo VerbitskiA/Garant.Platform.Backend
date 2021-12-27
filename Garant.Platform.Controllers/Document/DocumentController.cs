@@ -188,5 +188,21 @@ namespace Garant.Platform.Controllers.Document
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод прикрепит акт к сделке.
+        /// </summary>
+        /// <param name="files">Файлы сделки.</param>
+        /// <param name="documentData">Входной модель.</param>
+        /// <returns>Данные файлов.</returns>
+        [HttpPost]
+        [Route("attachment-act")]
+        [ProducesResponseType(200, Type = typeof(DocumentOutput))]
+        public async Task<IActionResult> AttachmentActAsync([FromForm] IFormCollection files, [FromForm] string documentData)
+        {
+            var result = await _documentService.AttachmentActAsync(files, documentData, GetUserName());
+
+            return Ok(result);
+        }
     }
 }
