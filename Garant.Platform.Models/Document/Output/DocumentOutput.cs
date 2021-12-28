@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Garant.Platform.Models.Document.Output
+﻿namespace Garant.Platform.Models.Document.Output
 {
     /// <summary>
     /// Класс выходной модели документов сделки.
@@ -46,5 +44,10 @@ namespace Garant.Platform.Models.Document.Output
         /// Флаг подтвержден ли документ сделки.
         /// </summary>
         public bool? IsAcceptDocument { get; set; }
+
+        /// <summary>
+        /// Флаг оплаты.
+        /// </summary>
+        public bool? IsPay { get; set; }
     }
 }

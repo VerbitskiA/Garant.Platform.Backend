@@ -204,5 +204,35 @@ namespace Garant.Platform.Controllers.Document
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит список актов продавца.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Список актов продавца.</returns>
+        [HttpPost]
+        [Route("get-vendor-acts")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<DocumentOutput>))]
+        public async Task<IActionResult> GetVendorActsAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentService.GetVendorActsAsync(documentInput.DocumentItemId);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список актов покупателя.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Список актов покупателя.</returns>
+        [HttpPost]
+        [Route("get-customer-acts")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<DocumentOutput>))]
+        public async Task<IActionResult> GetCustomerActsAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentService.GetCustomerActsAsync(documentInput.DocumentItemId);
+
+            return Ok(result);
+        }
     }
 }

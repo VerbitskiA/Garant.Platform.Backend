@@ -540,5 +540,91 @@ namespace Garant.Platform.Services.Document
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список актов продавца.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <returns>Список актов продавца.</returns>
+        public async Task<IEnumerable<DocumentOutput>> GetVendorActsAsync(long documentItemId)
+        {
+            try
+            {
+                // Если не передан Id сделки.
+                if (documentItemId <= 0)
+                {
+                    throw new EmptyDocumentItemIdException();
+                }
+
+                var result = await _postgreDbContext.Documents
+                    .Where(d => d.DocumentItemId == documentItemId
+                                && d.IsSend == true
+                                && d.IsDealDocument == true
+                                && new[] { "DocumentVendorAct1", "DocumentVendorAct2", "DocumentVendorAct3", "DocumentVendorAct4", "DocumentVendorAct5", "DocumentVendorAct6", "DocumentVendorAct7", "DocumentVendorAct8", "DocumentVendorAct9", "DocumentVendorAct10" }.Contains(d.DocumentType))
+                    .Select(d => new DocumentOutput
+                    {
+                        DocumentName = d.DocumentName,
+                        IsPay = d.IsPay,
+                        DocumentId = d.DocumentId,
+                        DateCreate = d.DateCreate.ToString("d"),
+                        IsAcceptDocument = d.IsApproveDocument,
+                        DocumentType = d.DocumentType
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список актов покупателя.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <returns>Список актов покупателя.</returns>
+        public async Task<IEnumerable<DocumentOutput>> GetCustomerActsAsync(long documentItemId)
+        {
+            try
+            {
+                // Если не передан Id сделки.
+                if (documentItemId <= 0)
+                {
+                    throw new EmptyDocumentItemIdException();
+                }
+
+                var result = await _postgreDbContext.Documents
+                    .Where(d => d.DocumentItemId == documentItemId
+                                && d.IsSend == true
+                                && d.IsDealDocument == true
+                                && new[] { "DocumentCustomerAct1", "DocumentCustomerAct2", "DocumentCustomerAct3", "DocumentCustomerAct4", "DocumentCustomerAct5", "DocumentCustomerAct6", "DocumentCustomerAct7", "DocumentCustomerAct8", "DocumentCustomerAct9", "DocumentCustomerAct10" }.Contains(d.DocumentType))
+                    .Select(d => new DocumentOutput
+                    {
+                        DocumentName = d.DocumentName,
+                        IsPay = d.IsPay,
+                        DocumentId = d.DocumentId,
+                        DateCreate = d.DateCreate.ToString("d"),
+                        IsAcceptDocument = d.IsApproveDocument,
+                        DocumentType = d.DocumentType
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }

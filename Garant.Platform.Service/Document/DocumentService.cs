@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Document;
@@ -205,6 +206,52 @@ namespace Garant.Platform.Services.Document
                     // Загрузит документы на сервер.
                     await _ftpService.UploadFilesFtpAsync(files.Files);
                 }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список актов продавца.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <returns>Список актов продавца.</returns>
+        public async Task<IEnumerable<DocumentOutput>> GetVendorActsAsync(long documentItemId)
+        {
+            try
+            {
+                var result = await _documentRepository.GetVendorActsAsync(documentItemId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список актов покупателя.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <returns>Список актов покупателя.</returns>
+        public async Task<IEnumerable<DocumentOutput>> GetCustomerActsAsync(long documentItemId)
+        {
+            try
+            {
+                var result = await _documentRepository.GetCustomerActsAsync(documentItemId);
 
                 return result;
             }

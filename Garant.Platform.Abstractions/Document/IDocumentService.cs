@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Garant.Platform.Models.Document.Output;
 using Microsoft.AspNetCore.Http;
 
@@ -53,5 +54,19 @@ namespace Garant.Platform.Abstractions.Document
         /// <param name="account">Аккаунт пользователя.</param>
         /// <returns>Данные документов.</returns>
         Task<DocumentOutput> AttachmentActAsync(IFormCollection files, string documentData, string account);
+
+        /// <summary>
+        /// Метод получит список актов продавца.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <returns>Список актов продавца.</returns>
+        Task<IEnumerable<DocumentOutput>> GetVendorActsAsync(long documentItemId);
+
+        /// <summary>
+        /// Метод получит список актов покупателя.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <returns>Список актов покупателя.</returns>
+        Task<IEnumerable<DocumentOutput>> GetCustomerActsAsync(long documentItemId);
     }
 }

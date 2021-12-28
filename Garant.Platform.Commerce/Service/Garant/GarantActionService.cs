@@ -1166,13 +1166,14 @@ namespace Garant.Platform.Commerce.Service.Garant
                 BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
                 ContractTitle = "Скан акта приема-передачи",
                 ContractDetail = "После оплаты акта вы сможете утвердить его посредством подписанного акта приема-передачи",
-                ButtonActionTextContract = string.Empty,
+                ButtonActionTextContract = "Оплатить этап - ",
                 ButtonRejectDocumentText = string.Empty,
                 ContractText = @"Прикрепите согласованный файл в формате .pdf и ожидайте подтверждения от продавца",
                 BlockCustomerComment = "После утверждения акта вы сможете оплатить следующий",
                 ButtonApproveDocumentText = string.Empty,
-                IsOwner = true,
-                DateStartDeal = dateCreateDeal.ToString("dd.MM.yyyy")
+                IsOwner = false,
+                DateStartDeal = dateCreateDeal.ToString("dd.MM.yyyy"),
+                FormatAmount = string.Format("{0:0,0}", totalInvest)
             };
 
             if (isChat && !string.IsNullOrEmpty(userId))
@@ -1257,7 +1258,7 @@ namespace Garant.Platform.Commerce.Service.Garant
         }
 
         /// <summary>
-        /// Метод формирует данные франшизы для 4 этапа не для владельца.
+        /// Метод формирует данные франшизы для 4 этапа для владельца.
         /// </summary>
         /// <param name="franchiseId">Id франшизы.</param>
         /// <param name="totalInvest">Всего инвестиций.</param>
@@ -1377,14 +1378,15 @@ namespace Garant.Platform.Commerce.Service.Garant
                 BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
                 ContractTitle = "Основной договор",
                 ContractDetail = "",
-                ButtonActionTextContract = "Оплатить этап - " + string.Format("{0:0,0}", totalInvest),
+                ButtonActionTextContract = "Оплатить этап - ",
                 ButtonRejectDocumentText = "Отклонить договор",
                 ContractText = @"После оплаты акта вы сможете утвердить его посредством подписанного акта приема-передачи",
                 BlockCustomerComment = "Прикрепите скан согласованного договора",
                 ButtonApproveDocumentText = "Отправить подписанный договор продавцу в ответ",
                 IsOwner = false,
                 IsLast = true,
-                DateStartDeal = dateCreateDeal.ToString("dd.MM.yyyy")
+                DateStartDeal = dateCreateDeal.ToString("dd.MM.yyyy"),
+                FormatAmount = string.Format("{0:0,0}", totalInvest)
             };
 
             if (isChat && !string.IsNullOrEmpty(userId))
