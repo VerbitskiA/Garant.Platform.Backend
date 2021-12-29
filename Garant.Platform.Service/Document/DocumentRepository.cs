@@ -626,5 +626,57 @@ namespace Garant.Platform.Services.Document
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод подтвердит акт продавца.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <param name="documentType">Тип документа, который нужно подтвердить.</param>
+        /// <returns>Флаг подтверждения.</returns>
+        public async Task<bool> ApproveActVendorAsync(long documentItemId, string documentType)
+        {
+            try
+            {
+                // Если не передан Id документа предмета сделки.
+                if (documentItemId <= 0)
+                {
+                    throw new EmptyDocumentItemIdException();
+                }
+
+                if (!new[] { "DocumentVendorAct1", "DocumentVendorAct2", "DocumentVendorAct3", "DocumentVendorAct4", "DocumentVendorAct5", "DocumentVendorAct6", "DocumentVendorAct7", "DocumentVendorAct8", "DocumentVendorAct9", "DocumentVendorAct10" }.Contains(documentType))
+                {
+                    throw new ErrorApproveDocumentTypeException("Тип документа отличается от акта продавца");
+                }
+
+                var result = await _postgreDbContext.Documents
+                    .Where(d => d.DocumentItemId == documentItemId
+                                && d.IsSend == true
+                                && d.DocumentType.Equals(documentType)
+                                && d.IsApproveDocument == false
+                                && d.IsPay == false
+                                && d.IsRejectDocument == false
+                                && d.IsDealDocument == true)
+                    .FirstOrDefaultAsync();
+
+                // Если акт найден, то подтвердит его.
+                if (result != null)
+                {
+                    result.IsApproveDocument = true;
+                    await _postgreDbContext.SaveChangesAsync();
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }

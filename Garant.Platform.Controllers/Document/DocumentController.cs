@@ -234,5 +234,20 @@ namespace Garant.Platform.Controllers.Document
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод подтвердит акт продавца.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Флаг подтверждения.</returns>
+        [HttpPost]
+        [Route("approve-act-vendor")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> ApproveActVendorAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentRepository.ApproveActVendorAsync(documentInput.DocumentItemId, documentInput.DocumentType);
+
+            return Ok(result);
+        }
     }
 }

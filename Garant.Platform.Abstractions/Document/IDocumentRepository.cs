@@ -123,5 +123,13 @@ namespace Garant.Platform.Abstractions.Document
         /// <param name="documentItemId">Id сделки.</param>
         /// <returns>Список актов покупателя.</returns>
         Task<IEnumerable<DocumentOutput>> GetCustomerActsAsync(long documentItemId);
+
+        /// <summary>
+        /// Метод подтвердит акт продавца.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <param name="documentType">Тип документа, который нужно подтвердить.</param>
+        /// <returns>Флаг подтверждения.</returns>
+        Task<bool> ApproveActVendorAsync(long documentItemId, string documentType);
     }
 }
