@@ -678,5 +678,150 @@ namespace Garant.Platform.Services.Document
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список подтвержденных актов продавца.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <returns>Список актов.</returns>
+        public async Task<IEnumerable<DocumentOutput>> GetApproveVendorActsAsync(long documentItemId)
+        {
+            try
+            {
+                // Если не передан Id документа предмета сделки.
+                if (documentItemId <= 0)
+                {
+                    throw new EmptyDocumentItemIdException();
+                }
+
+                var result = await _postgreDbContext.Documents
+                    .Where(d => d.DocumentItemId == documentItemId
+                                && new[]
+                                {
+                                    "DocumentVendorAct1", "DocumentVendorAct2", "DocumentVendorAct3",
+                                    "DocumentVendorAct4", "DocumentVendorAct5", "DocumentVendorAct6",
+                                    "DocumentVendorAct7", "DocumentVendorAct8", "DocumentVendorAct9",
+                                    "DocumentVendorAct10"
+                                }.Contains(d.DocumentType)
+                                && d.IsDealDocument == true
+                                && d.IsSend == true
+                                && d.IsApproveDocument == true
+                                && d.IsPay == false
+                                && d.IsRejectDocument == false)
+                    .Select(d => new DocumentOutput
+                    {
+                        DocumentName = d.DocumentName,
+                        DocumentType = d.DocumentType
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод подтвердит акт покупателя.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <param name="documentType">Тип документа, который нужно подтвердить.</param>
+        /// <returns>Флаг подтверждения.</returns>
+        public async Task<bool> ApproveActCustomerAsync(long documentItemId, string documentType)
+        {
+            try
+            {
+                // Если не передан Id документа предмета сделки.
+                if (documentItemId <= 0)
+                {
+                    throw new EmptyDocumentItemIdException();
+                }
+
+                if (!new[] { "DocumentCustomerAct1", "DocumentCustomerAct2", "DocumentCustomerAct3", "DocumentCustomerAct4", "DocumentCustomerAct5", "DocumentCustomerAct6", "DocumentCustomerAct7", "DocumentCustomerAct8", "DocumentCustomerAct9", "DocumentCustomerAct10" }.Contains(documentType))
+                {
+                    throw new ErrorApproveDocumentTypeException("Тип документа отличается от акта покупателя");
+                }
+
+                var result = await _postgreDbContext.Documents
+                    .Where(d => d.DocumentItemId == documentItemId
+                                && d.IsSend == true
+                                && d.DocumentType.Equals(documentType)
+                                && d.IsApproveDocument == false
+                                && d.IsPay == false
+                                && d.IsRejectDocument == false
+                                && d.IsDealDocument == true)
+                    .FirstOrDefaultAsync();
+
+                // Если акт найден, то подтвердит его.
+                if (result != null)
+                {
+                    result.IsApproveDocument = true;
+                    await _postgreDbContext.SaveChangesAsync();
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список подтвержденных актов покупателя.
+        /// </summary>
+        /// <param name="documentItemId">Id сделки.</param>
+        /// <returns>Список актов.</returns>
+        public async Task<IEnumerable<DocumentOutput>> GetApproveCustomerActsAsync(long documentItemId)
+        {
+            try
+            {
+                // Если не передан Id документа предмета сделки.
+                if (documentItemId <= 0)
+                {
+                    throw new EmptyDocumentItemIdException();
+                }
+
+                var result = await _postgreDbContext.Documents
+                    .Where(d => d.DocumentItemId == documentItemId
+                                && new[]
+                                {
+                                    "DocumentCustomerAct1", "DocumentCustomerAct2", "DocumentCustomerAct3", "DocumentCustomerAct4", "DocumentCustomerAct5", "DocumentCustomerAct6", "DocumentCustomerAct7", "DocumentCustomerAct8", "DocumentCustomerAct9", "DocumentCustomerAct10"
+                                }.Contains(d.DocumentType)
+                                && d.IsDealDocument == true
+                                && d.IsSend == true
+                                && d.IsApproveDocument == true
+                                && d.IsPay == false
+                                && d.IsRejectDocument == false)
+                    .Select(d => new DocumentOutput
+                    {
+                        DocumentName = d.DocumentName,
+                        DocumentType = d.DocumentType
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
     }
 }

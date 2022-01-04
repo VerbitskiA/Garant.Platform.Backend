@@ -249,5 +249,50 @@ namespace Garant.Platform.Controllers.Document
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит список подтвержденных актов продавца.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Список актов.</returns>
+        [HttpPost]
+        [Route("get-approve-vendor-acts")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<DocumentOutput>))]
+        public async Task<IActionResult> GetApproveVendorActsAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentRepository.GetApproveVendorActsAsync(documentInput.DocumentItemId);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список подтвержденных актов покупателя продавцом.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Список актов.</returns>
+        [HttpPost]
+        [Route("get-approve-customer-acts")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<string>))]
+        public async Task<IActionResult> GetApproveCustomerActsAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentRepository.GetApproveCustomerActsAsync(documentInput.DocumentItemId);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод подтвердит акт покупателя.
+        /// </summary>
+        /// <param name="documentInput">Входная модель.</param>
+        /// <returns>Флаг подтверждения.</returns>
+        [HttpPost]
+        [Route("approve-act-customer")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> ApproveActCustomerAsync([FromBody] DocumentInput documentInput)
+        {
+            var result = await _documentRepository.ApproveActCustomerAsync(documentInput.DocumentItemId, documentInput.DocumentType);
+
+            return Ok(result);
+        }
     }
 }

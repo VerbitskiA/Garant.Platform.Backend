@@ -1307,7 +1307,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                 BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
                 ContractTitle = "Основной договор",
                 ContractDetail = "После утверждения акта вы сможете оплатить следующий",
-                ButtonActionTextContract = "Отправить акт на согласование покупателю",
+                ButtonActionTextContract = "Утвердить договор покупателя",
                 ButtonRejectDocumentText = "Отклонить договор",
                 ContractText = string.Empty,
                 BlockCustomerComment = "Прикрепите скан согласованного договора",
