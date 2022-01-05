@@ -1166,14 +1166,13 @@ namespace Garant.Platform.Commerce.Service.Garant
                 BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
                 ContractTitle = "Скан акта приема-передачи",
                 ContractDetail = "После оплаты акта вы сможете утвердить его посредством подписанного акта приема-передачи",
-                ButtonActionTextContract = "Оплатить этап - ",
+                ButtonActionTextContract = "Оплатить этап - " + string.Format("{0:0,0}", totalInvest),
                 ButtonRejectDocumentText = string.Empty,
                 ContractText = @"Прикрепите согласованный файл в формате .pdf и ожидайте подтверждения от продавца",
                 BlockCustomerComment = "После утверждения акта вы сможете оплатить следующий",
                 ButtonApproveDocumentText = string.Empty,
                 IsOwner = false,
-                DateStartDeal = dateCreateDeal.ToString("dd.MM.yyyy"),
-                FormatAmount = string.Format("{0:0,0}", totalInvest)
+                DateStartDeal = dateCreateDeal.ToString("dd.MM.yyyy")
             };
 
             if (isChat && !string.IsNullOrEmpty(userId))
@@ -1385,8 +1384,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                 ButtonApproveDocumentText = "Отправить подписанный договор продавцу в ответ",
                 IsOwner = false,
                 IsLast = true,
-                DateStartDeal = dateCreateDeal.ToString("dd.MM.yyyy"),
-                FormatAmount = string.Format("{0:0,0}", totalInvest)
+                DateStartDeal = dateCreateDeal.ToString("dd.MM.yyyy")
             };
 
             if (isChat && !string.IsNullOrEmpty(userId))

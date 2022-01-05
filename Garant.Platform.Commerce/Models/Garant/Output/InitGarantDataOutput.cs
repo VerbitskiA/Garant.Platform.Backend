@@ -229,10 +229,5 @@ namespace Garant.Platform.Commerce.Models.Garant.Output
         /// Дата начала сделки.
         /// </summary>
         public string DateStartDeal { get; set; }
-
-        /// <summary>
-        /// Сумма с форматированием для фронта.
-        /// </summary>
-        public string FormatAmount { get; set; }
     }
 }
