@@ -35,7 +35,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
         {
             try
             {
-                const int id = 1000000;
+                var id = 1000000;
                 var lastId = await _postgreDbContext.Orders.MaxAsync(o => o.OrderId);
 
                 if (lastId <= 0)
@@ -64,17 +64,10 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
 
                 await _postgreDbContext.SaveChangesAsync();
 
-                var lastOrderId = _postgreDbContext.Orders
+                var result = await _postgreDbContext.Orders
                     .OrderByDescending(o => o.OrderId)
-                    .Select(o => o.OrderId)
-                    .AsQueryable();
-
-                var lastOrder = await lastOrderId.FirstOrDefaultAsync();
-
-                var result = new OrderOutput
-                {
-                    OrderId = lastOrder
-                };
+                    .Select(o => new OrderOutput { OrderId = o.OrderId })
+                    .FirstOrDefaultAsync();
 
                 return result;
             }

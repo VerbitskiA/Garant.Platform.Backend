@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Garant.Platform.Base.Abstraction;
+using Garant.Platform.Base.Exceptions;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
@@ -285,6 +286,32 @@ namespace Garant.Platform.Base.Service
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод преобразует рубли в копейки.
+        /// </summary>
+        /// <param name="amount">Сумма в руб.</param>
+        /// <returns>Сумма в копейках.</returns>
+        public async Task<double> ConvertRubToPennyAsync(double amount)
+        {
+            try
+            {
+                if (amount <= 0)
+                {
+                    throw new EmptySumException("Сумма была меньше или равна 0.");
+                }
+
+                return await Task.FromResult(amount * 100);
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }

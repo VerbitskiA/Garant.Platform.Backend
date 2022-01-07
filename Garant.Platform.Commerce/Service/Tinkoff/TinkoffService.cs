@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Text.Json;
+using System.Text;
 using System.Threading.Tasks;
+using Garant.Platform.Base.Abstraction;
+using Garant.Platform.Commerce.Abstraction;
 using Garant.Platform.Commerce.Abstraction.Tinkoff;
 using Garant.Platform.Commerce.Models.Tinkoff.Input;
 using Garant.Platform.Commerce.Models.Tinkoff.Output;
@@ -10,6 +14,8 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace Garant.Platform.Commerce.Service.Tinkoff
 {
@@ -21,62 +27,111 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IConfiguration _configuration;
         private readonly ITinkoffRepository _tinkoffRepository;
+        private readonly IServiceProvider _serviceProvider;
 
-        public TinkoffService(PostgreDbContext postgreDbContext, ITinkoffRepository tinkoffRepository)
+        public TinkoffService(PostgreDbContext postgreDbContext, ITinkoffRepository tinkoffRepository, IServiceProvider serviceProvider)
         {
             _postgreDbContext = postgreDbContext;
             _configuration = AutoFac.Resolve<IConfiguration>();
             _tinkoffRepository = tinkoffRepository;
+            _serviceProvider = serviceProvider;
         }
 
         /// <summary>
-        /// Метод холдирует платеж на определенный срок, пока не получит подтверждения оплаты.
+        /// Метод снимет средства с карты покупателя за этап после вычитания комиссии.
         /// </summary>
         /// <param name="orderId">Id заказа в Гаранте.</param>
         /// <param name="amount">Сумма к оплате.</param>
-        /// <param name="endDate">Дата действия холдирования.</param>
-        /// <param name="description">Объект с описанием.</param>
-        /// <param name="redirectUrl">Ссылка редиректа после успешного холдирования.</param>
-        /// <returns>Данные холдирования платежа.</returns>
-        public async Task<HoldPaymentOutput> HoldPaymentAsync(long orderId, double amount, DateTime endDate, Description description, string redirectUrl)
+        /// <param name="iterationName">Название итерации этапа.</param>
+        /// <returns>Данные платежа с ссылкой на платежную форму.</returns>
+        public async Task<PaymentInitOutput> PaymentInitAsync(long orderId, double amount, string iterationName)
         {
             try
             {
-                var request = WebRequest.Create("https://business.tinkoff.ru/openapi/sandbox/api/v1/e-invoice");
-                request.Method = "POST";
-                request.ContentType = "application/json";
-                request.Headers.Add("Authorization", _configuration["TinkoffSandbox:Authorization"]);
+                // Преобразует сумму из рублей в копейки.
+                var commonService = AutoFac.Resolve<ICommonService>();
+                var pennySum = await commonService.ConvertRubToPennyAsync(amount);
 
-                // Получит ссылку на оплату.
-                var link = await _tinkoffRepository.GetReturnForPaymentUrlAsync();
+                // Найдет userId пользователя, который создал заказ.
+                var garantRepository = AutoFac.Resolve<IGarantActionRepository>();
+                var gRepository = garantRepository ?? _serviceProvider.GetService<IGarantActionRepository>();
 
-                var sendData = new HoldPaymentInput
+                if (gRepository == null)
                 {
-                    Amount = amount,
-                    Description = new Description
+                    return new PaymentInitOutput { Success = false };
+                }
+
+                var userIdCreatedOrder = await gRepository.GetUserIdCreatedOrderAsync(orderId);
+
+                // Получит Email и номер телефона пользователя, который создал заказ.
+                var findUserDataCreatedOrder = await gRepository.FindUserEmailPhoneCreatedOrderAsync(userIdCreatedOrder);
+
+                var sendInitData = new PaymentInitInput
+                {
+                    TerminalKey = _configuration["TinkoffSandbox:ShopSettings:Id"],
+                    Amount = pennySum.ToString(CultureInfo.InvariantCulture),
+                    Data = new Data
                     {
-                        Short = description.Short,
-                        Full = description.Full
+                        Email = findUserDataCreatedOrder.Email,
+                        Phone = findUserDataCreatedOrder.Phone
                     },
-                    EndDate = endDate.ToString("o"),
+                    Description = $"Оплата этапа {iterationName} на {amount} руб.",
                     OrderId = orderId.ToString(),
-                    RedirectUrl = link,
-                    Shop = new Shop
+                    PayType = "O",
+                    Receipt = new Receipt
                     {
-                        Id = _configuration["TinkoffSandbox:ShopSettings:Id"],
-                        Name = _configuration["TinkoffSandbox:ShopSettings:Name"]
+                        Email = findUserDataCreatedOrder.Email,
+                        Taxation = "osn",
+                        Phone = findUserDataCreatedOrder.Phone,
+                        Items = new List<Item>
+                        {
+                            new Item
+                            {
+                                Name = iterationName,
+                                Quantity = 1,
+                                Price = pennySum,
+                                Amount = pennySum * 1
+                            }
+                        }
                     }
                 };
 
-                await using var streamWriter = new StreamWriter(await request.GetRequestStreamAsync());
-                string json = JsonSerializer.Serialize(sendData);
-                await streamWriter.WriteAsync(json);
+                // Спишет средства с карты покупателя.
+                var initRequest = WebRequest.Create("https://securepay.tinkoff.ru/v2/Init");
+                initRequest.Method = "POST";
+                initRequest.ContentType = "application/json";
+                initRequest.Headers.Add("Authorization", _configuration["TinkoffSandbox:Authorization"]);
 
-                var httpResponse = await request.GetResponseAsync();
-                using var streamReader = new StreamReader(httpResponse.GetResponseStream());
-                var result = await streamReader.ReadToEndAsync();
+                var jsonInitData = JsonConvert.SerializeObject(sendInitData);
+                var byteInitData = Encoding.UTF8.GetBytes(jsonInitData);
 
-                return null;
+                // Запишет данные в поток запроса.
+                await using var dataInitStream = await initRequest.GetRequestStreamAsync();
+                await dataInitStream.WriteAsync(byteInitData, 0, byteInitData.Length);
+                HttpWebResponse responseInitData = (HttpWebResponse)await initRequest.GetResponseAsync();
+
+                if (responseInitData.StatusCode != HttpStatusCode.OK)
+                {
+                    return new PaymentInitOutput { Success = false };
+                }
+
+                await using var streamInit = responseInitData.GetResponseStream();
+
+                // Получит результат.
+                using var readerInit = new StreamReader(streamInit);
+                var initJsonResult = await readerInit.ReadToEndAsync();
+
+                var result = JsonConvert.DeserializeObject<PaymentInitOutput>(initJsonResult);
+
+                if (result == null)
+                {
+                    return new PaymentInitOutput { Success = false };
+                }
+
+                // Обновит систеный Id заказа.
+                await _tinkoffRepository.SetSystemOrderIdAsync(orderId, Convert.ToInt64(result.PaymentId));
+
+                return result;
             }
 
             catch (Exception e)

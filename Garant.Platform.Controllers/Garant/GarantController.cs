@@ -4,6 +4,7 @@ using Garant.Platform.Commerce.Abstraction.Garant.Customer;
 using Garant.Platform.Commerce.Abstraction.Garant.Vendor;
 using Garant.Platform.Commerce.Models.Garant.Input;
 using Garant.Platform.Commerce.Models.Garant.Output;
+using Garant.Platform.Commerce.Models.Tinkoff.Output;
 using Garant.Platform.Models.Commerce.Input;
 using Garant.Platform.Models.Commerce.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -47,15 +48,15 @@ namespace Garant.Platform.Controllers.Garant
         }
 
         /// <summary>
-        /// Метод холдирует платеж.
+        /// Метод проведет платеж за этап итерации.
         /// </summary>
         /// <param name="holdPaymentInput">Входная модель.</param>
-        /// <returns>Данные платежа.</returns>
         [HttpPost]
-        [Route("hold-payment")]
-        public async Task<IActionResult> HoldPaymentAsync([FromBody] HoldPaymentInput holdPaymentInput)
+        [Route("payment-iteration-customer")]
+        [ProducesResponseType(200, Type = typeof(PaymentInitOutput))]
+        public async Task<IActionResult> PaymentIterationCustomerAsync([FromBody] HoldPaymentInput holdPaymentInput)
         {
-            var result = await _customerService.HoldPaymentAsync(holdPaymentInput.OriginalId, holdPaymentInput.Amount, GetUserName(), holdPaymentInput.OrderType);
+            var result = await _customerService.PaymentIterationCustomerAsync(holdPaymentInput.OriginalId, GetUserName(), holdPaymentInput.OrderType, holdPaymentInput.Iteration);
 
             return Ok(result);
         }

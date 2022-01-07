@@ -118,5 +118,11 @@ namespace Garant.Platform.Models.Entities.Commerce
         public string UserId { get; set; }
 
         public UserEntity User { get; set; }
+
+        /// <summary>
+        /// Id заказа в системе Tinkoff.
+        /// </summary>
+        [Column("TinkoffSystemOrderId", TypeName = "bigint")]
+        public long TinkoffSystemOrderId { get; set; }
     }
 }

@@ -1166,7 +1166,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                 BlockDocumentsTemplatesDetail = "Типовые документы составленные юристами GoBizy",
                 ContractTitle = "Скан акта приема-передачи",
                 ContractDetail = "После оплаты акта вы сможете утвердить его посредством подписанного акта приема-передачи",
-                ButtonActionTextContract = "Оплатить этап - " + string.Format("{0:0,0}", totalInvest),
+                ButtonActionTextContract = "Оплатить этап - ",
                 ButtonRejectDocumentText = string.Empty,
                 ContractText = @"Прикрепите согласованный файл в формате .pdf и ожидайте подтверждения от продавца",
                 BlockCustomerComment = "После утверждения акта вы сможете оплатить следующий",

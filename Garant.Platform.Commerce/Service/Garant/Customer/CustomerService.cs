@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Commerce.Abstraction.Garant.Customer;
 using Garant.Platform.Commerce.Abstraction.Tinkoff;
@@ -7,6 +10,10 @@ using Garant.Platform.Commerce.Models.Tinkoff.Input;
 using Garant.Platform.Commerce.Models.Tinkoff.Output;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
+using Garant.Platform.Models.Franchise.Other;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace Garant.Platform.Commerce.Service.Garant.Customer
 {
@@ -19,49 +26,121 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
         private readonly IUserRepository _userRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly ITinkoffService _tinkoffService;
+        private readonly IServiceProvider _serviceProvider;
 
-        public CustomerService(PostgreDbContext postgreDbContex, IUserRepository userRepository, ICustomerRepository customerRepository, ITinkoffService tinkoffService)
+        public CustomerService(PostgreDbContext postgreDbContex, IUserRepository userRepository, ICustomerRepository customerRepository, ITinkoffService tinkoffService, IServiceProvider serviceProvider)
         {
             _postgreDbContext = postgreDbContex;
             _userRepository = userRepository;
             _customerRepository = customerRepository;
             _tinkoffService = tinkoffService;
+            _serviceProvider = serviceProvider;
         }
 
         /// <summary>
         /// Метод холдирует платеж на определенный срок, пока не получит подтверждения оплаты.
         /// </summary>
         /// <param name="originalId">Id франшизы или бизнеса.</param>
-        /// <param name="amount">Сумма к оплате.</param>
         /// <param name="account">Аккаунт пользователя.</param>
         /// <param name="orderType">Тип заказа.</param>
-        /// <returns>Данные холдирования платежа.</returns>
-        public async Task<HoldPaymentOutput> HoldPaymentAsync(long originalId, double amount, string account, string orderType)
+        /// <param name="iteration">Номер итерации этапа.</param>
+        /// <returns>Данные платежа.</returns>
+        public async Task<PaymentInitOutput> PaymentIterationCustomerAsync(long originalId, string account, string orderType, int iteration)
         {
             try
             {
                 var userId = await _userRepository.FindUserIdUniverseAsync(account);
-                var result = new HoldPaymentOutput();
+                double amount = 0;
+                var i = 0;
+                var iterationName = string.Empty;
+
+                if (iteration == 1)
+                {
+                    i = 0;
+                }
 
                 // От текущей даты прибавит 14 дней как срок холдирования платежа.
                 var endDate = DateTime.Now.AddDays(14);
 
+                // Найдет франшизу или бизнес.
+                if (orderType.Equals("Franchise"))
+                {
+                    var franchiseService = AutoFac.Resolve<IFranchiseService>();
+                    var fService = franchiseService ?? _serviceProvider.GetService<IFranchiseService>();
+
+                    if (fService == null)
+                    {
+                        return new PaymentInitOutput { Success = false };
+                    }
+
+                    var franchise = await fService.GetFranchiseAsync(originalId);
+
+                    if (franchise != null)
+                    {
+                        // Найдет этапы итерации (что входит в инвестиции) франшизы.
+                        var franchiseData = JsonConvert.DeserializeObject<List<ParseInvestInclude>>(franchise.InvestInclude)[i];
+
+                        // Выберет цену итерации для оплаты.
+                        amount = Convert.ToInt64(franchiseData.Price);
+
+                        // Выберет название предмета итерации.
+                        iterationName = franchiseData.Name;
+                    }
+                }
+
+                if (orderType.Equals("Business"))
+                {
+                    var businessService = AutoFac.Resolve<IBusinessService>();
+                    var bService = businessService ?? _serviceProvider.GetService<IBusinessService>();
+
+                    if (bService == null)
+                    {
+                        return new PaymentInitOutput { Success = false };
+                    }
+
+                    var business = await bService.GetBusinessAsync(originalId);
+
+                    if (business != null)
+                    {
+                        // Найдет этапы итерации (что входит в инвестиции) бизнеса.
+                        var businessData = JsonConvert.DeserializeObject<List<ParseInvestInclude>>(business.InvestPrice)[i];
+
+                        // Выберет цену итерации для оплаты.
+                        amount = Convert.ToInt64(businessData.Price);
+
+                        // Выберет название предмета итерации.
+                        iterationName = businessData.Name;
+                    }
+                }
+
+                if (amount <= 0)
+                {
+                    return new PaymentInitOutput { Success = false };
+                }
+
+                if (string.IsNullOrEmpty(iterationName))
+                {
+                    return new PaymentInitOutput { Success = false };
+                }
+
                 // Объект с описанием платежа.
                 var description = new Description
                 {
-                    Short = "Тестовый платеж",
-                    Full = "Полное описание тестового платежа"
+                    Short = iterationName,
+                    Full = iterationName
                 };
 
                 var newOrder = await _customerRepository.CreateOrderAsync(originalId, amount, endDate, description, string.Empty, orderType, userId);
 
-                // Если заказ создан успешно.
-                if (newOrder != null)
+                if (newOrder == null)
                 {
-                    result = await _tinkoffService.HoldPaymentAsync(newOrder.OrderId, amount, endDate, description, string.Empty) ?? new HoldPaymentOutput();
+                    return new PaymentInitOutput { Success = false };
                 }
 
-                return result;
+                // Если заказ в сервисе Гарант создан успешно, то создаст платеж в системе банка и вернет ссылку на платежную форму.
+                var result = await _tinkoffService.PaymentInitAsync(newOrder.OrderId, amount, iterationName);
+
+                return result.Success ? result : new PaymentInitOutput { Success = false };
             }
 
             catch (Exception e)

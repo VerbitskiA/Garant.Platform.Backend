@@ -37,5 +37,12 @@ namespace Garant.Platform.Base.Abstraction
         /// <param name="arr">Исходный массив строк.</param>
         /// <returns>Строка со значениями массива.</returns>
         Task<string> JoinArrayWithDelimeterAsync(string[] arr);
+
+        /// <summary>
+        /// Метод преобразует рубли в копейки.
+        /// </summary>
+        /// <param name="amount">Сумма в руб.</param>
+        /// <returns>Сумма в копейках.</returns>
+        Task<double> ConvertRubToPennyAsync(double amount);
     }
 }
