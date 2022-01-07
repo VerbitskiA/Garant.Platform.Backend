@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,6 +13,7 @@ using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Mailing.Output;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Garant.Platform.Base.Service
 {
@@ -305,6 +307,44 @@ namespace Garant.Platform.Base.Service
                 }
 
                 return await Task.FromResult(amount * 100);
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод хэширует строку по SHA-256.
+        /// </summary>
+        /// <param name="str">Исходная строка с параметрами, которые конкантенированы.</param>
+        /// <returns>Измененная строку по SHA-256.</returns>
+        public async Task<string> HashSha256Async(Dictionary<string, object> hashValues)
+        {
+            try
+            {
+                var sortedDict = new SortedDictionary<string, object>(hashValues);
+                var sb = new StringBuilder();
+
+                foreach (var item in sortedDict)
+                {
+                    sb.Append(item.Value);
+                }
+
+                using var sha256Hash = SHA256.Create();
+                var bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()));
+                var builder = new StringBuilder();
+
+                foreach (var t in bytes)
+                {
+                    builder.Append(t.ToString("x2"));
+                }
+
+                return builder.ToString();
             }
 
             catch (Exception e)

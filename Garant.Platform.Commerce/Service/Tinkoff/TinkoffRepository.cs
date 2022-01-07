@@ -60,7 +60,12 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
             {
                 if (systemOrderId <= 0)
                 {
-                    throw new EmptySystemOrderIdException("Передан некорректный Id платежа в системе банка.");
+                    throw new EmptyOrderIdException("Передан некорректный Id платежа в системе банка.");
+                }
+
+                if (orderId <= 0)
+                {
+                    throw new EmptyOrderIdException("Передан некорректный Id заказа.");
                 }
 
                 var order = await _garantActionRepository.GetOrderByIdAsync(orderId);
@@ -71,6 +76,41 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 }
 
                 order.TinkoffSystemOrderId = systemOrderId;
+                _postgreDbContext.Orders.Update(order);
+                await _postgreDbContext.SaveChangesAsync();
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод запишет статус платежа.
+        /// </summary>
+        /// <param name="orderId">Id заказа.</param>
+        /// <param name="status"> Статус заказа.</param>
+        public async Task SetOrderStatusByIdAsync(long orderId, string status)
+        {
+            try
+            {
+                if (orderId <= 0)
+                {
+                    throw new EmptyOrderIdException("Передан некорректный Id заказа.");
+                }
+
+                var order = await _garantActionRepository.GetOrderByIdAsync(orderId);
+
+                if (order == null)
+                {
+                    throw new ErrorUpdateSystemOrderIdException(orderId, "Ошибка при обновлении systemOrderId по параметру");
+                }
+
+                order.OrderStatus = status;
                 _postgreDbContext.Orders.Update(order);
                 await _postgreDbContext.SaveChangesAsync();
             }

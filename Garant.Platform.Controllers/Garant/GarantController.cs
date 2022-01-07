@@ -1,15 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Garant.Platform.Commerce.Abstraction.Garant;
 using Garant.Platform.Commerce.Abstraction.Garant.Customer;
 using Garant.Platform.Commerce.Abstraction.Garant.Vendor;
+using Garant.Platform.Commerce.Abstraction.Tinkoff;
 using Garant.Platform.Commerce.Models.Garant.Input;
 using Garant.Platform.Commerce.Models.Garant.Output;
+using Garant.Platform.Commerce.Models.Tinkoff.Input;
 using Garant.Platform.Commerce.Models.Tinkoff.Output;
 using Garant.Platform.Models.Commerce.Input;
 using Garant.Platform.Models.Commerce.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using HoldPaymentInput = Garant.Platform.Commerce.Models.Garant.Input.HoldPaymentInput;
 
 namespace Garant.Platform.Controllers.Garant
 {
@@ -24,12 +28,14 @@ namespace Garant.Platform.Controllers.Garant
         private readonly IGarantActionService _garantActionService;
         private readonly ICustomerService _customerService;
         private readonly IVendorService _vendorService;
+        private readonly ITinkoffService _tinkoffService;
 
-        public GarantController(IGarantActionService _garantActionervice, ICustomerService customerService, IVendorService vendorService)
+        public GarantController(IGarantActionService _garantActionervice, ICustomerService customerService, IVendorService vendorService, ITinkoffService tinkoffService)
         {
             _garantActionService = _garantActionervice;
             _customerService = customerService;
             _vendorService = vendorService;
+            _tinkoffService = tinkoffService;
         }
 
         /// <summary>
@@ -74,6 +80,15 @@ namespace Garant.Platform.Controllers.Garant
             var result = await _vendorService.AcceptActualDealAsync(dealInput.DealItemId, dealInput.OrderType, GetUserName());
 
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("get-state-payment")]
+        public async Task<IActionResult> GetStatePaymentAsync([FromBody] StatePaymentInput statePaymentInput)
+        {
+            await _tinkoffService.GetStatePaymentAsync(statePaymentInput.PaymentId, statePaymentInput.OrderId);
+
+            return Ok();
         }
     }
 }

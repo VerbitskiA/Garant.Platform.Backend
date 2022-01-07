@@ -138,7 +138,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
                 }
 
                 // Если заказ в сервисе Гарант создан успешно, то создаст платеж в системе банка и вернет ссылку на платежную форму.
-                var result = await _tinkoffService.PaymentInitAsync(newOrder.OrderId, amount, iterationName);
+                var result = await _tinkoffService.PaymentInitAsync(newOrder.OrderId, amount, iterationName, originalId);
 
                 return result.Success ? result : new PaymentInitOutput { Success = false };
             }

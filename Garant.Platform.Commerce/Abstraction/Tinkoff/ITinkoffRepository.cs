@@ -19,5 +19,12 @@ namespace Garant.Platform.Commerce.Abstraction.Tinkoff
         /// <param name="orderId">Id заказа в сервисе Гарант.</param>
         /// <param name="systemOrderId">Id платежа в системе банка.</param>
         Task SetSystemOrderIdAsync(long orderId, long systemOrderId);
+
+        /// <summary>
+        /// Метод запишет статус платежа.
+        /// </summary>
+        /// <param name="orderId">Id заказа.</param>
+        /// <param name="status"> Статус заказа.</param>
+        Task SetOrderStatusByIdAsync(long orderId, string status);
     }
 }
