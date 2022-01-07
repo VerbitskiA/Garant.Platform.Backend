@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Garant.Platform.Commerce.Models.Tinkoff.Input;
+﻿using System.Threading.Tasks;
 using Garant.Platform.Commerce.Models.Tinkoff.Output;
 
 namespace Garant.Platform.Commerce.Abstraction.Tinkoff
@@ -20,12 +18,11 @@ namespace Garant.Platform.Commerce.Abstraction.Tinkoff
         Task<PaymentInitOutput> PaymentInitAsync(long orderId, double amount, string iterationName, long dealItemId);
 
         /// <summary>
-        /// Метод получит статус платежей итерации этапа в система банка.
+        /// Метод проверит статус платежа.
         /// </summary>
-        /// <param name="statuses">Массив с данными для проверки статусов платежей в системе банка.</param>
-        /// <returns></returns>
-        Task GetStateAllPaymentAsync(IReadOnlyList<StatePaymentInput> statuses);
-
-        Task GetStatePaymentAsync(string paymentId, long orderId);
+        /// <param name="paymentId">Id платежа в системе банка.</param>
+        /// <param name="orderId">Id заказа в сервисе Гарант.</param>
+        /// <returns>Данные платежа.</returns>
+        Task<GetPaymentStatusOutput> GetStatePaymentAsync(string paymentId, long orderId);
     }
 }

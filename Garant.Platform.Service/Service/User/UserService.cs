@@ -573,6 +573,32 @@ namespace Garant.Platform.Services.Service.User
         }
 
         /// <summary>
+        /// Метод получит переход пользователя по параметрам.
+        /// </summary>
+        /// <param name="referenceId">Id заказа или предмета сделки.</param>
+        /// <param name="account">Логин или почта пользователя.</param>
+        /// <returns>Данные перехода.</returns>
+        public async Task<TransitionOutput> GetTransitionWithParamsAsync(long referenceId, string account)
+        {
+            try
+            {
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+
+                var result = await _userRepository.GetTransitionWithParamsAsync(referenceId, "PaymentAct", userId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Метод получит фио авторизованного пользователя.
         /// </summary>
         /// <param name="account">Аккаунт.</param>

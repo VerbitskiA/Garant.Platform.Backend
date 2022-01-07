@@ -27,14 +27,12 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IConfiguration _configuration;
         private readonly ITinkoffRepository _tinkoffRepository;
-        private readonly IGarantActionRepository _garantActionRepository;
 
-        public TinkoffService(PostgreDbContext postgreDbContext, ITinkoffRepository tinkoffRepository, IGarantActionRepository garantActionRepository)
+        public TinkoffService(PostgreDbContext postgreDbContext, ITinkoffRepository tinkoffRepository)
         {
             _postgreDbContext = postgreDbContext;
             _configuration = AutoFac.Resolve<IConfiguration>();
             _tinkoffRepository = tinkoffRepository;
-            _garantActionRepository = garantActionRepository;
         }
 
         /// <summary>
@@ -141,66 +139,12 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
         }
 
         /// <summary>
-        /// Метод получит статус платежей итерации этапа в система банка.
+        /// Метод проверит статус платежа.
         /// </summary>
-        /// <param name="statuses">Массив с данными для проверки статусов платежей в системе банка.</param>
-        /// <returns></returns>
-        public async Task GetStateAllPaymentAsync(IReadOnlyList<StatePaymentInput> statuses)
-        {
-            try
-            {
-                foreach (var item in statuses)
-                {
-                    if (string.IsNullOrEmpty(item.PaymentId) && Convert.ToInt64(item.PaymentId) <= 0)
-                    {
-                        throw new EmptyOrderIdException("Не передан Id платежа в системе банка.");
-                    }
-
-                    var sendData = new GetStatePaymentInput
-                    {
-                        PaymentId = item.PaymentId,
-                        TerminalKey = _configuration["TinkoffSandbox:ShopSettings:Id"],
-                        Token = _configuration["TinkoffSandbox:Authorization"]
-                    };
-
-                    // Проверит статус платежа в системе банка.
-                    var request = WebRequest.Create("https://securepay.tinkoff.ru/v2/GetState");
-                    request.Method = "POST";
-                    request.ContentType = "application/json";
-                    request.Headers.Add("Authorization", _configuration["TinkoffSandbox:Authorization"]);
-
-                    var json = JsonConvert.SerializeObject(sendData);
-                    var byteData = Encoding.UTF8.GetBytes(json);
-
-                    // Запишет данные в поток запроса.
-                    await using var stream = await request.GetRequestStreamAsync();
-                    await stream.WriteAsync(byteData, 0, byteData.Length);
-                    HttpWebResponse responseInitData = (HttpWebResponse)await request.GetResponseAsync();
-
-                    //if (responseInitData.StatusCode != HttpStatusCode.OK)
-                    //{
-                    //    return new PaymentInitOutput { Success = false };
-                    //}
-
-                    await using var streamResult = responseInitData.GetResponseStream();
-
-                    // Получит результат.
-                    using var reader = new StreamReader(streamResult);
-                    var jsonResult = await reader.ReadToEndAsync();
-                    Console.WriteLine();
-                }
-            }
-
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
-                throw;
-            }
-        }
-
-        public async Task GetStatePaymentAsync(string paymentId, long orderId)
+        /// <param name="paymentId">Id платежа в системе банка.</param>
+        /// <param name="orderId">Id заказа в сервисе Гарант.</param>
+        /// <returns>Данные платежа.</returns>
+        public async Task<GetPaymentStatusOutput> GetStatePaymentAsync(string paymentId, long orderId)
         {
             try
             {
@@ -256,7 +200,7 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
 
                 if (responseInitData.StatusCode != HttpStatusCode.OK)
                 {
-                    return;
+                    return new GetPaymentStatusOutput();
                 }
 
                 await using var streamResult = responseInitData.GetResponseStream();
@@ -266,14 +210,16 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 var jsonResult = await reader.ReadToEndAsync();
 
                 // Запишет новый статус заказа.
-                var checkStatus = JsonConvert.DeserializeObject<GetPaymentStatusOutput>(jsonResult);
+                var result = JsonConvert.DeserializeObject<GetPaymentStatusOutput>(jsonResult);
 
                 // Если статусы заказа разные.
-                if (!currentOrderStatus.OrderStatus.Equals(checkStatus.Status))
+                if (!currentOrderStatus.OrderStatus.Equals(result.Status))
                 {
                     // Запишет новый статус заказа.
-                    await _tinkoffRepository.SetOrderStatusByIdAsync(orderId, checkStatus.Status);
+                    await _tinkoffRepository.SetOrderStatusByIdAsync(orderId, result.Status);
                 }
+
+                return result;
             }
 
             catch (Exception e)

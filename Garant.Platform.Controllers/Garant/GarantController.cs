@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Garant.Platform.Commerce.Abstraction.Garant;
 using Garant.Platform.Commerce.Abstraction.Garant.Customer;
 using Garant.Platform.Commerce.Abstraction.Garant.Vendor;
@@ -82,13 +81,19 @@ namespace Garant.Platform.Controllers.Garant
             return Ok(result);
         }
 
+        /// <summary>
+        /// Метод проверит статус платежа.
+        /// </summary>
+        /// <param name="statePaymentInput">Входная модель.</param>
+        /// <returns>Данные платежа.</returns>
         [HttpPost]
         [Route("get-state-payment")]
+        [ProducesResponseType(200, Type = typeof(GetPaymentStatusOutput))]
         public async Task<IActionResult> GetStatePaymentAsync([FromBody] StatePaymentInput statePaymentInput)
         {
-            await _tinkoffService.GetStatePaymentAsync(statePaymentInput.PaymentId, statePaymentInput.OrderId);
+            var result = await _tinkoffService.GetStatePaymentAsync(statePaymentInput.PaymentId, statePaymentInput.OrderId);
 
-            return Ok();
+            return Ok(result);
         }
     }
 }

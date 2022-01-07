@@ -632,8 +632,7 @@ namespace Garant.Platform.Services.Service.User
                 var maxTransitionId = await _postgreDbContext.Transitions.MaxAsync(t => t.TransitionId);
 
                 var result = await _postgreDbContext.Transitions
-                    .Where(t => t.UserId.Equals(userId))
-                    .Where(t => t.TransitionId == maxTransitionId)
+                    .Where(t => t.UserId.Equals(userId) && t.TransitionId == maxTransitionId)
                     .Select(t => new TransitionOutput
                     {
                         ReferenceId = t.ReferenceId,
@@ -641,6 +640,41 @@ namespace Garant.Platform.Services.Service.User
                         UserId = t.UserId,
                         OtherId = t.OtherId,
                         TypeItem = t.TypeItem
+                    })
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит переход пользователя по параметрам.
+        /// </summary>
+        /// <param name="referenceId">Id заказа или предмета сделки.</param>
+        /// <param name="otherId">Id заказа в системе банка.</param>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные перехода.</returns>
+        public async Task<TransitionOutput> GetTransitionWithParamsAsync(long referenceId, string transitionType, string userId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Transitions
+                    .Where(t => t.ReferenceId == referenceId
+                                && t.TransitionType.Equals(transitionType)
+                                && t.UserId.Equals(userId))
+                    .Select(t => new TransitionOutput
+                    {
+                        TransitionType = t.TransitionType,
+                        ReferenceId = t.ReferenceId,
+                        OtherId = t.OtherId
                     })
                     .FirstOrDefaultAsync();
 

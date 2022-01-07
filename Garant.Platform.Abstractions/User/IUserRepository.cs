@@ -111,6 +111,15 @@ namespace Garant.Platform.Abstractions.User
         Task<TransitionOutput> GetTransitionAsync(string account);
 
         /// <summary>
+        /// Метод получит переход пользователя по параметрам.
+        /// </summary>
+        /// <param name="referenceId">Id заказа или предмета сделки.</param>
+        /// <param name="otherId">Id заказа в системе банка.</param>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные перехода.</returns>
+        Task<TransitionOutput> GetTransitionWithParamsAsync(long refrenceId, string orerId, string userId);
+
+        /// <summary>
         /// Метод получит фио авторизованного пользователя.
         /// </summary>
         /// <param name="account">Аккаунт.</param>
