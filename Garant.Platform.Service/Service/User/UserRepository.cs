@@ -189,7 +189,7 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="kpp">КПП.</param>
         /// <param name="bik">БИК.</param>
         /// <returns>Данные пользователя.</returns>
-        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid, int? kpp, int? bik)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid, int kpp, int bik)
         {
             try
             {

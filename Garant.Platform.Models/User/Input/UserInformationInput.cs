@@ -110,11 +110,11 @@ namespace Garant.Platform.Models.User.Input
         /// <summary>
         /// КПП.
         /// </summary>
-        public int? Kpp { get; set; }
+        public int Kpp { get; set; }
 
         /// <summary>
         /// БИК.
         /// </summary>
-        public int? Bik { get; set; }
+        public int Bik { get; set; }
     }
 }

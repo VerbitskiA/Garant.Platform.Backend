@@ -91,14 +91,16 @@ namespace Garant.Platform.Models.Entities.User
         /// <summary>
         /// КПП.
         /// </summary>
+        [Required]
         [Column("Kpp", TypeName = "int")]
-        public int? Kpp { get; set; }
+        public int Kpp { get; set; }
 
         /// <summary>
         /// БИК.
         /// </summary>
+        [Required]
         [Column("Bik", TypeName = "int")]
-        public int? Bik { get; set; }
+        public int Bik { get; set; }
 
         /// <summary>
         /// Серия паспорта.
