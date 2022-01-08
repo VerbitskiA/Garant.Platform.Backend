@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Models.Mailing.Output;
 
@@ -37,5 +38,19 @@ namespace Garant.Platform.Base.Abstraction
         /// <param name="arr">Исходный массив строк.</param>
         /// <returns>Строка со значениями массива.</returns>
         Task<string> JoinArrayWithDelimeterAsync(string[] arr);
+
+        /// <summary>
+        /// Метод преобразует рубли в копейки.
+        /// </summary>
+        /// <param name="amount">Сумма в руб.</param>
+        /// <returns>Сумма в копейках.</returns>
+        Task<double> ConvertRubToPennyAsync(double amount);
+
+        /// <summary>
+        /// Метод хэширует строку по SHA-256.
+        /// </summary>
+        /// <param name="str">Исходная строка с параметрами, которые конкантенированы.</param>
+        /// <returns>Измененная строку по SHA-256.</returns>
+        Task<string> HashSha256Async(Dictionary<string, object> hashValues);
     }
 }

@@ -12,10 +12,10 @@ namespace Garant.Platform.Commerce.Abstraction.Garant.Customer
         /// Метод холдирует платеж на определенный срок, пока не получит подтверждения оплаты.
         /// </summary>
         /// <param name="originalId">Id франшизы или бизнеса.</param>
-        /// <param name="amount">Сумма к оплате.</param>
         /// <param name="account">Аккаунт пользователя.</param>
         /// <param name="orderType">Тип заказа.</param>
-        /// <returns>Данные холдирования платежа.</returns>
-        Task<HoldPaymentOutput> HoldPaymentAsync(long originalId, double amount, string account, string orderType);
+        /// <param name="iteration">Номер итерации этапа.</param>
+        /// <returns>Данные платежа.</returns>
+        Task<PaymentInitOutput> PaymentIterationCustomerAsync(long originalId, string account, string orderType, int iteration);
     }
 }

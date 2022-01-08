@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Garant.Platform.Commerce.Models.Tinkoff.Input;
+﻿using System.Threading.Tasks;
 using Garant.Platform.Commerce.Models.Tinkoff.Output;
 
 namespace Garant.Platform.Commerce.Abstraction.Tinkoff
@@ -11,14 +9,20 @@ namespace Garant.Platform.Commerce.Abstraction.Tinkoff
     public interface ITinkoffService
     {
         /// <summary>
-        /// Метод холдирует платеж на определенный срок, пока не получит подтверждения оплаты.
+        /// Метод снимет средства с карты покупателя за этап после вычитания комиссии.
         /// </summary>
         /// <param name="orderId">Id заказа в Гаранте.</param>
         /// <param name="amount">Сумма к оплате.</param>
-        /// <param name="endDate">Дата действия холдирования.</param>
-        /// <param name="description">Объект с описанием.</param>
-        /// <param name="redirectUrl">Ссылка редиректа после успешного холдирования.</param>
-        /// <returns>Данные холдирования платежа.</returns>
-        Task<HoldPaymentOutput> HoldPaymentAsync(long orderId, double amount, DateTime endDate, Description description, string redirectUrl);
+        /// <param name="iterationName">Название итерации этапа.</param>
+        /// <returns>Данные платежа с ссылкой на платежную форму.</returns>
+        Task<PaymentInitOutput> PaymentInitAsync(long orderId, double amount, string iterationName, long dealItemId);
+
+        /// <summary>
+        /// Метод проверит статус платежа.
+        /// </summary>
+        /// <param name="paymentId">Id платежа в системе банка.</param>
+        /// <param name="orderId">Id заказа в сервисе Гарант.</param>
+        /// <returns>Данные платежа.</returns>
+        Task<GetPaymentStatusOutput> GetStatePaymentAsync(string paymentId, long orderId);
     }
 }

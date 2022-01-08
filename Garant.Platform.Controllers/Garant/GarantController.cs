@@ -2,13 +2,17 @@
 using Garant.Platform.Commerce.Abstraction.Garant;
 using Garant.Platform.Commerce.Abstraction.Garant.Customer;
 using Garant.Platform.Commerce.Abstraction.Garant.Vendor;
+using Garant.Platform.Commerce.Abstraction.Tinkoff;
 using Garant.Platform.Commerce.Models.Garant.Input;
 using Garant.Platform.Commerce.Models.Garant.Output;
+using Garant.Platform.Commerce.Models.Tinkoff.Input;
+using Garant.Platform.Commerce.Models.Tinkoff.Output;
 using Garant.Platform.Models.Commerce.Input;
 using Garant.Platform.Models.Commerce.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using HoldPaymentInput = Garant.Platform.Commerce.Models.Garant.Input.HoldPaymentInput;
 
 namespace Garant.Platform.Controllers.Garant
 {
@@ -23,12 +27,14 @@ namespace Garant.Platform.Controllers.Garant
         private readonly IGarantActionService _garantActionService;
         private readonly ICustomerService _customerService;
         private readonly IVendorService _vendorService;
+        private readonly ITinkoffService _tinkoffService;
 
-        public GarantController(IGarantActionService _garantActionervice, ICustomerService customerService, IVendorService vendorService)
+        public GarantController(IGarantActionService _garantActionervice, ICustomerService customerService, IVendorService vendorService, ITinkoffService tinkoffService)
         {
             _garantActionService = _garantActionervice;
             _customerService = customerService;
             _vendorService = vendorService;
+            _tinkoffService = tinkoffService;
         }
 
         /// <summary>
@@ -47,15 +53,15 @@ namespace Garant.Platform.Controllers.Garant
         }
 
         /// <summary>
-        /// Метод холдирует платеж.
+        /// Метод проведет платеж за этап итерации.
         /// </summary>
         /// <param name="holdPaymentInput">Входная модель.</param>
-        /// <returns>Данные платежа.</returns>
         [HttpPost]
-        [Route("hold-payment")]
-        public async Task<IActionResult> HoldPaymentAsync([FromBody] HoldPaymentInput holdPaymentInput)
+        [Route("payment-iteration-customer")]
+        [ProducesResponseType(200, Type = typeof(PaymentInitOutput))]
+        public async Task<IActionResult> PaymentIterationCustomerAsync([FromBody] HoldPaymentInput holdPaymentInput)
         {
-            var result = await _customerService.HoldPaymentAsync(holdPaymentInput.OriginalId, holdPaymentInput.Amount, GetUserName(), holdPaymentInput.OrderType);
+            var result = await _customerService.PaymentIterationCustomerAsync(holdPaymentInput.OriginalId, GetUserName(), holdPaymentInput.OrderType, holdPaymentInput.Iteration);
 
             return Ok(result);
         }
@@ -71,6 +77,21 @@ namespace Garant.Platform.Controllers.Garant
         public async Task<IActionResult> AcceptDealAsync([FromBody] DealInput dealInput)
         {
             var result = await _vendorService.AcceptActualDealAsync(dealInput.DealItemId, dealInput.OrderType, GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод проверит статус платежа.
+        /// </summary>
+        /// <param name="statePaymentInput">Входная модель.</param>
+        /// <returns>Данные платежа.</returns>
+        [HttpPost]
+        [Route("get-state-payment")]
+        [ProducesResponseType(200, Type = typeof(GetPaymentStatusOutput))]
+        public async Task<IActionResult> GetStatePaymentAsync([FromBody] StatePaymentInput statePaymentInput)
+        {
+            var result = await _tinkoffService.GetStatePaymentAsync(statePaymentInput.PaymentId, statePaymentInput.OrderId);
 
             return Ok(result);
         }

@@ -1,4 +1,6 @@
-﻿namespace Garant.Platform.Commerce.Models.Tinkoff.Output
+﻿using Newtonsoft.Json;
+
+namespace Garant.Platform.Commerce.Models.Tinkoff.Output
 {
     /// <summary>
     /// Класс выходной модели при холдировании платежа.
@@ -8,11 +10,13 @@
         /// <summary>
         /// Id платежа.
         /// </summary>
-        public long PaymentId { get; set; }
+        [JsonProperty(PropertyName = "id")]
+        public string PaymentId { get; set; }
 
         /// <summary>
         /// Ссылка на редирект после успешного холдирования.
         /// </summary>
+        [JsonProperty(PropertyName = "paymentUrl")]
         public string PaymentUrl { get; set; }
     }
 }

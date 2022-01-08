@@ -206,8 +206,28 @@ namespace Garant.Platform.Commerce.Models.Garant.Output
         public string ButtonActionTextContract { get; set; }
 
         /// <summary>
-        /// Дополнительный комментарий.
+        /// Комментарий блока с договором от продавца.
         /// </summary>
-        public string DopComment { get; set; }
+        public string BlockCustomerComment { get; set; }
+
+        /// <summary>
+        /// Текст кнопки принятия договора. 
+        /// </summary>
+        public string ButtonApproveDocumentText { get; set; }
+
+        /// <summary>
+        /// Текст кнопки отклонения договора. 
+        /// </summary>
+        public string ButtonRejectDocumentText { get; set; }
+
+        /// <summary>
+        /// Является ли роль владельцем.
+        /// </summary>
+        public bool IsOwner { get; set; }
+
+        /// <summary>
+        /// Дата начала сделки.
+        /// </summary>
+        public string DateStartDeal { get; set; }
     }
 }

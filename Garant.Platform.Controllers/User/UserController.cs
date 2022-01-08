@@ -224,6 +224,20 @@ namespace Garant.Platform.Controllers.User
         }
 
         /// <summary>
+        /// Метод получит переход пользователя по параметрам.
+        /// </summary>
+        /// <returns>Данные перехода.</returns>
+        [HttpPost]
+        [Route("get-transition-with-params")]
+        [ProducesResponseType(200, Type = typeof(TransitionOutput))]
+        public async Task<IActionResult> getTransitionWithParamsAsync([FromBody] TransitionInput transitionInput)
+        {
+            var result = await _userService.GetTransitionWithParamsAsync(transitionInput.ReferenceId, GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Метод получит фио авторизованного пользователя.
         /// </summary>
         /// <returns>Данные пользователя.</returns>

@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace Garant.Platform.Commerce.Models.Tinkoff.Input
 {
@@ -10,14 +10,14 @@ namespace Garant.Platform.Commerce.Models.Tinkoff.Input
         /// <summary>
         /// Краткое описание платежа.
         /// </summary>
-        [JsonPropertyName("short")]
+        [JsonProperty(PropertyName = "short")]
 
         public string Short { get; set; }
 
         /// <summary>
         /// Полное описание платежа.
         /// </summary>
-        [JsonPropertyName("full")]
+        [JsonProperty(PropertyName = "full")]
         public string Full { get; set; }
     }
 }
