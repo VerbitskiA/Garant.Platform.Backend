@@ -118,7 +118,7 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// Метод найдет все данные заказа по его Id.
         /// </summary>
         /// <param name="orderId">Id заказа в сервисе Гарант.</param>
-        /// <returns>Данне заказа.</returns>
+        /// <returns>Данные заказа.</returns>
         public async Task<OrderEntity> GetOrderByIdAsync(long orderId)
         {
             try
@@ -128,7 +128,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                     return null;
                 }
 
-                var result = await _postgreDbContext.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
+                var result = await _postgreDbContext.Orders.FirstOrDefaultAsync(o => o.OriginalId == orderId);
 
                 return result;
             }
