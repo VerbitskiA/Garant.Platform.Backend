@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Garant.Platform.Models.Entities.Commerce
@@ -32,5 +33,11 @@ namespace Garant.Platform.Models.Entities.Commerce
         /// </summary>
         [Column("IsCompletedDeal", TypeName = "bool")]
         public bool IsCompletedDeal { get; set; }
+
+        /// <summary>
+        /// Дата создания сделки.
+        /// </summary>
+        [Column("DateCreate", TypeName = "timestamp")]
+        public DateTime DateCreate { get; set; }
     }
 }

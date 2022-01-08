@@ -51,9 +51,11 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
         /// <param name="values">Причины регистрации разделенные запятой.</param>
+        /// <param name="kpp">КПП.</param>
+        /// <param name="bik">БИК.</param>
         /// <returns>Данные пользователя.</returns>
         Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email,
-            string password, string values, string guid);
+            string password, string values, string guid, int? kpp, int? bik);
 
         /// <summary>
         /// Метод найдет захэшированный пароль пользователя по логину или email или номеру телефона.
@@ -109,6 +111,15 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="account">Логин или почта пользователя.</param>
         /// <returns>Данные перехода.</returns>
         Task<TransitionOutput> GetTransitionAsync(string account);
+
+        /// <summary>
+        /// Метод получит переход пользователя по параметрам.
+        /// </summary>
+        /// <param name="referenceId">Id заказа или предмета сделки.</param>
+        /// <param name="otherId">Id заказа в системе банка.</param>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные перехода.</returns>
+        Task<TransitionOutput> GetTransitionWithParamsAsync(long refrenceId, string orerId, string userId);
 
         /// <summary>
         /// Метод получит фио авторизованного пользователя.

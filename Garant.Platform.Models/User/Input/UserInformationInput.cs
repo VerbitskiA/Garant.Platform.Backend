@@ -106,5 +106,15 @@ namespace Garant.Platform.Models.User.Input
         /// Тип формы.
         /// </summary>
         public string TypeForm { get; set; }
+
+        /// <summary>
+        /// КПП.
+        /// </summary>
+        public int? Kpp { get; set; }
+
+        /// <summary>
+        /// БИК.
+        /// </summary>
+        public int? Bik { get; set; }
     }
 }

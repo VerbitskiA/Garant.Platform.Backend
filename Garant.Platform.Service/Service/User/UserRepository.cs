@@ -186,8 +186,10 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
         /// <param name="values">Причины регистрации разделенные запятой.</param>
+        /// <param name="kpp">КПП.</param>
+        /// <param name="bik">БИК.</param>
         /// <returns>Данные пользователя.</returns>
-        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid, int? kpp, int? bik)
         {
             try
             {
@@ -236,7 +238,9 @@ namespace Garant.Platform.Services.Service.User
                             Password = passwordHash,
                             Values = values,
                             PhoneNumber = user.PhoneNumber,
-                            UserId = user.UserId
+                            UserId = user.UserId,
+                            Kpp = kpp,
+                            Bik = bik
                         });
 
                         await _postgreDbContext.SaveChangesAsync();
@@ -267,6 +271,8 @@ namespace Garant.Platform.Services.Service.User
                         checkUserInfoData.Values = values;
                         checkUserInfoData.PhoneNumber = user.PhoneNumber;
                         checkUserInfoData.UserId = user.UserId;
+                        checkUserInfoData.Kpp = kpp;
+                        checkUserInfoData.Bik = bik;
 
                         await _postgreDbContext.SaveChangesAsync();
 
@@ -282,7 +288,9 @@ namespace Garant.Platform.Services.Service.User
                         City = city,
                         Email = email,
                         Values = values,
-                        PhoneNumber = user.PhoneNumber
+                        PhoneNumber = user.PhoneNumber,
+                        Kpp = kpp,
+                        Bik = bik
                     };
                 }
 
@@ -489,7 +497,7 @@ namespace Garant.Platform.Services.Service.User
         {
             try
             {
-                if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(transitionType))
+                if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(transitionType) || referenceId <= 0)
                 {
                     return false;
                 }
@@ -550,10 +558,10 @@ namespace Garant.Platform.Services.Service.User
 
                 // Проверит, есть ли уже переход у пользователя.
                 var findTransition = await _postgreDbContext.Transitions
-                    .Where(t => t.UserId.Equals(userId))
-                    .FirstOrDefaultAsync();
+                    .AnyAsync(t => t.UserId.Equals(userId)
+                                   && t.ReferenceId == referenceId
+                                   && t.TransitionType.Equals(transitionType));
 
-                // Если перехода нет, то добавит.
                 var transition = new TransitionEntity
                 {
                     UserId = userId,
@@ -562,13 +570,14 @@ namespace Garant.Platform.Services.Service.User
                 };
 
                 // Доп. проверки для чата.
-                if (!string.IsNullOrEmpty(otherId) && !string.IsNullOrEmpty(typeItem))
+                if (!string.IsNullOrEmpty(otherId) && !string.IsNullOrEmpty(typeItem) || !string.IsNullOrEmpty(typeItem) && typeItem.Equals("PaymentAct"))
                 {
                     transition.OtherId = otherId;
                     transition.TypeItem = typeItem;
                 }
 
-                if (findTransition == null)
+                // Если перехода нет, то добавит.
+                if (!findTransition)
                 {
                     await _postgreDbContext.Transitions.AddAsync(transition);
                 }
@@ -576,7 +585,7 @@ namespace Garant.Platform.Services.Service.User
                 // Если есть, то перезапишет его.
                 else
                 {
-                    _postgreDbContext.Transitions.Update(transition);
+                    _postgreDbContext.Update(transition);
                 }
 
                 await _postgreDbContext.SaveChangesAsync();
@@ -632,8 +641,7 @@ namespace Garant.Platform.Services.Service.User
                 var maxTransitionId = await _postgreDbContext.Transitions.MaxAsync(t => t.TransitionId);
 
                 var result = await _postgreDbContext.Transitions
-                    .Where(t => t.UserId.Equals(userId))
-                    .Where(t => t.TransitionId == maxTransitionId)
+                    .Where(t => t.UserId.Equals(userId) && t.TransitionId == maxTransitionId)
                     .Select(t => new TransitionOutput
                     {
                         ReferenceId = t.ReferenceId,
@@ -641,6 +649,42 @@ namespace Garant.Platform.Services.Service.User
                         UserId = t.UserId,
                         OtherId = t.OtherId,
                         TypeItem = t.TypeItem
+                    })
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит переход пользователя по параметрам.
+        /// </summary>
+        /// <param name="referenceId">Id заказа или предмета сделки.</param>
+        /// <param name="otherId">Id заказа в системе банка.</param>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Данные перехода.</returns>
+        public async Task<TransitionOutput> GetTransitionWithParamsAsync(long referenceId, string transitionType, string userId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Transitions
+                    .OrderByDescending(t => t.TransitionId)
+                    .Where(t => t.ReferenceId == referenceId
+                                && t.TransitionType.Equals(transitionType)
+                                && t.UserId.Equals(userId))
+                    .Select(t => new TransitionOutput
+                    {
+                        TransitionType = t.TransitionType,
+                        ReferenceId = t.ReferenceId,
+                        OtherId = t.OtherId
                     })
                     .FirstOrDefaultAsync();
 
@@ -965,7 +1009,9 @@ namespace Garant.Platform.Services.Service.User
                         City = i.City,
                         DateBirth = i.DateBirth.ToString("yyyy-MM-dd"),
                         Patronymic = i.Patronymic,
-                        Values = i.Values
+                        Values = i.Values,
+                        Kpp = i.Kpp,
+                        Bik = i.Bik
                     })
                     .FirstOrDefaultAsync();
 

@@ -21,6 +21,7 @@ namespace Garant.Platform.Models.Entities.User
         /// <summary>
         /// Тип ссылки.
         /// </summary>
+        [Column("TypeLink", TypeName = "varchar(200)")]
         public string TypeLink { get; set; }
     }
 }

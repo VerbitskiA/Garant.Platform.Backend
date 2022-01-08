@@ -19,5 +19,10 @@
         /// Тип заказа.
         /// </summary>
         public string OrderType { get; set; }
+
+        /// <summary>
+        /// Номер итерации этапа.
+        /// </summary>
+        public int Iteration { get; set; }
     }
 }

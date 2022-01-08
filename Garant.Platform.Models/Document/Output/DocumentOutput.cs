@@ -1,12 +1,15 @@
-﻿using System;
-
-namespace Garant.Platform.Models.Document.Output
+﻿namespace Garant.Platform.Models.Document.Output
 {
     /// <summary>
     /// Класс выходной модели документов сделки.
     /// </summary>
     public class DocumentOutput
     {
+        /// <summary>
+        /// Id документа.
+        /// </summary>
+        public long DocumentId { get; set; }
+
         /// <summary>
         /// Название документа.
         /// </summary>
@@ -30,7 +33,7 @@ namespace Garant.Platform.Models.Document.Output
         /// <summary>
         /// Дата прикрепления документа.
         /// </summary>
-        public DateTime DateCreate { get; set; }
+        public string DateCreate { get; set; }
 
         /// <summary>
         /// Флаг документа сделки.
@@ -41,5 +44,10 @@ namespace Garant.Platform.Models.Document.Output
         /// Флаг подтвержден ли документ сделки.
         /// </summary>
         public bool? IsAcceptDocument { get; set; }
+
+        /// <summary>
+        /// Флаг оплаты.
+        /// </summary>
+        public bool? IsPay { get; set; }
     }
 }

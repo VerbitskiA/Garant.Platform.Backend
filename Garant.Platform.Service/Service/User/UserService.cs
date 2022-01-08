@@ -295,8 +295,10 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
         /// <param name="values">Причины регистрации разделенные запятой.</param>
+        /// <param name="kpp">КПП.</param>
+        /// <param name="bik">БИК.</param>
         /// <returns>Данные пользователя.</returns>
-        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, int? kpp, int? bik)
         {
             try
             {
@@ -313,7 +315,7 @@ namespace Garant.Platform.Services.Service.User
                 // Генерит guid код для подтверждения почты.
                 var guid = Guid.NewGuid().ToString();
 
-                var result = await _userRepository.SaveUserInfoAsync(firstName, lastName, city, email, password, values, guid);
+                var result = await _userRepository.SaveUserInfoAsync(firstName, lastName, city, email, password, values, guid, kpp, bik);
 
                 if (result == null)
                 {
@@ -568,6 +570,32 @@ namespace Garant.Platform.Services.Service.User
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит переход пользователя по параметрам.
+        /// </summary>
+        /// <param name="referenceId">Id заказа или предмета сделки.</param>
+        /// <param name="account">Логин или почта пользователя.</param>
+        /// <returns>Данные перехода.</returns>
+        public async Task<TransitionOutput> GetTransitionWithParamsAsync(long referenceId, string account)
+        {
+            try
+            {
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+
+                var result = await _userRepository.GetTransitionWithParamsAsync(referenceId, "PaymentAct", userId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
                 throw;
             }
         }

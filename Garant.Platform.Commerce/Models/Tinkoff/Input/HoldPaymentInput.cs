@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace Garant.Platform.Commerce.Models.Tinkoff.Input
 {
@@ -7,31 +7,31 @@ namespace Garant.Platform.Commerce.Models.Tinkoff.Input
     /// </summary>
     public class HoldPaymentInput
     {
-        [JsonPropertyName("orderId")]
+        [JsonProperty(PropertyName = "orderId")]
         public string OrderId { get; set; }
 
-        [JsonPropertyName("amount")]
+        [JsonProperty(PropertyName = "amount")]
         public double Amount { get; set; }
 
-        [JsonPropertyName("endDate")]
+        [JsonProperty(PropertyName = "endDate")]
         public string EndDate { get; set; }
 
-        [JsonPropertyName("description")]
+        [JsonProperty(PropertyName = "description")]
         public Description Description { get; set; }
 
-        [JsonPropertyName("redirectUrl")]
+        [JsonProperty(PropertyName = "redirectUrl")]
         public string RedirectUrl { get; set; }
 
-        [JsonPropertyName("shop")]
+        [JsonProperty(PropertyName = "shop")]
         public Shop Shop { get; set; }
     }
 
     public class Shop
     {
-        [JsonPropertyName("id")]
+        [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
-        [JsonPropertyName("name")]
+        [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
     }
 }

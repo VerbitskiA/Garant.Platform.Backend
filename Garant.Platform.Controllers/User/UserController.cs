@@ -115,7 +115,7 @@ namespace Garant.Platform.Controllers.User
         [ProducesResponseType(200, Type = typeof(UserInformationOutput))]
         public async Task<IActionResult> SaveUserInfoAsync([FromBody] UserInformationInput userInformationInput)
         {
-            var result = await _userService.SaveUserInfoAsync(userInformationInput.FirstName, userInformationInput.LastName, userInformationInput.City, userInformationInput.Email, userInformationInput.Password, userInformationInput.Values);
+            var result = await _userService.SaveUserInfoAsync(userInformationInput.FirstName, userInformationInput.LastName, userInformationInput.City, userInformationInput.Email, userInformationInput.Password, userInformationInput.Values, userInformationInput.Kpp, userInformationInput.Bik);
 
             return Ok(result);
         }
@@ -219,6 +219,20 @@ namespace Garant.Platform.Controllers.User
         public async Task<IActionResult> GetTransitionAsync()
         {
             var result = await _userService.GetTransitionAsync(GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит переход пользователя по параметрам.
+        /// </summary>
+        /// <returns>Данные перехода.</returns>
+        [HttpPost]
+        [Route("get-transition-with-params")]
+        [ProducesResponseType(200, Type = typeof(TransitionOutput))]
+        public async Task<IActionResult> getTransitionWithParamsAsync([FromBody] TransitionInput transitionInput)
+        {
+            var result = await _userService.GetTransitionWithParamsAsync(transitionInput.ReferenceId, GetUserName());
 
             return Ok(result);
         }

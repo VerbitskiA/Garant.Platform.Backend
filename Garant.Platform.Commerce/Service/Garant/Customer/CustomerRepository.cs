@@ -27,16 +27,21 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
         /// Метод создаст новый заказ.
         /// </summary>
         /// <param name="amount">Цена.</param>
-        /// <param name="endDate">Дата окончания холдирования.</param>
         /// <param name="description">Объект с описанием платежа.</param>
-        /// <param name="redirectUrl">Url редиректа после успешного платежа.</param>
+        /// <param name="iteration">Номер итерации этапа.</param>
         /// <returns>Данные платежа.</returns>
-        public async Task<OrderOutput> CreateOrderAsync(long originalId, double amount, DateTime endDate, Description description, string redirectUrl, string orderType, string userId)
+        public async Task<OrderOutput> CreateOrderAsync(long originalId, double amount, Description description, string orderType, string userId, int iteration)
         {
             try
             {
-                const int id = 1000000;
-                var lastId = await _postgreDbContext.Orders.MaxAsync(o => o.OrderId);
+                var id = 1000000;
+                long lastId = 0;
+                var optionalType = "DocumentCustomerAct" + iteration;
+
+                if (await _postgreDbContext.Orders.AnyAsync())
+                {
+                    lastId = await _postgreDbContext.Orders.MaxAsync(o => o.OrderId);
+                }
 
                 if (lastId <= 0)
                 {
@@ -46,35 +51,78 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
                 lastId++;
                 var last = lastId;
 
-                await _postgreDbContext.Orders.AddAsync(new OrderEntity
+                // Проверит существование такого заказа.
+                var checkOrder = await _postgreDbContext.Orders
+                    .AsNoTracking()
+                    .Where(o => o.OriginalId == originalId
+                                && o.UserId.Equals(userId)
+                                && o.OrderType.Equals(orderType)
+                                && o.Iteration == iteration
+                                && o.OptionalType.Equals(optionalType))
+                    .FirstOrDefaultAsync();
+
+                if (checkOrder == null)
                 {
-                    OrderId = last,
-                    Amount = amount,
-                    Currency = "RUB",
-                    DateCreate = DateTime.Now,
-                    ShortOrderName = description.Short,
-                    FullOrderName = description.Full,
-                    OrderStatus = "Hold",
-                    TotalAmount = amount,
-                    OrderType = orderType,
-                    OriginalId = originalId,
-                    ProductCount = 1,
-                    UserId = userId
-                });
+                    // Создаст новый заказ.
+                    await _postgreDbContext.Orders.AddAsync(new OrderEntity
+                    {
+                        OrderId = last,
+                        Amount = amount,
+                        Currency = "RUB",
+                        DateCreate = DateTime.Now,
+                        ShortOrderName = description.Short,
+                        FullOrderName = description.Full,
+                        OrderStatus = "Hold",
+                        TotalAmount = amount,
+                        OrderType = orderType,
+                        OriginalId = originalId,
+                        ProductCount = 1,
+                        UserId = userId,
+                        Iteration = iteration,
+                        OptionalType = optionalType
+                    });
 
-                await _postgreDbContext.SaveChangesAsync();
+                    await _postgreDbContext.SaveChangesAsync();
+                }
 
-                var lastOrderId = _postgreDbContext.Orders
+                // Обновит заказ.
+                else
+                {
+                    var getOrder = await _postgreDbContext.Orders
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(o => o.OriginalId == originalId
+                                                  && o.UserId.Equals(userId)
+                                                  && o.OrderType.Equals(orderType));
+
+                    if (getOrder != null)
+                    {
+                        var newOrder = new OrderEntity
+                        {
+                            OrderId = getOrder.OrderId,
+                            Amount = amount,
+                            Currency = "RUB",
+                            DateCreate = DateTime.Now,
+                            ShortOrderName = description.Short,
+                            FullOrderName = description.Full,
+                            OrderStatus = "Hold",
+                            TotalAmount = amount,
+                            OrderType = orderType,
+                            OriginalId = originalId,
+                            ProductCount = 1,
+                            UserId = userId,
+                            Iteration = iteration,
+                            OptionalType = optionalType
+                        };
+
+                        _postgreDbContext.Orders.Update(newOrder);
+                        await _postgreDbContext.SaveChangesAsync();
+                    }
+                }
+
+                var result = await _postgreDbContext.Orders
                     .OrderByDescending(o => o.OrderId)
-                    .Select(o => o.OrderId)
-                    .AsQueryable();
-
-                var lastOrder = await lastOrderId.FirstOrDefaultAsync();
-
-                var result = new OrderOutput
-                {
-                    OrderId = lastOrder
-                };
+                    .Select(o => new OrderOutput { OrderId = o.OrderId })
+                    .FirstOrDefaultAsync();
 
                 return result;
             }

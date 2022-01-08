@@ -79,6 +79,11 @@ namespace Garant.Platform.Models.Entities.Document
         [Column("IsSend", TypeName = "bool")]
         public bool? IsSend { get; set; }
 
+        /// <summary>
+        /// Флаг оплаты.
+        /// </summary>
+        public bool? IsPay { get; set; }
+
         public UserEntity User { get; set; }
     }
 }

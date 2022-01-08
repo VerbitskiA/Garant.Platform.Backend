@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Garant.Platform.Commerce.Models.Tinkoff.Input;
 using Garant.Platform.Models.Commerce.Output;
 
@@ -14,10 +13,9 @@ namespace Garant.Platform.Commerce.Abstraction.Garant.Customer
         /// Метод создаст новый заказ.
         /// </summary>
         /// <param name="amount">Цена.</param>
-        /// <param name="endDate">Дата окончания холдирования.</param>
         /// <param name="description">Объект с описанием платежа.</param>
-        /// <param name="redirectUrl">Url редиректа после успешного платежа.</param>
+        /// <param name="iteration">Номер итерации этапа.</param>
         /// <returns>Данные платежа.</returns>
-        Task<OrderOutput> CreateOrderAsync(long originalId, double amount, DateTime endDate, Description description, string redirectUrl, string orderType, string userId);
+        Task<OrderOutput> CreateOrderAsync(long originalId, double amount, Description description, string orderType, string userId, int iteration);
     }
 }
