@@ -550,10 +550,10 @@ namespace Garant.Platform.Services.Service.User
 
                 // Проверит, есть ли уже переход у пользователя.
                 var findTransition = await _postgreDbContext.Transitions
-                    .Where(t => t.UserId.Equals(userId))
-                    .FirstOrDefaultAsync();
+                    .AnyAsync(t => t.UserId.Equals(userId)
+                                   && t.ReferenceId == referenceId
+                                   && t.TransitionType.Equals(transitionType));
 
-                // Если перехода нет, то добавит.
                 var transition = new TransitionEntity
                 {
                     UserId = userId,
@@ -562,13 +562,14 @@ namespace Garant.Platform.Services.Service.User
                 };
 
                 // Доп. проверки для чата.
-                if (!string.IsNullOrEmpty(otherId) && !string.IsNullOrEmpty(typeItem))
+                if (!string.IsNullOrEmpty(otherId) && !string.IsNullOrEmpty(typeItem) || !string.IsNullOrEmpty(typeItem) && typeItem.Equals("PaymentAct"))
                 {
                     transition.OtherId = otherId;
                     transition.TypeItem = typeItem;
                 }
 
-                if (findTransition == null)
+                // Если перехода нет, то добавит.
+                if (!findTransition)
                 {
                     await _postgreDbContext.Transitions.AddAsync(transition);
                 }
@@ -667,6 +668,7 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var result = await _postgreDbContext.Transitions
+                    .OrderByDescending(t => t.TransitionId)
                     .Where(t => t.ReferenceId == referenceId
                                 && t.TransitionType.Equals(transitionType)
                                 && t.UserId.Equals(userId))

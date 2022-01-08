@@ -121,7 +121,6 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
 
                 // Обновит систеный Id заказа.
                 await _tinkoffRepository.SetSystemOrderIdAsync(orderId, Convert.ToInt64(result.PaymentId));
-                //await _tinkoffRepository.SetOrderStatusByIdAsync(orderId, Convert.ToInt64(result.PaymentId));
 
                 // Проверит статус созданного платежа.
                 await GetStatePaymentAsync(result.PaymentId, orderId);
@@ -213,7 +212,7 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 var result = JsonConvert.DeserializeObject<GetPaymentStatusOutput>(jsonResult);
 
                 // Если статусы заказа разные.
-                if (!currentOrderStatus.OrderStatus.Equals(result.Status))
+                if (currentOrderStatus != null && result != null && !currentOrderStatus.OrderStatus.Equals(result.Status))
                 {
                     // Запишет новый статус заказа.
                     await _tinkoffRepository.SetOrderStatusByIdAsync(orderId, result.Status);

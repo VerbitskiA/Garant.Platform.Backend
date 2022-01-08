@@ -12,7 +12,6 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Franchise.Other;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace Garant.Platform.Commerce.Service.Garant.Customer
@@ -26,15 +25,13 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
         private readonly IUserRepository _userRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly ITinkoffService _tinkoffService;
-        private readonly IServiceProvider _serviceProvider;
 
-        public CustomerService(PostgreDbContext postgreDbContex, IUserRepository userRepository, ICustomerRepository customerRepository, ITinkoffService tinkoffService, IServiceProvider serviceProvider)
+        public CustomerService(PostgreDbContext postgreDbContex, IUserRepository userRepository, ICustomerRepository customerRepository, ITinkoffService tinkoffService)
         {
             _postgreDbContext = postgreDbContex;
             _userRepository = userRepository;
             _customerRepository = customerRepository;
             _tinkoffService = tinkoffService;
-            _serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -66,14 +63,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
                 if (orderType.Equals("Franchise"))
                 {
                     var franchiseService = AutoFac.Resolve<IFranchiseService>();
-                    var fService = franchiseService ?? _serviceProvider.GetService<IFranchiseService>();
-
-                    if (fService == null)
-                    {
-                        return new PaymentInitOutput { Success = false };
-                    }
-
-                    var franchise = await fService.GetFranchiseAsync(originalId);
+                    var franchise = await franchiseService.GetFranchiseAsync(originalId);
 
                     if (franchise != null)
                     {
@@ -91,14 +81,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
                 if (orderType.Equals("Business"))
                 {
                     var businessService = AutoFac.Resolve<IBusinessService>();
-                    var bService = businessService ?? _serviceProvider.GetService<IBusinessService>();
-
-                    if (bService == null)
-                    {
-                        return new PaymentInitOutput { Success = false };
-                    }
-
-                    var business = await bService.GetBusinessAsync(originalId);
+                    var business = await businessService.GetBusinessAsync(originalId);
 
                     if (business != null)
                     {
@@ -130,7 +113,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
                     Full = iterationName
                 };
 
-                var newOrder = await _customerRepository.CreateOrderAsync(originalId, amount, endDate, description, string.Empty, orderType, userId);
+                var newOrder = await _customerRepository.CreateOrderAsync(originalId, amount, description, orderType, userId, iteration);
 
                 if (newOrder == null)
                 {
