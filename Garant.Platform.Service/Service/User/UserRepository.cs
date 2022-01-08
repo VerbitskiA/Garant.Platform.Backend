@@ -186,8 +186,10 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
         /// <param name="values">Причины регистрации разделенные запятой.</param>
+        /// <param name="kpp">КПП.</param>
+        /// <param name="bik">БИК.</param>
         /// <returns>Данные пользователя.</returns>
-        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid, int? kpp, int? bik)
         {
             try
             {
@@ -236,7 +238,9 @@ namespace Garant.Platform.Services.Service.User
                             Password = passwordHash,
                             Values = values,
                             PhoneNumber = user.PhoneNumber,
-                            UserId = user.UserId
+                            UserId = user.UserId,
+                            Kpp = kpp,
+                            Bik = bik
                         });
 
                         await _postgreDbContext.SaveChangesAsync();
@@ -267,6 +271,8 @@ namespace Garant.Platform.Services.Service.User
                         checkUserInfoData.Values = values;
                         checkUserInfoData.PhoneNumber = user.PhoneNumber;
                         checkUserInfoData.UserId = user.UserId;
+                        checkUserInfoData.Kpp = kpp;
+                        checkUserInfoData.Bik = bik;
 
                         await _postgreDbContext.SaveChangesAsync();
 
@@ -282,7 +288,9 @@ namespace Garant.Platform.Services.Service.User
                         City = city,
                         Email = email,
                         Values = values,
-                        PhoneNumber = user.PhoneNumber
+                        PhoneNumber = user.PhoneNumber,
+                        Kpp = kpp,
+                        Bik = bik
                     };
                 }
 
@@ -489,7 +497,7 @@ namespace Garant.Platform.Services.Service.User
         {
             try
             {
-                if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(transitionType))
+                if (string.IsNullOrEmpty(account) || string.IsNullOrEmpty(transitionType) || referenceId <= 0)
                 {
                     return false;
                 }
@@ -576,7 +584,7 @@ namespace Garant.Platform.Services.Service.User
                 // Если есть, то перезапишет его.
                 else
                 {
-                    _postgreDbContext.Transitions.Update(transition);
+                    _postgreDbContext.Update(transition);
                 }
 
                 await _postgreDbContext.SaveChangesAsync();
@@ -965,7 +973,9 @@ namespace Garant.Platform.Services.Service.User
                         City = i.City,
                         DateBirth = i.DateBirth.ToString("yyyy-MM-dd"),
                         Patronymic = i.Patronymic,
-                        Values = i.Values
+                        Values = i.Values,
+                        Kpp = i.Kpp,
+                        Bik = i.Bik
                     })
                     .FirstOrDefaultAsync();
 

@@ -66,6 +66,16 @@
         public int? Pc { get; set; }
 
         /// <summary>
+        /// КПП.
+        /// </summary>
+        public int? Kpp { get; set; }
+
+        /// <summary>
+        /// БИК.
+        /// </summary>
+        public int? Bik { get; set; }
+
+        /// <summary>
         /// Серия паспорта.
         /// </summary>
         public int? PassportSerial { get; set; }

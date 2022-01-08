@@ -295,8 +295,10 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
         /// <param name="values">Причины регистрации разделенные запятой.</param>
+        /// <param name="kpp">КПП.</param>
+        /// <param name="bik">БИК.</param>
         /// <returns>Данные пользователя.</returns>
-        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, int? kpp, int? bik)
         {
             try
             {
@@ -313,7 +315,7 @@ namespace Garant.Platform.Services.Service.User
                 // Генерит guid код для подтверждения почты.
                 var guid = Guid.NewGuid().ToString();
 
-                var result = await _userRepository.SaveUserInfoAsync(firstName, lastName, city, email, password, values, guid);
+                var result = await _userRepository.SaveUserInfoAsync(firstName, lastName, city, email, password, values, guid, kpp, bik);
 
                 if (result == null)
                 {

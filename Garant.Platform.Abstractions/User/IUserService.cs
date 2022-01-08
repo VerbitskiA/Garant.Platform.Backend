@@ -63,8 +63,10 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="email">Email.</param>
         /// <param name="password">Пароль.</param>
         /// <param name="values">Причины регистрации разделенные запятой.</param>
+        /// <param name="kpp">КПП.</param>
+        /// <param name="bik">БИК.</param>
         /// <returns>Данные пользователя.</returns>
-        Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values);
+        Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, int? kpp, int? bik);
 
         /// <summary>
         /// Метод найдет пользователя по email или номеру телефона.

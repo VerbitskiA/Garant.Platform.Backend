@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Garant.Platform.Models.Entities.User
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей информации о пользователе dbo.UsersInformation.
+    /// Класс сопоставляется с таблицей информации о пользователе Info.UsersInformation.
     /// </summary>
     [Table("UsersInformation", Schema = "Info")]
     public class UserInformationEntity
@@ -87,6 +87,18 @@ namespace Garant.Platform.Models.Entities.User
         /// </summary>
         [Column("Pc", TypeName = "int")]
         public int? Pc { get; set; }
+
+        /// <summary>
+        /// КПП.
+        /// </summary>
+        [Column("Kpp", TypeName = "int")]
+        public int? Kpp { get; set; }
+
+        /// <summary>
+        /// БИК.
+        /// </summary>
+        [Column("Bik", TypeName = "int")]
+        public int? Bik { get; set; }
 
         /// <summary>
         /// Серия паспорта.
