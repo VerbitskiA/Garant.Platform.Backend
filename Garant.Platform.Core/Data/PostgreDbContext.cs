@@ -219,5 +219,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица dbo.Controls.
         /// </summary>
         public DbSet<ControlEntity> Controls { get; set; }
+
+        /// <summary>
+        /// Таблица Commerce.Payments.
+        /// </summary>
+        public DbSet<PaymentEntity> Payments { get; set; }
     }
 }

@@ -46,9 +46,8 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="account">Аккаунт.</param>
         /// <param name="stage">Номер этапа.</param>
         /// <param name="isChat">Флаг чата.</param>
-        /// <param name="otherId">Id другого пользователя.</param>
         /// <returns>Данные стартовой страницы.</returns>
-        public async Task<InitGarantDataOutput> GetInitDataGarantAsync(long originalId, string orderType, string account, int stage, bool isChat, string otherId)
+        public async Task<InitGarantDataOutput> GetInitDataGarantAsync(long originalId, string orderType, string account, int stage, bool isChat)
         {
             try
             {
@@ -1396,6 +1395,25 @@ namespace Garant.Platform.Commerce.Service.Garant
             }
 
             return await Task.FromResult(result);
+        }
+
+        /// <summary>
+        /// Метод выполнит платеж на счет продавцу за этап.
+        /// </summary>
+        public async Task PaymentVendorIterationAsync()
+        {
+            try
+            {
+
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
     }
 }
