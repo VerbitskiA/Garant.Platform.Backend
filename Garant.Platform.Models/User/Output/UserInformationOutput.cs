@@ -119,5 +119,10 @@
         /// Кол-во объявлений.
         /// </summary>
         public int CountAd { get; set; }
+
+        /// <summary>
+        /// Название банка, которое ранее было сохранено.
+        /// </summary>
+        public string DefaultBankName { get; set; }
     }
 }

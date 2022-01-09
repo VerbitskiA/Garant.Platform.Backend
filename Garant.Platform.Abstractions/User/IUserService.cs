@@ -65,8 +65,10 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="values">Причины регистрации разделенные запятой.</param>
         /// <param name="kpp">КПП.</param>
         /// <param name="bik">БИК.</param>
+        /// <param name="defaultBankName">Название банка которое нужно сохранить по умолчанию.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
         /// <returns>Данные пользователя.</returns>
-        Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, int kpp, int bik);
+        Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, int kpp, int bik, string defaultBankName, string account);
 
         /// <summary>
         /// Метод найдет пользователя по email или номеру телефона.
