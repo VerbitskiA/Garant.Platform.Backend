@@ -143,5 +143,11 @@ namespace Garant.Platform.Models.Entities.User
         /// </summary>
         [Column("DocumentName", TypeName = "varchar(400)")]
         public string DocumentName { get; set; }
+
+        /// <summary>
+        /// Название банка, которое ранее было сохранено.
+        /// </summary>
+        [Column("DefaultBankName", TypeName = "varchar(400)")]
+        public string DefaultBankName { get; set; }
     }
 }

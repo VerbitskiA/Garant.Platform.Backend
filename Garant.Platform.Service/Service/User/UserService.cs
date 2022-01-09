@@ -297,8 +297,10 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="values">Причины регистрации разделенные запятой.</param>
         /// <param name="kpp">КПП.</param>
         /// <param name="bik">БИК.</param>
+        /// <param name="defaultBankName">Название банка которое нужно сохранить по умолчанию.</param>
+        /// <param name="account">Аккаунт пользователя.</param>
         /// <returns>Данные пользователя.</returns>
-        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, int kpp, int bik)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, int kpp, int bik, string defaultBankName, string account)
         {
             try
             {
@@ -315,16 +317,23 @@ namespace Garant.Platform.Services.Service.User
                 // Генерит guid код для подтверждения почты.
                 var guid = Guid.NewGuid().ToString();
 
-                var result = await _userRepository.SaveUserInfoAsync(firstName, lastName, city, email, password, values, guid, kpp, bik);
+                var result = await _userRepository.SaveUserInfoAsync(firstName, lastName, city, email, password, values, guid, kpp, bik, defaultBankName);
 
                 if (result == null)
                 {
                     return null;
                 }
 
-                // Отправит подтверждение на почту.
-                await _mailingService.SendAcceptEmailAsync(email, $"Подтвердите регистрацию, перейдя по ссылке: <a href='https://gobizy.ru?code={guid}'>Подтвердить</a>", "Gobizy: Подтверждение почты");
-                //http://localhost:4200
+                // Проверит, подтверждал ли пользователь свою почту, если нет, то попросит подтвердить.
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+                var checkConfirmEmail = await _userRepository.CheckConfirmEmailAsync(userId);
+
+                if (!checkConfirmEmail)
+                {
+                    // Отправит подтверждение на почту.
+                    await _mailingService.SendAcceptEmailAsync(email, $"Подтвердите регистрацию, перейдя по ссылке: <a href='https://gobizy.ru?code={guid}'>Подтвердить</a>", "Gobizy: Подтверждение почты");
+                    //http://localhost:4200   
+                }
 
                 return result;
             }

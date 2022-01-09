@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Garant.Platform.Abstractions.Blog;
+using Garant.Platform.Abstractions.Control;
 using Garant.Platform.Abstractions.Document;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.MainPage;
@@ -12,6 +13,7 @@ using Garant.Platform.Core.Attributes;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Service.Service.Ad;
+using Garant.Platform.Services.Control;
 using Garant.Platform.Services.Document;
 using Garant.Platform.Services.Request;
 using Garant.Platform.Services.Service.Blog;
@@ -80,6 +82,12 @@ namespace Garant.Platform.Services.AutofacModules
             builder.RegisterType<DocumentService>().As<IDocumentService>();
             builder.RegisterType<DocumentRepository>().Named<IDocumentRepository>("DocumentRepository");
             builder.RegisterType<DocumentRepository>().As<IDocumentRepository>();
+
+            // Сервис контролов.
+            builder.RegisterType<ControlService>().Named<IControlService>("ControlService");
+            builder.RegisterType<ControlService>().As<IControlService>();
+            builder.RegisterType<ControlRepository>().Named<IControlRepository>("ControlRepository");
+            builder.RegisterType<ControlRepository>().As<IControlRepository>();
         }
     }
 }

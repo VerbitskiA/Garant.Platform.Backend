@@ -53,9 +53,10 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="values">Причины регистрации разделенные запятой.</param>
         /// <param name="kpp">КПП.</param>
         /// <param name="bik">БИК.</param>
+        /// <param name="defaultBankName">Название банка которое нужно сохранить по умолчанию.</param>
         /// <returns>Данные пользователя.</returns>
         Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email,
-            string password, string values, string guid, int kpp, int bik);
+            string password, string values, string guid, int kpp, int bik, string defaultBankName);
 
         /// <summary>
         /// Метод найдет захэшированный пароль пользователя по логину или email или номеру телефона.
@@ -177,5 +178,12 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="userId">Id пользователя.</param>
         /// <returns>Данные профиля.</returns>
         Task<UserInformationOutput> GetUserProfileInfoByIdAsync(string userId);
+
+        /// <summary>
+        /// Проверит, подтверждал ли пользователь свою почту, если нет, то попросит подтвердить.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Статус проверки.</returns>
+        Task<bool> CheckConfirmEmailAsync(string userId);
     }
 }

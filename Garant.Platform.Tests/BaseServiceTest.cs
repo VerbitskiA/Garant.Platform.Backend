@@ -3,6 +3,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.FTP.Service;
 using Garant.Platform.Mailings.Service;
 using Garant.Platform.Messaging.Service.Chat;
+using Garant.Platform.Services.Control;
 using Garant.Platform.Services.Document;
 using Garant.Platform.Services.Request;
 using Garant.Platform.Services.Service.Business;
@@ -36,6 +37,8 @@ namespace Garant.Platform.Tests
         protected RequestService RequestService;
         protected DocumentService DocumentService;
         protected DocumentRepository DocumentRepository;
+        protected ControlRepository ControlRepository;
+        protected ControlService ControlService;
 
         public BaseServiceTest()
         { 
@@ -65,6 +68,8 @@ namespace Garant.Platform.Tests
             RequestService = new RequestService(FranchiseRepository, BusinessRepository, PostgreDbContext);
             DocumentRepository = new DocumentRepository(PostgreDbContext, UserRepository);
             DocumentService = new DocumentService(PostgreDbContext, FtpService, DocumentRepository);
+            ControlRepository = new ControlRepository(PostgreDbContext);
+            ControlService = new ControlService(PostgreDbContext, ControlRepository, UserRepository);
         }
     }
 }

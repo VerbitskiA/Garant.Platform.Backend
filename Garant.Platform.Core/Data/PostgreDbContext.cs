@@ -4,6 +4,7 @@ using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.Business;
 using Garant.Platform.Models.Entities.Chat;
 using Garant.Platform.Models.Entities.Commerce;
+using Garant.Platform.Models.Entities.Control;
 using Garant.Platform.Models.Entities.Document;
 using Garant.Platform.Models.Entities.Footer;
 using Garant.Platform.Models.Entities.Franchise;
@@ -213,5 +214,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица Documents.Documents.
         /// </summary>
         public DbSet<DocumentEntity> Documents { get; set; }
+
+        /// <summary>
+        /// Таблица dbo.Controls.
+        /// </summary>
+        public DbSet<ControlEntity> Controls { get; set; }
     }
 }

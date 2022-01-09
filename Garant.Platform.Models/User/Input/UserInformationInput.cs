@@ -116,5 +116,10 @@ namespace Garant.Platform.Models.User.Input
         /// БИК.
         /// </summary>
         public int Bik { get; set; }
+
+        /// <summary>
+        /// Название банка, которое ранее было сохранено.
+        /// </summary>
+        public string DefaultBankName { get; set; }
     }
 }

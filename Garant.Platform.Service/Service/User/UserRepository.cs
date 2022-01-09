@@ -188,8 +188,9 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="values">Причины регистрации разделенные запятой.</param>
         /// <param name="kpp">КПП.</param>
         /// <param name="bik">БИК.</param>
+        /// <param name="defaultBankName">Название банка которое нужно сохранить по умолчанию.</param>
         /// <returns>Данные пользователя.</returns>
-        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid, int kpp, int bik)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid, int kpp, int bik, string defaultBankName)
         {
             try
             {
@@ -228,8 +229,7 @@ namespace Garant.Platform.Services.Service.User
                     // Если таких данных еще не было, то добавит.
                     if (checkUserInfoData == null)
                     {
-                        // Запишет доп.информацию.   
-                        await _postgreDbContext.UsersInformation.AddAsync(new UserInformationEntity
+                        var addInfo = new UserInformationEntity
                         {
                             FirstName = firstName,
                             LastName = lastName,
@@ -241,7 +241,15 @@ namespace Garant.Platform.Services.Service.User
                             UserId = user.UserId,
                             Kpp = kpp,
                             Bik = bik
-                        });
+                        };
+
+                        if (!string.IsNullOrEmpty(defaultBankName))
+                        {
+                            addInfo.DefaultBankName = defaultBankName;
+                        }
+
+                        // Запишет доп.информацию.   
+                        await _postgreDbContext.UsersInformation.AddAsync(addInfo);
 
                         await _postgreDbContext.SaveChangesAsync();
 
@@ -274,6 +282,11 @@ namespace Garant.Platform.Services.Service.User
                         checkUserInfoData.Kpp = kpp;
                         checkUserInfoData.Bik = bik;
 
+                        if (!string.IsNullOrEmpty(defaultBankName))
+                        {
+                            checkUserInfoData.DefaultBankName = defaultBankName;
+                        }
+
                         await _postgreDbContext.SaveChangesAsync();
 
                         user.IsWriteQuestion = true;
@@ -290,7 +303,8 @@ namespace Garant.Platform.Services.Service.User
                         Values = values,
                         PhoneNumber = user.PhoneNumber,
                         Kpp = kpp,
-                        Bik = bik
+                        Bik = bik,
+                        DefaultBankName = defaultBankName
                     };
                 }
 
@@ -1099,6 +1113,32 @@ namespace Garant.Platform.Services.Service.User
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Проверит, подтверждал ли пользователь свою почту, если нет, то попросит подтвердить.
+        /// </summary>
+        /// <param name="userId">Id пользователя.</param>
+        /// <returns>Статус проверки.</returns>
+        public async Task<bool> CheckConfirmEmailAsync(string userId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Users
+                    .Where(u => u.Id.Equals(userId))
+                    .Select(u => u.EmailConfirmed)
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }
