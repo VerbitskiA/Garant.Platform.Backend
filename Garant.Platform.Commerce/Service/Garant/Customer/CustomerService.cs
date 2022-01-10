@@ -57,7 +57,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
                 }
 
                 // От текущей даты прибавит 14 дней как срок холдирования платежа.
-                var endDate = DateTime.Now.AddDays(14);
+                //var endDate = DateTime.Now.AddDays(14);
 
                 // Найдет франшизу или бизнес.
                 if (orderType.Equals("Franchise"))

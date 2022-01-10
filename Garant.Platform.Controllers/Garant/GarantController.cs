@@ -91,7 +91,7 @@ namespace Garant.Platform.Controllers.Garant
         [ProducesResponseType(200, Type = typeof(GetPaymentStatusOutput))]
         public async Task<IActionResult> GetStatePaymentAsync([FromBody] StatePaymentInput statePaymentInput)
         {
-            var result = await _tinkoffService.GetStatePaymentAsync(statePaymentInput.PaymentId, statePaymentInput.OrderId);
+            var result = await _tinkoffService.GetStatePaymentAsync(statePaymentInput.PaymentId, statePaymentInput.OrderId, statePaymentInput.DealItemType, statePaymentInput.ItemDealId, GetUserName());
 
             return Ok(result);
         }
@@ -99,11 +99,11 @@ namespace Garant.Platform.Controllers.Garant
         /// <summary>
         /// Метод выполнит платеж на счет продавца за этап.
         /// </summary>
-        [HttpPost]
-        [Route("payment-vendor-iteration")]
-        public async Task<IActionResult> PaymentVendorIterationAsync()
-        {
-            return Ok();
-        }
+        //[HttpPost]
+        //[Route("payment-vendor-iteration")]
+        //public async Task<IActionResult> PaymentVendorIterationAsync()
+        //{
+        //    return Ok();
+        //}
     }
 }

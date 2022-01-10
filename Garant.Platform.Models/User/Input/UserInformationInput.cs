@@ -60,12 +60,12 @@ namespace Garant.Platform.Models.User.Input
         /// <summary>
         /// ИНН.
         /// </summary>
-        public int? Inn { get; set; }
+        public string Inn { get; set; }
 
         /// <summary>
         /// Расчетный счет.
         /// </summary>
-        public int? Pc { get; set; }
+        public string Pc { get; set; }
 
         /// <summary>
         /// Серия паспорта.
@@ -110,16 +110,21 @@ namespace Garant.Platform.Models.User.Input
         /// <summary>
         /// КПП.
         /// </summary>
-        public int Kpp { get; set; }
+        public string Kpp { get; set; }
 
         /// <summary>
         /// БИК.
         /// </summary>
-        public int Bik { get; set; }
+        public string Bik { get; set; }
 
         /// <summary>
         /// Название банка, которое ранее было сохранено.
         /// </summary>
         public string DefaultBankName { get; set; }
+
+        /// <summary>
+        /// Корреспондентский счёт банка получателя.
+        /// </summary>
+        public string CorrAccountNumber { get; set; }
     }
 }

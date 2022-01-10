@@ -299,8 +299,9 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="bik">БИК.</param>
         /// <param name="defaultBankName">Название банка которое нужно сохранить по умолчанию.</param>
         /// <param name="account">Аккаунт пользователя.</param>
+        /// <param name="corrAccountNumber">Корреспондентский счёт банка получателя.</param>
         /// <returns>Данные пользователя.</returns>
-        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, int kpp, int bik, string defaultBankName, string account)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string kpp, string bik, string defaultBankName, string account, string corrAccountNumber, string inn)
         {
             try
             {
@@ -317,7 +318,7 @@ namespace Garant.Platform.Services.Service.User
                 // Генерит guid код для подтверждения почты.
                 var guid = Guid.NewGuid().ToString();
 
-                var result = await _userRepository.SaveUserInfoAsync(firstName, lastName, city, email, password, values, guid, kpp, bik, defaultBankName);
+                var result = await _userRepository.SaveUserInfoAsync(firstName, lastName, city, email, password, values, guid, kpp, bik, defaultBankName, corrAccountNumber, inn);
 
                 if (result == null)
                 {

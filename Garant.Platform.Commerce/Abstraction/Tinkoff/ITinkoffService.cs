@@ -22,7 +22,9 @@ namespace Garant.Platform.Commerce.Abstraction.Tinkoff
         /// </summary>
         /// <param name="paymentId">Id платежа в системе банка.</param>
         /// <param name="orderId">Id заказа в сервисе Гарант.</param>
+        /// <param name="typeItemDeal">Тип предмета обсуждения.</param>
+        /// <param name="itemDealId">Id предмета обсуждения.</param>
         /// <returns>Данные платежа.</returns>
-        Task<GetPaymentStatusOutput> GetStatePaymentAsync(string paymentId, long orderId);
+        Task<GetPaymentStatusOutput> GetStatePaymentAsync(string paymentId, long orderId, string typeItemDeal, long itemDealId, string account);
     }
 }

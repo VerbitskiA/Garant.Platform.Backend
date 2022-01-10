@@ -67,8 +67,9 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="bik">БИК.</param>
         /// <param name="defaultBankName">Название банка которое нужно сохранить по умолчанию.</param>
         /// <param name="account">Аккаунт пользователя.</param>
+        /// <param name="corrAccountNumber">Корреспондентский счёт банка получателя.</param>
         /// <returns>Данные пользователя.</returns>
-        Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, int kpp, int bik, string defaultBankName, string account);
+        Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string kpp, string bik, string defaultBankName, string account, string corrAccountNumber, string inn);
 
         /// <summary>
         /// Метод найдет пользователя по email или номеру телефона.

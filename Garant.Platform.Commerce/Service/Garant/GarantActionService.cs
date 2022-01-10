@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.Franchise;
@@ -8,10 +11,13 @@ using Garant.Platform.Abstractions.User;
 using Garant.Platform.Commerce.Abstraction;
 using Garant.Platform.Commerce.Abstraction.Garant;
 using Garant.Platform.Commerce.Models.Garant.Output;
+using Garant.Platform.Commerce.Models.Tinkoff.Input;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Messaging.Abstraction.Chat;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace Garant.Platform.Commerce.Service.Garant
@@ -1400,11 +1406,79 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <summary>
         /// Метод выполнит платеж на счет продавцу за этап.
         /// </summary>
-        public async Task PaymentVendorIterationAsync()
+        public async Task PaymentVendorIterationAsync(string typeItemDeal, string payerAccountNumber, string currentUserId, long itemDealId, long paymentId)
         {
             try
             {
+                // TODO: запрос вынести в сервис банка.
+                var config = AutoFac.Resolve<IConfiguration>();
+                var request = WebRequest.Create("https://secured-openapi.business.tinkoff.ru/api/v1/payment/ruble-transfer/pay");
+                request.Method = "POST";
+                request.ContentType = "application/json";
+                request.Headers.Add("Authorization", config["TinkoffSandbox:Authorization"]);
 
+                var sendData = new PaymentVendorIterationInput();
+
+                // Найдет системный Id заказа.
+                var order = await _garantActionRepository.GetOrderBySystemIdAsync(paymentId);
+
+                // Получит данные получателя.
+                if (typeItemDeal.Equals("Franchise"))
+                {
+                    var franchise = await _franchiseService.GetFranchiseAsync(itemDealId);
+
+                    if (franchise != null && order != null)
+                    {
+                        // Найдет продавца.
+                        var payer = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
+
+                        sendData = new PaymentVendorIterationInput
+                        {
+                            Id = "123",
+                            From = new From
+                            {
+                                AccountNumber = payerAccountNumber
+                            },
+                            To = new To
+                            {
+                                Name = payer.FirstName + payer.LastName + payer.Patronymic,
+                                Inn = payer.Inn.ToString(),
+                                Bik = payer.Bik.ToString(),
+                                BankName = payer.DefaultBankName,
+                                CorrAccountNumber = payer.CorrAccountNumber.ToString(),
+                                AccountNumber = payer.Pc.ToString(),
+                                Kpp = payer.Kpp.ToString()
+                            },
+                            Purpose = "Перевод средств за этап предмета сделки (франшизы или бизнеса) продавцу.",
+                            Amount = order.Amount
+                        };
+
+                        Console.WriteLine();
+                    }
+                }
+
+                // Запишет в БД новый платеж.
+                //await _garantActionRepository.SetPaymentAsync();
+
+                var json = JsonConvert.SerializeObject(sendData);
+                var byteData = Encoding.UTF8.GetBytes(json);
+
+                // Запишет данные в поток запроса.
+                await using var stream = await request.GetRequestStreamAsync();
+                await stream.WriteAsync(byteData, 0, byteData.Length);
+                HttpWebResponse responseInitData = (HttpWebResponse)await request.GetResponseAsync();
+
+                //if (responseInitData.StatusCode != HttpStatusCode.OK)
+                //{
+                //    return false;
+                //}
+
+                await using var streamResult = responseInitData.GetResponseStream();
+
+                // Получит результат.
+                using var reader = new StreamReader(streamResult);
+                var jsonResult = await reader.ReadToEndAsync();
+                Console.WriteLine();
             }
 
             catch (Exception e)

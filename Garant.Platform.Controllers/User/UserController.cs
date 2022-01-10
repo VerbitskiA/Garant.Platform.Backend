@@ -115,7 +115,7 @@ namespace Garant.Platform.Controllers.User
         [ProducesResponseType(200, Type = typeof(UserInformationOutput))]
         public async Task<IActionResult> SaveUserInfoAsync([FromBody] UserInformationInput userInformationInput)
         {
-            var result = await _userService.SaveUserInfoAsync(userInformationInput.FirstName, userInformationInput.LastName, userInformationInput.City, userInformationInput.Email, userInformationInput.Password, userInformationInput.Values, userInformationInput.Kpp, userInformationInput.Bik, userInformationInput.DefaultBankName, GetUserName());
+            var result = await _userService.SaveUserInfoAsync(userInformationInput.FirstName, userInformationInput.LastName, userInformationInput.City, userInformationInput.Email, userInformationInput.Password, userInformationInput.Values, userInformationInput.Kpp, userInformationInput.Bik, userInformationInput.DefaultBankName, GetUserName(), userInformationInput.CorrAccountNumber, userInformationInput.Inn);
 
             return Ok(result);
         }

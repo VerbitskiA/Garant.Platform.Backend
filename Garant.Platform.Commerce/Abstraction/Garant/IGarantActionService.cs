@@ -22,6 +22,6 @@ namespace Garant.Platform.Commerce.Abstraction.Garant
         /// <summary>
         /// Метод выполнит платеж на счет продавцу за этап.
         /// </summary>
-        Task PaymentVendorIterationAsync();
+        Task PaymentVendorIterationAsync(string typeItemDeal, string payerAccountNumber, string currentUserId, long itemDealId, long orderId);
     }
 }

@@ -54,9 +54,10 @@ namespace Garant.Platform.Abstractions.User
         /// <param name="kpp">КПП.</param>
         /// <param name="bik">БИК.</param>
         /// <param name="defaultBankName">Название банка которое нужно сохранить по умолчанию.</param>
+        /// <param name="corrAccountNumber">Корреспондентский счёт банка получателя.</param>
         /// <returns>Данные пользователя.</returns>
         Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email,
-            string password, string values, string guid, int kpp, int bik, string defaultBankName);
+            string password, string values, string guid, string kpp, string bik, string defaultBankName, string corrAccountNumber, string inn);
 
         /// <summary>
         /// Метод найдет захэшированный пароль пользователя по логину или email или номеру телефона.

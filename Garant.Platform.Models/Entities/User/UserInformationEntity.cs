@@ -79,28 +79,28 @@ namespace Garant.Platform.Models.Entities.User
         /// <summary>
         /// ИНН.
         /// </summary>
-        [Column("Inn", TypeName = "int")]
-        public int? Inn { get; set; }
+        [Column("Inn", TypeName = "varchar(20)")]
+        public string Inn { get; set; }
 
         /// <summary>
         /// Расчетный счет.
         /// </summary>
-        [Column("Pc", TypeName = "int")]
-        public int? Pc { get; set; }
+        [Column("Pc", TypeName = "varchar(20)")]
+        public string Pc { get; set; }
 
         /// <summary>
         /// КПП.
         /// </summary>
         [Required]
-        [Column("Kpp", TypeName = "int")]
-        public int Kpp { get; set; }
+        [Column("Kpp", TypeName = "varchar(20)")]
+        public string Kpp { get; set; }
 
         /// <summary>
         /// БИК.
         /// </summary>
         [Required]
-        [Column("Bik", TypeName = "int")]
-        public int Bik { get; set; }
+        [Column("Bik", TypeName = "varchar(20)")]
+        public string Bik { get; set; }
 
         /// <summary>
         /// Серия паспорта.
@@ -149,5 +149,11 @@ namespace Garant.Platform.Models.Entities.User
         /// </summary>
         [Column("DefaultBankName", TypeName = "varchar(400)")]
         public string DefaultBankName { get; set; }
+
+        /// <summary>
+        /// Корреспондентский счёт банка получателя.
+        /// </summary>
+        [Column("CorrAccountNumber", TypeName = "varchar(20)")]
+        public string CorrAccountNumber { get; set; }
     }
 }
