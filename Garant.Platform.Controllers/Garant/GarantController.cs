@@ -47,7 +47,7 @@ namespace Garant.Platform.Controllers.Garant
         [ProducesResponseType(200, Type = typeof(PaymentActionOutput))]
         public async Task<IActionResult> PaymentActionAsync([FromBody] PaymentActionInput paymentActionInput)
         {
-            var result = await _garantActionService.GetInitDataGarantAsync(paymentActionInput.OriginalId, paymentActionInput.OrderType, GetUserName(), paymentActionInput.Stage, paymentActionInput.IsChat, paymentActionInput.OtherId);
+            var result = await _garantActionService.GetInitDataGarantAsync(paymentActionInput.OriginalId, paymentActionInput.OrderType, GetUserName(), paymentActionInput.Stage, paymentActionInput.IsChat);
 
             return Ok(result);
         }
@@ -91,9 +91,19 @@ namespace Garant.Platform.Controllers.Garant
         [ProducesResponseType(200, Type = typeof(GetPaymentStatusOutput))]
         public async Task<IActionResult> GetStatePaymentAsync([FromBody] StatePaymentInput statePaymentInput)
         {
-            var result = await _tinkoffService.GetStatePaymentAsync(statePaymentInput.PaymentId, statePaymentInput.OrderId);
+            var result = await _tinkoffService.GetStatePaymentAsync(statePaymentInput.PaymentId, statePaymentInput.OrderId, statePaymentInput.DealItemType, statePaymentInput.ItemDealId, GetUserName());
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод выполнит платеж на счет продавца за этап.
+        /// </summary>
+        //[HttpPost]
+        //[Route("payment-vendor-iteration")]
+        //public async Task<IActionResult> PaymentVendorIterationAsync()
+        //{
+        //    return Ok();
+        //}
     }
 }

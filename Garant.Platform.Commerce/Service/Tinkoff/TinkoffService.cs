@@ -5,13 +5,17 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.Franchise;
+using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Commerce.Abstraction;
+using Garant.Platform.Commerce.Abstraction.Garant;
 using Garant.Platform.Commerce.Abstraction.Tinkoff;
 using Garant.Platform.Commerce.Core.Exceptions;
 using Garant.Platform.Commerce.Models.Tinkoff.Input;
 using Garant.Platform.Commerce.Models.Tinkoff.Output;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Microsoft.Extensions.Configuration;
@@ -27,12 +31,14 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IConfiguration _configuration;
         private readonly ITinkoffRepository _tinkoffRepository;
+        private readonly IGarantActionService _garantActionService;
 
-        public TinkoffService(PostgreDbContext postgreDbContext, ITinkoffRepository tinkoffRepository)
+        public TinkoffService(PostgreDbContext postgreDbContext, ITinkoffRepository tinkoffRepository, IGarantActionService garantActionService)
         {
             _postgreDbContext = postgreDbContext;
             _configuration = AutoFac.Resolve<IConfiguration>();
             _tinkoffRepository = tinkoffRepository;
+            _garantActionService = garantActionService;
         }
 
         /// <summary>
@@ -123,7 +129,7 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 await _tinkoffRepository.SetSystemOrderIdAsync(orderId, Convert.ToInt64(result.PaymentId));
 
                 // Проверит статус созданного платежа.
-                await GetStatePaymentAsync(result.PaymentId, orderId);
+                //await GetStatePaymentAsync(result.PaymentId, orderId);
 
                 return result;
             }
@@ -142,17 +148,31 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
         /// </summary>
         /// <param name="paymentId">Id платежа в системе банка.</param>
         /// <param name="orderId">Id заказа в сервисе Гарант.</param>
+        /// <param name="typeItemDeal">Тип предмета обсуждения.</param>
+        /// <param name="itemDealId">Id предмета обсуждения.</param>
         /// <returns>Данные платежа.</returns>
-        public async Task<GetPaymentStatusOutput> GetStatePaymentAsync(string paymentId, long orderId)
+        public async Task<GetPaymentStatusOutput> GetStatePaymentAsync(string paymentId, long orderId, string typeItemDeal, long itemDealId, string account)
         {
             try
             {
                 if (string.IsNullOrEmpty(paymentId) && Convert.ToInt64(paymentId) <= 0)
                 {
-                    throw new EmptyOrderIdException("Не передан Id платежа в системе банка.");
+                    throw new EmptyOrderIdException("Не передан Id платежа для системы банка.");
+                }
+
+                if (itemDealId <= 0)
+                {
+                    throw new EmptyItemDealIdException();
+                }
+
+                if (string.IsNullOrEmpty(typeItemDeal))
+                {
+                    throw new EmptyDealItemTypeException();
                 }
 
                 var commonService = AutoFac.Resolve<ICommonService>();
+                var userRepo = AutoFac.Resolve<IUserRepository>();
+                var currentUserId = await userRepo.FindUserIdUniverseAsync(account);
 
                 // Готовит объект значений для хэша в SHA-256.
                 var hashValues = new Dictionary<string, object>
@@ -211,11 +231,23 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 // Запишет новый статус заказа.
                 var result = JsonConvert.DeserializeObject<GetPaymentStatusOutput>(jsonResult);
 
+                if (result == null)
+                {
+                    return new GetPaymentStatusOutput();
+                }
+
                 // Если статусы заказа разные.
-                if (currentOrderStatus != null && result != null && !currentOrderStatus.OrderStatus.Equals(result.Status))
+                if (currentOrderStatus != null && !currentOrderStatus.OrderStatus.Equals(result.Status))
                 {
                     // Запишет новый статус заказа.
                     await _tinkoffRepository.SetOrderStatusByIdAsync(orderId, result.Status);
+                }
+
+                // Если статус платежа подтвержден, то отправит средства за этап на счет продавца.
+                if (result.Success && result.Status.Equals("CONFIRMED"))
+                {
+                    var payerAccountNumber = _configuration["TinkoffSandbox:ShopSettings:PayerAccount"];
+                    await _garantActionService.PaymentVendorIterationAsync(typeItemDeal, payerAccountNumber.ToString(), currentUserId, itemDealId, Convert.ToInt64(paymentId));
                 }
 
                 return result;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Garant.Platform.Commerce.Models.Garant.Output;
+using Garant.Platform.Commerce.Models.Tinkoff.Output;
 using Garant.Platform.Models.Entities.Commerce;
 
 namespace Garant.Platform.Commerce.Abstraction
@@ -37,5 +38,18 @@ namespace Garant.Platform.Commerce.Abstraction
         /// <param name="orderId">Id заказа в сервисе Гарант.</param>
         /// <returns>Данне заказа.</returns>
         Task<OrderEntity> GetOrderByIdAsync(long orderId);
+
+        /// <summary>
+        /// Метод запишет в БД новый платеж.
+        /// </summary>
+        /// <returns>Данные платежа.</returns>
+        Task<PaymentOutput> SetPaymentAsync();
+
+        /// <summary>
+        /// Метод найдет системный Id заказа.
+        /// </summary>
+        /// <param name="systemOrderId">Системный Id заказа в сервисе Гарант.</param>
+        /// <returns>Системный Id заказа в системе банка.</returns>
+        Task<OrderEntity> GetOrderBySystemIdAsync(long systemOrderId);
     }
 }

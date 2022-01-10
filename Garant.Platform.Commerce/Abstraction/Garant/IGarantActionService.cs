@@ -16,8 +16,12 @@ namespace Garant.Platform.Commerce.Abstraction.Garant
         /// <param name="account">Аккаунт.</param>
         /// <param name="stage">Номер этапа.</param>
         /// <param name="isChat">Флаг чата.</param>
-        /// <param name="otherId">Id другого пользователя.</param>
         /// <returns>Данные стартовой страницы.</returns>
-        Task<InitGarantDataOutput> GetInitDataGarantAsync(long originalId, string orderType, string account, int stage, bool isChat, string otherId);
+        Task<InitGarantDataOutput> GetInitDataGarantAsync(long originalId, string orderType, string account, int stage, bool isChat);
+
+        /// <summary>
+        /// Метод выполнит платеж на счет продавцу за этап.
+        /// </summary>
+        Task PaymentVendorIterationAsync(string typeItemDeal, string payerAccountNumber, string currentUserId, long itemDealId, long orderId);
     }
 }

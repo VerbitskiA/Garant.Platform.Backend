@@ -189,8 +189,9 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="kpp">КПП.</param>
         /// <param name="bik">БИК.</param>
         /// <param name="defaultBankName">Название банка которое нужно сохранить по умолчанию.</param>
+        /// <param name="corrAccountNumber">Корреспондентский счёт банка получателя.</param>
         /// <returns>Данные пользователя.</returns>
-        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid, int kpp, int bik, string defaultBankName)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid, string kpp, string bik, string defaultBankName, string corrAccountNumber, string inn)
         {
             try
             {
@@ -240,7 +241,9 @@ namespace Garant.Platform.Services.Service.User
                             PhoneNumber = user.PhoneNumber,
                             UserId = user.UserId,
                             Kpp = kpp,
-                            Bik = bik
+                            Bik = bik,
+                            CorrAccountNumber = corrAccountNumber,
+                            Inn = inn
                         };
 
                         if (!string.IsNullOrEmpty(defaultBankName))
@@ -281,6 +284,7 @@ namespace Garant.Platform.Services.Service.User
                         checkUserInfoData.UserId = user.UserId;
                         checkUserInfoData.Kpp = kpp;
                         checkUserInfoData.Bik = bik;
+                        checkUserInfoData.CorrAccountNumber = corrAccountNumber;
 
                         if (!string.IsNullOrEmpty(defaultBankName))
                         {
@@ -304,7 +308,8 @@ namespace Garant.Platform.Services.Service.User
                         PhoneNumber = user.PhoneNumber,
                         Kpp = kpp,
                         Bik = bik,
-                        DefaultBankName = defaultBankName
+                        DefaultBankName = defaultBankName,
+                        CorrAccountNumber = corrAccountNumber
                     };
                 }
 
@@ -1025,7 +1030,8 @@ namespace Garant.Platform.Services.Service.User
                         Patronymic = i.Patronymic,
                         Values = i.Values,
                         Kpp = i.Kpp,
-                        Bik = i.Bik
+                        Bik = i.Bik,
+                        CorrAccountNumber = i.CorrAccountNumber
                     })
                     .FirstOrDefaultAsync();
 
@@ -1101,7 +1107,11 @@ namespace Garant.Platform.Services.Service.User
                         City = i.City,
                         DateBirth = i.DateBirth.ToString("yyyy-MM-dd"),
                         Patronymic = i.Patronymic,
-                        Values = i.Values
+                        Values = i.Values,
+                        CorrAccountNumber = i.CorrAccountNumber,
+                        Bik = i.Bik,
+                        Kpp = i.Kpp,
+                        DefaultBankName = i.DefaultBankName
                     })
                     .FirstOrDefaultAsync();
 

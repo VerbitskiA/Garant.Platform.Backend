@@ -14,5 +14,15 @@
         /// Id заказа.
         /// </summary>
         public long OrderId { get; set; }
+
+        /// <summary>
+        /// Тип предмета обсуждения.
+        /// </summary>
+        public string DealItemType { get; set; }
+
+        /// <summary>
+        /// Id предмета обсуждения.
+        /// </summary>
+        public long ItemDealId { get; set; }
     }
 }

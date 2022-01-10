@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Commerce.Abstraction;
 using Garant.Platform.Commerce.Models.Garant.Output;
+using Garant.Platform.Commerce.Models.Tinkoff.Output;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.Commerce;
@@ -129,6 +130,39 @@ namespace Garant.Platform.Commerce.Service.Garant
                 }
 
                 var result = await _postgreDbContext.Orders.FirstOrDefaultAsync(o => o.OriginalId == orderId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        public Task<PaymentOutput> SetPaymentAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Метод найдет системный Id заказа.
+        /// </summary>
+        /// <param name="systemOrderId">Системный Id заказа в сервисе Гарант.</param>
+        /// <returns>Системный Id заказа в системе банка.</returns>
+        public async Task<OrderEntity> GetOrderBySystemIdAsync(long systemOrderId)
+        {
+            try
+            {
+                if (systemOrderId <= 0)
+                {
+                    return null;
+                }
+
+                var result = await _postgreDbContext.Orders.FirstOrDefaultAsync(o => o.TinkoffSystemOrderId == systemOrderId);
 
                 return result;
             }
