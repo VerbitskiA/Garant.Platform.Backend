@@ -53,7 +53,7 @@ namespace Garant.Platform.Services.Control
                 // Проставит записи значение по дефолту, если она есть.
                 if (!string.IsNullOrEmpty(defaultSelectedCode))
                 {
-                    foreach (var item in result.Where(i => i.ValueId.ToString().Equals(defaultSelectedCode)))
+                    foreach (var item in result.Where(i => i.Value.ToString().Equals(defaultSelectedCode)))
                     {
                         item.IsDefault = true;
                     }
