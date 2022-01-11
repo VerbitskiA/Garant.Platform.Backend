@@ -23,8 +23,8 @@ namespace Garant.Platform.Models.Entities.Commerce
         [Required]
         [MinLength(20)]
         [MaxLength(20)]
-        [Column("AccountNumberPayer", TypeName = "int")]
-        public int AccountNumberPayer { get; set; }
+        [Column("AccountNumberPayer", TypeName = "varchar(20)")]
+        public string AccountNumberPayer { get; set; }
 
         /// <summary>
         /// Наименование получателя.
@@ -36,27 +36,26 @@ namespace Garant.Platform.Models.Entities.Commerce
         /// <summary>
         /// ИНН получателя. Если при платеже физ.лицу ИНН неизвестен, то ставить 0. Во всех других случаях он необходим.
         /// </summary>
-        [DefaultValue(0)]
+        [DefaultValue("0")]
         [Required]
         [MaxLength(12)]
-        [Column("RecipientInn", TypeName = "int")]
-        public int RecipientInn { get; set; }
+        [Column("RecipientInn", TypeName = "varchar(20)")]
+        public string RecipientInn { get; set; }
 
         /// <summary>
         /// КПП получателя.
         /// </summary>
         [MaxLength(9)]
-        [Column("RecipientKpp", TypeName = "int")]
-        public int? RecipientKpp { get; set; }
+        [Column("RecipientKpp", TypeName = "varchar(20)")]
+        public string RecipientKpp { get; set; }
 
         /// <summary>
         /// БИК получателя.
         /// </summary>
         [Required]
-        [MinLength(9)]
         [MaxLength(9)]
-        [Column("RecipientBik", TypeName = "int")]
-        public int RecipientBik { get; set; }
+        [Column("RecipientBik", TypeName = "varchar(20)")]
+        public string RecipientBik { get; set; }
 
         /// <summary>
         /// Название банка получателя.
@@ -69,19 +68,17 @@ namespace Garant.Platform.Models.Entities.Commerce
         /// Корреспондентский счёт банка получателя.
         /// </summary>
         [Required]
-        [MinLength(20)]
         [MaxLength(20)]
-        [Column("CorrAccountNumber", TypeName = "int")]
-        public int CorrAccountNumber { get; set; }
+        [Column("CorrAccountNumber", TypeName = "varchar(20)")]
+        public string CorrAccountNumber { get; set; }
 
         /// <summary>
         /// Номер расчетного счета получателя.
         /// </summary>
         [Required]
-        [MinLength(20)]
         [MaxLength(20)]
-        [Column("RecipientAccountNumber", TypeName = "int")]
-        public int RecipientAccountNumber { get; set; }
+        [Column("RecipientAccountNumber", TypeName = "varchar(20)")]
+        public string RecipientAccountNumber { get; set; }
 
         /// <summary>
         /// Назначение платежа.

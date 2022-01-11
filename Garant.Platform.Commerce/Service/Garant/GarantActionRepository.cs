@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Commerce.Abstraction;
 using Garant.Platform.Commerce.Models.Garant.Output;
-using Garant.Platform.Commerce.Models.Tinkoff.Output;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.Commerce;
@@ -143,9 +142,57 @@ namespace Garant.Platform.Commerce.Service.Garant
             }
         }
 
-        public Task<PaymentOutput> SetPaymentAsync()
+        /// <summary>
+        /// Метод запишет в БД новый платеж.
+        /// </summary>
+        /// <param name="paymentId">Id платежа в сервисе Гарант.</param>
+        /// <param name="accountNumberPayer">Номер расчетного счета продавца.</param>
+        /// <param name="recipientName">Наименование получателя.</param>
+        /// <param name="recipientInn">ИНН получателя.</param>
+        /// <param name="recipientKpp">КПП получателя.</param>
+        /// <param name="recipientBik">БИК получателя.</param>
+        /// <param name="bankName">Название банка.</param>
+        /// <param name="corrAccountNumber">Корреспондентский счёт банка получателя.</param>
+        /// <param name="recipientAccountNumber">Номер расчетного счета получателя.</param>
+        /// <param name="purpose">Назначение платежа.</param>
+        /// <param name="amount">Сумма платежа в руб.</param>
+        /// <param name="collectionAmount">Удержанная сумма в руб.</param>
+        public async Task SetPaymentAsync(long? paymentId, string accountNumberPayer, string recipientName, string recipientInn, string recipientKpp, string recipientBik, string bankName, string corrAccountNumber, string recipientAccountNumber, string purpose, double amount, double? collectionAmount)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // Если не нужно создавать платеж.
+                if (paymentId == null)
+                {
+                    return;
+                }
+
+                await _postgreDbContext.Payments.AddAsync(new PaymentEntity
+                {
+                    PaymentId = Convert.ToInt64(paymentId),
+                    AccountNumberPayer = accountNumberPayer,
+                    Amount = amount,
+                    BankName = bankName,
+                    CollectionAmount = collectionAmount,
+                    CorrAccountNumber = corrAccountNumber,
+                    Purpose = purpose,
+                    RecipientAccountNumber = recipientAccountNumber,
+                    RecipientBik = recipientBik,
+                    RecipientInn = recipientInn,
+                    RecipientName = recipientName,
+                    RecipientKpp = recipientKpp
+                });
+
+                await _postgreDbContext.SaveChangesAsync();
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
 
         /// <summary>
@@ -163,6 +210,36 @@ namespace Garant.Platform.Commerce.Service.Garant
                 }
 
                 var result = await _postgreDbContext.Orders.FirstOrDefaultAsync(o => o.TinkoffSystemOrderId == systemOrderId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит Id последнего платежа.
+        /// </summary>
+        /// <returns>Id платежа.</returns>
+        public async Task<long> GetLastPaymentIdAsync()
+        {
+            try
+            {
+                if (!await _postgreDbContext.Payments.AnyAsync())
+                {
+                    return 0;
+                }
+
+                var result = await _postgreDbContext.Payments
+                    .OrderByDescending(p => p.PaymentId)
+                    .Select(p => p.PaymentId)
+                    .FirstOrDefaultAsync();
 
                 return result;
             }

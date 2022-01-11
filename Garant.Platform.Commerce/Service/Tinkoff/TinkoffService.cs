@@ -247,7 +247,12 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 if (result.Success && result.Status.Equals("CONFIRMED"))
                 {
                     var payerAccountNumber = _configuration["TinkoffSandbox:ShopSettings:PayerAccount"];
-                    await _garantActionService.PaymentVendorIterationAsync(typeItemDeal, payerAccountNumber.ToString(), currentUserId, itemDealId, Convert.ToInt64(paymentId));
+                    var paymentStatus = await _garantActionService.PaymentVendorIterationAsync(typeItemDeal, payerAccountNumber, currentUserId, itemDealId, Convert.ToInt64(paymentId));
+
+                    if (paymentStatus)
+                    {
+                        result.IsPay = true;
+                    }
                 }
 
                 return result;

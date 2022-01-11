@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Garant.Platform.Commerce.Models.Tinkoff.Output
+﻿namespace Garant.Platform.Commerce.Models.Tinkoff.Output
 {
     /// <summary>
     /// Класс выходной модели платежа.
@@ -10,7 +8,6 @@ namespace Garant.Platform.Commerce.Models.Tinkoff.Output
         /// <summary>
         /// Id платежа в сервисе Гарант.
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
         public long PaymentId { get; set; }
     }
 }
