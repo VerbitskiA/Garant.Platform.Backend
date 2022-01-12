@@ -9,6 +9,7 @@ using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Commerce.Abstraction;
 using Garant.Platform.Commerce.Abstraction.Garant;
+using Garant.Platform.Commerce.Abstraction.Tinkoff;
 using Garant.Platform.Commerce.Models.Garant.Output;
 using Garant.Platform.Commerce.Models.Tinkoff.Input;
 using Garant.Platform.Core.Data;
@@ -1416,7 +1417,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                 request.ContentType = "application/json";
                 request.Headers.Add("Authorization", config["TinkoffSandbox:Authorization"]);
 
-                var id = 0;
+                var id = 1;
                 var sendData = new PaymentVendorIterationInput();
 
                 // Найдет системный Id заказа.
@@ -1506,8 +1507,11 @@ namespace Garant.Platform.Commerce.Service.Garant
                 // Запишет в БД новый платеж.
                 //await _garantActionRepository.SetPaymentAsync();
 
-                if (responseInitData.StatusCode != HttpStatusCode.Created)
+                if (responseInitData.StatusCode == HttpStatusCode.Created)
                 {
+                    var tinkoffRepo = AutoFac.Resolve<ITinkoffRepository>();
+                    await tinkoffRepo.SetOrderStatusByIdAsync(paymentId, "PaymentSuccess");
+
                     return true;
                 }
 

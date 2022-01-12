@@ -128,7 +128,10 @@ namespace Garant.Platform.Commerce.Service.Garant
                     return null;
                 }
 
-                var result = await _postgreDbContext.Orders.FirstOrDefaultAsync(o => o.OriginalId == orderId);
+                // Если не нашли по OriginalId, попробует поискать заказ по системному Id банка.
+                var result = await _postgreDbContext.Orders.FirstOrDefaultAsync(o => o.OriginalId == orderId) ??
+                             await _postgreDbContext.Orders.FirstOrDefaultAsync(o => o.TinkoffSystemOrderId == orderId) ??
+                             await _postgreDbContext.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
 
                 return result;
             }

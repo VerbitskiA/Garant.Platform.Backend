@@ -56,6 +56,11 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
                     i = 0;
                 }
 
+                else
+                {
+                    i++;
+                }
+
                 // От текущей даты прибавит 14 дней как срок холдирования платежа.
                 //var endDate = DateTime.Now.AddDays(14);
 

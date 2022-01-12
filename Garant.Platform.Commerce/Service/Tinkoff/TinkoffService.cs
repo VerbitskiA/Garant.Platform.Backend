@@ -252,6 +252,13 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                     if (paymentStatus)
                     {
                         result.IsPay = true;
+                        result.Status = "PaymentSuccess";
+
+                        // Найдет, какой этап оплачен по номеру итерации.
+                        if (currentOrderStatus != null)
+                        {
+                            result.Iteration = currentOrderStatus.Iteration;
+                        }
                     }
                 }
 
