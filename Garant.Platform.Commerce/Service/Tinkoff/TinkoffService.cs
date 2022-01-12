@@ -203,6 +203,11 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 var garantRepository = AutoFac.Resolve<IGarantActionRepository>();
                 var currentOrderStatus = await garantRepository.GetOrderByIdAsync(orderId);
 
+                if (currentOrderStatus == null)
+                {
+                    return null;
+                }
+
                 // Проверит статус платежа в системе банка.
                 var request = WebRequest.Create("https://securepay.tinkoff.ru/v2/GetState");
                 request.Method = "POST";
@@ -237,14 +242,14 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 }
 
                 // Если статусы заказа разные.
-                if (currentOrderStatus != null && !currentOrderStatus.OrderStatus.Equals(result.Status))
+                if (!currentOrderStatus.OrderStatus.Equals("PaymentSuccess") && !currentOrderStatus.OrderStatus.Equals(result.Status))
                 {
                     // Запишет новый статус заказа.
                     await _tinkoffRepository.SetOrderStatusByIdAsync(orderId, result.Status);
                 }
 
                 // Если статус платежа подтвержден, то отправит средства за этап на счет продавца.
-                if (result.Success && result.Status.Equals("CONFIRMED"))
+                if (result.Success && result.Status.Equals("CONFIRMED") || result.Success && result.Status.Equals("NEW"))
                 {
                     var payerAccountNumber = _configuration["TinkoffSandbox:ShopSettings:PayerAccount"];
                     var paymentStatus = await _garantActionService.PaymentVendorIterationAsync(typeItemDeal, payerAccountNumber, currentUserId, itemDealId, Convert.ToInt64(paymentId));
@@ -255,10 +260,7 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                         result.Status = "PaymentSuccess";
 
                         // Найдет, какой этап оплачен по номеру итерации.
-                        if (currentOrderStatus != null)
-                        {
-                            result.Iteration = currentOrderStatus.Iteration;
-                        }
+                        result.Iteration = currentOrderStatus.Iteration;
                     }
                 }
 

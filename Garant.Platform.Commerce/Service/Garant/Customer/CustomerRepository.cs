@@ -34,22 +34,15 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
         {
             try
             {
-                var id = 1000000;
-                long lastId = 0;
+                //long lastId = 1;
                 var optionalType = "DocumentCustomerAct" + iteration;
 
-                if (await _postgreDbContext.Orders.AnyAsync())
-                {
-                    lastId = await _postgreDbContext.Orders.MaxAsync(o => o.OrderId);
-                }
+                //if (await _postgreDbContext.Orders.AnyAsync())
+                //{
+                //    lastId = await _postgreDbContext.Orders.MaxAsync(o => o.OrderId);
+                //}
 
-                if (lastId <= 0)
-                {
-                    lastId = id;
-                }
-
-                lastId++;
-                var last = lastId;
+                //lastId++;
 
                 // Проверит существование такого заказа.
                 var checkOrder = await _postgreDbContext.Orders
@@ -66,7 +59,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
                     // Создаст новый заказ.
                     await _postgreDbContext.Orders.AddAsync(new OrderEntity
                     {
-                        OrderId = last,
+                        //OrderId = lastId,
                         Amount = amount,
                         Currency = "RUB",
                         DateCreate = DateTime.Now,
