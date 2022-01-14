@@ -95,15 +95,5 @@ namespace Garant.Platform.Controllers.Garant
 
             return Ok(result);
         }
-
-        /// <summary>
-        /// Метод выполнит платеж на счет продавца за этап.
-        /// </summary>
-        //[HttpPost]
-        //[Route("payment-vendor-iteration")]
-        //public async Task<IActionResult> PaymentVendorIterationAsync()
-        //{
-        //    return Ok();
-        //}
     }
 }

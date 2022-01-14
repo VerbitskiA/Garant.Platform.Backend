@@ -29,5 +29,15 @@
         /// Цена в копейках.
         /// </summary>
         public string Amount { get; set; }
+
+        /// <summary>
+        /// Оплачен ли этап продавцу.
+        /// </summary>
+        public bool IsPay { get; set; }
+
+        /// <summary>
+        /// Номер итерации, которая оплачена.
+        /// </summary>
+        public int Iteration { get; set; }
     }
 }

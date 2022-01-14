@@ -5,11 +5,11 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Commerce.Abstraction;
 using Garant.Platform.Commerce.Abstraction.Garant;
+using Garant.Platform.Commerce.Abstraction.Garant.Customer;
 using Garant.Platform.Commerce.Abstraction.Tinkoff;
 using Garant.Platform.Commerce.Core.Exceptions;
 using Garant.Platform.Commerce.Models.Tinkoff.Input;
@@ -203,6 +203,11 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 var garantRepository = AutoFac.Resolve<IGarantActionRepository>();
                 var currentOrderStatus = await garantRepository.GetOrderByIdAsync(orderId);
 
+                if (currentOrderStatus == null)
+                {
+                    return null;
+                }
+
                 // Проверит статус платежа в системе банка.
                 var request = WebRequest.Create("https://securepay.tinkoff.ru/v2/GetState");
                 request.Method = "POST";
@@ -237,17 +242,30 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                 }
 
                 // Если статусы заказа разные.
-                if (currentOrderStatus != null && !currentOrderStatus.OrderStatus.Equals(result.Status))
+                if (!currentOrderStatus.OrderStatus.Equals("PaymentSuccess") && !currentOrderStatus.OrderStatus.Equals(result.Status))
                 {
                     // Запишет новый статус заказа.
                     await _tinkoffRepository.SetOrderStatusByIdAsync(orderId, result.Status);
                 }
 
                 // Если статус платежа подтвержден, то отправит средства за этап на счет продавца.
-                if (result.Success && result.Status.Equals("CONFIRMED"))
+                if (result.Success && result.Status.Equals("CONFIRMED") || result.Success && result.Status.Equals("NEW"))
                 {
                     var payerAccountNumber = _configuration["TinkoffSandbox:ShopSettings:PayerAccount"];
-                    await _garantActionService.PaymentVendorIterationAsync(typeItemDeal, payerAccountNumber.ToString(), currentUserId, itemDealId, Convert.ToInt64(paymentId));
+                    var paymentStatus = await _garantActionService.PaymentVendorIterationAsync(typeItemDeal, payerAccountNumber, currentUserId, itemDealId, Convert.ToInt64(paymentId));
+                    var customerRepo = AutoFac.Resolve<ICustomerRepository>();
+
+                    if (paymentStatus)
+                    {
+                        result.IsPay = true;
+                        result.Status = "PaymentSuccess";
+
+                        // Найдет, какой этап оплачен по номеру итерации.
+                        result.Iteration = currentOrderStatus.Iteration;
+
+                        // Проставит оплату документу покупателя.
+                        await customerRepo.SetDocumentsCustomerPaymentAsync(currentUserId, result.Iteration);
+                    }
                 }
 
                 return result;

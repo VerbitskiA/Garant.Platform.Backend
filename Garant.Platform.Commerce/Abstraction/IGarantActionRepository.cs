@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Garant.Platform.Commerce.Models.Garant.Output;
-using Garant.Platform.Commerce.Models.Tinkoff.Output;
 using Garant.Platform.Models.Entities.Commerce;
 
 namespace Garant.Platform.Commerce.Abstraction
@@ -42,8 +41,19 @@ namespace Garant.Platform.Commerce.Abstraction
         /// <summary>
         /// Метод запишет в БД новый платеж.
         /// </summary>
-        /// <returns>Данные платежа.</returns>
-        Task<PaymentOutput> SetPaymentAsync();
+        /// <param name="paymentId">Id платежа в сервисе Гарант.</param>
+        /// <param name="accountNumberPayer">Номер расчетного счета продавца.</param>
+        /// <param name="recipientName">Наименование получателя.</param>
+        /// <param name="recipientInn">ИНН получателя.</param>
+        /// <param name="recipientKpp">КПП получателя.</param>
+        /// <param name="recipientBik">БИК получателя.</param>
+        /// <param name="bankName">Название банка.</param>
+        /// <param name="corrAccountNumber">Корреспондентский счёт банка получателя.</param>
+        /// <param name="recipientAccountNumber">Номер расчетного счета получателя.</param>
+        /// <param name="purpose">Назначение платежа.</param>
+        /// <param name="amount">Сумма платежа в руб.</param>
+        /// <param name="collectionAmount">Удержанная сумма в руб.</param>
+        Task SetPaymentAsync(long? paymentId, string accountNumberPayer, string recipientName, string recipientInn, string recipientKpp, string recipientBik, string bankName, string corrAccountNumber, string recipientAccountNumber, string purpose, double amount, double? collectionAmount);
 
         /// <summary>
         /// Метод найдет системный Id заказа.
@@ -51,5 +61,11 @@ namespace Garant.Platform.Commerce.Abstraction
         /// <param name="systemOrderId">Системный Id заказа в сервисе Гарант.</param>
         /// <returns>Системный Id заказа в системе банка.</returns>
         Task<OrderEntity> GetOrderBySystemIdAsync(long systemOrderId);
+
+        /// <summary>
+        /// Метод получит Id последнего платежа.
+        /// </summary>
+        /// <returns>Id платежа.</returns>
+        Task<long> GetLastPaymentIdAsync();
     }
 }
