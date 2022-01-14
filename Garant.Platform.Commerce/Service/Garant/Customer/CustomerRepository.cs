@@ -7,6 +7,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Commerce.Output;
 using Garant.Platform.Models.Entities.Commerce;
+using Garant.Platform.Models.Entities.Document;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Commerce.Service.Garant.Customer
@@ -118,6 +119,65 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
                     .FirstOrDefaultAsync();
 
                 return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод проставит флаг оплаты в true документам покупателя, которые оплачены.
+        /// </summary>
+        /// <param name="userId">Id покупателя.</param>
+        /// <param name="iteration">Номер итерации.</param>
+        public async Task SetDocumentsCustomerPaymentAsync(string userId, int iteration)
+        {
+            try
+            {
+                var documents = await _postgreDbContext.Documents.AsNoTracking()
+                    .Where(d => d.UserId.Equals(userId)
+                        && d.IsDealDocument
+                        && d.IsSend == true
+                        && d.IsApproveDocument == true
+                        && d.IsRejectDocument == false
+                        && d.IsPay == false)
+                    .ToListAsync();
+
+                long updateDocumentId = 0;
+
+                foreach (var item in documents)
+                {
+                    var value = 0;
+
+                    // Возьмет только число из строки.
+                    int.TryParse(string.Join("", item.DocumentType.Where(char.IsDigit)), out value);
+
+                    // Если найдет нужный акт, то обновит его оплату.
+                    if (value == 0 && item.DocumentType.Equals("DocumentCustomer") || value == iteration)
+                    {
+                        updateDocumentId = item.DocumentId;
+                    }
+                }
+
+                // Обновит документу флаг оплаты.
+                if (updateDocumentId > 0)
+                {
+                    var updateDocument = await _postgreDbContext.Documents.FirstOrDefaultAsync(d => d.DocumentId == updateDocumentId);
+
+                    if (updateDocument != null)
+                    {
+                        updateDocument.IsPay = true;
+                        _postgreDbContext.Documents.Update(updateDocument);
+                        await _postgreDbContext.SaveChangesAsync();
+                    }
+                }
+
+                Console.WriteLine();
             }
 
             catch (Exception e)

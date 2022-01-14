@@ -1142,7 +1142,7 @@ namespace Garant.Platform.Commerce.Service.Garant
             {
                 ItemDealId = franchiseId,
                 TotalAmount = totalInvest,
-                BlackBlockText = string.Empty,
+                BlackBlockText = "Отправить акт на согласование продавцу",
                 BlackBlockTitle = "Оплата и исполнение этапов сделки",
                 BlackBlueButtonText = "Отправить акт на согласование покупателю",
                 BlackButtonText = string.Empty,
@@ -1353,7 +1353,7 @@ namespace Garant.Platform.Commerce.Service.Garant
             {
                 ItemDealId = businessId,
                 TotalAmount = totalInvest,
-                BlackBlockText = string.Empty,
+                BlackBlockText = "Отправить акт на согласование продавцу",
                 BlackBlockTitle = "Оплата и исполнение этапов сделки",
                 BlackBlueButtonText = "Пригласить в сделку юриста",
                 BlackButtonText = "Не сейчас",
