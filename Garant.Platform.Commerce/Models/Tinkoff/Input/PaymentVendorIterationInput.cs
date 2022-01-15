@@ -36,6 +36,12 @@ namespace Garant.Platform.Commerce.Models.Tinkoff.Input
         /// </summary>
         [JsonProperty(PropertyName = "amount")]
         public double Amount { get; set; }
+
+        /// <summary>
+        /// Удержанная сумма в руб.
+        /// </summary>
+        [JsonProperty(PropertyName = "collectionAmount")]
+        public double? CollectionAmount { get; set; }
     }
 
     /// <summary>

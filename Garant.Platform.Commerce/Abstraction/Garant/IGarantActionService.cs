@@ -22,6 +22,14 @@ namespace Garant.Platform.Commerce.Abstraction.Garant
         /// <summary>
         /// Метод выполнит платеж на счет продавцу за этап.
         /// </summary>
+        /// <returns>Статус платежа.</returns>
         Task<bool> PaymentVendorIterationAsync(string typeItemDeal, string payerAccountNumber, string currentUserId, long itemDealId, long orderId);
+
+        /// <summary>
+        /// Метод вычислит комиссию удержанной сервисом гарант суммы от продажи этапа.
+        /// </summary>
+        /// <param name="amount">Сумма до вычета комиссии.</param>
+        /// <returns>Данные после вычислений комиссии.</returns>
+        Task<CalcCommissionOutput> CalcCommissionPaymentAsync(double amount);
     }
 }

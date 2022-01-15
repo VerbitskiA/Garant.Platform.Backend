@@ -109,7 +109,7 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
 
                 if (responseInitData.StatusCode != HttpStatusCode.OK)
                 {
-                    return new PaymentInitOutput { Success = false };
+                    return new PaymentInitOutput { Success = false, Status = "Fail" };
                 }
 
                 await using var streamInit = responseInitData.GetResponseStream();
@@ -122,7 +122,7 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
 
                 if (result == null)
                 {
-                    return new PaymentInitOutput { Success = false };
+                    return new PaymentInitOutput { Success = false, Status = "Fail"};
                 }
 
                 // Обновит систеный Id заказа.
@@ -201,11 +201,11 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
 
                 // Получит старый статус заказа.
                 var garantRepository = AutoFac.Resolve<IGarantActionRepository>();
-                var currentOrderStatus = await garantRepository.GetOrderByIdAsync(orderId);
+                var order = await garantRepository.GetOrderByIdAsync(orderId);
 
-                if (currentOrderStatus == null)
+                if (order == null)
                 {
-                    return null;
+                    return new GetPaymentStatusOutput { Success = false, Status = "Fail"};
                 }
 
                 // Проверит статус платежа в системе банка.
@@ -224,7 +224,7 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
 
                 if (responseInitData.StatusCode != HttpStatusCode.OK)
                 {
-                    return new GetPaymentStatusOutput();
+                    return new GetPaymentStatusOutput { Success = false, Status = "Fail" };
                 }
 
                 await using var streamResult = responseInitData.GetResponseStream();
@@ -238,18 +238,18 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
 
                 if (result == null)
                 {
-                    return new GetPaymentStatusOutput();
+                    return new GetPaymentStatusOutput { Success = false, Status = "Fail" };
                 }
 
                 // Если статусы заказа разные.
-                if (!currentOrderStatus.OrderStatus.Equals("PaymentSuccess") && !currentOrderStatus.OrderStatus.Equals(result.Status))
+                if (!order.OrderStatus.Equals("PaymentSuccess") && !order.OrderStatus.Equals(result.Status))
                 {
                     // Запишет новый статус заказа.
                     await _tinkoffRepository.SetOrderStatusByIdAsync(orderId, result.Status);
                 }
 
                 // Если статус платежа подтвержден, то отправит средства за этап на счет продавца.
-                if (result.Success && result.Status.Equals("CONFIRMED") || result.Success && result.Status.Equals("NEW"))
+                if ((result.Success && result.Status.Equals("CONFIRMED")) || (result.Success && result.Status.Equals("NEW")))
                 {
                     var payerAccountNumber = _configuration["TinkoffSandbox:ShopSettings:PayerAccount"];
                     var paymentStatus = await _garantActionService.PaymentVendorIterationAsync(typeItemDeal, payerAccountNumber, currentUserId, itemDealId, Convert.ToInt64(paymentId));
@@ -261,7 +261,7 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
                         result.Status = "PaymentSuccess";
 
                         // Найдет, какой этап оплачен по номеру итерации.
-                        result.Iteration = currentOrderStatus.Iteration;
+                        result.Iteration = order.Iteration;
 
                         // Проставит оплату документу покупателя.
                         await customerRepo.SetDocumentsCustomerPaymentAsync(currentUserId, result.Iteration);

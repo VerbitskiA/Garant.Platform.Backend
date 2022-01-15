@@ -10,6 +10,7 @@ using Garant.Platform.Abstractions.User;
 using Garant.Platform.Commerce.Abstraction;
 using Garant.Platform.Commerce.Abstraction.Garant;
 using Garant.Platform.Commerce.Abstraction.Tinkoff;
+using Garant.Platform.Commerce.Core.Exceptions;
 using Garant.Platform.Commerce.Models.Garant.Output;
 using Garant.Platform.Commerce.Models.Tinkoff.Input;
 using Garant.Platform.Core.Data;
@@ -1406,11 +1407,11 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <summary>
         /// Метод выполнит платеж на счет продавцу за этап.
         /// </summary>
+        /// <returns>Статус платежа.</returns>
         public async Task<bool> PaymentVendorIterationAsync(string typeItemDeal, string payerAccountNumber, string currentUserId, long itemDealId, long paymentId)
         {
             try
             {
-                // TODO: запрос вынести в сервис банка.
                 var config = AutoFac.Resolve<IConfiguration>();
                 var request = WebRequest.Create("https://business.tinkoff.ru/openapi/sandbox/secured/api/v1/payment/ruble-transfer/pay");
                 request.Method = "POST";
@@ -1422,6 +1423,14 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                 // Найдет системный Id заказа.
                 var order = await _garantActionRepository.GetOrderBySystemIdAsync(paymentId);
+
+                if (order == null)
+                {
+                    throw new ErrorFindOrderException($"Заказа с paymentId не найдено {paymentId}");
+                }
+
+                // Вычислит комиссию.
+                var commissionAmount = await CalcCommissionPaymentAsync(order.Amount);
 
                 // Получит Id последнего платежа.
                 var lastPaymentId = await _garantActionRepository.GetLastPaymentIdAsync();
@@ -1436,7 +1445,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                 {
                     var franchise = await _franchiseService.GetFranchiseAsync(itemDealId);
 
-                    if (franchise != null && order != null)
+                    if (franchise != null)
                     {
                         // Найдет продавца.
                         var payer = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
@@ -1459,6 +1468,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 Kpp = payer.Kpp
                             },
                             Purpose = $"//ВЗС//500-00// Перевод средств за этап предмета сделки (франшизы или бизнеса) продавцу ({order.Amount} руб.) НДС не облагается.",
+                            CollectionAmount = commissionAmount.AfterCalcAmount,
                             Amount = order.Amount
                         };
                     }
@@ -1468,7 +1478,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                 {
                     var business = await _businessService.GetBusinessAsync(itemDealId);
 
-                    if (business != null && order != null)
+                    if (business != null)
                     {
                         // Найдет продавца.
                         var payer = await _userRepository.GetUserProfileInfoByIdAsync(business.UserId);
@@ -1491,6 +1501,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                                 Kpp = payer.Kpp
                             },
                             Purpose = $"//ВЗС//500-00// Перевод средств за этап предмета сделки (франшизы или бизнеса) продавцу ({order.Amount} руб.) НДС не облагается.",
+                            CollectionAmount = commissionAmount.AfterCalcAmount,
                             Amount = order.Amount
                         };
                     }
@@ -1522,6 +1533,84 @@ namespace Garant.Platform.Commerce.Service.Garant
                 //var jsonResult = await reader.ReadToEndAsync();
 
                 return false;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод вычислит комиссию удержанной сервисом гарант суммы от продажи этапа.
+        /// </summary>
+        /// <param name="amount">Сумма до вычета комиссии.</param>
+        /// <returns>Данные после вычислений комиссии.</returns>
+        public async Task<CalcCommissionOutput> CalcCommissionPaymentAsync(double amount)
+        {
+            try
+            {
+                var result = new CalcCommissionOutput();
+
+                if (amount <= 0)
+                {
+                    throw new EmptyCalcSumsForCalcCommissionsException();
+                }
+
+                // Если <= 500 000, то ставка комиссии 5%.
+                if (amount <= 500000)
+                {
+                    result = new CalcCommissionOutput
+                    {
+                        BeforeCalcAmount = amount,
+                        AfterCalcAmount = Math.Round(amount * 5 / 100)
+                    };
+                }
+
+                // Если <= 1 000 000, то ставка комиссии 1%.
+                if (amount <= 1000000)
+                {
+                    result = new CalcCommissionOutput
+                    {
+                        BeforeCalcAmount = amount,
+                        AfterCalcAmount = Math.Round(amount * 1 / 100)
+                    };
+                }
+
+                // Если <= 5 000 000, то ставка комиссии 0.5%.
+                if (amount <= 5000000)
+                {
+                    result = new CalcCommissionOutput
+                    {
+                        BeforeCalcAmount = amount,
+                        AfterCalcAmount = Math.Round(amount * 0.5 / 100)
+                    };
+                }
+
+                // Если >= 5 000 000 и <= 10 000 000, то ставка комиссии 0.2%.
+                if (amount is >= 5000000 and <= 10000000)
+                {
+                    result = new CalcCommissionOutput
+                    {
+                        BeforeCalcAmount = amount,
+                        AfterCalcAmount = Math.Round(amount * 0.2 / 100)
+                    };
+                }
+
+                // Если <= 10 000 000, то ставка комиссии 0.1%.
+                if (amount > 10000000)
+                {
+                    result = new CalcCommissionOutput
+                    {
+                        BeforeCalcAmount = amount,
+                        AfterCalcAmount = Math.Round(amount * 0.1 / 100)
+                    };
+                }
+
+                return await Task.FromResult(result);
             }
 
             catch (Exception e)
