@@ -37,7 +37,6 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
             try
             {
                 var isCheck = false;
-                var result = new DealOutput();
 
                 if (orderType.Equals("Franchise"))
                 {
@@ -61,14 +60,23 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
                     }
                 }
 
-                if (!isCheck)
+                if (isCheck)
                 {
-                    return result;
+                    return null;
                 }
 
                 var userService = AutoFac.Resolve<IUserRepository>();
                 var userId = await userService.FindUserIdUniverseAsync(account);
-                result = await _vendorRepository.CreateDealAsync(itemDealId, userId, false);
+
+                // Проверит существование открытой сделки, чтобы не дублировать ее.
+                var checkDeal = await _vendorRepository.CheckDealByItemDealIdAsync(itemDealId, account);
+
+                if (!checkDeal)
+                {
+                    return null;
+                }
+
+                var result = await _vendorRepository.CreateDealAsync(itemDealId, userId);
 
                 return result;
             }

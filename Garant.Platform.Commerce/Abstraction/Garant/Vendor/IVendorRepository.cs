@@ -13,8 +13,15 @@ namespace Garant.Platform.Commerce.Abstraction.Garant.Vendor
         /// </summary>
         /// <param name="itemDealId">Id предмета сделки.</param>
         /// <param name="userId">Id пользователя, который создал сделку.</param>
-        /// <param name="isCompletedDeal">Флаг завершена ли сделка.</param>
         /// <returns>Данные сделки.</returns>
-        Task<DealOutput> CreateDealAsync(long itemDealId, string userId, bool isCompletedDeal);
+        Task<DealOutput> CreateDealAsync(long itemDealId, string userId);
+
+        /// <summary>
+        /// Метод проверит существование открытой сделки с таким предметом сделки.
+        /// </summary>
+        /// <param name="itemDealId">Id предмета сделки.</param>
+        /// <param name="userId">Id пользователя, который создал сделку.</param>
+        /// <returns>Статус проверки.</returns>
+        Task<bool> CheckDealByItemDealIdAsync(long itemDealId, string userId);
     }
 }

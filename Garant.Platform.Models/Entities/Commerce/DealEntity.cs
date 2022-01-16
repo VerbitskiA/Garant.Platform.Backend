@@ -39,5 +39,11 @@ namespace Garant.Platform.Models.Entities.Commerce
         /// </summary>
         [Column("DateCreate", TypeName = "timestamp")]
         public DateTime DateCreate { get; set; }
+
+        /// <summary>
+        /// Закрыта ли сделка.
+        /// </summary>
+        [Column("IsClose", TypeName = "bool")]
+        public bool IsClose { get; set; }
     }
 }

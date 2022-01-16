@@ -28,13 +28,15 @@ namespace Garant.Platform.Controllers.Garant
         private readonly ICustomerService _customerService;
         private readonly IVendorService _vendorService;
         private readonly ITinkoffService _tinkoffService;
+        private readonly IVendorRepository _vendorRepository;
 
-        public GarantController(IGarantActionService _garantActionervice, ICustomerService customerService, IVendorService vendorService, ITinkoffService tinkoffService)
+        public GarantController(IGarantActionService _garantActionervice, ICustomerService customerService, IVendorService vendorService, ITinkoffService tinkoffService, IVendorRepository vendorRepository)
         {
             _garantActionService = _garantActionervice;
             _customerService = customerService;
             _vendorService = vendorService;
             _tinkoffService = tinkoffService;
+            _vendorRepository = vendorRepository;
         }
 
         /// <summary>
@@ -92,6 +94,21 @@ namespace Garant.Platform.Controllers.Garant
         public async Task<IActionResult> GetStatePaymentAsync([FromBody] StatePaymentInput statePaymentInput)
         {
             var result = await _tinkoffService.GetStatePaymentAsync(statePaymentInput.PaymentId, statePaymentInput.OrderId, statePaymentInput.DealItemType, statePaymentInput.ItemDealId, GetUserName());
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод проверит существование сделки, чтобы ее не дублировать.
+        /// </summary>
+        /// <param name="dealInput">Входная модель.</param>
+        /// <returns>Статус проверки.</returns>
+        [HttpPost]
+        [Route("check-deal")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> CheckDealAsync([FromBody] DealInput dealInput)
+        {
+            var result = await _vendorRepository.CheckDealByItemDealIdAsync(dealInput.DealItemId, GetUserName());
 
             return Ok(result);
         }
