@@ -13,7 +13,6 @@ using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Mailing.Output;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace Garant.Platform.Base.Service
 {
@@ -38,8 +37,6 @@ namespace Garant.Platform.Base.Service
         /// <returns>Флаг успеха.</returns>
         public async Task<MailngOutput> GenerateAcceptCodeAsync(string data)
         {
-            await using var transaction = await _postgreDbContext.Database.BeginTransactionAsync();
-
             try
             {
                 var random = new Random();
@@ -72,7 +69,6 @@ namespace Garant.Platform.Base.Service
 
                     // Отправит код подтверждения по смс.
                     await _mailigSmsService.SendAcceptCodeSmsAsync(data, code);
-                    await transaction.CommitAsync();
                 }
 
                 else if (type.Equals("mail"))
@@ -81,7 +77,6 @@ namespace Garant.Platform.Base.Service
                     await SaveCodeAsync(data, code);
 
                     await _mailigSmsService.SendAcceptCodeMailAsync(code, data);
-                    await transaction.CommitAsync();
                 }
 
                 var result = new MailngOutput
@@ -99,8 +94,6 @@ namespace Garant.Platform.Base.Service
 
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
-
-                await transaction.RollbackAsync();
                 throw;
             }
         }
@@ -170,6 +163,8 @@ namespace Garant.Platform.Base.Service
                 // Такого номера не было, добавит пользователя.
                 await _postgreDbContext.Users.AddAsync(insertData);
                 await _postgreDbContext.SaveChangesAsync();
+
+                await SaveUserBaseAsync(data);
             }
 
             catch (Exception e)
@@ -354,6 +349,29 @@ namespace Garant.Platform.Base.Service
                 await logger.LogCritical();
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Метод добавит пользователя в таблицу Identity.
+        /// </summary>
+        /// <param name="data"></param>
+        private async Task SaveUserBaseAsync(string data)
+        {
+            var user = await _postgreDbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(data) && u.UserName.Equals(data));
+
+            var baseUser = new BaseUserEntity
+                {
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    DateRegister = user.DateRegister,
+                    NormalizedUserName = user.UserName.ToUpper(),
+                    NormalizedEmail = user.Email.ToUpper(),
+                    SecurityStamp = user.SecurityStamp,
+                    Code = user.Code
+                };
+
+                await _postgreDbContext.BaseUsers.AddAsync(baseUser);
+                await _postgreDbContext.SaveChangesAsync();
         }
     }
 }

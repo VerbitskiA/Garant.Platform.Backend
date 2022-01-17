@@ -91,14 +91,12 @@ namespace Garant.Platform.Models.Entities.User
         /// <summary>
         /// КПП.
         /// </summary>
-        [Required]
         [Column("Kpp", TypeName = "varchar(20)")]
         public string Kpp { get; set; }
 
         /// <summary>
         /// БИК.
         /// </summary>
-        [Required]
         [Column("Bik", TypeName = "varchar(20)")]
         public string Bik { get; set; }
 

@@ -30,6 +30,8 @@ namespace Garant.Platform.Core.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) { }
 
+        public DbSet<BaseUserEntity> BaseUsers { get; set; }
+
         /// <summary>
         /// Таблица пользователей.
         /// </summary>

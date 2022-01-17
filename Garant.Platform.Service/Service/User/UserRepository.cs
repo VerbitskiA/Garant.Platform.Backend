@@ -298,6 +298,17 @@ namespace Garant.Platform.Services.Service.User
                         await _postgreDbContext.SaveChangesAsync();
                     }
 
+                    // Обновит пароль в таблице Identity, потому что изначально он там пустой.
+                    var baseUser = await _postgreDbContext.BaseUsers.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
+
+                    if (baseUser != null)
+                    {
+                        baseUser.UserPassword = password;
+                        baseUser.PasswordHash = passwordHash;
+                        _postgreDbContext.BaseUsers.Update(baseUser);
+                        await _postgreDbContext.SaveChangesAsync();
+                    }
+
                     result = new UserInformationOutput
                     {
                         FirstName = firstName,
