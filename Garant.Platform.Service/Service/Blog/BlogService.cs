@@ -16,10 +16,16 @@ namespace Garant.Platform.Services.Service.Blog
     public sealed class BlogService : IBlogService
     {
         private readonly PostgreDbContext _postgreDbContext;
+        private readonly IBlogRepository _blogRepository;
 
         public BlogService(PostgreDbContext postgreDbContext)
         {
             _postgreDbContext = postgreDbContext;
+        }
+        public BlogService(PostgreDbContext postgreDbContext, IBlogRepository blogRepository)
+        {
+            _postgreDbContext = postgreDbContext;
+            _blogRepository = blogRepository;
         }
 
         /// <summary>
@@ -124,12 +130,7 @@ namespace Garant.Platform.Services.Service.Blog
         {
             try
             {
-                var result = await (from b in _postgreDbContext.BlogThemes                                    
-                                    select new BlogThemesOutput
-                                    {
-                                        Title = b.Title                                        
-                                    })                    
-                    .ToListAsync();
+                var result = await _blogRepository.GetBlogThemesAsync();
 
                 return result;
             }
