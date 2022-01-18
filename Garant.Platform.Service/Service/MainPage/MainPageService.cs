@@ -225,20 +225,18 @@ namespace Garant.Platform.Services.Service.MainPage
         /// <summary>
         /// Метод получит список франшиз на основе фильтров.
         /// </summary>
-        /// <param name="viewBusiness">Вид бизнеса.</param>
-        /// <param name="category">Категория.</param>
-        /// <param name="city">Город.</param>
+        /// <param name="viewBusinessCode">Код вида бизнеса.</param>
+        /// <param name="categoryCode">Код категории.</param>
         /// <param name="minPrice">Цена от.</param>
         /// <param name="maxPrice">Цена до.</param>
         /// <returns>Список франшиз.</returns>
-        public async Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string viewBusinessCode, string categoryCode, string cityCode, double minPrice, double maxPrice)
+        public async Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string viewBusinessCode, string categoryCode, double minPrice, double maxPrice)
         {
             try
             {
                 var result = await (from f in _postgreDbContext.Franchises
                                     where f.ViewBusiness.Equals(viewBusinessCode)
                                         && f.Category.Equals(categoryCode)
-                                        && f.City.Equals(cityCode)
                                         && (f.Price <= maxPrice && f.Price >= minPrice)
                                     orderby f.FranchiseId
                                     select new FranchiseOutput

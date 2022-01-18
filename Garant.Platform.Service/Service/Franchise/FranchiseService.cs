@@ -176,12 +176,16 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="isGarant">Покупка через гарант.</param>
         /// <param name="minPrice">Прибыль от.</param>
         /// <param name="maxPrice">Прибыль до.</param>
+        /// <param name="viewCode"> Код вида бизнеса.</param>
+        /// <param name="categoryCode">Код категории.</param>
+        /// <param name="minPriceInvest">Сумма инвестиций от.</param>
+        /// <param name="maxPriceInvest">Сумма инвестиций до.</param>
         /// <returns>Список франшиз после фильтрации.</returns>
-        public async Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, string minPrice, string maxPrice, bool isGarant = false)
+        public async Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice, double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false)
         {
             try
             {
-                var items = await _franchiseRepository.FilterFranchisesAsync(typeSort, minPrice, maxPrice, isGarant);
+                var items = await _franchiseRepository.FilterFranchisesAsync(typeSort, minPrice, maxPrice, viewCode, categoryCode, minPriceInvest, maxPriceInvest, isGarant);
 
                 foreach (var item in items)
                 {

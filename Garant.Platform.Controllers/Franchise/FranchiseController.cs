@@ -76,7 +76,7 @@ namespace Garant.Platform.Controllers.Franchise
         [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
         public async Task<IActionResult> FilterFranchisesAsync([FromBody] FilterInput fitFilterInput)
         {
-            var result = await _franchiseService.FilterFranchisesAsync(fitFilterInput.TypeSortPrice, fitFilterInput.ProfitMinPrice, fitFilterInput.ProfitMaxPrice, fitFilterInput.IsGarant);
+            var result = await _franchiseService.FilterFranchisesAsync(fitFilterInput.TypeSortPrice, fitFilterInput.ProfitMinPrice, fitFilterInput.ProfitMaxPrice, fitFilterInput.ViewCode, fitFilterInput.CategoryCode, fitFilterInput.MinPriceInvest, fitFilterInput.MaxPriceInvest, fitFilterInput.IsGarant);
 
             return Ok(result);
         }

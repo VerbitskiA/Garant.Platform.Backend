@@ -18,11 +18,36 @@
         /// <summary>
         /// Прибыль в мес. от.
         /// </summary>
-        public string ProfitMinPrice { get; set; }
+        public double ProfitMinPrice { get; set; }
 
         /// <summary>
         /// Прибыль в мес. до.
         /// </summary>
-        public string ProfitMaxPrice { get; set; }
+        public double ProfitMaxPrice { get; set; }
+
+        /// <summary>
+        /// Код бизнеса.
+        /// </summary>
+        public string ViewCode { get; set; }
+
+        /// <summary>
+        /// Код категории.
+        /// </summary>
+        public string CategoryCode { get; set; }
+
+        /// <summary>
+        /// Код города.
+        /// </summary>
+        //public string CityCode { get; set; }
+
+        /// <summary>
+        /// Цена инвестиций от.
+        /// </summary>
+        public double MinPriceInvest { get; set; }
+
+        /// <summary>
+        /// Цена инвестиций до.
+        /// </summary>
+        public double MaxPriceInvest { get; set; }
     }
 }
