@@ -17,11 +17,7 @@ namespace Garant.Platform.Services.Service.Blog
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IBlogRepository _blogRepository;
-
-        public BlogService(PostgreDbContext postgreDbContext)
-        {
-            _postgreDbContext = postgreDbContext;
-        }
+        
         public BlogService(PostgreDbContext postgreDbContext, IBlogRepository blogRepository)
         {
             _postgreDbContext = postgreDbContext;
