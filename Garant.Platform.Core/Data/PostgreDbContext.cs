@@ -103,6 +103,11 @@ namespace Garant.Platform.Core.Data
         public DbSet<BlogEntity> Blogs { get; set; }
 
         /// <summary>
+        /// Таблица блогов Info.BlogThemes.
+        /// </summary>
+        public DbSet<BlogThemeEntity> BlogThemes { get; set; }
+
+        /// <summary>
         /// Таблица Franchises.FranchiseCities.
         /// </summary>
         public DbSet<FranchiseCityEntity> FranchiseCities { get; set; }

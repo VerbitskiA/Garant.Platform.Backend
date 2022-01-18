@@ -115,5 +115,32 @@ namespace Garant.Platform.Services.Service.Blog
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список тем блогов.
+        /// </summary>
+        /// <returns>Список тем блогов.</returns>
+        public async Task<IEnumerable<BlogThemesOutput>> GetBlogThemesAsync()
+        {
+            try
+            {
+                var result = await (from b in _postgreDbContext.BlogThemes                                    
+                                    select new BlogThemesOutput
+                                    {
+                                        Title = b.Title                                        
+                                    })                    
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }
