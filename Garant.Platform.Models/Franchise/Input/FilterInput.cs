@@ -1,7 +1,7 @@
 ﻿namespace Garant.Platform.Models.Franchise.Input
 {
     /// <summary>
-    /// Класс входной модели для фильтрации франшиз.
+    /// Класс входной модели для фильтрации франшиз и бизнесов.
     /// </summary>
     public class FilterInput
     {
@@ -38,7 +38,7 @@
         /// <summary>
         /// Код города.
         /// </summary>
-        //public string CityCode { get; set; }
+        public string CityCode { get; set; }
 
         /// <summary>
         /// Цена инвестиций от.

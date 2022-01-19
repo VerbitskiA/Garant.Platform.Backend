@@ -65,14 +65,18 @@ namespace Garant.Platform.Abstractions.Business
         Task<IEnumerable<PopularBusinessOutput>> GetBusinessListAsync();
 
         /// <summary>
-        /// Метод получит список бизнеса на основе фильтров.
+        /// Метод фильтрует список бизнесов по параметрам.
         /// </summary>
-        /// <param name="categoryCode">Категория.</param>
-        /// <param name="cityCode">Город.</param>
-        /// <param name="minPrice">Цена от.</param>
-        /// <param name="maxPrice">Цена до.</param>
-        /// <returns>Список бизнеса.</returns>
-        Task<IEnumerable<BusinessOutput>> FilterBusinessesAsync(string categoryCode, string cityCode, double minPrice, double maxPrice);
+        /// <param name="typeSortPrice">Тип сортировки цены (убыванию, возрастанию).</param>
+        /// <param name="profitMinPrice">Цена от.</param>
+        /// <param name="profitMaxPrice">Цена до.</param>
+        /// <param name="categoryCode">Город.</param>
+        /// <param name="viewCode">Код вида бизнеса.</param>
+        /// <param name="minPriceInvest">Сумма общих инвестиций от.</param>
+        /// <param name="maxPriceInvest">Сумма общих инвестиций до.</param>
+        /// <param name="isGarant">Флаг гаранта.</param>
+        /// <returns>Список бизнесов после фильтрации.</returns>
+        Task<IEnumerable<BusinessOutput>> FilterBusinessesAsync(string typeSortPrice, double profitMinPrice, double profitMaxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false);
 
         /// <summary>
         /// Метод получит новый бизнес, который был создан в текущем месяце.
