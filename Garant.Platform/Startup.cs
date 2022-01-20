@@ -22,7 +22,7 @@ namespace Garant.Platform
         public IContainer ApplicationContainer { get; private set; }
 
         public Startup(IConfiguration configuration)
-        {
+        { 
             Configuration = configuration;
             ContainerBuilder = new ContainerBuilder();
         }
@@ -43,7 +43,7 @@ namespace Garant.Platform
                     .AllowCredentials();
             }));
 
-            #region Продакшен.
+            #region пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 
             //services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
             //    opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"), b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
@@ -53,7 +53,7 @@ namespace Garant.Platform
 
             #endregion
 
-            #region Тестовая среда.
+            #region пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.
 
             services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
