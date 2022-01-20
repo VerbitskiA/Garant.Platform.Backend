@@ -20,12 +20,13 @@
     "Garant.Platform": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "swagger/",
+      "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": "true",
-      "applicationUrl": "http://localhost:5780"
+      "applicationUrl": "http://localhost:9991",
+      "jsWebView2Debugging": false
     }
   }
 }

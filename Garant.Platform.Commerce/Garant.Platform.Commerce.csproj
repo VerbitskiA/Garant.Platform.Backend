@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Garant.Platform.Abstractions\Garant.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Base\Garant.Platform.Base.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Core\Garant.Platform.Core.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Messaging\Garant.Platform.Messaging.csproj" />
+  </ItemGroup>
+
+</Project>

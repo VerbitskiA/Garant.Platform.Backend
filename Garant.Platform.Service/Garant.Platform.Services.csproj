@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.2" />
+    <PackageReference Include="System.Net.FtpClient" Version="1.0.5824.34026" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Garant.Platform.Abstractions\Garant.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Base\Garant.Platform.Base.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Core\Garant.Platform.Core.csproj" />
+    <ProjectReference Include="..\Garant.Platform.FTP\Garant.Platform.FTP.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Mailings\Garant.Platform.Mailings.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Models\Garant.Platform.Models.csproj" />
+  </ItemGroup>
+
+</Project>
