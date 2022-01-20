@@ -24,7 +24,7 @@ namespace Garant.Platform
         public Startup(IConfiguration configuration)
         { 
             Configuration = configuration;
-            ContainerBuilder = new ContainerBuilder();
+            ContainerBuilder = new ContainerBuilder(); 
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
