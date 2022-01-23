@@ -354,8 +354,8 @@ namespace Garant.Platform.Base.Service
         /// <summary>
         /// Метод вернёт корректное склонение для слова "день" в зависимости от количества дней.
         /// </summary>
-        /// <param name="days">Количество дней</param>
-        /// <returns></returns>
+        /// <param name="days">Количество дней.</param>
+        /// <returns>Корректное склонение слова "день".</returns>
         public async Task<string> GetCorrectDeclinationForDays(int days)
         {
             try
@@ -365,7 +365,7 @@ namespace Garant.Platform.Base.Service
                     throw new ArgumentOutOfRangeException(nameof(days), $"Количество дней {nameof(days)} не может быть отрицательным");
                 }
 
-                if (days >= 10 && days <= 20)
+                if (days % 100 >= 10 && days % 100 <= 20)
                 {
                     return await Task.FromResult("дней");
                 }
