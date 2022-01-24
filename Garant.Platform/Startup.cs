@@ -46,23 +46,23 @@ namespace Garant.Platform
 
             #region Для прода.
 
-            services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
-                opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"),
-                    b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
-            
-            services.AddDbContext<IdentityDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"),
-                    b => b.MigrationsAssembly("Garant.Platform.Core")));
+            // services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
+            //     opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"),
+            //         b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
+            //
+            // services.AddDbContext<IdentityDbContext>(options =>
+            //     options.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"),
+            //         b => b.MigrationsAssembly("Garant.Platform.Core")));
 
             #endregion
 
             #region Для теста.
 
-            // services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
-            //     opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
-            //
-            // services.AddDbContext<IdentityDbContext>(options =>
-            //     options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
+            services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
+                opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
+            
+            services.AddDbContext<IdentityDbContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
 
             #endregion
 
