@@ -119,7 +119,7 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         /// <summary>
         /// Метод получит список популярного бизнеса.
         /// </summary>
-        /// <returns>Список бизнеса.</returns>
+        /// <returns>Список бизнеса.</returns>        
         [HttpPost]
         [Route("popular-business")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<PopularBusinessOutput>))]
