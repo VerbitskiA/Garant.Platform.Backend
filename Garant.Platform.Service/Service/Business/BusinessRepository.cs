@@ -594,6 +594,11 @@ namespace Garant.Platform.Services.Service.Business
                     .Take(4)
                     .ToListAsync();
 
+                foreach (var item in result)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
+
                 return result;
             }
 
@@ -629,6 +634,11 @@ namespace Garant.Platform.Services.Service.Business
                         BusinessId = b.BusinessId
                     })
                     .ToListAsync();
+
+                foreach (var item in result)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return result;
             }
@@ -725,6 +735,11 @@ namespace Garant.Platform.Services.Service.Business
                     }
 
                     items = await query.ToListAsync();
+
+                    foreach (var item in items)
+                    {
+                        item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                    }
                 }
 
                 return items;
@@ -769,6 +784,11 @@ namespace Garant.Platform.Services.Service.Business
                     .Take(10)
                     .ToListAsync();
 
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
+
                 return items;
             }
 
@@ -808,6 +828,11 @@ namespace Garant.Platform.Services.Service.Business
                         BusinessId = f.BusinessId
                     })
                     .ToListAsync();
+
+                foreach (var item in result)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return result;
             }

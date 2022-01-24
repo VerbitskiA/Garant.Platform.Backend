@@ -34,6 +34,7 @@ namespace Garant.Platform.Service.Service.Ad
             {
                 var commonService = AutoFac.Resolve<ICommonService>();
 
+                //TODO: CountDays и DayDeclination сделать вычисляемыми и не хранить в БД.
                 var result = await (from a in _postgreDbContext.Ads
                                     orderby a.DateCreate
                                     select new AdOutput
