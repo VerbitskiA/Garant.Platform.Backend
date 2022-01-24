@@ -80,7 +80,7 @@ namespace Garant.Platform.Services.Service.Franchise
                                     {
                                         DateCreate = p.DateCreate,
                                         Price = string.Format("{0:0,0}", p.Price),
-                                        CountDays = DateTime.Now.Day - p.DateCreate.Day,
+                                        CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
                                         DayDeclination = "дня",
                                         Text = p.Text,
                                         TextDoPrice = p.TextDoPrice,

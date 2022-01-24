@@ -582,7 +582,7 @@ namespace Garant.Platform.Services.Service.Business
                     {
                         DateCreate = b.DateCreate,
                         Price = string.Format("{0:0,0}", b.Price),
-                        CountDays = DateTime.Now.Day - b.DateCreate.Day,
+                        CountDays = DateTime.Now.Subtract(b.DateCreate).Days,
                         DayDeclination = "дня",
                         Text = b.Text,
                         TextDoPrice = b.TextDoPrice,
@@ -624,7 +624,7 @@ namespace Garant.Platform.Services.Service.Business
                     {
                         DateCreate = b.DateCreate,
                         Price = string.Format("{0:0,0}", b.Price),
-                        CountDays = DateTime.Now.Day - b.DateCreate.Day,
+                        CountDays = DateTime.Now.Subtract(b.DateCreate).Days,
                         DayDeclination = "дня",
                         Text = b.Text,
                         TextDoPrice = b.TextDoPrice,
