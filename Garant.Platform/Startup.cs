@@ -37,8 +37,8 @@ namespace Garant.Platform
                     .WithOrigins(
                         "http://localhost:4200",
                         "http://localhost:40493",
-                        "https://gobizy.ru",
-                        "https://gobizy.com")
+                        "https://gobizy.com",
+                        "https://gobizy.ru")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
