@@ -51,7 +51,7 @@ namespace Garant.Platform.Base.Abstraction
         /// </summary>
         /// <param name="days">Количество дней.</param>
         /// <returns>Корректное склонение слова "день".</returns>
-        Task<string> GetCorrectDeclinationDaysAsync(int days);
+        Task<string> GetCorrectDayDeclinationAsync(int days);
 
         /// <summary>
         /// Метод хэширует строку по SHA-256.

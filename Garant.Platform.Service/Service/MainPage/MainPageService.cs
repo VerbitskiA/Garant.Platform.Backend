@@ -186,7 +186,7 @@ namespace Garant.Platform.Services.Service.MainPage
                 //исправляем склонение слова "день"
                 foreach (var item in result)
                 {
-                    item.DayDeclination = await commonService.GetCorrectDeclinationDaysAsync(item.CountDays);
+                    item.DayDeclination = await commonService.GetCorrectDayDeclinationAsync(item.CountDays);
                 }
 
                 return result;
@@ -244,6 +244,8 @@ namespace Garant.Platform.Services.Service.MainPage
         {
             try
             {
+                var commonService = AutoFac.Resolve<ICommonService>();
+
                 var result = await (from f in _postgreDbContext.Franchises
                                     where f.ViewBusiness.Equals(viewBusinessCode)
                                         && f.Category.Equals(categoryCode)
@@ -267,6 +269,9 @@ namespace Garant.Platform.Services.Service.MainPage
 
                 foreach (var item in result)
                 {
+                    //исправляем склонение слова "день"
+                    item.DayDeclination = await commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+
                     item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
                 }
 

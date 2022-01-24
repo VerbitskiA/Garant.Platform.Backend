@@ -356,7 +356,7 @@ namespace Garant.Platform.Base.Service
         /// </summary>
         /// <param name="days">Количество дней.</param>
         /// <returns>Корректное склонение слова "день".</returns>
-        public async Task<string> GetCorrectDeclinationDaysAsync(int days)
+        public async Task<string> GetCorrectDayDeclinationAsync(int days)
         {
             try
             {

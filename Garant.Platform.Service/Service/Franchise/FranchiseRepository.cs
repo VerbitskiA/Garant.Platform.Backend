@@ -54,6 +54,11 @@ namespace Garant.Platform.Services.Service.Franchise
                                    })
                     .ToListAsync();
 
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
+
                 return items;
             }
 
@@ -86,6 +91,11 @@ namespace Garant.Platform.Services.Service.Franchise
                                     })
                     .Take(4)
                     .ToListAsync();
+
+                foreach (var item in result)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return result;
             }
@@ -125,6 +135,11 @@ namespace Garant.Platform.Services.Service.Franchise
                                    })
                     .Take(4)
                     .ToListAsync();
+
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return items;
             }
@@ -238,7 +253,7 @@ namespace Garant.Platform.Services.Service.Franchise
                 IQueryable<FranchiseOutput> query = null;
 
                 // Сортировать на возрастанию цены.
-                if (typeSort.Equals("Asc")) 
+                if (typeSort.Equals("Asc"))
                 {
                     query = (from f in _postgreDbContext.Franchises
                              where f.ViewBusiness.Equals(viewCode)
@@ -271,25 +286,25 @@ namespace Garant.Platform.Services.Service.Franchise
                 else if (typeSort.Equals("Desc"))
                 {
                     query = (from f in _postgreDbContext.Franchises
-                            where f.ViewBusiness.Equals(viewCode)
-                                  && f.Category.Equals(categoryCode)
-                                  && (f.Price <= maxPrice && f.Price >= minPrice)
-                                  && (f.GeneralInvest >= minPriceInvest && f.GeneralInvest <= maxPriceInvest)
-                                  && f.IsGarant == isGarant
-                             orderby f.FranchiseId descending 
+                             where f.ViewBusiness.Equals(viewCode)
+                                   && f.Category.Equals(categoryCode)
+                                   && (f.Price <= maxPrice && f.Price >= minPrice)
+                                   && (f.GeneralInvest >= minPriceInvest && f.GeneralInvest <= maxPriceInvest)
+                                   && f.IsGarant == isGarant
+                             orderby f.FranchiseId descending
                              select new FranchiseOutput
-                                 {
-                                     DateCreate = f.DateCreate,
-                                     Price = string.Format("{0:0,0}", f.Price),
-                                     CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                                     DayDeclination = "дня",
-                                     Text = f.Text,
-                                     TextDoPrice = f.TextDoPrice,
-                                     Title = f.Title,
-                                     Url = f.Url,
-                                     IsGarant = f.IsGarant,
-                                     ProfitPrice = f.ProfitPrice
-                                 })
+                             {
+                                 DateCreate = f.DateCreate,
+                                 Price = string.Format("{0:0,0}", f.Price),
+                                 CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                 DayDeclination = "дня",
+                                 Text = f.Text,
+                                 TextDoPrice = f.TextDoPrice,
+                                 Title = f.Title,
+                                 Url = f.Url,
+                                 IsGarant = f.IsGarant,
+                                 ProfitPrice = f.ProfitPrice
+                             })
                         .AsQueryable();
                 }
 
@@ -303,6 +318,11 @@ namespace Garant.Platform.Services.Service.Franchise
                     }
 
                     items = await query.ToListAsync();
+
+                    foreach (var item in items)
+                    {
+                        item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                    }
                 }
 
                 return items;
@@ -347,6 +367,11 @@ namespace Garant.Platform.Services.Service.Franchise
                     .Take(10)
                     .ToListAsync();
 
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
+
                 return items;
             }
 
@@ -383,6 +408,11 @@ namespace Garant.Platform.Services.Service.Franchise
                                    })
                     .Take(10)
                     .ToListAsync();
+
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return items;
             }
@@ -978,6 +1008,11 @@ namespace Garant.Platform.Services.Service.Franchise
                         FranchiseId = f.FranchiseId
                     })
                     .ToListAsync();
+
+                foreach (var item in result)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return result;
             }

@@ -54,7 +54,7 @@ namespace Garant.Platform.Service.Service.Ad
                 //исправим склонение слова "день"
                 foreach (var item in result)
                 {
-                    item.DayDeclination = await commonService.GetCorrectDeclinationDaysAsync(item.CountDays);
+                    item.DayDeclination = await commonService.GetCorrectDayDeclinationAsync(item.CountDays);
                 }
 
                 return result;
