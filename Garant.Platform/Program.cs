@@ -25,7 +25,7 @@ namespace Garant.Platform
             WebHost.CreateDefaultBuilder(args)
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseUrls("http://*:9991")
+                .UseUrls("http://*:9990")
                 .UseStartup<Startup>();
     }
 }
