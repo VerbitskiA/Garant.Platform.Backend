@@ -47,6 +47,13 @@ namespace Garant.Platform.Base.Abstraction
         Task<double> ConvertRubToPennyAsync(double amount);
 
         /// <summary>
+        /// Метод вернёт корректное склонение для слова "день" в зависимости от количества дней.
+        /// </summary>
+        /// <param name="days">Количество дней.</param>
+        /// <returns>Корректное склонение слова "день".</returns>
+        Task<string> GetCorrectDeclinationDaysAsync(int days);
+
+        /// <summary>
         /// Метод хэширует строку по SHA-256.
         /// </summary>
         /// <param name="str">Исходная строка с параметрами, которые конкантенированы.</param>

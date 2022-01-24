@@ -25,9 +25,9 @@ namespace Garant.Platform.Tests.UnitTests
         [DataRow(119, "дней")]
         [DataRow(1116, "дней")]
         [DataRow(1221, "день")]        
-        public async Task GetCorrectDeclinationForDaysTest(int count, string expected)
+        public async Task GetCorrectDeclinationDaysAsyncTest(int count, string expected)
         {
-            string result = await CommonService.GetCorrectDeclinationForDays(count);
+            string result = await CommonService.GetCorrectDeclinationDaysAsync(count);
 
             Assert.AreEqual(expected, result);
         }
