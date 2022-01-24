@@ -185,7 +185,7 @@ namespace Garant.Platform.Base.Service
         {
             byte[] salt;
             byte[] buffer2;
-            
+
             using (var bytes = new Rfc2898DeriveBytes(password, 0x10, 0x3e8))
             {
                 salt = bytes.Salt;
@@ -352,6 +352,51 @@ namespace Garant.Platform.Base.Service
         }
 
         /// <summary>
+        /// Метод вернёт корректное склонение для слова "день" в зависимости от количества дней.
+        /// </summary>
+        /// <param name="days">Количество дней.</param>
+        /// <returns>Корректное склонение слова "день".</returns>
+        public async Task<string> GetCorrectDayDeclinationAsync(int days)
+        {
+            try
+            {
+                if (days < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(days), $"Количество дней {nameof(days)} не может быть отрицательным");
+                }
+
+                if (days % 100 >= 10 && days % 100 <= 20)
+                {
+                    return await Task.FromResult("дней");
+                }
+
+                if (days % 10 == 1)
+                {
+                    return await Task.FromResult("день");
+
+                }
+                if (days % 10 >= 2 && days % 10 <= 4)
+                {
+                    return await Task.FromResult("дня");
+
+                }
+                else
+                {
+                    return await Task.FromResult("дней");
+                }
+
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Метод добавит пользователя в таблицу Identity.
         /// </summary>
         /// <param name="data"></param>
@@ -360,18 +405,18 @@ namespace Garant.Platform.Base.Service
             var user = await _postgreDbContext.Users.FirstOrDefaultAsync(u => u.Email.Equals(data) && u.UserName.Equals(data));
 
             var baseUser = new BaseUserEntity
-                {
-                    UserName = user.UserName,
-                    Email = user.Email,
-                    DateRegister = user.DateRegister,
-                    NormalizedUserName = user.UserName.ToUpper(),
-                    NormalizedEmail = user.Email.ToUpper(),
-                    SecurityStamp = user.SecurityStamp,
-                    Code = user.Code
-                };
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                DateRegister = user.DateRegister,
+                NormalizedUserName = user.UserName.ToUpper(),
+                NormalizedEmail = user.Email.ToUpper(),
+                SecurityStamp = user.SecurityStamp,
+                Code = user.Code
+            };
 
-                await _postgreDbContext.BaseUsers.AddAsync(baseUser);
-                await _postgreDbContext.SaveChangesAsync();
+            await _postgreDbContext.BaseUsers.AddAsync(baseUser);
+            await _postgreDbContext.SaveChangesAsync();
         }
     }
 }

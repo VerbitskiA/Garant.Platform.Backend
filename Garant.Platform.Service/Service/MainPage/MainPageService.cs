@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.MainPage;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Actions.Output;
 using Garant.Platform.Models.Category.Output;
 using Garant.Platform.Models.Franchise.Output;
@@ -163,13 +165,15 @@ namespace Garant.Platform.Services.Service.MainPage
         {
             try
             {
+                var commonService = AutoFac.Resolve<ICommonService>();
+
                 // TODO: переделать CountDays по аналогии как сделано у франшиз. Это поле должно быть вычисляемым и не храниться в БД. CountDays и DayDeclination убрать из БД а тут сделать CountDays вычисляемым.
                 var result = await (from res in _postgreDbContext.LastBuys
                                     select new LastBuyOutput
                                     {
                                         CountDays = res.CountDays,
-                                        DateBuy = res.DateBuy,
-                                        DayDeclination = "дня",
+                                        DateBuy = res.DateBuy,    
+                                        DayDeclination = res.DayDeclination,
                                         Name = res.Name,
                                         Price = string.Format("{0:0,0}", res.Price),
                                         Text = res.Text,
@@ -178,6 +182,12 @@ namespace Garant.Platform.Services.Service.MainPage
                                     })
                     .Take(5)
                     .ToListAsync();
+
+                //исправляем склонение слова "день"
+                foreach (var item in result)
+                {
+                    item.DayDeclination = await commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return result;
             }
@@ -234,6 +244,8 @@ namespace Garant.Platform.Services.Service.MainPage
         {
             try
             {
+                var commonService = AutoFac.Resolve<ICommonService>();
+
                 var result = await (from f in _postgreDbContext.Franchises
                                     where f.ViewBusiness.Equals(viewBusinessCode)
                                         && f.Category.Equals(categoryCode)
@@ -257,6 +269,9 @@ namespace Garant.Platform.Services.Service.MainPage
 
                 foreach (var item in result)
                 {
+                    //исправляем склонение слова "день"
+                    item.DayDeclination = await commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+
                     item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
                 }
 
