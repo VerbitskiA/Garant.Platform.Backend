@@ -25,9 +25,9 @@ namespace Garant.Platform.Services.Service.Blog
         }
 
         /// <summary>
-        /// /// Метод получит список объявлений для главной страницы.
+        /// /// Метод получит список блогов, у которых стоит флаг IsPaid. Т.е те, которые проплачены за размещение на главной.
         /// </summary>
-        /// <returns>Список объявлений.</returns>
+        /// <returns>Список блогов.</returns>
         public async Task<IEnumerable<BlogOutput>> GetBlogsListMainPageAsync()
         {
             try
@@ -138,6 +138,29 @@ namespace Garant.Platform.Services.Service.Blog
                 await logger.LogError();
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Метод получит список блогов.
+        /// </summary>
+        /// <returns>Список блогов.</returns>
+        public async Task<IEnumerable<BlogOutput>> GetBlogsListAsync()
+        {
+            try
+            {
+                var result = await _blogRepository.GetBlogsListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+
         }
     }
 }

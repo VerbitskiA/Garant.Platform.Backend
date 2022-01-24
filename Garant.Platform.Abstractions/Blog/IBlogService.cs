@@ -10,7 +10,7 @@ namespace Garant.Platform.Abstractions.Blog
     public interface IBlogService
     {
         /// <summary>
-        /// Метод получит список объявлений для главной страницы.
+        /// Метод получит список блогов, у которых стоит флаг IsPaid. Т.е те, которые проплачены за размещение на главной.
         /// </summary>
         /// <returns>Список объявлений.</returns>
         Task<IEnumerable<BlogOutput>> GetBlogsListMainPageAsync();
@@ -26,5 +26,11 @@ namespace Garant.Platform.Abstractions.Blog
         /// </summary>
         /// <returns>Список тем блогов.</returns>
         Task<IEnumerable<BlogThemesOutput>> GetBlogThemesAsync();
+
+        /// <summary>
+        /// Метод получит список блогов.
+        /// </summary>
+        /// <returns>Список блогов.</returns>
+        Task<IEnumerable<BlogOutput>> GetBlogsListAsync();
     }
 }

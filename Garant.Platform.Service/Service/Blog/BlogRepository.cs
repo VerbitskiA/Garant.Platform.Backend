@@ -23,6 +23,35 @@ namespace Garant.Platform.Services.Service.Blog
         }
 
         /// <summary>
+        /// Метод вернёт список блогов.
+        /// </summary>
+        /// <returns>Список блогов.</returns>
+        public async Task<IEnumerable<BlogOutput>> GetBlogsListAsync()
+        {
+            try
+            {
+                var result = await (from b in _postgreDbContext.Blogs
+                                    select new BlogOutput
+                                    {
+                                        Title = b.Title,
+                                        Url = b.Url,
+                                        IsPaid = b.IsPaid
+                                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Метод вернёт список тем блогов.
         /// </summary>        
         /// <returns>Список тем блогов.</returns>
@@ -31,10 +60,10 @@ namespace Garant.Platform.Services.Service.Blog
             try
             {
                 var result = await (from b in _postgreDbContext.BlogThemes
-                                   select new BlogThemesOutput
-                                   {
-                                       Title = b.Title
-                                   })
+                                    select new BlogThemesOutput
+                                    {
+                                        Title = b.Title
+                                    })
                     .ToListAsync();
 
                 return result;

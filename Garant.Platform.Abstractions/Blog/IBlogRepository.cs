@@ -17,5 +17,11 @@ namespace Garant.Platform.Abstractions.Blog
         /// </summary>        
         /// <returns>Список тем блогов.</returns>
         Task<IEnumerable<BlogThemesOutput>> GetBlogThemesAsync();
+
+        /// <summary>
+        /// Метод вернёт список блогов.
+        /// </summary>
+        /// <returns>Список блогов.</returns>
+        Task<IEnumerable<BlogOutput>> GetBlogsListAsync();
     }
 }

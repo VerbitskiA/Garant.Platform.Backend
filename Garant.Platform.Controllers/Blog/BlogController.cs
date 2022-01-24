@@ -63,5 +63,19 @@ namespace Garant.Platform.Controllers.Blog
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит список блогов.
+        /// </summary>
+        /// <returns>Список блогов.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("get-blogs-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BlogOutput>))]
+        public async Task<IActionResult> GetBlogsListAsync()
+        {
+            var result = await _blogService.GetBlogsListAsync();
+
+            return Ok(result);
+        }
     }
 }
