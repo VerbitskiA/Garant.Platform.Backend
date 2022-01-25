@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
 using Microsoft.EntityFrameworkCore;
 
@@ -161,6 +162,26 @@ namespace Garant.Platform.Services.Service.Blog
                 throw;
             }
 
+        }
+
+        /// <summary>
+        /// Метод создаст новый блог.
+        /// </summary>
+        /// <param name="blogInput">Входная модель блога.</param>
+        /// <returns>Созданный блог.</returns>
+        public Task<BlogOutput> CreateBlogAsync(CreateBlogInput blogInput)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Метод обновит существующий блог.
+        /// </summary>
+        /// <param name="blogInput">Входная модель блога.</param>
+        /// <returns>Обновлённый блог.</returns>
+        public Task<BlogOutput> UpdateBlogAsync(UpdateBlogInput blogInput)
+        {
+            throw new NotImplementedException();
         }
     }
 }

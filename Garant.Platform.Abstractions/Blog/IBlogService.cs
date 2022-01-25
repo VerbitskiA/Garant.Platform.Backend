@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
 
 namespace Garant.Platform.Abstractions.Blog
@@ -32,5 +33,19 @@ namespace Garant.Platform.Abstractions.Blog
         /// </summary>
         /// <returns>Список блогов.</returns>
         Task<IEnumerable<BlogOutput>> GetBlogsListAsync();
+
+        /// <summary>
+        /// Метод создаст блог.
+        /// </summary>
+        /// <param name="blogInput">Входная модель блога.</param>
+        /// <returns>Созданный блог.</returns>
+        Task<BlogOutput> CreateBlogAsync(CreateBlogInput blogInput);
+
+        /// <summary>
+        /// Метод обновит существующий блог.
+        /// </summary>
+        /// <param name="blogInput">Входная модель блога.</param>
+        /// <returns>Обновлённый блог.</returns>
+        Task<BlogOutput> UpdateBlogAsync(UpdateBlogInput blogInput);
     }
 }

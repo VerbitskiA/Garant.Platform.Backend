@@ -1,7 +1,7 @@
 ﻿namespace Garant.Platform.Models.Blog.Output
 {
     /// <summary>
-    /// Класс выходной модели 
+    /// Класс выходной модели блога.
     /// </summary>
     public class BlogOutput
     {

@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Blog;
+using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers.Blog
@@ -27,7 +30,7 @@ namespace Garant.Platform.Controllers.Blog
         /// </summary>
         /// <returns>Список объявлений.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("main-blogs")]
+        [HttpGet, Route("main-blogs")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BlogOutput>))]
         public async Task<IActionResult> GetBlogsListMainPageAsync()
         {
@@ -41,7 +44,7 @@ namespace Garant.Platform.Controllers.Blog
         /// </summary>
         /// <returns>Список новостей.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("main-news")]
+        [HttpGet, Route("main-news")]
         public async Task<IActionResult> GetTopNewsMainPageAsync()
         {
             var result = await _blogService.GetTopNewsMainPageAsync();
@@ -49,13 +52,12 @@ namespace Garant.Platform.Controllers.Blog
             return Ok(result);
         }
 
-
         /// <summary>
         /// Метод получит список тем блогов.
         /// </summary>
         /// <returns>Список тем блогов.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("get-blog-themes")]
+        [HttpGet, Route("get-blog-themes")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BlogThemesOutput>))]
         public async Task<IActionResult> GetBlogThemesListAsync()
         {
@@ -69,13 +71,42 @@ namespace Garant.Platform.Controllers.Blog
         /// </summary>
         /// <returns>Список блогов.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("get-blogs-list")]
+        [HttpGet, Route("get-blogs")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BlogOutput>))]
         public async Task<IActionResult> GetBlogsListAsync()
         {
             var result = await _blogService.GetBlogsListAsync();
-
+            
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод создаст новый блог.
+        /// </summary>
+        /// <param name="blogInput">Входная модель блога.</param>
+        /// <param name="image">Загружаемое изображение.</param>
+        /// <returns>Созданный блог.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("create-blog")]
+        [ProducesResponseType(200, Type = typeof(BlogOutput))]
+        public async Task<IActionResult> CreateBlogAsync(CreateBlogInput blogInput, IFormFile image)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Метод обновит существующий блог.
+        /// </summary>
+        /// <param name="blogInput">Входная модель блога.</param>
+        /// <param name="image">Загружаемое изображение.</param>
+        /// <returns>Обновлённый блог.</returns>
+        [AllowAnonymous]
+        [HttpPut, Route("update-blog")]
+        [ProducesResponseType(200, Type = typeof(BlogOutput))]
+        public async Task<IActionResult> UpdateBlogAsync(UpdateBlogInput blogInput, IFormFile image)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
