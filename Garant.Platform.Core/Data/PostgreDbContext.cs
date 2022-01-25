@@ -226,5 +226,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица Commerce.Payments.
         /// </summary>
         public DbSet<PaymentEntity> Payments { get; set; }
+
+        /// <summary>
+        /// Таблица dbo.Employees.
+        /// </summary>
+        public DbSet<EmployeeEntity> Employees { get; set; }
     }
 }
