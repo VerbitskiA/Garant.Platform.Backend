@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Request;
+using Garant.Platform.Base;
 using Garant.Platform.Models.Request.Input;
 using Garant.Platform.Models.Request.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

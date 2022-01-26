@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Pagination;
+using Garant.Platform.Base;
 using Garant.Platform.Models.Pagination.Input;
 using Garant.Platform.Models.Pagination.Output;
 using Microsoft.AspNetCore.Mvc;
