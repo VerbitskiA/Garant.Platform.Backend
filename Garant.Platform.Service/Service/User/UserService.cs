@@ -488,14 +488,17 @@ namespace Garant.Platform.Services.Service.User
             {
                 var result = await _userRepository.GetBreadcrumbsAsync(selectorPage);
 
-                // Вычислит последний активный пункт цепочки хлебных крошек.
-                var maxPosition = result.Max(l => l.Position);
-
-                foreach (var item in result)
+                if (result.Any())
                 {
-                    if (item.Position == maxPosition)
+                    // Вычислит последний активный пункт цепочки хлебных крошек.
+                    var maxPosition = result.Max(l => l.Position);
+
+                    foreach (var item in result)
                     {
-                        item.IsCurrent = true;
+                        if (item.Position == maxPosition)
+                        {
+                            item.IsCurrent = true;
+                        }
                     }
                 }
 

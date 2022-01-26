@@ -502,7 +502,7 @@ namespace Garant.Platform.Services.Service.User
                                     })
                     .ToListAsync();
 
-                return result;
+                return result ?? new List<BreadcrumbOutput>();
             }
 
             catch (Exception e)
