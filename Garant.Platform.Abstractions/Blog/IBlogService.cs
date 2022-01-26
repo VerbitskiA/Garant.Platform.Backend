@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
+using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Abstractions.Blog
 {
@@ -37,15 +38,17 @@ namespace Garant.Platform.Abstractions.Blog
         /// <summary>
         /// Метод создаст блог.
         /// </summary>
-        /// <param name="blogInput">Входная модель блога.</param>
+        /// <param name="blogData">Входные данные блога.</param>
+        /// <param name="images">Файлы изображений.</param>
         /// <returns>Созданный блог.</returns>
-        Task<BlogOutput> CreateBlogAsync(CreateBlogInput blogInput);
+        Task<BlogOutput> CreateBlogAsync(string blogData, IFormCollection images);
 
         /// <summary>
         /// Метод обновит существующий блог.
         /// </summary>
-        /// <param name="blogInput">Входная модель блога.</param>
+        /// <param name="blogData">Входные данные блога.</param>
+        /// <param name="images">Файлы изображений.</param>
         /// <returns>Обновлённый блог.</returns>
-        Task<BlogOutput> UpdateBlogAsync(UpdateBlogInput blogInput);
+        Task<BlogOutput> UpdateBlogAsync(string blogData, IFormCollection images);
     }
 }

@@ -76,36 +76,40 @@ namespace Garant.Platform.Controllers.Blog
         public async Task<IActionResult> GetBlogsListAsync()
         {
             var result = await _blogService.GetBlogsListAsync();
-            
+
             return Ok(result);
         }
 
         /// <summary>
         /// Метод создаст новый блог.
         /// </summary>
-        /// <param name="blogInput">Входная модель блога.</param>
-        /// <param name="image">Загружаемое изображение.</param>
+        /// <param name="blogData">Входная модель блога.</param>
+        /// <param name="images">Загружаемые изображения.</param>
         /// <returns>Созданный блог.</returns>
         [AllowAnonymous]
         [HttpPost, Route("create-blog")]
         [ProducesResponseType(200, Type = typeof(BlogOutput))]
-        public async Task<IActionResult> CreateBlogAsync(CreateBlogInput blogInput, IFormFile image)
+        public async Task<IActionResult> CreateBlogAsync([FromForm] string blogData, [FromForm] IFormCollection images)
         {
-            throw new NotImplementedException();
+            var result = await _blogService.CreateBlogAsync(blogData, images);
+
+            return Ok(result);
         }
 
         /// <summary>
         /// Метод обновит существующий блог.
         /// </summary>
-        /// <param name="blogInput">Входная модель блога.</param>
-        /// <param name="image">Загружаемое изображение.</param>
+        /// <param name="blogData">Входная модель блога.</param>
+        /// <param name="images">Загружаемые изображения.</param>
         /// <returns>Обновлённый блог.</returns>
         [AllowAnonymous]
         [HttpPut, Route("update-blog")]
         [ProducesResponseType(200, Type = typeof(BlogOutput))]
-        public async Task<IActionResult> UpdateBlogAsync(UpdateBlogInput blogInput, IFormFile image)
+        public async Task<IActionResult> UpdateBlogAsync([FromForm] string blogData, [FromForm] IFormCollection images)
         {
-            throw new NotImplementedException();
+            var result = await _blogService.UpdateBlogAsync(blogData, images);
+
+            return Ok(result);
         }
 
     }

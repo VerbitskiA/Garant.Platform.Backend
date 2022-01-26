@@ -5,9 +5,12 @@ using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Garant.Platform.Services.Service.Blog
 {
@@ -18,11 +21,13 @@ namespace Garant.Platform.Services.Service.Blog
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IBlogRepository _blogRepository;
+        private readonly IFtpService _ftpService;
         
-        public BlogService(PostgreDbContext postgreDbContext, IBlogRepository blogRepository)
+        public BlogService(PostgreDbContext postgreDbContext, IBlogRepository blogRepository, IFtpService ftpService)
         {
             _postgreDbContext = postgreDbContext;
             _blogRepository = blogRepository;
+            _ftpService = ftpService;
         }
 
         /// <summary>
@@ -167,19 +172,51 @@ namespace Garant.Platform.Services.Service.Blog
         /// <summary>
         /// Метод создаст новый блог.
         /// </summary>
-        /// <param name="blogInput">Входная модель блога.</param>
+        /// <param name="blogData">Входные данные блога.</param>
+        /// <param name="images">Файлы изображений.</param>
         /// <returns>Созданный блог.</returns>
-        public Task<BlogOutput> CreateBlogAsync(CreateBlogInput blogInput)
+        public async Task<BlogOutput> CreateBlogAsync(string blogData, IFormCollection images)
         {
-            throw new NotImplementedException();
+            try
+            {
+                BlogOutput result = null;
+
+                if (images.Files.Any())
+                {
+                    var blogInput = JsonConvert.DeserializeObject<CreateBlogInput>(blogData);
+
+                    if (blogInput != null)
+                    {
+                        // создаст блог в БД
+                        result = await _blogRepository.CreateBlog(blogInput);
+                    }
+                }
+
+                if (result != null)
+                {
+                    // Загрузит документы на сервер.
+                    await _ftpService.UploadFilesFtpAsync(images.Files);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
 
         /// <summary>
         /// Метод обновит существующий блог.
         /// </summary>
-        /// <param name="blogInput">Входная модель блога.</param>
+        /// <param name="blogData">Входные данные блога.</param>
+        /// <param name="images">Файлы изображений.</param>
         /// <returns>Обновлённый блог.</returns>
-        public Task<BlogOutput> UpdateBlogAsync(UpdateBlogInput blogInput)
+        public Task<BlogOutput> UpdateBlogAsync(string blogData, IFormCollection images)
         {
             throw new NotImplementedException();
         }
