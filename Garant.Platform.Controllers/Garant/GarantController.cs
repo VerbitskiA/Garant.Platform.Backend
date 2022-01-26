@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Garant.Platform.Base;
 using Garant.Platform.Commerce.Abstraction.Garant;
 using Garant.Platform.Commerce.Abstraction.Garant.Customer;
 using Garant.Platform.Commerce.Abstraction.Garant.Vendor;

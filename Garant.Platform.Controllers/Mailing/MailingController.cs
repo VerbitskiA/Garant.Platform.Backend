@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Garant.Platform.Base;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Models.Mailing.Input;
 using Garant.Platform.Models.Mailing.Output;

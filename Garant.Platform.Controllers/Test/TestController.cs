@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Garant.Platform.Base;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers.Test
 {

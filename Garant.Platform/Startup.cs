@@ -1,7 +1,9 @@
 using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Mapper;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -99,6 +101,14 @@ namespace Garant.Platform
                 });
 
             ApplicationContainer = AutoFac.Init(cb => { cb.Populate(services); });
+            
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             return new AutofacServiceProvider(ApplicationContainer);
         }

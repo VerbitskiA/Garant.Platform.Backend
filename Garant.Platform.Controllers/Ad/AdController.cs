@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Base;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Models.Ad.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
