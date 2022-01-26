@@ -1,4 +1,5 @@
-﻿using Garant.Platform.Models.Entities.User;
+﻿using System.Threading.Tasks;
+using Garant.Platform.Models.Entities.User;
 
 namespace Garant.Platform.Configurator.Abstractions
 {

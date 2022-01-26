@@ -1,4 +1,5 @@
-﻿using Garant.Platform.Base;
+﻿using System.Threading.Tasks;
+using Garant.Platform.Base;
 using Garant.Platform.Configurator.Abstractions;
 using Garant.Platform.Configurator.Models.Input;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

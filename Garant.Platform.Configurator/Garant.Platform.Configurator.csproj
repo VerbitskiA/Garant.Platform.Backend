@@ -1,26 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>disable</Nullable>
-        <LangVersion>default</LangVersion>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <Folder Include="AutofacModules" />
-      <Folder Include="Exceptions" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Garant.Platform.Abstractions\Garant.Platform.Abstractions.csproj" />
-      <ProjectReference Include="..\Garant.Platform.Base\Garant.Platform.Base.csproj" />
-      <ProjectReference Include="..\Garant.Platform.Core\Garant.Platform.Core.csproj" />
-      <ProjectReference Include="..\Garant.Platform.Service\Garant.Platform.Services.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.11" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Garant.Platform.Abstractions\Garant.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Base\Garant.Platform.Base.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Core\Garant.Platform.Core.csproj" />
+  </ItemGroup>
 
 </Project>
