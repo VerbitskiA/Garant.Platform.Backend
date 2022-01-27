@@ -66,6 +66,11 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        public async Task<NewsOutput> CreateNewsAsync(string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Метод получит блог по названию.
         /// </summary>
@@ -211,6 +216,11 @@ namespace Garant.Platform.Services.Service.Blog
                 await logger.LogCritical();
                 throw;
             }
+        }
+
+        public async Task<NewsOutput> UpdateNewsAsync(long newsId, string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid)
+        {
+            throw new NotImplementedException();
         }
     }
 }

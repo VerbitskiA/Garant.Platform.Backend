@@ -11,6 +11,10 @@ namespace Garant.Platform.Abstractions.Blog
     /// </summary>
     public interface IBlogService
     {
+        Task<NewsOutput> CreateNewsAsync(string newsData, IFormCollection images);
+
+        Task<NewsOutput> UpdateNewsAsync(string newsData, IFormCollection images);
+
         /// <summary>
         /// Метод получит список блогов, у которых стоит флаг IsPaid. Т.е те, которые проплачены за размещение на главной.
         /// </summary>

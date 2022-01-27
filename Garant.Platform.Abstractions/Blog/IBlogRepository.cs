@@ -10,6 +10,33 @@ namespace Garant.Platform.Abstractions.Blog
     public interface IBlogRepository
     {
         /// <summary>
+        /// Метод создаст новость.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="text"></param>
+        /// <param name="url"></param>
+        /// <param name="isToday"></param>
+        /// <param name="type"></param>
+        /// <param name="isMarginTop"></param>
+        /// <param name="isPaid"></param>
+        /// <returns></returns>
+        Task<NewsOutput> CreateNewsAsync(string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid);
+
+        /// <summary>
+        /// Метод обновит новость
+        /// </summary>
+        /// <param name="newsId"></param>
+        /// <param name="name"></param>
+        /// <param name="text"></param>
+        /// <param name="url"></param>
+        /// <param name="isToday"></param>
+        /// <param name="type"></param>
+        /// <param name="isMarginTop"></param>
+        /// <param name="isPaid"></param>
+        /// <returns></returns>
+        Task<NewsOutput> UpdateNewsAsync(long newsId, string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid);
+
+        /// <summary>
         /// Метод вернёт список тем блогов.
         /// </summary>        
         /// <returns>Список тем блогов.</returns>

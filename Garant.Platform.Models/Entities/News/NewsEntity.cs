@@ -23,6 +23,12 @@ namespace Garant.Platform.Models.Entities.News
         public string Name { get; set; }
 
         /// <summary>
+        /// Основной текст новости.
+        /// </summary>
+        [Column("Text", TypeName = "text")]
+        public string Text { get; set; }
+
+        /// <summary>
         /// Путь иконки новости.
         /// </summary>
         [Column("Url", TypeName = "text")]

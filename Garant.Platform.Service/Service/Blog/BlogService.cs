@@ -250,5 +250,15 @@ namespace Garant.Platform.Services.Service.Blog
                 throw;
             }
         }
+
+        public async Task<NewsOutput> CreateNewsAsync(string newsData, IFormCollection images)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<NewsOutput> UpdateNewsAsync(string newsData, IFormCollection images)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
