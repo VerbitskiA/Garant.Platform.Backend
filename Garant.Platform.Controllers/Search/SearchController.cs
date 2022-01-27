@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Search;
+using Garant.Platform.Base;
 using Garant.Platform.Models.Search.Input;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

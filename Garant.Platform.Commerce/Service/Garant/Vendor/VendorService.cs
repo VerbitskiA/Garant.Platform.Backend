@@ -60,6 +60,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
                     }
                 }
 
+                // TODO: заменить на понятную ошибку
                 if (isCheck)
                 {
                     return null;
@@ -71,6 +72,7 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
                 // Проверит существование открытой сделки, чтобы не дублировать ее.
                 var checkDeal = await _vendorRepository.CheckDealByItemDealIdAsync(itemDealId, account);
 
+                // TODO: заменить на понятную ошибку
                 if (!checkDeal)
                 {
                     return null;

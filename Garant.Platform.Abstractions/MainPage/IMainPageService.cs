@@ -33,12 +33,11 @@ namespace Garant.Platform.Abstractions.MainPage
         /// <summary>
         /// Метод получит список франшиз на основе фильтров.
         /// </summary>
-        /// <param name="viewBusiness">Вид бизнеса.</param>
-        /// <param name="category">Категория.</param>
-        /// <param name="city">Город.</param>
+        /// <param name="viewBusinessCode">Код вида бизнеса.</param>
+        /// <param name="categoryCode">Код категории.</param>
         /// <param name="minPrice">Цена от.</param>
         /// <param name="maxPrice">Цена до.</param>
         /// <returns>Список франшиз.</returns>
-        Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string viewBusinessCode, string categoryCode, string cityCode, double minPrice, double maxPrice);
+        Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string viewBusinessCode, string categoryCode, double minPrice, double maxPrice);
     }
 }

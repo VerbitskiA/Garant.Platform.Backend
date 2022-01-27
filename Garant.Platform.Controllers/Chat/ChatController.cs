@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Base;
 using Garant.Platform.Messaging.Abstraction.Chat;
 using Garant.Platform.Messaging.Models.Chat.Input;
 using Garant.Platform.Messaging.Models.Chat.Output;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Blog;
-using Garant.Platform.Models.Blog.Input;
+using Garant.Platform.Base;
 using Garant.Platform.Models.Blog.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

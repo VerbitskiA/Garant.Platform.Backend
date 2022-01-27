@@ -56,9 +56,12 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="isGarant">Покупка через гарант.</param>
         /// <param name="minPrice">Прибыль от.</param>
         /// <param name="maxPrice">Прибыль до.</param>
+        /// <param name="viewCode"> Код вида бизнеса.</param>
+        /// <param name="categoryCode">Код категории.</param>
+        /// <param name="minPriceInvest">Сумма инвестиций от.</param>
+        /// <param name="maxPriceInvest">Сумма инвестиций до.</param>
         /// <returns>Список франшиз после фильтрации.</returns>
-        Task<List<FranchiseOutput>> FilterFranchisesAsync(string typeSort, string minPrice, string maxPrice,
-            bool isGarant = false);
+        Task<List<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice, double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false);
 
         /// <summary>
         /// Метод получит новые франшизы, которые были созданы в текущем месяце.

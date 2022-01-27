@@ -54,6 +54,11 @@ namespace Garant.Platform.Services.Service.Franchise
                                    })
                     .ToListAsync();
 
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
+
                 return items;
             }
 
@@ -75,7 +80,7 @@ namespace Garant.Platform.Services.Service.Franchise
                                     {
                                         DateCreate = p.DateCreate,
                                         Price = string.Format("{0:0,0}", p.Price),
-                                        CountDays = DateTime.Now.Day - p.DateCreate.Day,
+                                        CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
                                         DayDeclination = "дня",
                                         Text = p.Text,
                                         TextDoPrice = p.TextDoPrice,
@@ -86,6 +91,11 @@ namespace Garant.Platform.Services.Service.Franchise
                                     })
                     .Take(4)
                     .ToListAsync();
+
+                foreach (var item in result)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return result;
             }
@@ -125,6 +135,11 @@ namespace Garant.Platform.Services.Service.Franchise
                                    })
                     .Take(4)
                     .ToListAsync();
+
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return items;
             }
@@ -230,73 +245,84 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="minPrice">Прибыль от.</param>
         /// <param name="maxPrice">Прибыль до.</param>
         /// <returns>Список франшиз после фильтрации.</returns>
-        public async Task<List<FranchiseOutput>> FilterFranchisesAsync(string typeSort, string minPrice,
-            string maxPrice, bool isGarant = false)
+        public async Task<List<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice, double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false)
         {
             try
             {
                 List<FranchiseOutput> items = null;
+                IQueryable<FranchiseOutput> query = null;
 
                 // Сортировать на возрастанию цены.
                 if (typeSort.Equals("Asc"))
                 {
-                    var query = (from f in _postgreDbContext.Franchises
-                                 orderby f.Price
-                                 select new FranchiseOutput
-                                 {
-                                     DateCreate = f.DateCreate,
-                                     Price = string.Format("{0:0,0}", f.Price),
-                                     CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                                     DayDeclination = "дня",
-                                     Text = f.Text,
-                                     TextDoPrice = f.TextDoPrice,
-                                     Title = f.Title,
-                                     Url = f.Url,
-                                     IsGarant = f.IsGarant,
-                                     ProfitPrice = f.ProfitPrice,
-                                     TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
-                                     FranchiseId = f.FranchiseId
-                                 })
+                    query = (from f in _postgreDbContext.Franchises
+                             where f.ViewBusiness.Equals(viewCode)
+                                   && f.Category.Equals(categoryCode)
+                                   && (f.Price <= maxPrice && f.Price >= minPrice)
+                                   && (f.GeneralInvest >= minPriceInvest && f.GeneralInvest <= maxPriceInvest)
+                                   && f.IsGarant == isGarant
+                             orderby f.FranchiseId
+                             select new FranchiseOutput
+                             {
+                                 DateCreate = f.DateCreate,
+                                 Price = string.Format("{0:0,0}", f.Price),
+                                 CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                 DayDeclination = "дня",
+                                 Text = f.Text,
+                                 TextDoPrice = f.TextDoPrice,
+                                 Title = f.Title,
+                                 Url = f.Url,
+                                 IsGarant = f.IsGarant,
+                                 ProfitPrice = f.ProfitPrice,
+                                 TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
+                                 FranchiseId = f.FranchiseId
+                             })
                         .AsQueryable();
 
-                    // Нужно ли дополнить запрос для сортировки по прибыли.
-                    if (!string.IsNullOrEmpty(minPrice) && !string.IsNullOrEmpty(maxPrice))
-                    {
-                        query = query.Where(c => c.ProfitPrice <= Convert.ToDouble(maxPrice)
-                                                 && c.ProfitPrice >= Convert.ToDouble(minPrice));
-                    }
-
-                    items = await query.ToListAsync();
+                    Console.WriteLine();
                 }
 
                 // Сортировать на убыванию цены.
                 else if (typeSort.Equals("Desc"))
                 {
-                    var query = (from f in _postgreDbContext.Franchises
-                                 orderby f.Price descending
-                                 select new FranchiseOutput
-                                 {
-                                     DateCreate = f.DateCreate,
-                                     Price = string.Format("{0:0,0}", f.Price),
-                                     CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                                     DayDeclination = "дня",
-                                     Text = f.Text,
-                                     TextDoPrice = f.TextDoPrice,
-                                     Title = f.Title,
-                                     Url = f.Url,
-                                     IsGarant = f.IsGarant,
-                                     ProfitPrice = f.ProfitPrice
-                                 })
+                    query = (from f in _postgreDbContext.Franchises
+                             where f.ViewBusiness.Equals(viewCode)
+                                   && f.Category.Equals(categoryCode)
+                                   && (f.Price <= maxPrice && f.Price >= minPrice)
+                                   && (f.GeneralInvest >= minPriceInvest && f.GeneralInvest <= maxPriceInvest)
+                                   && f.IsGarant == isGarant
+                             orderby f.FranchiseId descending
+                             select new FranchiseOutput
+                             {
+                                 DateCreate = f.DateCreate,
+                                 Price = string.Format("{0:0,0}", f.Price),
+                                 CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                 DayDeclination = "дня",
+                                 Text = f.Text,
+                                 TextDoPrice = f.TextDoPrice,
+                                 Title = f.Title,
+                                 Url = f.Url,
+                                 IsGarant = f.IsGarant,
+                                 ProfitPrice = f.ProfitPrice
+                             })
                         .AsQueryable();
+                }
 
+                if (query != null)
+                {
                     // Нужно ли дополнить запрос для сортировки по прибыли.
-                    if (!string.IsNullOrEmpty(minPrice) && !string.IsNullOrEmpty(maxPrice))
+                    if (minPrice > 0 && maxPrice > 0)
                     {
                         query = query.Where(c => c.ProfitPrice <= Convert.ToDouble(maxPrice)
                                                  && c.ProfitPrice >= Convert.ToDouble(minPrice));
                     }
 
                     items = await query.ToListAsync();
+
+                    foreach (var item in items)
+                    {
+                        item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                    }
                 }
 
                 return items;
@@ -341,6 +367,11 @@ namespace Garant.Platform.Services.Service.Franchise
                     .Take(10)
                     .ToListAsync();
 
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
+
                 return items;
             }
 
@@ -377,6 +408,11 @@ namespace Garant.Platform.Services.Service.Franchise
                                    })
                     .Take(10)
                     .ToListAsync();
+
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return items;
             }
@@ -972,6 +1008,11 @@ namespace Garant.Platform.Services.Service.Franchise
                         FranchiseId = f.FranchiseId
                     })
                     .ToListAsync();
+
+                foreach (var item in result)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
 
                 return result;
             }

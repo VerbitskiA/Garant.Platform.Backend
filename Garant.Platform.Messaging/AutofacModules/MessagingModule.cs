@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Garant.Platform.Core.Attributes;
-using Garant.Platform.Messaging.Abstraction.RabbitMq;
-using Garant.Platform.Messaging.Service.RabbitMq;
+// using Garant.Platform.Messaging.Abstraction.RabbitMq;
+// using Garant.Platform.Messaging.Service.RabbitMq;
 
 namespace Garant.Platform.Messaging.AutofacModules
 {
@@ -14,8 +14,8 @@ namespace Garant.Platform.Messaging.AutofacModules
         public static void InitModules(ContainerBuilder builder)
         {
             // Сервис сообщений.
-            builder.RegisterType<RabbitMqService>().Named<IRabbitMqService>("RabbitMqService");
-            builder.RegisterType<RabbitMqService>().As<IRabbitMqService>();
+            // builder.RegisterType<RabbitMqService>().Named<IRabbitMqService>("RabbitMqService");
+            // builder.RegisterType<RabbitMqService>().As<IRabbitMqService>();
         }
     }
 }

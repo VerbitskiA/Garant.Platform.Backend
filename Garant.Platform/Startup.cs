@@ -1,7 +1,9 @@
 using System;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Mapper;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -37,40 +39,43 @@ namespace Garant.Platform
                     .WithOrigins(
                         "http://localhost:4200",
                         "http://localhost:40493",
+                        "https://gobizy.com",
                         "https://gobizy.ru")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
             }));
 
-            #region Продакшен.
+            #region Р”Р»СЏ РїСЂРѕРґР°.
 
-            //services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
-            //    opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"), b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
-
-            //services.AddDbContext<IdentityDbContext>(options =>
-            //    options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
+            // services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
+            //     opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"),
+            //         b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
+            //
+            // services.AddDbContext<IdentityDbContext>(options =>
+            //     options.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"),
+            //         b => b.MigrationsAssembly("Garant.Platform.Core")));
 
             #endregion
 
-            #region Тестовая среда.
+            #region Р”Р»СЏ С‚РµСЃС‚Р°.
 
             services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
-
+            
             services.AddDbContext<IdentityDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
 
             #endregion
 
             services.AddIdentity<UserEntity, IdentityRole>(opts =>
-            {
-                opts.Password.RequiredLength = 5;
-                opts.Password.RequireNonAlphanumeric = false;
-                opts.Password.RequireLowercase = false;
-                opts.Password.RequireUppercase = false;
-                opts.Password.RequireDigit = false;
-            })
+                {
+                    opts.Password.RequiredLength = 5;
+                    opts.Password.RequireNonAlphanumeric = false;
+                    opts.Password.RequireLowercase = false;
+                    opts.Password.RequireUppercase = false;
+                    opts.Password.RequireDigit = false;
+                })
                 .AddEntityFrameworkStores<IdentityDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -95,10 +100,15 @@ namespace Garant.Platform
                     };
                 });
 
-            ApplicationContainer = AutoFac.Init(cb =>
+            ApplicationContainer = AutoFac.Init(cb => { cb.Populate(services); });
+            
+            var mapperConfig = new MapperConfiguration(mc =>
             {
-                cb.Populate(services);
+                mc.AddProfile(new MappingProfile());
             });
+            
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             return new AutofacServiceProvider(ApplicationContainer);
         }
@@ -113,16 +123,10 @@ namespace Garant.Platform
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Garant.Platform v1"));
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapDefaultControllerRoute();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
         }
     }
 }
