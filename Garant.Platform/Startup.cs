@@ -46,7 +46,7 @@ namespace Garant.Platform
                     .AllowCredentials();
             }));
 
-            #region Для прода.
+            #region Для прода. 
 
             services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
                 opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"),
