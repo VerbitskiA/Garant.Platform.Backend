@@ -301,7 +301,7 @@ namespace Garant.Platform.Services.Service.Blog
                     if (newsInput != null)
                     {
                         // обновит новость в БД
-                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId,newsInput.Name, newsInput.Text, images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
+                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId, newsInput.Name, newsInput.Text, images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
                     }
                 }
 
@@ -323,14 +323,88 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
-        public Task<ArticleOutput> CreateArticleAsync(string articleData, IFormCollection images)
+        public async Task<ArticleOutput> CreateArticleAsync(string articleData, IFormCollection images)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ArticleOutput result = null;
+
+                if (images.Files.Any())
+                {
+                    var articleInput = JsonConvert.DeserializeObject<CreateArticleInput>(articleData);
+
+                    if (articleInput != null)
+                    {
+                        string[] urls = new string[images.Files.Count];
+
+                        for (int i = 0; i < images.Files.Count; i++)
+                        {
+                            urls[i] = images.Files[i].FileName;
+                        }
+
+                        // создаст статью
+                        result = await _blogRepository.CreateArticleAsync(articleInput.BlogId, urls, articleInput.Title, articleInput.Position, articleInput.Description, articleInput.Text, articleInput.ArticleCode);
+                    }
+                }
+
+                if (result != null)
+                {
+                    // Загрузит изображение на сервер.
+                    await _ftpService.UploadFilesFtpAsync(images.Files);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
 
-        public Task<ArticleOutput> UpdateArticleAsync(string articleData, IFormCollection images)
+        public async Task<ArticleOutput> UpdateArticleAsync(string articleData, IFormCollection images)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ArticleOutput result = null;
+
+                if (images.Files.Any())
+                {
+                    var articleInput = JsonConvert.DeserializeObject<UpdateArticleInput>(articleData);
+
+
+                    if (articleInput != null)
+                    {
+                        string[] urls = new string[images.Files.Count];
+
+                        for (int i = 0; i < images.Files.Count; i++)
+                        {
+                            urls[i] = images.Files[i].FileName;
+                        }
+                        // обновит статью в БД
+                        result = await _blogRepository.UpdateArticleAsync(articleInput.ArticleId, articleInput.BlogId, urls,  articleInput.Title, articleInput.Position, articleInput.Description, articleInput.Text, articleInput.ArticleCode);
+                    }
+                }
+
+                if (result != null)
+                {
+                    // Загрузит изображение на сервер.
+                    await _ftpService.UploadFilesFtpAsync(images.Files);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
     }
 }

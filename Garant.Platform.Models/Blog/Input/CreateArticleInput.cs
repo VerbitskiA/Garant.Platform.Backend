@@ -14,6 +14,8 @@ namespace Garant.Platform.Models.Blog.Input
 
         public string Text { get; set; }
 
-        public Guid ArticleCategory { get; set; }
+        public int Position { get; set; }
+
+        public Guid ArticleCode { get; set; }
     }
 }

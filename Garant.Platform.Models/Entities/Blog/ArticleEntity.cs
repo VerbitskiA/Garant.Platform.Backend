@@ -26,10 +26,13 @@ namespace Garant.Platform.Models.Entities.Blog
         [Column("Text", TypeName = "text")]
         public string Text { get; set; }
 
+        [Column("Position", TypeName = "int4")]
+        public int Position { get; set; }
+
         [Column("DateCreated", TypeName = "timestamp")]
         public DateTime DateCreated { get; set; }
         
-        [Column("ArticleCategory", TypeName = "nvarchar(100)")]
-        public Guid ArticleCategory { get; set; }
+        [Column("ArticleCode", TypeName = "nvarchar(100)")]
+        public Guid ArticleCode { get; set; }
     }
 }

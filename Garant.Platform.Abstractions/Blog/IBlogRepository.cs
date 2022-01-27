@@ -80,9 +80,9 @@ namespace Garant.Platform.Abstractions.Blog
         /// <returns>Данные блога.</returns>
         Task<BlogOutput> GetBlogAsync(string title);
 
-        Task<ArticleOutput> CreateArticleAsync(long blogId, string urls, string title, string description, string text, Guid articleCategory);
+        Task<ArticleOutput> CreateArticleAsync(long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode);
 
-        Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string urls, string title, string description, string text, Guid articleCategory);
+        Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode);
 
     }
 }

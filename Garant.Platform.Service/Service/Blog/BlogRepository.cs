@@ -1,4 +1,5 @@
 ﻿using Garant.Platform.Abstractions.Blog;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Blog.Input;
@@ -20,15 +21,47 @@ namespace Garant.Platform.Services.Service.Blog
     public class BlogRepository : IBlogRepository
     {
         private readonly PostgreDbContext _postgreDbContext;
+        private readonly ICommonService _commonService;
 
-        public BlogRepository(PostgreDbContext postgreDbContext)
+        public BlogRepository(PostgreDbContext postgreDbContext, ICommonService commonService)
         {
             _postgreDbContext = postgreDbContext;
+            _commonService = commonService;
         }
 
-        public async Task<ArticleOutput> CreateArticleAsync(long blogId, string urls, string title, string description, string text, Guid articleCategory)
+        public async Task<ArticleOutput> CreateArticleAsync(long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var articlesUrls = await _commonService.JoinArrayWithDelimeterAsync(urls);
+                var article = new ArticleEntity
+                {
+                    BlogId = blogId,
+                    Urls = articlesUrls,
+                    Title = title,
+                    Position = position,
+                    Description = description,
+                    Text = text,
+                    DateCreated = DateTime.Now,
+                    ArticleCode = articleCode
+                };
+                await _postgreDbContext.Articles.AddAsync(article);
+                await _postgreDbContext.SaveChangesAsync();
+
+
+                var jsonString = JsonConvert.SerializeObject(article);
+                var result = JsonConvert.DeserializeObject<ArticleOutput>(jsonString);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
 
         /// <summary>
@@ -76,6 +109,7 @@ namespace Garant.Platform.Services.Service.Blog
         {
             try
             {
+                
                 var news = new NewsEntity
                 {
                     Name = name,
@@ -199,9 +233,51 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
-        public async Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string urls, string title, string description, string text, Guid articleCategory)
+        public async Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var getArticle = await _postgreDbContext.Articles
+                    .AsNoTracking()
+                    .Where(d => d.ArticleId == articleId)
+                    .FirstOrDefaultAsync();
+                
+                var articlesUrls = await _commonService.JoinArrayWithDelimeterAsync(urls);
+
+                var article = new ArticleEntity
+                {
+                    ArticleId = articleId,
+                    BlogId = blogId,
+                    Urls = articlesUrls,
+                    Title = title,
+                    Position = position,
+                    Description = description,
+                    Text = text,
+                    DateCreated = DateTime.Now,
+                    ArticleCode = articleCode
+                };
+
+                //TODO: обработать ситуацию, если такой статьи не найдено.
+                // Обновит статью.
+                if (getArticle != null)
+                {
+                    _postgreDbContext.Articles.Update(article);
+                    await _postgreDbContext.SaveChangesAsync();
+                }
+
+                var jsonString = JsonConvert.SerializeObject(article);
+                var result = JsonConvert.DeserializeObject<ArticleOutput>(jsonString);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
 
         /// <summary>
@@ -238,8 +314,6 @@ namespace Garant.Platform.Services.Service.Blog
                 // Обновит блог.
                 if (getBlog != null)
                 {
-                    getBlog.BlogId = blog.BlogId;
-
                     _postgreDbContext.Blogs.Update(blog);
                     await _postgreDbContext.SaveChangesAsync();
                 }
@@ -285,8 +359,6 @@ namespace Garant.Platform.Services.Service.Blog
                 // Обновит новость.
                 if (getNews != null)
                 {
-                    getNews.NewsId = news.NewsId;
-
                     _postgreDbContext.News.Update(news);
                     await _postgreDbContext.SaveChangesAsync();
                 }
