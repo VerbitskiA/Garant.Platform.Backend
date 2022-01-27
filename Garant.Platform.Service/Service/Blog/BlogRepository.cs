@@ -260,6 +260,7 @@ namespace Garant.Platform.Services.Service.Blog
 
                 var news = new NewsEntity
                 {
+                    NewsId = newsId,
                     Name = name,
                     Text = text,
                     Url = url,

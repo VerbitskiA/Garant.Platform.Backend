@@ -188,7 +188,7 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // создаст блог в БД
-                        result = await _blogRepository.CreateBlogAsync(blogInput.Title, images.Files[0].Name, blogInput.IsPaid, blogInput.Position, blogInput.BlogThemeId);
+                        result = await _blogRepository.CreateBlogAsync(blogInput.Title, images.Files[0].FileName, blogInput.IsPaid, blogInput.Position, blogInput.BlogThemeId);
                     }
                 }
 
@@ -229,7 +229,7 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // обновит блог в БД
-                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title, images.Files[0].Name, blogInput.IsPaid, blogInput.Position, blogInput.BlogThemeId);
+                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title, images.Files[0].FileName, blogInput.IsPaid, blogInput.Position, blogInput.BlogThemeId);
                     }
                 }
 
@@ -264,7 +264,7 @@ namespace Garant.Platform.Services.Service.Blog
                     if (newsInput != null)
                     {
                         // создаст новость
-                        result = await _blogRepository.CreateNewsAsync(newsInput.Name, newsInput.Text, images.Files[0].Name, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
+                        result = await _blogRepository.CreateNewsAsync(newsInput.Name, newsInput.Text, images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
                     }
                 }
 
@@ -299,7 +299,7 @@ namespace Garant.Platform.Services.Service.Blog
                     if (newsInput != null)
                     {
                         // обновит новость в БД
-                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId,newsInput.Name, newsInput.Text, images.Files[0].Name, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
+                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId,newsInput.Name, newsInput.Text, images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
                     }
                 }
 
