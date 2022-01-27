@@ -253,12 +253,72 @@ namespace Garant.Platform.Services.Service.Blog
 
         public async Task<NewsOutput> CreateNewsAsync(string newsData, IFormCollection images)
         {
-            throw new NotImplementedException();
+            try
+            {
+                NewsOutput result = null;
+
+                if (images.Files.Any())
+                {
+                    var newsInput = JsonConvert.DeserializeObject<CreateNewsInput>(newsData);
+
+                    if (newsInput != null)
+                    {
+                        // создаст новость
+                        result = await _blogRepository.CreateNewsAsync(newsInput.Name, newsInput.Text, images.Files[0].Name, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
+                    }
+                }
+
+                if (result != null)
+                {
+                    // Загрузит изображение на сервер.
+                    await _ftpService.UploadFilesFtpAsync(images.Files);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
 
         public async Task<NewsOutput> UpdateNewsAsync(string newsData, IFormCollection images)
         {
-            throw new NotImplementedException();
+            try
+            {
+                NewsOutput result = null;
+
+                if (images.Files.Any())
+                {
+                    var newsInput = JsonConvert.DeserializeObject<UpdateNewsInput>(newsData);
+
+                    if (newsInput != null)
+                    {
+                        // обновит новость в БД
+                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId,newsInput.Name, newsInput.Text, images.Files[0].Name, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
+                    }
+                }
+
+                if (result != null)
+                {
+                    // Загрузит изображение на сервер.
+                    await _ftpService.UploadFilesFtpAsync(images.Files);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
     }
 }

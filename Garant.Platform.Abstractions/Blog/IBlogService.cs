@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
 using Microsoft.AspNetCore.Http;
 

@@ -4,6 +4,7 @@ using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
 using Garant.Platform.Models.Entities.Blog;
+using Garant.Platform.Models.Entities.News;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
@@ -68,7 +69,36 @@ namespace Garant.Platform.Services.Service.Blog
 
         public async Task<NewsOutput> CreateNewsAsync(string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var news = new NewsEntity
+                {
+                    Name = name,
+                    Text = text,
+                    Url = url,
+                    IsToday = isToday,
+                    Type = type,
+                    IsMarginTop = isMarginTop,
+                    IsPaid = isPaid,
+                    DateCreated = DateTime.Now
+                };
+                await _postgreDbContext.News.AddAsync(news);
+                await _postgreDbContext.SaveChangesAsync();
+
+
+                var jsonString = JsonConvert.SerializeObject(news);
+                var result = JsonConvert.DeserializeObject<NewsOutput>(jsonString);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
 
         /// <summary>
@@ -192,8 +222,9 @@ namespace Garant.Platform.Services.Service.Blog
                     IsPaid = isPaid,
                     BlogThemeId = blogThemeId,
                     DateCreated = DateTime.Now
-                };                
+                };
 
+                //TODO: обработать ситуацию, если такого блога не найдено.
                 // Обновит блог.
                 if (getBlog != null)
                 {
@@ -220,7 +251,48 @@ namespace Garant.Platform.Services.Service.Blog
 
         public async Task<NewsOutput> UpdateNewsAsync(long newsId, string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var getNews = await _postgreDbContext.News
+                    .AsNoTracking()
+                    .Where(d => d.NewsId == newsId)
+                    .FirstOrDefaultAsync();
+
+                var news = new NewsEntity
+                {
+                    Name = name,
+                    Text = text,
+                    Url = url,
+                    IsToday = isToday,
+                    Type = type,
+                    IsMarginTop = isMarginTop,
+                    IsPaid = isPaid,
+                    DateCreated = DateTime.Now
+                };
+
+                //TODO: обработать ситуацию, если такой новости не найдено.
+                // Обновит новость.
+                if (getNews != null)
+                {
+                    getNews.NewsId = news.NewsId;
+
+                    _postgreDbContext.News.Update(news);
+                    await _postgreDbContext.SaveChangesAsync();
+                }
+
+                var jsonString = JsonConvert.SerializeObject(news);
+                var result = JsonConvert.DeserializeObject<NewsOutput>(jsonString);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
     }
 }
