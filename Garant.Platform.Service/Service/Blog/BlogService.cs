@@ -406,5 +406,41 @@ namespace Garant.Platform.Services.Service.Blog
                 throw;
             }
         }
+
+        public async Task<IEnumerable<NewsOutput>> GetNewsListAsync()
+        {
+            try
+            {
+                var result = await _blogRepository.GetNewsListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<ArticleOutput>> GetArticlesFromBlogAsync(long blogId)
+        {
+            try
+            {
+                var result = await _blogRepository.GetArticlesFromBlogAsync(blogId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

@@ -140,6 +140,37 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        public async Task<IEnumerable<ArticleOutput>> GetArticlesFromBlogAsync(long blogId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Articles
+                    .Where(b => b.BlogId.Equals(blogId))
+                    .OrderByDescending(b =>b.DateCreated)
+                    .Select(b => new ArticleOutput
+                    {
+                        Title = b.Title,
+                        Urls = b.Urls,
+                        Description = b.Description,
+                        Text = b.Text,
+                        Position = b.Position,
+                        DateCreated = b.DateCreated,
+                        ArticleCode = b.ArticleCode
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
         /// <summary>
         /// Метод получит блог по названию.
         /// </summary>
@@ -220,6 +251,67 @@ namespace Garant.Platform.Services.Service.Blog
                                         Title = b.Title
                                     })
                     .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<NewsOutput>> GetNewsListAsync()
+        {
+            try
+            {
+                var result = await (from n in _postgreDbContext.News 
+                                    orderby n.DateCreated descending
+                                    select new NewsOutput
+                                    {
+                                        DateCreated = n.DateCreated,
+                                        IsMarginTop = n.IsMarginTop,
+                                        IsPaid = n.IsPaid,
+                                        Name = n.Name,
+                                        Text = n.Text,
+                                        Type = n.Type,
+                                        Url = n.Url
+                                    })
+                   .ToListAsync();
+
+                // Вычислит поля даты и времени.
+                var i = 0;
+                var nowDay = DateTime.Now.Day;
+
+                foreach (var item in result)
+                {
+                    // Первому элементу не нужен отступ.
+                    if (i == 0)
+                    {
+                        item.IsMarginTop = false;
+                    }
+
+                    // Если день совпадает с сегодня, то проставит флаг и надпись.
+                    if (item.DateCreated.Day == nowDay)
+                    {
+                        item.IsToday = true;
+                        item.Date = "сегодня";
+                    }
+
+                    else
+                    {
+                        // 17 июля
+                        item.Date = string.Format("{0:m}", item.DateCreated);
+                    }
+
+                    // Вычислит часы и минуты.
+                    item.Time = string.Format("{0:t}", item.DateCreated);
+
+                    i++;
+                }
 
                 return result;
             }

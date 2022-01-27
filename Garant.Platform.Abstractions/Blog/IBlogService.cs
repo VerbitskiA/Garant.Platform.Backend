@@ -10,6 +10,10 @@ namespace Garant.Platform.Abstractions.Blog
     /// </summary>
     public interface IBlogService
     {
+        Task<IEnumerable<NewsOutput>> GetNewsListAsync();
+
+        Task<IEnumerable<ArticleOutput>> GetArticlesFromBlogAsync(long blogId);
+
         Task<NewsOutput> CreateNewsAsync(string newsData, IFormCollection images);
 
         Task<NewsOutput> UpdateNewsAsync(string newsData, IFormCollection images);

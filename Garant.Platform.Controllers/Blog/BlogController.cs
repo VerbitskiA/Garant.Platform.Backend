@@ -152,5 +152,24 @@ namespace Garant.Platform.Controllers.Blog
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpGet, Route("get-news")]
+        [ProducesResponseType(200, Type = typeof(NewsOutput))]
+        public async Task<IActionResult> GetNewsListAsync()
+        {
+            var result = await _blogService.GetNewsListAsync();
+
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet, Route("get-blog-articles")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ArticleOutput>))]
+        public async Task<IActionResult> GetArticlesFromBlogAsync(long blogId)
+        {
+            var result = await _blogService.GetArticlesFromBlogAsync(blogId);
+
+            return Ok(result);
+        }
     }
 }

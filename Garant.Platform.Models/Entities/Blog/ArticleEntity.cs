@@ -32,7 +32,7 @@ namespace Garant.Platform.Models.Entities.Blog
         [Column("DateCreated", TypeName = "timestamp")]
         public DateTime DateCreated { get; set; }
         
-        [Column("ArticleCode", TypeName = "nvarchar(100)")]
+        [Column("ArticleCode", TypeName = "text")]
         public Guid ArticleCode { get; set; }
     }
 }

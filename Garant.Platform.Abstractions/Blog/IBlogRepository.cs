@@ -49,6 +49,10 @@ namespace Garant.Platform.Abstractions.Blog
         /// <returns>Список блогов.</returns>
         Task<IEnumerable<BlogOutput>> GetBlogsListAsync();
 
+        Task<IEnumerable<NewsOutput>> GetNewsListAsync();
+
+        Task<IEnumerable<ArticleOutput>> GetArticlesFromBlogAsync(long blogId);
+
         /// <summary>
         /// Метод создаст новый блог.
         /// </summary>
