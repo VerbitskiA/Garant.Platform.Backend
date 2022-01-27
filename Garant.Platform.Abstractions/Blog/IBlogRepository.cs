@@ -1,7 +1,4 @@
-﻿using Garant.Platform.Models.Blog.Input;
-using Garant.Platform.Models.Blog.Output;
-using Garant.Platform.Models.Entities.Blog;
-using System;
+﻿using Garant.Platform.Models.Blog.Output;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -37,11 +34,16 @@ namespace Garant.Platform.Abstractions.Blog
         Task<BlogOutput> CreateBlogAsync(string title, string url, bool isPaid, int position, long blogThemeId);
 
         /// <summary>
-        /// Метод обновит существующий блог
+        /// Метод обновит существующий блог.
         /// </summary>
-        /// <param name="blogInput"></param>
-        /// <returns></returns>
-        Task<BlogOutput> UpdateBlog(UpdateBlogInput blogInput);
+        /// <param name="blogId"></param>
+        /// <param name="title"></param>
+        /// <param name="url"></param>
+        /// <param name="isPaid"></param>
+        /// <param name="position"></param>
+        /// <param name="blogThemeId"></param>
+        /// <returns>Данные блога.</returns>
+        Task<BlogOutput> UpdateBlogAsync(long blogId, string title, string url, bool isPaid, int position, long blogThemeId);
 
         /// <summary>
         /// Метод получит блог по названию.

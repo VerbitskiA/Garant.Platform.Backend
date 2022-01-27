@@ -25,6 +25,15 @@ namespace Garant.Platform.Services.Service.Blog
             _postgreDbContext = postgreDbContext;
         }
 
+        /// <summary>
+        /// Создаст новый блог.
+        /// </summary>
+        /// <param name="title">Название блога.</param>
+        /// <param name="url">Путь к файлу.</param>
+        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
+        /// <param name="position">Позиция при размещении.</param>
+        /// <param name="blogThemeId">Идентификатор темы блога.</param>
+        /// <returns>Данные блога.</returns>
         public async Task<BlogOutput> CreateBlogAsync(string title, string url, bool isPaid, int position, long blogThemeId)
         {
             try
@@ -151,13 +160,57 @@ namespace Garant.Platform.Services.Service.Blog
         }
 
         /// <summary>
-        /// Метод обновит существующий блог
+        /// Обновит существующий блог.
         /// </summary>
-        /// <param name="blogInput">Входная модель блога.</param>
-        /// <returns>Обновлённый блог.</returns>
-        public Task<BlogOutput> UpdateBlog(UpdateBlogInput blogInput)
+        /// <param name="blogId">Идентификатор обновляемого блога.</param>
+        /// <param name="title">Название блога.</param>
+        /// <param name="url">Путь к файлу.</param>
+        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
+        /// <param name="position">Позиция при размещении.</param>
+        /// <param name="blogThemeId">Идентификатор темы блога.</param>
+        /// <returns>Данные блога.</returns>
+        public async Task<BlogOutput> UpdateBlogAsync(long blogId, string title, string url, bool isPaid, int position, long blogThemeId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var getBlog = await _postgreDbContext.Blogs
+                    .AsNoTracking()
+                    .Where(d => d.BlogId == blogId)
+                    .FirstOrDefaultAsync();
+
+                var blog = new BlogEntity
+                {
+                    BlogId = blogId,
+                    Title = title,
+                    Url = url,
+                    Position = position,
+                    IsPaid = isPaid,
+                    BlogThemeId = blogThemeId,
+                    DateCreated = DateTime.Now
+                };                
+
+                // Обновит блог.
+                if (getBlog != null)
+                {
+                    getBlog.BlogId = blog.BlogId;
+
+                    _postgreDbContext.Blogs.Update(blog);
+                    await _postgreDbContext.SaveChangesAsync();
+                }
+
+                var jsonString = JsonConvert.SerializeObject(blog);
+                var result = JsonConvert.DeserializeObject<BlogOutput>(jsonString);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
     }
 }

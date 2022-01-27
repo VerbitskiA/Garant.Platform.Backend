@@ -194,7 +194,7 @@ namespace Garant.Platform.Services.Service.Blog
 
                 if (result != null)
                 {
-                    // Загрузит документы на сервер.
+                    // Загрузит изображение на сервер.
                     await _ftpService.UploadFilesFtpAsync(images.Files);
                 }
 
@@ -216,9 +216,39 @@ namespace Garant.Platform.Services.Service.Blog
         /// <param name="blogData">Входные данные блога.</param>
         /// <param name="images">Файлы изображений.</param>
         /// <returns>Обновлённый блог.</returns>
-        public Task<BlogOutput> UpdateBlogAsync(string blogData, IFormCollection images)
+        public async Task<BlogOutput> UpdateBlogAsync(string blogData, IFormCollection images)
         {
-            throw new NotImplementedException();
+            try
+            {
+                BlogOutput result = null;
+
+                if (images.Files.Any())
+                {
+                    var blogInput = JsonConvert.DeserializeObject<UpdateBlogInput>(blogData);
+
+                    if (blogInput != null)
+                    {
+                        // обновит блог в БД
+                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title, images.Files[0].Name, blogInput.IsPaid, blogInput.Position, blogInput.BlogThemeId);
+                    }
+                }
+
+                if (result != null)
+                {
+                    // Загрузит изображение на сервер.
+                    await _ftpService.UploadFilesFtpAsync(images.Files);
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
     }
 }
