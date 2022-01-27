@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using System.Net;
 using Microsoft.AspNetCore;
 
 namespace Garant.Platform
@@ -23,7 +24,10 @@ namespace Garant.Platform
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseKestrel()
+                .UseKestrel(opt =>
+                {
+                    opt.Listen(IPAddress.Loopback, 9898);
+                })
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseUrls("http://*:9898")
                 .UseStartup<Startup>();
