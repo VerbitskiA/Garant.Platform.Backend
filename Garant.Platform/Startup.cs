@@ -68,7 +68,7 @@ namespace Garant.Platform
 
             #endregion
 
-            services.AddIdentity<UserEntity, IdentityRole>(opts =>
+            services.AddIdentity<UserEntity, IdentityRole>(opts => 
                 {
                     opts.Password.RequiredLength = 5;
                     opts.Password.RequireNonAlphanumeric = false;
