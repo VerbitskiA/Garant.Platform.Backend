@@ -5,6 +5,7 @@ using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
 using Garant.Platform.Models.Entities.Blog;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,15 +24,37 @@ namespace Garant.Platform.Services.Service.Blog
         {
             _postgreDbContext = postgreDbContext;
         }
-        
-        /// <summary>
-        /// Метод создаст новый блог.
-        /// </summary>
-        /// <param name="blogInput">Входная модель блога.</param>
-        /// <returns>Созданный блог.</returns>
-        public Task<BlogOutput> CreateBlog(CreateBlogInput blogInput)
+
+        public async Task<BlogOutput> CreateBlogAsync(string title, string url, bool isPaid, int position, long blogThemeId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var blog = new BlogEntity
+                {
+                    Title = title,
+                    Url = url,
+                    Position = position,
+                    IsPaid = isPaid,
+                    BlogThemeId = blogThemeId,
+                    DateCreated = DateTime.Now
+                };
+                await _postgreDbContext.Blogs.AddAsync(blog);
+                await _postgreDbContext.SaveChangesAsync();
+
+
+                var jsonString = JsonConvert.SerializeObject(blog);
+                var result = JsonConvert.DeserializeObject<BlogOutput>(jsonString);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
         }
 
         /// <summary>
@@ -49,7 +72,10 @@ namespace Garant.Platform.Services.Service.Blog
                     {
                         Title = b.Title,
                         Url = b.Url,
-                        IsPaid = b.IsPaid
+                        IsPaid = b.IsPaid,
+                        Position = b.Position,
+                        DateCreated = b.DateCreated,
+                        BlogThemeId = b.BlogThemeId
                     })
                     .FirstOrDefaultAsync();
 
@@ -78,7 +104,10 @@ namespace Garant.Platform.Services.Service.Blog
                                     {
                                         Title = b.Title,
                                         Url = b.Url,
-                                        IsPaid = b.IsPaid
+                                        IsPaid = b.IsPaid,
+                                        Position = b.Position,
+                                        DateCreated = b.DateCreated,
+                                        BlogThemeId = b.BlogThemeId
                                     })
                     .ToListAsync();
 
@@ -130,93 +159,5 @@ namespace Garant.Platform.Services.Service.Blog
         {
             throw new NotImplementedException();
         }
-
-        /// <summary>
-        /// Метод обновит существующий или создаст новый блог.
-        /// </summary>
-        /// <param name="blogInput">Входная модель.</param>
-        /// <returns>Данные блога.</returns>
-        //public async Task<CreateBlogInput> UpdateCreateBlog(CreateBlogInput blogInput)
-        //{
-        //    //TODO^ втф
-        //    try
-        //    {
-        //        CreateBlogInput result = null;
-
-        //        if (blogInput != null)
-        //        {
-
-        //            // Найдет блог с таким названием.
-        //            var findBlog = await GetBlogAsync(blogInput.Title);
-
-        //            // Создаст новый блог.
-        //            if (blogInput.IsNew && findBlog == null)
-        //            {
-        //                await _postgreDbContext.Blogs.AddAsync(new BlogEntity
-        //                {
-        //                    Title = blogInput.Title,
-        //                    Url = blogInput.Url,
-        //                    IsPaid = false
-        //                });
-        //            }
-
-        //            // Обновит блог.
-        //            else if (!blogInput.IsNew && blogInput != null)
-        //            {
-        //                findBlog.Title = blogInput.Title;
-        //                findBlog.Url = blogInput.Url;
-
-
-        //                _postgreDbContext.Update(findBlog);
-        //            }
-
-        //            await _postgreDbContext.SaveChangesAsync();
-
-        //            result = new CreateUpdateBusinessOutput
-        //            {
-        //                ActivityDetail = businessInput.ActivityDetail,
-        //                ActivityPhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName,
-        //                Address = businessInput.Address,
-        //                Assets = businessInput.Assets,
-        //                AssetsPhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName,
-        //                BusinessAge = businessInput.BusinessAge,
-        //                BusinessId = lastBusinessId,
-        //                BusinessName = businessInput.BusinessName,
-        //                EmployeeCountYear = businessInput.EmployeeCountYear,
-        //                Form = businessInput.Form,
-        //                Status = businessInput.Status,
-        //                Price = businessInput.Price,
-        //                UrlsBusiness = urls,
-        //                TurnPrice = businessInput.TurnPrice,
-        //                ProfitPrice = businessInput.ProfitPrice,
-        //                Payback = businessInput.Payback,
-        //                Profitability = businessInput.Profitability,
-        //                InvestPrice = businessInput.InvestPrice,
-        //                Text = businessInput.Text,
-        //                Share = businessInput.Share,
-        //                Site = businessInput.Site,
-        //                Peculiarity = businessInput.Peculiarity,
-        //                NameFinModelFile = "../../../assets/images/" + files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
-        //                ReasonsSale = businessInput.ReasonsSale,
-        //                ReasonsSalePhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName,
-        //                UrlVideo = businessInput.UrlVideo,
-        //                IsGarant = businessInput.IsGarant,
-        //                DateCreate = DateTime.Now,
-        //                TextDoPrice = "Стоимость:",
-        //                BusinessCity = businessInput.BusinessCity
-        //            };
-        //        }
-
-        //        return result;
-        //    }
-
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e);
-        //        var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-        //        await logger.LogCritical();
-        //        throw;
-        //    }
-        //}
     }
 }

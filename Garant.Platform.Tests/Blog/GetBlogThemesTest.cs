@@ -18,7 +18,7 @@ namespace Garant.Platform.Tests.Blog
         {
             var mock = new Mock<IBlogService>();
             mock.Setup(a => a.GetBlogThemesAsync());
-            var component = new BlogService(PostgreDbContext, BlogRepository);
+            var component = new BlogService(PostgreDbContext, BlogRepository,FtpService);
             var result = await component.GetBlogThemesAsync();
 
             Assert.IsTrue(result.Any());

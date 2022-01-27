@@ -9,11 +9,21 @@
         /// Заголовок.
         /// </summary>
         public string Title { get; set; }
+        
+        /// <summary>
+        /// Оплачено ли размещение блога на главной.
+        /// </summary>
+        public bool IsPaid { get; set; }
+        
+        /// <summary>
+        /// Позиция при размещении.
+        /// </summary>
+        public int Position { get; set; }
 
         /// <summary>
-        /// Путь к изображению.
+        /// Идентификатор темы блога.
         /// </summary>
-        public string Url { get; set; }    
+        public long BlogThemeId { get; set; }
 
     }
 }

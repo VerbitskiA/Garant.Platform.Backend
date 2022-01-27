@@ -22,7 +22,7 @@ namespace Garant.Platform.Services.Service.Blog
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IBlogRepository _blogRepository;
         private readonly IFtpService _ftpService;
-        
+
         public BlogService(PostgreDbContext postgreDbContext, IBlogRepository blogRepository, IFtpService ftpService)
         {
             _postgreDbContext = postgreDbContext;
@@ -188,7 +188,7 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // создаст блог в БД
-                        result = await _blogRepository.CreateBlog(blogInput);
+                        result = await _blogRepository.CreateBlogAsync(blogInput.Title, images.Files[0].Name, blogInput.IsPaid, blogInput.Position, blogInput.BlogThemeId);
                     }
                 }
 
