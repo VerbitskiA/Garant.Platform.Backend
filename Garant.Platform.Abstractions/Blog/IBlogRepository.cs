@@ -1,4 +1,5 @@
 ﻿using Garant.Platform.Models.Blog.Output;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -78,5 +79,10 @@ namespace Garant.Platform.Abstractions.Blog
         /// <param name="title">Название блога.</param>
         /// <returns>Данные блога.</returns>
         Task<BlogOutput> GetBlogAsync(string title);
+
+        Task<ArticleOutput> CreateArticleAsync(long blogId, string urls, string title, string description, string text, Guid articleCategory);
+
+        Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string urls, string title, string description, string text, Guid articleCategory);
+
     }
 }

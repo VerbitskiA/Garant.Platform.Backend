@@ -38,6 +38,7 @@ namespace Garant.Platform.Services.Service.Blog
         {
             try
             {
+                //TODO: сделать через репозиторий
                 var result = await (from b in _postgreDbContext.Blogs
                                     where b.IsPaid.Equals(true)
                                     select new BlogOutput
@@ -68,6 +69,7 @@ namespace Garant.Platform.Services.Service.Blog
         {
             try
             {
+                //TODO: сделать через репозиторий
                 var result = await (from n in _postgreDbContext.News
                                     where n.IsPaid.Equals(true)
                                     select new NewsOutput
@@ -319,6 +321,16 @@ namespace Garant.Platform.Services.Service.Blog
                 await logger.LogCritical();
                 throw;
             }
+        }
+
+        public Task<ArticleOutput> CreateArticleAsync(string articleData, IFormCollection images)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ArticleOutput> UpdateArticleAsync(string articleData, IFormCollection images)
+        {
+            throw new NotImplementedException();
         }
     }
 }

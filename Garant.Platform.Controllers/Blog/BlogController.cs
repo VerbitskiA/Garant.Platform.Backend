@@ -132,5 +132,25 @@ namespace Garant.Platform.Controllers.Blog
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpPost, Route("create-article")]
+        [ProducesResponseType(200, Type = typeof(ArticleOutput))]
+        public async Task<IActionResult> CreateArticleAsync([FromForm] string articleData, [FromForm] IFormCollection images)
+        {
+            var result = await _blogService.CreateArticleAsync(articleData, images);
+
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPut, Route("update-article")]
+        [ProducesResponseType(200, Type = typeof(ArticleOutput))]
+        public async Task<IActionResult> UpdateArticleAsync([FromForm] string articleData, [FromForm] IFormCollection images)
+        {
+            var result = await _blogService.UpdateArticleAsync(articleData, images);
+
+            return Ok(result);
+        }
+
     }
 }

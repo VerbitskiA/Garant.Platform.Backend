@@ -26,6 +26,11 @@ namespace Garant.Platform.Services.Service.Blog
             _postgreDbContext = postgreDbContext;
         }
 
+        public async Task<ArticleOutput> CreateArticleAsync(long blogId, string urls, string title, string description, string text, Guid articleCategory)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Создаст новый блог.
         /// </summary>
@@ -192,6 +197,11 @@ namespace Garant.Platform.Services.Service.Blog
                 await logger.LogError();
                 throw;
             }
+        }
+
+        public async Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string urls, string title, string description, string text, Guid articleCategory)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
