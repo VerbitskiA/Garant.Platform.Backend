@@ -43,8 +43,13 @@ namespace Garant.Platform.Services.Service.Blog
                                     where b.IsPaid.Equals(true)
                                     select new BlogOutput
                                     {
+                                        BlogId = b.BlogId,
                                         Title = b.Title,
-                                        Url = b.Url
+                                        Url = b.Url,
+                                        IsPaid = b.IsPaid,
+                                        Position = b.Position,
+                                        DateCreated = b.DateCreated,
+                                        BlogThemeId = b.BlogThemeId
                                     })
                     .Take(3)
                     .ToListAsync();
@@ -74,6 +79,8 @@ namespace Garant.Platform.Services.Service.Blog
                                     where n.IsPaid.Equals(true)
                                     select new NewsOutput
                                     {
+                                        NewsId = n.NewsId,
+                                        Text = n.Text,
                                         DateCreated = n.DateCreated,
                                         IsMarginTop = n.IsMarginTop,
                                         IsPaid = n.IsPaid,
@@ -253,6 +260,12 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод создаст новость.
+        /// </summary>
+        /// <param name="newsData">Данные новости.</param>
+        /// <param name="images">Изображения новости.</param>
+        /// <returns>Данные новости.</returns>
         public async Task<NewsOutput> CreateNewsAsync(string newsData, IFormCollection images)
         {
             try
@@ -288,6 +301,12 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод обновит новость.
+        /// </summary>
+        /// <param name="newsData">Данные новости.</param>
+        /// <param name="images">Изображения новости.</param>
+        /// <returns>Данные новости.</returns>
         public async Task<NewsOutput> UpdateNewsAsync(string newsData, IFormCollection images)
         {
             try
@@ -323,6 +342,12 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод создаст статью.
+        /// </summary>
+        /// <param name="articleData">Данные статьи.</param>
+        /// <param name="images">Изображения статьи.</param>
+        /// <returns>Данные статьи.</returns>
         public async Task<ArticleOutput> CreateArticleAsync(string articleData, IFormCollection images)
         {
             try
@@ -365,6 +390,12 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод обновит статью.
+        /// </summary>
+        /// <param name="articleData">Данные статьи.</param>
+        /// <param name="images">Изображения статьи.</param>
+        /// <returns>Данные статьи.</returns>
         public async Task<ArticleOutput> UpdateArticleAsync(string articleData, IFormCollection images)
         {
             try
@@ -403,6 +434,51 @@ namespace Garant.Platform.Services.Service.Blog
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод вернёт список новостей упорядоченный по дате создания.
+        /// </summary>
+        /// <returns>Список новостей упорядоченный по дате создания. </returns>
+        public async Task<IEnumerable<NewsOutput>> GetNewsListAsync()
+        {
+            try
+            {
+                var result = await _blogRepository.GetNewsListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод вернёт список статей, относящихся к блогу, упорядоченный по дате создания.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns>Список статей упорядоченный по дате создания.</returns>
+        public async Task<IEnumerable<ArticleOutput>> GetArticlesFromBlogAsync(long blogId)
+        {
+            try
+            {
+                var result = await _blogRepository.GetArticlesFromBlogAsync(blogId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }

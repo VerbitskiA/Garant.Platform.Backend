@@ -10,12 +10,49 @@ namespace Garant.Platform.Abstractions.Blog
     /// </summary>
     public interface IBlogService
     {
+        /// <summary>
+        /// Метод вернёт список новостей упорядоченный по дате создания.
+        /// </summary>
+        /// <returns>Список новостей упорядоченный по дате создания.</returns>
+        Task<IEnumerable<NewsOutput>> GetNewsListAsync();
+
+        /// <summary>
+        /// Метод вернёт список статей, относящихся к блогу, упорядоченный по дате создания.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns>Список статей блога упорядоченный по дате создания.</returns>
+        Task<IEnumerable<ArticleOutput>> GetArticlesFromBlogAsync(long blogId);
+
+        /// <summary>
+        /// Метод создаст новость.
+        /// </summary>
+        /// <param name="newsData">Данные новости.</param>
+        /// <param name="images">Изображения новости.</param>
+        /// <returns>Данные новости.</returns>
         Task<NewsOutput> CreateNewsAsync(string newsData, IFormCollection images);
 
+        /// <summary>
+        /// Метод обновит новость.
+        /// </summary>
+        /// <param name="newsData">Данные новости.</param>
+        /// <param name="images">Изображения новости.</param>
+        /// <returns>Данные новости.</returns>
         Task<NewsOutput> UpdateNewsAsync(string newsData, IFormCollection images);
 
+        /// <summary>
+        /// Метод создаст статью.
+        /// </summary>
+        /// <param name="articleData">Данные статьи.</param>
+        /// <param name="images">Изображения статьи.</param>
+        /// <returns>Данные статьи.</returns>
         Task<ArticleOutput> CreateArticleAsync(string articleData, IFormCollection images);
 
+        /// <summary>
+        /// Метод обновит статью.
+        /// </summary>
+        /// <param name="articleData">Данные статьи.</param>
+        /// <param name="images">Изображения статьи.</param>
+        /// <returns>Данные статьи.</returns>
         Task<ArticleOutput> UpdateArticleAsync(string articleData, IFormCollection images);
 
         /// <summary>

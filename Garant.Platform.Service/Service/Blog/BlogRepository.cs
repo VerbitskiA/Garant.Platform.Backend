@@ -2,7 +2,6 @@
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
-using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
 using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.News;
@@ -16,7 +15,7 @@ using System.Threading.Tasks;
 namespace Garant.Platform.Services.Service.Blog
 {
     /// <summary>
-    /// Репозиторий блогов.
+    /// Репозиторий блогов и новостей.
     /// </summary>
     public class BlogRepository : IBlogRepository
     {
@@ -29,6 +28,17 @@ namespace Garant.Platform.Services.Service.Blog
             _commonService = commonService;
         }
 
+        /// <summary>
+        /// Метод создаст новую статью в блоге.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <param name="urls">Путь к изображениям.</param>
+        /// <param name="title">Название статьи.</param>
+        /// <param name="position">Позиция при размещении.</param>
+        /// <param name="description">Описание статьи.</param>
+        /// <param name="text">Полный текст статьи.</param>
+        /// <param name="articleCode">Код статьи.</param>
+        /// <returns>Данные статьи.</returns>
         public async Task<ArticleOutput> CreateArticleAsync(long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode)
         {
             try
@@ -105,6 +115,17 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод создаст новость.
+        /// </summary>
+        /// <param name="name">Название новости.</param>
+        /// <param name="text">Текст новости.</param>
+        /// <param name="url">Путь к изображению.</param>
+        /// <param name="isToday">Создана ли сегодня.</param>
+        /// <param name="type">Тип статьи.</param>
+        /// <param name="isMarginTop">Нужен ли отступ сверху.</param>
+        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
+        /// <returns>Данные новости.</returns>
         public async Task<NewsOutput> CreateNewsAsync(string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid)
         {
             try
@@ -141,6 +162,44 @@ namespace Garant.Platform.Services.Service.Blog
         }
 
         /// <summary>
+        /// Метод вернёт список статей, относящихся к блогу, упорядоченный по дате создания.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns>Список статей упорядоченный по дате создания.</returns>
+        public async Task<IEnumerable<ArticleOutput>> GetArticlesFromBlogAsync(long blogId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Articles
+                    .Where(b => b.BlogId.Equals(blogId))
+                    .OrderByDescending(b =>b.DateCreated)
+                    .Select(b => new ArticleOutput
+                    {
+                        ArticleId = b.ArticleId,
+                        BlogId = b.BlogId,
+                        Title = b.Title,
+                        Urls = b.Urls,
+                        Description = b.Description,
+                        Text = b.Text,
+                        Position = b.Position,
+                        DateCreated = b.DateCreated,
+                        ArticleCode = b.ArticleCode
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Метод получит блог по названию.
         /// </summary>
         /// <param name="title">Название блога.</param>
@@ -153,6 +212,7 @@ namespace Garant.Platform.Services.Service.Blog
                     .Where(b => b.Title.Equals(title))
                     .Select(b => new BlogOutput
                     {
+                        BlogId = b.BlogId,
                         Title = b.Title,
                         Url = b.Url,
                         IsPaid = b.IsPaid,
@@ -185,6 +245,7 @@ namespace Garant.Platform.Services.Service.Blog
                 var result = await (from b in _postgreDbContext.Blogs
                                     select new BlogOutput
                                     {
+                                        BlogId = b.BlogId,
                                         Title = b.Title,
                                         Url = b.Url,
                                         IsPaid = b.IsPaid,
@@ -233,6 +294,84 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод вернёт список новостей упорядоченный по дате создания.
+        /// </summary>
+        /// <returns>Список новостей упорядоченный по дате создания. </returns>
+        public async Task<IEnumerable<NewsOutput>> GetNewsListAsync()
+        {
+            try
+            {
+                var result = await (from n in _postgreDbContext.News 
+                                    orderby n.DateCreated descending
+                                    select new NewsOutput
+                                    {
+                                        NewsId = n.NewsId,
+                                        DateCreated = n.DateCreated,
+                                        IsMarginTop = n.IsMarginTop,
+                                        IsPaid = n.IsPaid,
+                                        Name = n.Name,
+                                        Text = n.Text,
+                                        Type = n.Type,
+                                        Url = n.Url
+                                    })
+                   .ToListAsync();
+
+                // Вычислит поля даты и времени.
+                var i = 0;
+                var nowDay = DateTime.Now.Day;
+
+                foreach (var item in result)
+                {
+                    // Первому элементу не нужен отступ.
+                    if (i == 0)
+                    {
+                        item.IsMarginTop = false;
+                    }
+
+                    // Если день совпадает с сегодня, то проставит флаг и надпись.
+                    if (item.DateCreated.Day == nowDay)
+                    {
+                        item.IsToday = true;
+                        item.Date = "сегодня";
+                    }
+
+                    else
+                    {
+                        // 17 июля
+                        item.Date = string.Format("{0:m}", item.DateCreated);
+                    }
+
+                    // Вычислит часы и минуты.
+                    item.Time = string.Format("{0:t}", item.DateCreated);
+
+                    i++;
+                }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод обновит статью.
+        /// </summary>
+        /// <param name="articleId">Идентифкатор статьи.</param>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <param name="urls">Путь к изображениям.</param>
+        /// <param name="title">Название статьи.</param>
+        /// <param name="position">Позиция при размещении.</param>
+        /// <param name="description">Описание статьи.</param>
+        /// <param name="text">Полный текст статьи.</param>
+        /// <param name="articleCode">Код статьи.</param>
+        /// <returns>Данные статьи.</returns>
         public async Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode)
         {
             try
@@ -333,6 +472,18 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод обновит новость.
+        /// </summary>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <param name="name">Название новости.</param>
+        /// <param name="text">Текст новости.</param>
+        /// <param name="url">Путь к изображению.</param>
+        /// <param name="isToday">Создана ли сегодня.</param>
+        /// <param name="type">Тип статьи.</param>
+        /// <param name="isMarginTop">Нужен ли отступ сверху.</param>
+        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
+        /// <returns>Данные новости.</returns>
         public async Task<NewsOutput> UpdateNewsAsync(long newsId, string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid)
         {
             try
