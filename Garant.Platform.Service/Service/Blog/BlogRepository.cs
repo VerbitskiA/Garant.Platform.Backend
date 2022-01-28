@@ -1,8 +1,7 @@
-﻿using Garant.Platform.Abstractions.Blog;
+﻿ using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
-using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
 using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.News;
@@ -16,7 +15,7 @@ using System.Threading.Tasks;
 namespace Garant.Platform.Services.Service.Blog
 {
     /// <summary>
-    /// Репозиторий блогов.
+    /// Репозиторий блогов и новостей.
     /// </summary>
     public class BlogRepository : IBlogRepository
     {
@@ -29,6 +28,17 @@ namespace Garant.Platform.Services.Service.Blog
             _commonService = commonService;
         }
 
+        /// <summary>
+        /// Метод создаст новую статью в блоге.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <param name="urls">Путь к изображениям.</param>
+        /// <param name="title">Название статьи.</param>
+        /// <param name="position">Позиция при размещении.</param>
+        /// <param name="description">Описание статьи.</param>
+        /// <param name="text">Полный текст статьи.</param>
+        /// <param name="articleCode">Код статьи.</param>
+        /// <returns>Данные статьи.</returns>
         public async Task<ArticleOutput> CreateArticleAsync(long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode)
         {
             try
@@ -105,6 +115,17 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод создаст новость.
+        /// </summary>
+        /// <param name="name">Название новости.</param>
+        /// <param name="text">Текст новости.</param>
+        /// <param name="url">Путь к изображению.</param>
+        /// <param name="isToday">Создана ли сегодня.</param>
+        /// <param name="type">Тип статьи.</param>
+        /// <param name="isMarginTop">Нужен ли отступ сверху.</param>
+        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
+        /// <returns>Данные новости.</returns>
         public async Task<NewsOutput> CreateNewsAsync(string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid)
         {
             try
@@ -140,6 +161,11 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод вернёт список статей, относящихся к блогу, упорядоченный по дате создания.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns>Список статей упорядоченный по дате создания.</returns>
         public async Task<IEnumerable<ArticleOutput>> GetArticlesFromBlogAsync(long blogId)
         {
             try
@@ -264,6 +290,10 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод вернёт список новостей упорядоченный по дате создания.
+        /// </summary>
+        /// <returns>Список новостей упорядоченный по дате создания. </returns>
         public async Task<IEnumerable<NewsOutput>> GetNewsListAsync()
         {
             try
@@ -325,6 +355,18 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод обновит статью.
+        /// </summary>
+        /// <param name="articleId">Идентифкатор статьи.</param>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <param name="urls">Путь к изображениям.</param>
+        /// <param name="title">Название статьи.</param>
+        /// <param name="position">Позиция при размещении.</param>
+        /// <param name="description">Описание статьи.</param>
+        /// <param name="text">Полный текст статьи.</param>
+        /// <param name="articleCode">Код статьи.</param>
+        /// <returns>Данные статьи.</returns>
         public async Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode)
         {
             try
@@ -425,6 +467,18 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод обновит новость.
+        /// </summary>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <param name="name">Название новости.</param>
+        /// <param name="text">Текст новости.</param>
+        /// <param name="url">Путь к изображению.</param>
+        /// <param name="isToday">Создана ли сегодня.</param>
+        /// <param name="type">Тип статьи.</param>
+        /// <param name="isMarginTop">Нужен ли отступ сверху.</param>
+        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
+        /// <returns>Данные новости.</returns>
         public async Task<NewsOutput> UpdateNewsAsync(long newsId, string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid)
         {
             try

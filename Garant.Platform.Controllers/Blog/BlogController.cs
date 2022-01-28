@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Base;
@@ -112,6 +111,12 @@ namespace Garant.Platform.Controllers.Blog
             return Ok(result);
         }
 
+        /// <summary>
+        /// Метод создаст новость.
+        /// </summary>
+        /// <param name="newsData">Входная модель новости.</param>
+        /// <param name="images">Изображения новости.</param>
+        /// <returns>Данные новости.</returns>
         [AllowAnonymous]
         [HttpPost, Route("create-news")]
         [ProducesResponseType(200, Type = typeof(NewsOutput))]
@@ -122,6 +127,12 @@ namespace Garant.Platform.Controllers.Blog
             return Ok(result);
         }
 
+        /// <summary>
+        /// Метод обновит новость.
+        /// </summary>
+        /// <param name="newsData">Входная модель новости.</param>
+        /// <param name="images">Изображения новости.</param>
+        /// <returns>Данные новости.</returns>
         [AllowAnonymous]
         [HttpPut, Route("update-news")]
         [ProducesResponseType(200, Type = typeof(NewsOutput))]
@@ -132,6 +143,12 @@ namespace Garant.Platform.Controllers.Blog
             return Ok(result);
         }
 
+        /// <summary>
+        /// Метод создаст статью.
+        /// </summary>
+        /// <param name="articleData">Входная модель статьи.</param>
+        /// <param name="images">Изображения новости.</param>
+        /// <returns>Данные статьи.</returns>
         [AllowAnonymous]
         [HttpPost, Route("create-article")]
         [ProducesResponseType(200, Type = typeof(ArticleOutput))]
@@ -142,6 +159,12 @@ namespace Garant.Platform.Controllers.Blog
             return Ok(result);
         }
 
+        /// <summary>
+        /// Метод обновит статью.
+        /// </summary>
+        /// <param name="articleData">Входная модель статьи.</param>
+        /// <param name="images">Изображения новости.</param>
+        /// <returns>Данные статьи.</returns>
         [AllowAnonymous]
         [HttpPut, Route("update-article")]
         [ProducesResponseType(200, Type = typeof(ArticleOutput))]
@@ -152,9 +175,13 @@ namespace Garant.Platform.Controllers.Blog
             return Ok(result);
         }
 
+        /// <summary>
+        /// Метод получит список новостей упорядоченыый по дате создания.
+        /// </summary>
+        /// <returns>Список новостей порядоченыый по дате создания.</returns>
         [AllowAnonymous]
         [HttpGet, Route("get-news")]
-        [ProducesResponseType(200, Type = typeof(NewsOutput))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<NewsOutput>))]
         public async Task<IActionResult> GetNewsListAsync()
         {
             var result = await _blogService.GetNewsListAsync();
@@ -162,6 +189,11 @@ namespace Garant.Platform.Controllers.Blog
             return Ok(result);
         }
 
+        /// <summary>
+        /// Метод получит список статей блога упорядоченыый по дате создания.
+        /// </summary>
+        /// <param name="blogId"></param>
+        /// <returns>Список статей блога упорядоченыый по дате создания.</returns>
         [AllowAnonymous]
         [HttpGet, Route("get-blog-articles")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ArticleOutput>))]

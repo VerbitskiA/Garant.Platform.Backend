@@ -253,6 +253,12 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод создаст новость.
+        /// </summary>
+        /// <param name="newsData">Данные новости.</param>
+        /// <param name="images">Изображения новости.</param>
+        /// <returns>Данные новости.</returns>
         public async Task<NewsOutput> CreateNewsAsync(string newsData, IFormCollection images)
         {
             try
@@ -288,6 +294,12 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод обновит новость.
+        /// </summary>
+        /// <param name="newsData">Данные новости.</param>
+        /// <param name="images">Изображения новости.</param>
+        /// <returns>Данные новости.</returns>
         public async Task<NewsOutput> UpdateNewsAsync(string newsData, IFormCollection images)
         {
             try
@@ -323,6 +335,12 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод создаст статью.
+        /// </summary>
+        /// <param name="articleData">Данные статьи.</param>
+        /// <param name="images">Изображения статьи.</param>
+        /// <returns>Данные статьи.</returns>
         public async Task<ArticleOutput> CreateArticleAsync(string articleData, IFormCollection images)
         {
             try
@@ -365,6 +383,12 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод обновит статью.
+        /// </summary>
+        /// <param name="articleData">Данные статьи.</param>
+        /// <param name="images">Изображения статьи.</param>
+        /// <returns>Данные статьи.</returns>
         public async Task<ArticleOutput> UpdateArticleAsync(string articleData, IFormCollection images)
         {
             try
@@ -407,6 +431,10 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод вернёт список новостей упорядоченный по дате создания.
+        /// </summary>
+        /// <returns>Список новостей упорядоченный по дате создания. </returns>
         public async Task<IEnumerable<NewsOutput>> GetNewsListAsync()
         {
             try
@@ -425,6 +453,11 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
+        /// <summary>
+        /// Метод вернёт список статей, относящихся к блогу, упорядоченный по дате создания.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns>Список статей упорядоченный по дате создания.</returns>
         public async Task<IEnumerable<ArticleOutput>> GetArticlesFromBlogAsync(long blogId)
         {
             try
