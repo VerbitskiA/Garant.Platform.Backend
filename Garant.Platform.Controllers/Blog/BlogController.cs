@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Base;
@@ -28,7 +29,7 @@ namespace Garant.Platform.Controllers.Blog
         /// </summary>
         /// <returns>Список объявлений.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("main-blogs")]
+        [HttpGet, Route("main-blogs")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BlogOutput>))]
         public async Task<IActionResult> GetBlogsListMainPageAsync()
         {
@@ -42,12 +43,113 @@ namespace Garant.Platform.Controllers.Blog
         /// </summary>
         /// <returns>Список новостей.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("main-news")]
+        [HttpGet, Route("main-news")]
         public async Task<IActionResult> GetTopNewsMainPageAsync()
         {
             var result = await _blogService.GetTopNewsMainPageAsync();
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит список тем блогов.
+        /// </summary>
+        /// <returns>Список тем блогов.</returns>
+        [AllowAnonymous]
+        [HttpGet, Route("get-blog-themes")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BlogThemesOutput>))]
+        public async Task<IActionResult> GetBlogThemesListAsync()
+        {
+            var result = await _blogService.GetBlogThemesAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список блогов.
+        /// </summary>
+        /// <returns>Список блогов.</returns>
+        [AllowAnonymous]
+        [HttpGet, Route("get-blogs")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BlogOutput>))]
+        public async Task<IActionResult> GetBlogsListAsync()
+        {
+            var result = await _blogService.GetBlogsListAsync();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод создаст новый блог.
+        /// </summary>
+        /// <param name="blogData">Входная модель блога.</param>
+        /// <param name="images">Загружаемые изображения.</param>
+        /// <returns>Созданный блог.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("create-blog")]
+        [ProducesResponseType(200, Type = typeof(BlogOutput))]
+        public async Task<IActionResult> CreateBlogAsync([FromForm] string blogData, [FromForm] IFormCollection images)
+        {
+            var result = await _blogService.CreateBlogAsync(blogData, images);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод обновит существующий блог.
+        /// </summary>
+        /// <param name="blogData">Входная модель блога.</param>
+        /// <param name="images">Загружаемые изображения.</param>
+        /// <returns>Обновлённый блог.</returns>
+        [AllowAnonymous]
+        [HttpPut, Route("update-blog")]
+        [ProducesResponseType(200, Type = typeof(BlogOutput))]
+        public async Task<IActionResult> UpdateBlogAsync([FromForm] string blogData, [FromForm] IFormCollection images)
+        {
+            var result = await _blogService.UpdateBlogAsync(blogData, images);
+
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost, Route("create-news")]
+        [ProducesResponseType(200, Type = typeof(NewsOutput))]
+        public async Task<IActionResult> CreateNewsAsync([FromForm] string newsData, [FromForm] IFormCollection images)
+        {
+            var result = await _blogService.CreateNewsAsync(newsData, images);
+
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPut, Route("update-news")]
+        [ProducesResponseType(200, Type = typeof(NewsOutput))]
+        public async Task<IActionResult> UpdateNewsAsync([FromForm] string newsData, [FromForm] IFormCollection images)
+        {
+            var result = await _blogService.UpdateNewsAsync(newsData, images);
+
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost, Route("create-article")]
+        [ProducesResponseType(200, Type = typeof(ArticleOutput))]
+        public async Task<IActionResult> CreateArticleAsync([FromForm] string articleData, [FromForm] IFormCollection images)
+        {
+            var result = await _blogService.CreateArticleAsync(articleData, images);
+
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPut, Route("update-article")]
+        [ProducesResponseType(200, Type = typeof(ArticleOutput))]
+        public async Task<IActionResult> UpdateArticleAsync([FromForm] string articleData, [FromForm] IFormCollection images)
+        {
+            var result = await _blogService.UpdateArticleAsync(articleData, images);
+
+            return Ok(result);
+        }
+
     }
 }

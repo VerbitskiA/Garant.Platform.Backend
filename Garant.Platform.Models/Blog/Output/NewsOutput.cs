@@ -13,6 +13,11 @@ namespace Garant.Platform.Models.Blog.Output
         public string Name { get; set; }
 
         /// <summary>
+        /// Основной текст новости.
+        /// </summary>
+        public string Text { get; set; }
+
+        /// <summary>
         /// Путь иконки новости.
         /// </summary>
         public string Url { get; set; }
