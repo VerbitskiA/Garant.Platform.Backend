@@ -11,7 +11,7 @@ namespace Garant.Platform.Controllers.Test
         [Route("gettest")]
         public IActionResult GetTest()
         {
-            return Ok("Return test from dev controller!");
+            return Ok("Return test from release controller!");
         }
     }
 }
