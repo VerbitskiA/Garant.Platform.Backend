@@ -70,7 +70,7 @@ namespace Garant.Platform.Models.Entities.User
         /// Полное ФИО.
         /// </summary>
         [Column("FullName", TypeName = "varchar(200)")]
-        public string FullName => FirstName + " " + LastName + " " + (Patronymic ?? string.Empty);
+        public string FullName { get; set; }
 
         /// <summary>
         /// Номер телефона.

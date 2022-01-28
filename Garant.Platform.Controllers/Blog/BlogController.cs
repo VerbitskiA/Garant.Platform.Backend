@@ -2,9 +2,11 @@
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Base;
+using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Controllers.Blog
@@ -28,7 +30,7 @@ namespace Garant.Platform.Controllers.Blog
         /// </summary>
         /// <returns>Список объявлений.</returns>
         [AllowAnonymous]
-        [HttpGet, Route("main-blogs")]
+        [HttpPost, Route("blogs")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BlogOutput>))]
         public async Task<IActionResult> GetBlogsListMainPageAsync()
         {
@@ -42,7 +44,7 @@ namespace Garant.Platform.Controllers.Blog
         /// </summary>
         /// <returns>Список новостей.</returns>
         [AllowAnonymous]
-        [HttpGet, Route("main-news")]
+        [HttpPost, Route("pay-news")]
         public async Task<IActionResult> GetTopNewsMainPageAsync()
         {
             var result = await _blogService.GetTopNewsMainPageAsync();
@@ -55,7 +57,7 @@ namespace Garant.Platform.Controllers.Blog
         /// </summary>
         /// <returns>Список тем блогов.</returns>
         [AllowAnonymous]
-        [HttpGet, Route("get-blog-themes")]
+        [HttpPost, Route("blog-themes")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BlogThemesOutput>))]
         public async Task<IActionResult> GetBlogThemesListAsync()
         {
@@ -69,7 +71,7 @@ namespace Garant.Platform.Controllers.Blog
         /// </summary>
         /// <returns>Список блогов.</returns>
         [AllowAnonymous]
-        [HttpGet, Route("get-blogs")]
+        [HttpPost, Route("get-blogs")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BlogOutput>))]
         public async Task<IActionResult> GetBlogsListAsync()
         {
@@ -117,7 +119,7 @@ namespace Garant.Platform.Controllers.Blog
         /// <param name="images">Изображения новости.</param>
         /// <returns>Данные новости.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("create-news")]
+        [HttpPost, Route("create-new")]
         [ProducesResponseType(200, Type = typeof(NewsOutput))]
         public async Task<IActionResult> CreateNewsAsync([FromForm] string newsData, [FromForm] IFormCollection images)
         {
@@ -133,7 +135,7 @@ namespace Garant.Platform.Controllers.Blog
         /// <param name="images">Изображения новости.</param>
         /// <returns>Данные новости.</returns>
         [AllowAnonymous]
-        [HttpPut, Route("update-news")]
+        [HttpPut, Route("update-new")]
         [ProducesResponseType(200, Type = typeof(NewsOutput))]
         public async Task<IActionResult> UpdateNewsAsync([FromForm] string newsData, [FromForm] IFormCollection images)
         {
@@ -179,7 +181,7 @@ namespace Garant.Platform.Controllers.Blog
         /// </summary>
         /// <returns>Список новостей порядоченыый по дате создания.</returns>
         [AllowAnonymous]
-        [HttpGet, Route("get-news")]
+        [HttpPost, Route("get-news")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<NewsOutput>))]
         public async Task<IActionResult> GetNewsListAsync()
         {
@@ -194,11 +196,11 @@ namespace Garant.Platform.Controllers.Blog
         /// <param name="blogId"></param>
         /// <returns>Список статей блога упорядоченыый по дате создания.</returns>
         [AllowAnonymous]
-        [HttpGet, Route("get-blog-articles")]
+        [HttpPost, Route("get-blog-articles")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ArticleOutput>))]
-        public async Task<IActionResult> GetArticlesFromBlogAsync(long blogId)
+        public async Task<IActionResult> GetArticlesFromBlogAsync([FromBody] GetBlogArticlesInput getBlogArticlesInput)
         {
-            var result = await _blogService.GetArticlesFromBlogAsync(blogId);
+            var result = await _blogService.GetArticlesFromBlogAsync(getBlogArticlesInput.BlogId);
 
             return Ok(result);
         }

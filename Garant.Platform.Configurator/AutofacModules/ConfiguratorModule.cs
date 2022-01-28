@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using AutoMapper;
 using Garant.Platform.Configurator.Abstractions;
 using Garant.Platform.Configurator.Services;
 using Garant.Platform.Core.Attributes;
@@ -19,6 +20,8 @@ namespace Garant.Platform.Configurator.AutofacModules
 
             builder.RegisterType<ConfiguratorRepository>().Named<IConfiguratorRepository>("ConfiguratorRepository");
             builder.RegisterType<ConfiguratorRepository>().As<IConfiguratorRepository>();
+
+            builder.RegisterType<IMapper>().InstancePerLifetimeScope();
         }
     }
 }

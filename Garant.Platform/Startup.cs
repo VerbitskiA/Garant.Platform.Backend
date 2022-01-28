@@ -99,8 +99,6 @@ namespace Garant.Platform
                         ValidateIssuerSigningKey = true
                     };
                 });
-
-            ApplicationContainer = AutoFac.Init(cb => { cb.Populate(services); });
             
             var mapperConfig = new MapperConfiguration(mc =>
             {
@@ -109,6 +107,8 @@ namespace Garant.Platform
             
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
+
+            ApplicationContainer = AutoFac.Init(cb => { cb.Populate(services); });
 
             return new AutofacServiceProvider(ApplicationContainer);
         }

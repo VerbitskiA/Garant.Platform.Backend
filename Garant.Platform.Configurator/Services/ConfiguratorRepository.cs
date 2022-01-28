@@ -38,7 +38,7 @@ namespace Garant.Platform.Configurator.Services
         {
             try
             {
-                await _postgreDbContext.Employees.AddAsync(new EmployeeEntity
+                var addEmployee = new EmployeeEntity
                 {
                     Email = email,
                     EmployeeRoleName = employeeRoleName,
@@ -48,8 +48,11 @@ namespace Garant.Platform.Configurator.Services
                     LastName = lastName,
                     Patronymic = patronymic,
                     PhoneNumber = phoneNumber,
-                    TelegramTag = telegramTag
-                });
+                    TelegramTag = telegramTag,
+                    FullName = firstName + " " + lastName + " " + (patronymic ?? string.Empty)
+                };
+                
+                await _postgreDbContext.Employees.AddAsync(addEmployee);
                 await _postgreDbContext.SaveChangesAsync();
 
                 var result = await _postgreDbContext.Employees
