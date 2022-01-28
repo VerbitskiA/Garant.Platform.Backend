@@ -1,4 +1,4 @@
-﻿ using Garant.Platform.Abstractions.Blog;
+﻿using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
@@ -175,6 +175,8 @@ namespace Garant.Platform.Services.Service.Blog
                     .OrderByDescending(b =>b.DateCreated)
                     .Select(b => new ArticleOutput
                     {
+                        ArticleId = b.ArticleId,
+                        BlogId = b.BlogId,
                         Title = b.Title,
                         Urls = b.Urls,
                         Description = b.Description,
@@ -210,6 +212,7 @@ namespace Garant.Platform.Services.Service.Blog
                     .Where(b => b.Title.Equals(title))
                     .Select(b => new BlogOutput
                     {
+                        BlogId = b.BlogId,
                         Title = b.Title,
                         Url = b.Url,
                         IsPaid = b.IsPaid,
@@ -242,6 +245,7 @@ namespace Garant.Platform.Services.Service.Blog
                 var result = await (from b in _postgreDbContext.Blogs
                                     select new BlogOutput
                                     {
+                                        BlogId = b.BlogId,
                                         Title = b.Title,
                                         Url = b.Url,
                                         IsPaid = b.IsPaid,
@@ -302,6 +306,7 @@ namespace Garant.Platform.Services.Service.Blog
                                     orderby n.DateCreated descending
                                     select new NewsOutput
                                     {
+                                        NewsId = n.NewsId,
                                         DateCreated = n.DateCreated,
                                         IsMarginTop = n.IsMarginTop,
                                         IsPaid = n.IsPaid,

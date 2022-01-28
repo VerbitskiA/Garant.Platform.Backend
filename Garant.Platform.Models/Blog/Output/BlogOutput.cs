@@ -8,6 +8,11 @@ namespace Garant.Platform.Models.Blog.Output
     public class BlogOutput
     {
         /// <summary>
+        /// PK.
+        /// </summary>
+        public long BlogId { get; set; }
+
+        /// <summary>
         /// Заголовок.
         /// </summary>
         public string Title { get; set; }

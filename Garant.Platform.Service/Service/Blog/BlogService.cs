@@ -43,8 +43,13 @@ namespace Garant.Platform.Services.Service.Blog
                                     where b.IsPaid.Equals(true)
                                     select new BlogOutput
                                     {
+                                        BlogId = b.BlogId,
                                         Title = b.Title,
-                                        Url = b.Url
+                                        Url = b.Url,
+                                        IsPaid = b.IsPaid,
+                                        Position = b.Position,
+                                        DateCreated = b.DateCreated,
+                                        BlogThemeId = b.BlogThemeId
                                     })
                     .Take(3)
                     .ToListAsync();
@@ -74,6 +79,8 @@ namespace Garant.Platform.Services.Service.Blog
                                     where n.IsPaid.Equals(true)
                                     select new NewsOutput
                                     {
+                                        NewsId = n.NewsId,
+                                        Text = n.Text,
                                         DateCreated = n.DateCreated,
                                         IsMarginTop = n.IsMarginTop,
                                         IsPaid = n.IsPaid,
