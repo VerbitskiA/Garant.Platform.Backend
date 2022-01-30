@@ -426,6 +426,7 @@ namespace Garant.Platform.Services.Service.Business
                                         Status = b.Status,
                                         Price = string.Format("{0:0,0}", b.Price),
                                         UrlsBusiness = b.UrlsBusiness,
+                                        Url = b.UrlsBusiness,
                                         TurnPrice = b.TurnPrice,
                                         ProfitPrice = b.ProfitPrice,
                                         Payback = b.Payback,
