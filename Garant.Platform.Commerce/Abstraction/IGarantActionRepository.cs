@@ -11,6 +11,13 @@ namespace Garant.Platform.Commerce.Abstraction
     public interface IGarantActionRepository
     {
         /// <summary>
+        /// Метод получит Id сделки
+        /// </summary>
+        /// <param name="userId">Id владельца предмета сделки.</param>
+        /// <returns>Id сделки.</returns>
+        Task<long> GetDealIdAsync(string userId);
+
+        /// <summary>
         /// Метод получит дату создания сделки.
         /// </summary>
         /// <param name="userId">Id владельца предмета сделки.</param>

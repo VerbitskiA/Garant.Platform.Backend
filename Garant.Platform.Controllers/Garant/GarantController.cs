@@ -47,7 +47,7 @@ namespace Garant.Platform.Controllers.Garant
         /// <returns>Данные стартовой страницы.</returns>
         [HttpPost]
         [Route("init")]
-        [ProducesResponseType(200, Type = typeof(PaymentActionOutput))]
+        [ProducesResponseType(200, Type = typeof(InitGarantDataOutput))]
         public async Task<IActionResult> PaymentActionAsync([FromBody] PaymentActionInput paymentActionInput)
         {
             var result = await _garantActionService.GetInitDataGarantAsync(paymentActionInput.OriginalId, paymentActionInput.OrderType, GetUserName(), paymentActionInput.Stage, paymentActionInput.IsChat);
