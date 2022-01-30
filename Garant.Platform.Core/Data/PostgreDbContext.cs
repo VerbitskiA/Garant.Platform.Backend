@@ -4,6 +4,7 @@ using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.Business;
 using Garant.Platform.Models.Entities.Chat;
 using Garant.Platform.Models.Entities.Commerce;
+using Garant.Platform.Models.Entities.Configurator;
 using Garant.Platform.Models.Entities.Control;
 using Garant.Platform.Models.Entities.Document;
 using Garant.Platform.Models.Entities.Footer;
@@ -241,5 +242,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица dbo.Employees.
         /// </summary>
         public DbSet<EmployeeEntity> Employees { get; set; }
+
+        /// <summary>
+        /// Таблица  Configurator.ConfiguratorMenuItems.
+        /// </summary>
+        public DbSet<ConfiguratorMenuEntity> ConfiguratorMenuItems { get; set; }
     }
 }

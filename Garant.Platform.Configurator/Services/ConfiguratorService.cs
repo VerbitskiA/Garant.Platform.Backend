@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Garant.Platform.Configurator.Abstractions;
+using Garant.Platform.Configurator.Enums;
 using Garant.Platform.Configurator.Exceptions;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
+using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.User.Output;
 
 namespace Garant.Platform.Configurator.Services
@@ -37,7 +40,9 @@ namespace Garant.Platform.Configurator.Services
         /// <param name="email">Почта сотрудника.</param>
         /// <param name="telegramTag">Тэг в телеграме.</param>
         /// <returns>Данные добавленного сотрудника</returns>
-        public async Task<CreateEmployeeOutput> CreateEmployeeAsync(string employeeRoleName, string employeeRoleSystemName, string employeeStatus, string firstName, string lastName, string patronymic, string phoneNumber, string email, string telegramTag)
+        public async Task<CreateEmployeeOutput> CreateEmployeeAsync(string employeeRoleName,
+            string employeeRoleSystemName, string employeeStatus, string firstName, string lastName, string patronymic,
+            string phoneNumber, string email, string telegramTag)
         {
             try
             {
@@ -66,9 +71,58 @@ namespace Garant.Platform.Configurator.Services
                 var newEmployee = await _configuratorRepository.CreateEmployeeAsync(employeeRoleName,
                     employeeRoleSystemName, employeeStatus, firstName, lastName, patronymic, phoneNumber, email,
                     telegramTag);
-                
+
                 var mapper = AutoFac.Resolve<IMapper>();
                 var result = mapper.Map<CreateEmployeeOutput>(newEmployee);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список меню конфигуратора.
+        /// </summary>
+        /// <returns>Список меню.</returns>
+        public async Task<IEnumerable<ConfiguratorMenuOutput>> GetMenuItemsAsync()
+        {
+            try
+            {
+                var result = await _configuratorRepository.GetMenuItemsAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод авторизует сотрудника сервиса.
+        /// </summary>
+        /// <param name="inputData">Email или телефон.</param>
+        /// <param name="password">Пароль.</param>
+        /// <returns>Данные сотрудника.</returns>
+        public async Task<ConfiguratorLoginOutput> ConfiguratorLoginAsync(string inputData, string password)
+        {
+            try
+            {
+                var loginEmployee = await _configuratorRepository.ConfiguratorLoginAsync(inputData, password);
+
+                var mapper = AutoFac.Resolve<IMapper>();
+                var result = mapper.Map<ConfiguratorLoginOutput>(loginEmployee);
 
                 return result;
             }
