@@ -81,9 +81,9 @@ namespace Garant.Platform.Services.Service.Blog
         /// <param name="url">Путь к файлу.</param>
         /// <param name="isPaid">Оплачено ли размещение на главной.</param>
         /// <param name="position">Позиция при размещении.</param>
-        /// <param name="blogThemeId">Идентификатор темы блога.</param>
+        /// <param name="blogThemeCode">Код темы блога.</param>
         /// <returns>Данные блога.</returns>
-        public async Task<BlogOutput> CreateBlogAsync(string title, string url, bool isPaid, int position, long blogThemeId)
+        public async Task<BlogOutput> CreateBlogAsync(string title, string url, string blogThemeCode)
         {
             try
             {
@@ -91,15 +91,21 @@ namespace Garant.Platform.Services.Service.Blog
                 {
                     Title = title,
                     Url = url,
-                    Position = position,
-                    IsPaid = isPaid,
-                    BlogThemeId = blogThemeId,
+                    ThemeCategoryCode = blogThemeCode,
                     DateCreated = DateTime.Now
                 };
+                
+                // Найдет последнюю позицию блогов.
+                var lastPosition = await _postgreDbContext.Blogs
+                    .OrderByDescending(o => o.BlogId)
+                    .Select(b => b.Position)
+                    .FirstOrDefaultAsync();
+
+                blog.Position = ++lastPosition;
+                
                 await _postgreDbContext.Blogs.AddAsync(blog);
                 await _postgreDbContext.SaveChangesAsync();
-
-
+                
                 var jsonString = JsonConvert.SerializeObject(blog);
                 var result = JsonConvert.DeserializeObject<BlogOutput>(jsonString);
 
@@ -218,7 +224,7 @@ namespace Garant.Platform.Services.Service.Blog
                         IsPaid = b.IsPaid,
                         Position = b.Position,
                         DateCreated = b.DateCreated,
-                        BlogThemeId = b.BlogThemeId
+                        ThemeCategoryCode = b.ThemeCategoryCode
                     })
                     .FirstOrDefaultAsync();
 
@@ -251,7 +257,7 @@ namespace Garant.Platform.Services.Service.Blog
                                         IsPaid = b.IsPaid,
                                         Position = b.Position,
                                         DateCreated = b.DateCreated,
-                                        BlogThemeId = b.BlogThemeId
+                                        ThemeCategoryCode = b.ThemeCategoryCode
                                     })
                     .ToListAsync();
 
@@ -278,7 +284,9 @@ namespace Garant.Platform.Services.Service.Blog
                 var result = await (from b in _postgreDbContext.BlogThemes
                                     select new BlogThemesOutput
                                     {
-                                        Title = b.Title
+                                        Title = b.Title,
+                                        ThemeCategoryCode = b.ThemeCategoryCode,
+                                        DateCreated = b.DateCreated
                                     })
                     .ToListAsync();
 
@@ -429,7 +437,7 @@ namespace Garant.Platform.Services.Service.Blog
         /// <param name="position">Позиция при размещении.</param>
         /// <param name="blogThemeId">Идентификатор темы блога.</param>
         /// <returns>Данные блога.</returns>
-        public async Task<BlogOutput> UpdateBlogAsync(long blogId, string title, string url, bool isPaid, int position, long blogThemeId)
+        public async Task<BlogOutput> UpdateBlogAsync(long blogId, string title, string url, bool isPaid, int position, string blogThemeId)
         {
             try
             {
@@ -445,7 +453,7 @@ namespace Garant.Platform.Services.Service.Blog
                     Url = url,
                     Position = position,
                     IsPaid = isPaid,
-                    BlogThemeId = blogThemeId,
+                    ThemeCategoryCode = blogThemeId,
                     DateCreated = DateTime.Now
                 };
 

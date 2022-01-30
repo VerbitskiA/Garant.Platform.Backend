@@ -67,11 +67,9 @@ namespace Garant.Platform.Abstractions.Blog
         /// </summary>
         /// <param name="title">Название блога.</param>
         /// <param name="url">Путь к изображению.</param>
-        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
-        /// <param name="position">Позиция при размежении.</param>
-        /// <param name="blogThemeId">Идентификатор темы блога.</param>        
+        /// <param name="blogThemeCode">Код темы блога.</param>        
         /// <returns>Данные блога.</returns>
-        Task<BlogOutput> CreateBlogAsync(string title, string url, bool isPaid, int position, long blogThemeId);
+        Task<BlogOutput> CreateBlogAsync(string title, string url, string blogThemeCode);
 
         /// <summary>
         /// Метод обновит существующий блог.
@@ -83,7 +81,7 @@ namespace Garant.Platform.Abstractions.Blog
         /// <param name="position">Позиция при размежении.</param>
         /// <param name="blogThemeId">Идентификатор темы блога.</param> 
         /// <returns>Данные блога.</returns>
-        Task<BlogOutput> UpdateBlogAsync(long blogId, string title, string url, bool isPaid, int position, long blogThemeId);
+        Task<BlogOutput> UpdateBlogAsync(long blogId, string title, string url, bool isPaid, int position, string blogThemeId);
 
         /// <summary>
         /// Метод получит блог по названию.

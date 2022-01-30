@@ -41,9 +41,11 @@ namespace Garant.Platform.Configurator.Controllers
         }
 
         /// <summary>
+        /// TODO: когда будет доработан контроль токена для внутренних сотрудников сервиса, то убрать AllowAnonymous.
         /// Метод получит список меню конфигуратора.
         /// </summary>
         /// <returns>Список меню.</returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route("menu-items")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ConfiguratorMenuOutput>))]

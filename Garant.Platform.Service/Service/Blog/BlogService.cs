@@ -49,7 +49,7 @@ namespace Garant.Platform.Services.Service.Blog
                                         IsPaid = b.IsPaid,
                                         Position = b.Position,
                                         DateCreated = b.DateCreated,
-                                        BlogThemeId = b.BlogThemeId
+                                        ThemeCategoryCode = b.ThemeCategoryCode
                                     })
                     .Take(3)
                     .ToListAsync();
@@ -197,7 +197,7 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // создаст блог в БД
-                        result = await _blogRepository.CreateBlogAsync(blogInput.Title, images.Files[0].FileName, blogInput.IsPaid, blogInput.Position, blogInput.BlogThemeId);
+                        result = await _blogRepository.CreateBlogAsync(blogInput.Title, images.Files[0].FileName, blogInput.ThemeCategoryCode);
                     }
                 }
 
@@ -238,7 +238,7 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // обновит блог в БД
-                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title, images.Files[0].FileName, blogInput.IsPaid, blogInput.Position, blogInput.BlogThemeId);
+                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title, images.Files[0].FileName, blogInput.IsPaid, blogInput.Position, blogInput.ThemeCategoryCode);
                     }
                 }
 
