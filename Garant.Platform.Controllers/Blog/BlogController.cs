@@ -204,5 +204,23 @@ namespace Garant.Platform.Controllers.Blog
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит список тем для статей блогов.
+        /// </summary>
+        /// <returns>Список тем.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("get-article-themes")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ArticleThemeOutput>))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(500)]
+        public async Task<IEnumerable<ArticleThemeOutput>> GetArticleThemesAsync()
+        {
+            var result = await _blogService.GetArticleThemesAsync();
+
+            return result;
+        }
     }
 }

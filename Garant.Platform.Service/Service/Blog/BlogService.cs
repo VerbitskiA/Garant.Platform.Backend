@@ -197,7 +197,7 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // создаст блог в БД
-                        result = await _blogRepository.CreateBlogAsync(blogInput.Title, images.Files[0].FileName, blogInput.ThemeCategoryCode);
+                        result = await _blogRepository.CreateBlogAsync(blogInput.Title, "../../../assets/images/" + images.Files[0].FileName, blogInput.ThemeCategoryCode);
                     }
                 }
 
@@ -346,7 +346,7 @@ namespace Garant.Platform.Services.Service.Blog
         /// Метод создаст статью.
         /// </summary>
         /// <param name="articleData">Данные статьи.</param>
-        /// <param name="images">Изображения статьи.</param>
+        /// <param name="images">Данные статьи.</param>
         /// <returns>Данные статьи.</returns>
         public async Task<ArticleOutput> CreateArticleAsync(string articleData, IFormCollection images)
         {
@@ -360,15 +360,11 @@ namespace Garant.Platform.Services.Service.Blog
 
                     if (articleInput != null)
                     {
-                        string[] urls = new string[images.Files.Count];
-
-                        for (int i = 0; i < images.Files.Count; i++)
-                        {
-                            urls[i] = images.Files[i].FileName;
-                        }
-
-                        // создаст статью
-                        result = await _blogRepository.CreateArticleAsync(articleInput.BlogId, urls, articleInput.Title, articleInput.Position, articleInput.Description, articleInput.Text, articleInput.ArticleCode);
+                        // Создаст статью.
+                        var previewFileName = images.Files.FirstOrDefault(f => f.Name.Equals("previewFile"))?.FileName;
+                        var articleFileName = images.Files.FirstOrDefault(f => f.Name.Equals("articleFile"))?.FileName;
+                            
+                        result = await _blogRepository.CreateArticleAsync(articleInput.BlogId, previewFileName, articleFileName, articleInput.Title, articleInput.Description, articleInput.Text, Guid.NewGuid().ToString(), articleInput.SignatureText);
                     }
                 }
 
@@ -474,6 +470,28 @@ namespace Garant.Platform.Services.Service.Blog
                 return result;
             }
 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Метод получит список тем для статей блогов.
+        /// </summary>
+        /// <returns>Список тем.</returns>
+        public async Task<IEnumerable<ArticleThemeOutput>> GetArticleThemesAsync()
+        {
+            try
+            {
+                var result = await _blogRepository.GetArticleThemesAsync();
+                
+                return result;
+            }
+            
             catch (Exception e)
             {
                 Console.WriteLine(e);

@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-
 namespace Garant.Platform.Models.Entities.Blog
 {
     /// <summary>
@@ -20,14 +19,19 @@ namespace Garant.Platform.Models.Entities.Blog
         /// <summary>
         /// FK, идентификатор блога.
         /// </summary>
-        [ForeignKey("Articles_BlogId_fkey")]
         public long BlogId { get; set; }        
 
         /// <summary>
-        /// Путь к изображениям.
+        /// Изображение превью облажки.
         /// </summary>
-        [Column("Urls", TypeName = "text")]
-        public string Urls { get; set; }
+        [Column("PreviewUrl", TypeName = "text")]
+        public string PreviewUrl { get; set; }
+
+        /// <summary>
+        /// Изображение статьи.
+        /// </summary>
+        [Column("ArticleUrl", TypeName = "text")]
+        public string ArticleUrl { get; set; }
 
         /// <summary>
         /// Заголовок статьи.
@@ -50,7 +54,7 @@ namespace Garant.Platform.Models.Entities.Blog
         /// <summary>
         /// Позиция при размещении.
         /// </summary>
-        [Column("Position", TypeName = "int4")]
+        [Column("Position", TypeName = "int")]
         public int Position { get; set; }
 
         /// <summary>
@@ -63,6 +67,18 @@ namespace Garant.Platform.Models.Entities.Blog
         /// Код статьи.
         /// </summary>
         [Column("ArticleCode", TypeName = "text")]
-        public Guid ArticleCode { get; set; }
+        public string ArticleCode { get; set; }
+
+        /// <summary>
+        /// Код темы статьи. 
+        /// </summary>
+        [Column("ThemeCode", TypeName = "varchar(100)")]
+        public string ThemeCode { get; set; }
+
+        /// <summary>
+        /// Подпись основного изображения статьи.
+        /// </summary>
+        [Column("SignatureText", TypeName = "varchar(300)")]
+        public string SignatureText { get; set; }
     }
 }

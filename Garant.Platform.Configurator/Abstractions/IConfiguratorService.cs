@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Configurator.Models.Output;
 using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.User.Output;
 
@@ -40,5 +41,11 @@ namespace Garant.Platform.Configurator.Abstractions
         /// <param name="password">Пароль.</param>
         /// <returns>Данные сотрудника.</returns>
         Task<ConfiguratorLoginOutput> ConfiguratorLoginAsync(string inputData, string password);
+
+        /// <summary>
+        /// Метод получит список действий при работе с блогами.
+        /// </summary>
+        /// <returns>Список действий.</returns>
+        Task<IEnumerable<BlogActionOutput>> GetBlogActionsAsync();
     }
 }

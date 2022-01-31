@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Base;
 using Garant.Platform.Configurator.Abstractions;
 using Garant.Platform.Configurator.Models.Input;
+using Garant.Platform.Configurator.Models.Output;
 using Garant.Platform.Models.Configurator.Input;
 using Garant.Platform.Models.Configurator.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -74,6 +75,25 @@ namespace Garant.Platform.Configurator.Controllers
         public async Task<IActionResult> ConfiguratorLoginAsync([FromBody] ConfiguratorLoginInput configuratorLoginInput)
         {
             var result = await _configuratorService.ConfiguratorLoginAsync(configuratorLoginInput.InputData, configuratorLoginInput.Password);
+            
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// TODO: когда будет доработан контроль токена для внутренних сотрудников сервиса, то убрать AllowAnonymous.
+        /// Метод получит список действий при работе с блогами.
+        /// </summary>
+        /// <returns>Список действий.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("blog-actions")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BlogActionOutput>))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetBlogActionsAsync()
+        {
+            var result = await _configuratorService.GetBlogActionsAsync();
             
             return Ok(result);
         }

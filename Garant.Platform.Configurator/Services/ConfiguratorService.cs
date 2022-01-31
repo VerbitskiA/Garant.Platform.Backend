@@ -5,6 +5,7 @@ using AutoMapper;
 using Garant.Platform.Configurator.Abstractions;
 using Garant.Platform.Configurator.Enums;
 using Garant.Platform.Configurator.Exceptions;
+using Garant.Platform.Configurator.Models.Output;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
@@ -127,6 +128,28 @@ namespace Garant.Platform.Configurator.Services
                 return result;
             }
 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список действий при работе с блогами.
+        /// </summary>
+        /// <returns>Список действий.</returns>
+        public async Task<IEnumerable<BlogActionOutput>> GetBlogActionsAsync()
+        {
+            try
+            {
+                var result = await _configuratorRepository.GetBlogActionsAsync();
+
+                return result;
+            }
+            
             catch (Exception e)
             {
                 Console.WriteLine(e);

@@ -94,14 +94,16 @@ namespace Garant.Platform.Abstractions.Blog
         /// Метод создаст новую статью в блоге.
         /// </summary>
         /// <param name="blogId">Идентификатор блога.</param>
-        /// <param name="urls">Путь к изображениям.</param>
+        /// <param name="previewUrl">Изображение превью.</param>
+        /// <param name="articleUrl">Изображение статьи.</param>
         /// <param name="title">Название статьи.</param>
         /// <param name="position">Позиция при размещении.</param>
         /// <param name="description">Описание статьи.</param>
         /// <param name="text">Полный текст статьи.</param>
         /// <param name="articleCode">Код статьи.</param>
+        /// <param name="signatureText">Подпись.</param>
         /// <returns>Данные статьи.</returns>
-        Task<ArticleOutput> CreateArticleAsync(long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode);
+        Task<ArticleOutput> CreateArticleAsync(long blogId, string previewUrl, string articleUrl, string title, string description, string text, string articleCode, string signatureText);
 
         /// <summary>
         /// Метод обновит статью.
@@ -116,6 +118,12 @@ namespace Garant.Platform.Abstractions.Blog
         /// <param name="articleCode">Код статьи.</param>
         /// <returns>Данные статьи.</returns>
         Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode);
+        
+        /// <summary>
+        /// Метод получит список тем для статей блогов.
+        /// </summary>
+        /// <returns>Список тем.</returns>
+        Task<IEnumerable<ArticleThemeOutput>> GetArticleThemesAsync();
 
     }
 }

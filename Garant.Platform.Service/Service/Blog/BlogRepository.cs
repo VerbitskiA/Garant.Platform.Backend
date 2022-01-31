@@ -32,29 +32,42 @@ namespace Garant.Platform.Services.Service.Blog
         /// Метод создаст новую статью в блоге.
         /// </summary>
         /// <param name="blogId">Идентификатор блога.</param>
-        /// <param name="urls">Путь к изображениям.</param>
+        /// <param name="previewUrl">Изображение превью.</param>
+        /// <param name="articleUrl">Изображение статьи.</param>
         /// <param name="title">Название статьи.</param>
         /// <param name="position">Позиция при размещении.</param>
         /// <param name="description">Описание статьи.</param>
         /// <param name="text">Полный текст статьи.</param>
         /// <param name="articleCode">Код статьи.</param>
+        /// <param name="signatureText">Подпись.</param>
         /// <returns>Данные статьи.</returns>
-        public async Task<ArticleOutput> CreateArticleAsync(long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode)
+        public async Task<ArticleOutput> CreateArticleAsync(long blogId, string previewUrl, string articleUrl,
+            string title, string description, string text, string themeArticleCode, string signatureText)
         {
             try
             {
-                var articlesUrls = await _commonService.JoinArrayWithDelimeterAsync(urls);
                 var article = new ArticleEntity
                 {
                     BlogId = blogId,
-                    Urls = articlesUrls,
+                    PreviewUrl = "../../../assets/images/" + previewUrl,
+                    ArticleUrl = "../../../assets/images/" + articleUrl,
                     Title = title,
-                    Position = position,
                     Description = description,
                     Text = text,
                     DateCreated = DateTime.Now,
-                    ArticleCode = articleCode
+                    ThemeCode = themeArticleCode,
+                    SignatureText = signatureText,
+                    ArticleCode = themeArticleCode
                 };
+
+                // Найдет последнюю позицию статей.
+                var lastPosition = await _postgreDbContext.Articles
+                    .OrderByDescending(o => o.BlogId)
+                    .Select(b => b.Position)
+                    .FirstOrDefaultAsync();
+
+                article.Position = ++lastPosition;
+
                 await _postgreDbContext.Articles.AddAsync(article);
                 await _postgreDbContext.SaveChangesAsync();
 
@@ -94,7 +107,7 @@ namespace Garant.Platform.Services.Service.Blog
                     ThemeCategoryCode = blogThemeCode,
                     DateCreated = DateTime.Now
                 };
-                
+
                 // Найдет последнюю позицию блогов.
                 var lastPosition = await _postgreDbContext.Blogs
                     .OrderByDescending(o => o.BlogId)
@@ -102,10 +115,10 @@ namespace Garant.Platform.Services.Service.Blog
                     .FirstOrDefaultAsync();
 
                 blog.Position = ++lastPosition;
-                
+
                 await _postgreDbContext.Blogs.AddAsync(blog);
                 await _postgreDbContext.SaveChangesAsync();
-                
+
                 var jsonString = JsonConvert.SerializeObject(blog);
                 var result = JsonConvert.DeserializeObject<BlogOutput>(jsonString);
 
@@ -132,11 +145,11 @@ namespace Garant.Platform.Services.Service.Blog
         /// <param name="isMarginTop">Нужен ли отступ сверху.</param>
         /// <param name="isPaid">Оплачено ли размещение на главной.</param>
         /// <returns>Данные новости.</returns>
-        public async Task<NewsOutput> CreateNewsAsync(string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid)
+        public async Task<NewsOutput> CreateNewsAsync(string name, string text, string url, bool isToday, string type,
+            bool isMarginTop, bool isPaid)
         {
             try
             {
-                
                 var news = new NewsEntity
                 {
                     Name = name,
@@ -176,24 +189,25 @@ namespace Garant.Platform.Services.Service.Blog
         {
             try
             {
-                var result = await _postgreDbContext.Articles
-                    .Where(b => b.BlogId.Equals(blogId))
-                    .OrderByDescending(b =>b.DateCreated)
-                    .Select(b => new ArticleOutput
-                    {
-                        ArticleId = b.ArticleId,
-                        BlogId = b.BlogId,
-                        Title = b.Title,
-                        Urls = b.Urls,
-                        Description = b.Description,
-                        Text = b.Text,
-                        Position = b.Position,
-                        DateCreated = b.DateCreated,
-                        ArticleCode = b.ArticleCode
-                    })
-                    .ToListAsync();
+                // var result = await _postgreDbContext.Articles
+                //     .Where(b => b.BlogId.Equals(blogId))
+                //     .OrderByDescending(b =>b.DateCreated)
+                //     .Select(b => new ArticleOutput
+                //     {
+                //         ArticleId = b.ArticleId,
+                //         BlogId = b.BlogId,
+                //         Title = b.Title,
+                //         Urls = b.Urls,
+                //         Description = b.Description,
+                //         Text = b.Text,
+                //         Position = b.Position,
+                //         DateCreated = b.DateCreated,
+                //         ArticleCode = b.ArticleCode
+                //     })
+                //     .ToListAsync();
 
-                return result;
+                // return result;
+                throw new NotImplementedException();
             }
 
             catch (Exception e)
@@ -249,16 +263,16 @@ namespace Garant.Platform.Services.Service.Blog
             try
             {
                 var result = await (from b in _postgreDbContext.Blogs
-                                    select new BlogOutput
-                                    {
-                                        BlogId = b.BlogId,
-                                        Title = b.Title,
-                                        Url = b.Url,
-                                        IsPaid = b.IsPaid,
-                                        Position = b.Position,
-                                        DateCreated = b.DateCreated,
-                                        ThemeCategoryCode = b.ThemeCategoryCode
-                                    })
+                        select new BlogOutput
+                        {
+                            BlogId = b.BlogId,
+                            Title = b.Title,
+                            Url = b.Url,
+                            IsPaid = b.IsPaid,
+                            Position = b.Position,
+                            DateCreated = b.DateCreated,
+                            ThemeCategoryCode = b.ThemeCategoryCode
+                        })
                     .ToListAsync();
 
                 return result;
@@ -282,12 +296,12 @@ namespace Garant.Platform.Services.Service.Blog
             try
             {
                 var result = await (from b in _postgreDbContext.BlogThemes
-                                    select new BlogThemesOutput
-                                    {
-                                        Title = b.Title,
-                                        ThemeCategoryCode = b.ThemeCategoryCode,
-                                        DateCreated = b.DateCreated
-                                    })
+                        select new BlogThemesOutput
+                        {
+                            Title = b.Title,
+                            ThemeCategoryCode = b.ThemeCategoryCode,
+                            DateCreated = b.DateCreated
+                        })
                     .ToListAsync();
 
                 return result;
@@ -310,20 +324,20 @@ namespace Garant.Platform.Services.Service.Blog
         {
             try
             {
-                var result = await (from n in _postgreDbContext.News 
-                                    orderby n.DateCreated descending
-                                    select new NewsOutput
-                                    {
-                                        NewsId = n.NewsId,
-                                        DateCreated = n.DateCreated,
-                                        IsMarginTop = n.IsMarginTop,
-                                        IsPaid = n.IsPaid,
-                                        Name = n.Name,
-                                        Text = n.Text,
-                                        Type = n.Type,
-                                        Url = n.Url
-                                    })
-                   .ToListAsync();
+                var result = await (from n in _postgreDbContext.News
+                        orderby n.DateCreated descending
+                        select new NewsOutput
+                        {
+                            NewsId = n.NewsId,
+                            DateCreated = n.DateCreated,
+                            IsMarginTop = n.IsMarginTop,
+                            IsPaid = n.IsPaid,
+                            Name = n.Name,
+                            Text = n.Text,
+                            Type = n.Type,
+                            Url = n.Url
+                        })
+                    .ToListAsync();
 
                 // Вычислит поля даты и времени.
                 var i = 0;
@@ -380,42 +394,43 @@ namespace Garant.Platform.Services.Service.Blog
         /// <param name="text">Полный текст статьи.</param>
         /// <param name="articleCode">Код статьи.</param>
         /// <returns>Данные статьи.</returns>
-        public async Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string[] urls, string title, int position, string description, string text, Guid articleCode)
+        public async Task<ArticleOutput> UpdateArticleAsync(long articleId, long blogId, string[] urls, string title,
+            int position, string description, string text, Guid articleCode)
         {
             try
             {
-                var getArticle = await _postgreDbContext.Articles
-                    .AsNoTracking()
-                    .Where(d => d.ArticleId == articleId)
-                    .FirstOrDefaultAsync();
-                
-                var articlesUrls = await _commonService.JoinArrayWithDelimeterAsync(urls);
-
-                var article = new ArticleEntity
-                {
-                    ArticleId = articleId,
-                    BlogId = blogId,
-                    Urls = articlesUrls,
-                    Title = title,
-                    Position = position,
-                    Description = description,
-                    Text = text,
-                    DateCreated = DateTime.Now,
-                    ArticleCode = articleCode
-                };
-
-                //TODO: обработать ситуацию, если такой статьи не найдено.
-                // Обновит статью.
-                if (getArticle != null)
-                {
-                    _postgreDbContext.Articles.Update(article);
-                    await _postgreDbContext.SaveChangesAsync();
-                }
-
-                var jsonString = JsonConvert.SerializeObject(article);
-                var result = JsonConvert.DeserializeObject<ArticleOutput>(jsonString);
-
-                return result;
+                // var getArticle = await _postgreDbContext.Articles
+                //     .AsNoTracking()
+                //     .Where(d => d.ArticleId == articleId)
+                //     .FirstOrDefaultAsync();
+                //
+                // var articlesUrls = await _commonService.JoinArrayWithDelimeterAsync(urls);
+                //
+                // var article = new ArticleEntity
+                // {
+                //     ArticleId = articleId,
+                //     BlogId = blogId,
+                //     Urls = articlesUrls,
+                //     Title = title,
+                //     Position = position,
+                //     Description = description,
+                //     Text = text,
+                //     DateCreated = DateTime.Now,
+                //     ArticleCode = articleCode
+                // };
+                //
+                // // Обновит статью.
+                // if (getArticle != null)
+                // {
+                //     _postgreDbContext.Articles.Update(article);
+                //     await _postgreDbContext.SaveChangesAsync();
+                // }
+                //
+                // var jsonString = JsonConvert.SerializeObject(article);
+                // var result = JsonConvert.DeserializeObject<ArticleOutput>(jsonString);
+                //
+                // return result;
+                throw new NotImplementedException();
             }
 
             catch (Exception e)
@@ -437,7 +452,8 @@ namespace Garant.Platform.Services.Service.Blog
         /// <param name="position">Позиция при размещении.</param>
         /// <param name="blogThemeId">Идентификатор темы блога.</param>
         /// <returns>Данные блога.</returns>
-        public async Task<BlogOutput> UpdateBlogAsync(long blogId, string title, string url, bool isPaid, int position, string blogThemeId)
+        public async Task<BlogOutput> UpdateBlogAsync(long blogId, string title, string url, bool isPaid, int position,
+            string blogThemeId)
         {
             try
             {
@@ -492,7 +508,8 @@ namespace Garant.Platform.Services.Service.Blog
         /// <param name="isMarginTop">Нужен ли отступ сверху.</param>
         /// <param name="isPaid">Оплачено ли размещение на главной.</param>
         /// <returns>Данные новости.</returns>
-        public async Task<NewsOutput> UpdateNewsAsync(long newsId, string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid)
+        public async Task<NewsOutput> UpdateNewsAsync(long newsId, string name, string text, string url, bool isToday,
+            string type, bool isMarginTop, bool isPaid)
         {
             try
             {
@@ -533,6 +550,37 @@ namespace Garant.Platform.Services.Service.Blog
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список тем для статей блогов.
+        /// </summary>
+        /// <returns>Список тем.</returns>
+        public async Task<IEnumerable<ArticleThemeOutput>> GetArticleThemesAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.ArticleThemes
+                    .Select(s => new ArticleThemeOutput
+                    {
+                        ThemeCode = s.ThemeCode,
+                        Position = s.Position,
+                        ThemeId = s.ThemeId,
+                        ThemeName = s.ThemeName
+                    })
+                    .OrderBy(o => o.Position)
+                    .ToListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }

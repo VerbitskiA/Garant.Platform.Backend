@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Garant.Platform.Configurator.Abstractions;
 using Garant.Platform.Configurator.Enums;
+using Garant.Platform.Configurator.Models.Output;
 using Garant.Platform.Core.Consts;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
@@ -185,6 +186,35 @@ namespace Garant.Platform.Configurator.Services
                 return employee;
             }
 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список действий при работе с блогами.
+        /// </summary>
+        /// <returns>Список действий.</returns>
+        public async Task<IEnumerable<BlogActionOutput>> GetBlogActionsAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.BlogActions
+                    .Select(ba => new BlogActionOutput
+                    {
+                        BlogActionId = ba.BlogActionId,
+                        BlogActionName = ba.BlogActionName,
+                        BlogActionSysName = ba.BlogActionSysName
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+            
             catch (Exception e)
             {
                 Console.WriteLine(e);

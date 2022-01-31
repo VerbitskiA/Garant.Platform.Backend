@@ -247,5 +247,15 @@ namespace Garant.Platform.Core.Data
         /// Таблица  Configurator.ConfiguratorMenuItems.
         /// </summary>
         public DbSet<ConfiguratorMenuEntity> ConfiguratorMenuItems { get; set; }
+
+        /// <summary>
+        /// Таблица Configurator.BlogActions.
+        /// </summary>
+        public DbSet<BlogActionEntity> BlogActions { get; set; }
+
+        /// <summary>
+        /// Таблица Info.ArticleThemes.
+        /// </summary>
+        public DbSet<ArticleThemeEntity> ArticleThemes { get; set; }
     }
 }
