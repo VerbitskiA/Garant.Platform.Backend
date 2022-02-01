@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Base;
 using Garant.Platform.Configurator.Abstractions;
 using Garant.Platform.Configurator.Models.Input;
 using Garant.Platform.Configurator.Models.Output;
 using Garant.Platform.Models.Configurator.Input;
 using Garant.Platform.Models.Configurator.Output;
+using Garant.Platform.Models.Franchise.Output;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Configurator.Controllers
@@ -20,10 +23,12 @@ namespace Garant.Platform.Configurator.Controllers
     public class ConfiguratorController : BaseController
     {
         private readonly IConfiguratorService _configuratorService;
+        private readonly IFranchiseService _franchiseService;
         
-        public ConfiguratorController(IConfiguratorService configuratorService)
+        public ConfiguratorController(IConfiguratorService configuratorService, IFranchiseService franchiseService)
         {
             _configuratorService = configuratorService;
+            _franchiseService = franchiseService;
         }
 
         /// <summary>
@@ -95,6 +100,36 @@ namespace Garant.Platform.Configurator.Controllers
         {
             var result = await _configuratorService.GetBlogActionsAsync();
             
+            return Ok(result);
+        }
+        
+        /// <summary>
+        /// Метод создаст новую или обновит существующую франшизу.
+        /// </summary>
+        /// <param name="franchiseFilesInput">Входные файлы.</param>
+        /// <param name="franchiseDataInput">Данные в строке json.</param>
+        /// <returns>Данные франшизы.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("create-update-franchise")]
+        [ProducesResponseType(200, Type = typeof(CreateUpdateFranchiseOutput))]
+        public async Task<IActionResult> CreateUpdateFranchiseConfiguratorAsync([FromForm] IFormCollection franchiseFilesInput, [FromForm] string franchiseDataInput)
+        {
+            var result = await _franchiseService.CreateUpdateFranchiseAsync(franchiseFilesInput, franchiseDataInput, GetUserName());
+
+            return Ok(result);
+        }
+        
+        /// <summary>
+        /// Метод отправит файл в папку и временно запишет в БД.
+        /// </summary>
+        /// <param name="files">Файлы.</param>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("temp-file")]
+        public async Task<IActionResult> AddTempFilesBeforeCreateFranchiseAsync([FromForm] IFormCollection files)
+        {
+            var result = await _franchiseService.AddTempFilesBeforeCreateFranchiseAsync(files, GetUserName());
+
             return Ok(result);
         }
     }

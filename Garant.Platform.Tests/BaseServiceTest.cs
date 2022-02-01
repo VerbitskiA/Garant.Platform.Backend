@@ -66,7 +66,7 @@ namespace Garant.Platform.Tests
             BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
             PaginationRepository = new PaginationRepository(PostgreDbContext);
 
-            BlogRepository = new BlogRepository(PostgreDbContext, CommonService);
+            BlogRepository = new BlogRepository(PostgreDbContext);
             BlogService = new BlogService(PostgreDbContext, BlogRepository, FtpService);
 
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);

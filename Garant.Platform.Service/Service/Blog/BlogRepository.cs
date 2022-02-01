@@ -21,12 +21,10 @@ namespace Garant.Platform.Services.Service.Blog
     public class BlogRepository : IBlogRepository
     {
         private readonly PostgreDbContext _postgreDbContext;
-        private readonly ICommonService _commonService;
 
-        public BlogRepository(PostgreDbContext postgreDbContext, ICommonService commonService)
+        public BlogRepository(PostgreDbContext postgreDbContext)
         {
             _postgreDbContext = postgreDbContext;
-            _commonService = commonService;
         }
 
         /// <summary>
@@ -462,6 +460,11 @@ namespace Garant.Platform.Services.Service.Blog
                     .AsNoTracking()
                     .Where(d => d.BlogId == blogId)
                     .FirstOrDefaultAsync();
+                
+                if (getBlog == null)
+                {
+                    throw new NotFoundBlogException(blogId);
+                }
 
                 var blog = new BlogEntity
                 {
@@ -473,14 +476,9 @@ namespace Garant.Platform.Services.Service.Blog
                     ThemeCategoryCode = blogThemeId,
                     DateCreated = DateTime.Now
                 };
-
-                //TODO: обработать ситуацию, если такого блога не найдено.
-                // Обновит блог.
-                if (getBlog != null)
-                {
-                    _postgreDbContext.Blogs.Update(blog);
-                    await _postgreDbContext.SaveChangesAsync();
-                }
+                
+                _postgreDbContext.Blogs.Update(blog);
+                await _postgreDbContext.SaveChangesAsync();
 
                 var jsonString = JsonConvert.SerializeObject(blog);
                 var result = JsonConvert.DeserializeObject<BlogOutput>(jsonString);

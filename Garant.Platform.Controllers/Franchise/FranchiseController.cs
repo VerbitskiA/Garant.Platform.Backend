@@ -111,7 +111,7 @@ namespace Garant.Platform.Controllers.Franchise
         }
 
         /// <summary>
-        /// Метод создаст новую  или обновит существующую франшизу.
+        /// Метод создаст новую или обновит существующую франшизу.
         /// </summary>
         /// <param name="franchiseFilesInput">Входные файлы.</param>
         /// <param name="franchiseDataInput">Данные в строке json.</param>
