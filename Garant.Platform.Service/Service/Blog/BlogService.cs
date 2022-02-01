@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
@@ -238,7 +241,7 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // обновит блог в БД
-                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title, images.Files[0].FileName, blogInput.IsPaid, blogInput.Position, blogInput.ThemeCategoryCode);
+                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title, "../../../assets/images/" + images.Files[0].FileName, blogInput.IsPaid, blogInput.Position, blogInput.ThemeCategoryCode);
                     }
                 }
 
@@ -489,6 +492,36 @@ namespace Garant.Platform.Services.Service.Blog
             {
                 var result = await _blogRepository.GetArticleThemesAsync();
                 
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит блог по его Id.
+        /// </summary>
+        /// <param name="blogId">Id блога.</param>
+        /// <returns>Данные блога.</returns>
+        public async Task<BlogOutput> GetBlogAsync(long blogId)
+        {
+            try
+            {
+                if (blogId <= 0)
+                {
+                    throw new EmptyBlogIdException();
+                }
+                
+                var blog = await _blogRepository.GetBlogByIdAsync(blogId);
+                var mapper = AutoFac.Resolve<IMapper>();
+                var result = mapper.Map<BlogOutput>(blog);
+
                 return result;
             }
             

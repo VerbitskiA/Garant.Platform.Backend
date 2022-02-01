@@ -222,5 +222,24 @@ namespace Garant.Platform.Controllers.Blog
 
             return result;
         }
+
+        /// <summary>
+        /// Метод получит блог по его Id.
+        /// </summary>
+        /// <param name="blogId">Id блога.</param>
+        /// <returns>Данные блога.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("get-blog")]
+        [ProducesResponseType(200, Type = typeof(BlogOutput))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(500)]
+        public async Task<BlogOutput> GetBlogAsync([FromQuery] long blogId)
+        {
+            var result = await _blogService.GetBlogAsync(blogId);
+
+            return result;
+        }
     }
 }

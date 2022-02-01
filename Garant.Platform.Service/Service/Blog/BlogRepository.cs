@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Core.Exceptions;
 
 namespace Garant.Platform.Services.Service.Blog
 {
@@ -581,6 +582,29 @@ namespace Garant.Platform.Services.Service.Blog
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит блог по его Id.
+        /// </summary>
+        /// <param name="blogId">Id блога.</param>
+        /// <returns>Данные блога.</returns>
+        public async Task<BlogEntity> GetBlogByIdAsync(long blogId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Blogs
+                    .Where(b => b.BlogId == blogId)
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
                 throw;
             }
         }

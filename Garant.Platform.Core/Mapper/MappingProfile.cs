@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Garant.Platform.Models.Blog.Output;
 using Garant.Platform.Models.Configurator.Output;
+using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.User.Output;
 
@@ -14,6 +16,7 @@ namespace Garant.Platform.Core.Mapper
         {
             CreateMap<EmployeeEntity, CreateEmployeeOutput>();
             CreateMap<EmployeeEntity, ConfiguratorLoginOutput>();
+            CreateMap<BlogEntity, BlogOutput>();
         }
     }
 }

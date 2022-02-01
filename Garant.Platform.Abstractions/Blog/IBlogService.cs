@@ -100,5 +100,12 @@ namespace Garant.Platform.Abstractions.Blog
         /// </summary>
         /// <returns>Список тем.</returns>
         Task<IEnumerable<ArticleThemeOutput>> GetArticleThemesAsync();
+
+        /// <summary>
+        /// Метод получит блог по его Id.
+        /// </summary>
+        /// <param name="blogId">Id блога.</param>
+        /// <returns>Данные блога.</returns>
+        Task<BlogOutput> GetBlogAsync(long blogId);
     }
 }

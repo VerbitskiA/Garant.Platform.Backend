@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Models.Entities.Blog;
 
 namespace Garant.Platform.Abstractions.Blog
 {
@@ -125,5 +126,11 @@ namespace Garant.Platform.Abstractions.Blog
         /// <returns>Список тем.</returns>
         Task<IEnumerable<ArticleThemeOutput>> GetArticleThemesAsync();
 
+        /// <summary>
+        /// Метод получит блог по его Id.
+        /// </summary>
+        /// <param name="blogId">Id блога.</param>
+        /// <returns>Данные блога.</returns>
+        Task<BlogEntity> GetBlogByIdAsync(long blogId);
     }
 }
