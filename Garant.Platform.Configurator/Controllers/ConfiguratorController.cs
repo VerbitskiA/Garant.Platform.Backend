@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Base;
 using Garant.Platform.Configurator.Abstractions;
 using Garant.Platform.Configurator.Models.Input;
 using Garant.Platform.Configurator.Models.Output;
+using Garant.Platform.Models.Business.Output;
 using Garant.Platform.Models.Configurator.Input;
 using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.Franchise.Output;
@@ -24,11 +26,13 @@ namespace Garant.Platform.Configurator.Controllers
     {
         private readonly IConfiguratorService _configuratorService;
         private readonly IFranchiseService _franchiseService;
+        private readonly IBusinessService _businessService;
         
-        public ConfiguratorController(IConfiguratorService configuratorService, IFranchiseService franchiseService)
+        public ConfiguratorController(IConfiguratorService configuratorService, IFranchiseService franchiseService, IBusinessService businessService)
         {
             _configuratorService = configuratorService;
             _franchiseService = franchiseService;
+            _businessService = businessService;
         }
 
         /// <summary>
@@ -141,11 +145,26 @@ namespace Garant.Platform.Configurator.Controllers
         [AllowAnonymous]
         [HttpGet, Route("get-franchise")]
         [ProducesResponseType(200, Type = typeof(FranchiseOutput))]
-        public async Task<IActionResult> GetFranchiseAsync([FromQuery] long franchiseId)
+        public async Task<FranchiseOutput> GetFranchiseAsync([FromQuery] long franchiseId)
         {
             var result = await _franchiseService.GetFranchiseAsync(franchiseId);
 
-            return Ok(result);
+            return result;
+        }
+        
+        /// <summary>
+        /// Метод получит бизнес для просмотра или изменения.
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet, Route("get-business")]
+        [ProducesResponseType(200, Type = typeof(BusinessOutput))]
+        public async Task<BusinessOutput> GetBusinessAsync([FromQuery] long businessId)
+        {
+            var result = await _businessService.GetBusinessAsync(businessId);
+
+            return result;
         }
     }
 }
