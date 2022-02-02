@@ -132,5 +132,20 @@ namespace Garant.Platform.Configurator.Controllers
 
             return Ok(result);
         }
+        
+        /// <summary>
+        /// Метод получит франшизу для просмотра или изменения.
+        /// </summary>
+        /// <param name="franchiseId">Id франшизы.</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet, Route("get-franchise")]
+        [ProducesResponseType(200, Type = typeof(FranchiseOutput))]
+        public async Task<IActionResult> GetFranchiseAsync([FromQuery] long franchiseId)
+        {
+            var result = await _franchiseService.GetFranchiseAsync(franchiseId);
+
+            return Ok(result);
+        }
     }
 }
