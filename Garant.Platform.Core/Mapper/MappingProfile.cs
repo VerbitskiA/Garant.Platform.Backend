@@ -17,6 +17,7 @@ namespace Garant.Platform.Core.Mapper
             CreateMap<EmployeeEntity, CreateEmployeeOutput>();
             CreateMap<EmployeeEntity, ConfiguratorLoginOutput>();
             CreateMap<BlogEntity, BlogOutput>();
+            CreateMap<ArticleEntity, ArticleOutput>();
         }
     }
 }

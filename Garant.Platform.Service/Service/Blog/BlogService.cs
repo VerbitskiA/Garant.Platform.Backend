@@ -43,17 +43,17 @@ namespace Garant.Platform.Services.Service.Blog
             {
                 //TODO: сделать через репозиторий
                 var result = await (from b in _postgreDbContext.Blogs
-                                    where b.IsPaid.Equals(true)
-                                    select new BlogOutput
-                                    {
-                                        BlogId = b.BlogId,
-                                        Title = b.Title,
-                                        Url = b.Url,
-                                        IsPaid = b.IsPaid,
-                                        Position = b.Position,
-                                        DateCreated = b.DateCreated,
-                                        ThemeCategoryCode = b.ThemeCategoryCode
-                                    })
+                        where b.IsPaid.Equals(true)
+                        select new BlogOutput
+                        {
+                            BlogId = b.BlogId,
+                            Title = b.Title,
+                            Url = b.Url,
+                            IsPaid = b.IsPaid,
+                            Position = b.Position,
+                            DateCreated = b.DateCreated,
+                            ThemeCategoryCode = b.ThemeCategoryCode
+                        })
                     .Take(3)
                     .ToListAsync();
 
@@ -79,18 +79,18 @@ namespace Garant.Platform.Services.Service.Blog
             {
                 //TODO: сделать через репозиторий
                 var result = await (from n in _postgreDbContext.News
-                                    where n.IsPaid.Equals(true)
-                                    select new NewsOutput
-                                    {
-                                        NewsId = n.NewsId,
-                                        Text = n.Text,
-                                        DateCreated = n.DateCreated,
-                                        IsMarginTop = n.IsMarginTop,
-                                        IsPaid = n.IsPaid,
-                                        Name = n.Name,
-                                        Type = n.Type,
-                                        Url = n.Url
-                                    })
+                        where n.IsPaid.Equals(true)
+                        select new NewsOutput
+                        {
+                            NewsId = n.NewsId,
+                            Text = n.Text,
+                            DateCreated = n.DateCreated,
+                            IsMarginTop = n.IsMarginTop,
+                            IsPaid = n.IsPaid,
+                            Name = n.Name,
+                            Type = n.Type,
+                            Url = n.Url
+                        })
                     .ToListAsync();
 
                 // Вычислит поля даты и времени.
@@ -178,7 +178,6 @@ namespace Garant.Platform.Services.Service.Blog
                 await logger.LogError();
                 throw;
             }
-
         }
 
         /// <summary>
@@ -200,7 +199,8 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // создаст блог в БД
-                        result = await _blogRepository.CreateBlogAsync(blogInput.Title, "../../../assets/images/" + images.Files[0].FileName, blogInput.ThemeCategoryCode);
+                        result = await _blogRepository.CreateBlogAsync(blogInput.Title,
+                            "../../../assets/images/" + images.Files[0].FileName, blogInput.ThemeCategoryCode);
                     }
                 }
 
@@ -241,7 +241,9 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // обновит блог в БД
-                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title, "../../../assets/images/" + images.Files[0].FileName, blogInput.IsPaid, blogInput.Position, blogInput.ThemeCategoryCode);
+                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title,
+                            "../../../assets/images/" + images.Files[0].FileName, blogInput.IsPaid, blogInput.Position,
+                            blogInput.ThemeCategoryCode);
                     }
                 }
 
@@ -282,7 +284,9 @@ namespace Garant.Platform.Services.Service.Blog
                     if (newsInput != null)
                     {
                         // создаст новость
-                        result = await _blogRepository.CreateNewsAsync(newsInput.Name, newsInput.Text, images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
+                        result = await _blogRepository.CreateNewsAsync(newsInput.Name, newsInput.Text,
+                            images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop,
+                            newsInput.IsPaid);
                     }
                 }
 
@@ -323,7 +327,9 @@ namespace Garant.Platform.Services.Service.Blog
                     if (newsInput != null)
                     {
                         // обновит новость в БД
-                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId, newsInput.Name, newsInput.Text, images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
+                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId, newsInput.Name, newsInput.Text,
+                            images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop,
+                            newsInput.IsPaid);
                     }
                 }
 
@@ -366,8 +372,10 @@ namespace Garant.Platform.Services.Service.Blog
                         // Создаст статью.
                         var previewFileName = images.Files.FirstOrDefault(f => f.Name.Equals("previewFile"))?.FileName;
                         var articleFileName = images.Files.FirstOrDefault(f => f.Name.Equals("articleFile"))?.FileName;
-                            
-                        result = await _blogRepository.CreateArticleAsync(articleInput.BlogId, previewFileName, articleFileName, articleInput.Title, articleInput.Description, articleInput.Text, Guid.NewGuid().ToString(), articleInput.SignatureText);
+
+                        result = await _blogRepository.CreateArticleAsync(articleInput.BlogId, previewFileName,
+                            articleFileName, articleInput.Title, articleInput.Description, articleInput.Text,
+                            Guid.NewGuid().ToString(), articleInput.SignatureText);
                     }
                 }
 
@@ -414,8 +422,11 @@ namespace Garant.Platform.Services.Service.Blog
                         {
                             urls[i] = images.Files[i].FileName;
                         }
+
                         // обновит статью в БД
-                        result = await _blogRepository.UpdateArticleAsync(articleInput.ArticleId, articleInput.BlogId, urls,  articleInput.Title, articleInput.Position, articleInput.Description, articleInput.Text, articleInput.ArticleCode);
+                        result = await _blogRepository.UpdateArticleAsync(articleInput.ArticleId, articleInput.BlogId,
+                            urls, articleInput.Title, articleInput.Position, articleInput.Description,
+                            articleInput.Text, articleInput.ArticleCode);
                     }
                 }
 
@@ -481,7 +492,7 @@ namespace Garant.Platform.Services.Service.Blog
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Метод получит список тем для статей блогов.
         /// </summary>
@@ -491,10 +502,10 @@ namespace Garant.Platform.Services.Service.Blog
             try
             {
                 var result = await _blogRepository.GetArticleThemesAsync();
-                
+
                 return result;
             }
-            
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
@@ -517,14 +528,45 @@ namespace Garant.Platform.Services.Service.Blog
                 {
                     throw new EmptyBlogIdException();
                 }
-                
+
                 var blog = await _blogRepository.GetBlogByIdAsync(blogId);
                 var mapper = AutoFac.Resolve<IMapper>();
                 var result = mapper.Map<BlogOutput>(blog);
 
                 return result;
             }
-            
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит статью блога.
+        /// </summary>
+        /// <param name="articleId">Id статьи.</param>
+        /// <returns>Данные статьи.</returns>
+        public async Task<ArticleOutput> GetBlogArticleAsync(long articleId)
+        {
+            try
+            {
+                if (articleId <= 0)
+                {
+                    throw new NotFoundArticleByIdException(articleId);
+                }
+                
+                var article = await _blogRepository.GetBlogArticleByUdAsync(articleId);
+
+                var cast = AutoFac.Resolve<IMapper>();
+                var result = cast.Map<ArticleOutput>(article);
+
+                return result;
+            }
+
             catch (Exception e)
             {
                 Console.WriteLine(e);

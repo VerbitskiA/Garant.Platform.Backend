@@ -188,25 +188,26 @@ namespace Garant.Platform.Services.Service.Blog
         {
             try
             {
-                // var result = await _postgreDbContext.Articles
-                //     .Where(b => b.BlogId.Equals(blogId))
-                //     .OrderByDescending(b =>b.DateCreated)
-                //     .Select(b => new ArticleOutput
-                //     {
-                //         ArticleId = b.ArticleId,
-                //         BlogId = b.BlogId,
-                //         Title = b.Title,
-                //         Urls = b.Urls,
-                //         Description = b.Description,
-                //         Text = b.Text,
-                //         Position = b.Position,
-                //         DateCreated = b.DateCreated,
-                //         ArticleCode = b.ArticleCode
-                //     })
-                //     .ToListAsync();
+                var result = await _postgreDbContext.Articles
+                    .Where(b => b.BlogId == blogId)
+                    .OrderByDescending(b =>b.DateCreated)
+                    .Select(b => new ArticleOutput
+                    {
+                        ArticleId = b.ArticleId,
+                        ArticleCode = b.ArticleCode,
+                        ArticleUrl = b.ArticleUrl,
+                        BlogId = b.BlogId,
+                        DateCreated = b.DateCreated,
+                        Description = b.Description,
+                        Position = b.Position,
+                        PreviewUrl = b.PreviewUrl,
+                        SignatureText = b.SignatureText,
+                        Text = b.Text,
+                        Title = b.Title
+                    })
+                    .ToListAsync();
 
-                // return result;
-                throw new NotImplementedException();
+                return result;
             }
 
             catch (Exception e)
@@ -603,6 +604,32 @@ namespace Garant.Platform.Services.Service.Blog
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит статью блога.
+        /// </summary>
+        /// <param name="articleId">Id статьи.</param>
+        /// <returns>Данные статьи.</returns>
+        public async Task<ArticleEntity> GetBlogArticleByUdAsync(long articleId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Articles.Where(a => a.ArticleId == articleId)
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }

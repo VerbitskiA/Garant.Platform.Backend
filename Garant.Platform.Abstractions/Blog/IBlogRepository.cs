@@ -132,5 +132,12 @@ namespace Garant.Platform.Abstractions.Blog
         /// <param name="blogId">Id блога.</param>
         /// <returns>Данные блога.</returns>
         Task<BlogEntity> GetBlogByIdAsync(long blogId);
+        
+        /// <summary>
+        /// Метод получит статью блога.
+        /// </summary>
+        /// <param name="articleId">Id статьи.</param>
+        /// <returns>Данные статьи.</returns>
+        Task<ArticleEntity> GetBlogArticleByUdAsync(long articleId);
     }
 }
