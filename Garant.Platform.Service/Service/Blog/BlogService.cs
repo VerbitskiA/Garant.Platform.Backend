@@ -85,11 +85,11 @@ namespace Garant.Platform.Services.Service.Blog
                             NewsId = n.NewsId,
                             Text = n.Text,
                             DateCreated = n.DateCreated,
-                            IsMarginTop = n.IsMarginTop,
                             IsPaid = n.IsPaid,
-                            Name = n.Name,
+                            Title = n.Title,
                             Type = n.Type,
-                            Url = n.Url
+                            Url = n.Url,
+                            Position = n.Position
                         })
                     .ToListAsync();
 
@@ -99,16 +99,9 @@ namespace Garant.Platform.Services.Service.Blog
 
                 foreach (var item in result)
                 {
-                    // Первому элементу не нужен отступ.
-                    if (i == 0)
-                    {
-                        item.IsMarginTop = false;
-                    }
-
                     // Если день совпадает с сегодня, то проставит флаг и надпись.
                     if (item.DateCreated.Day == nowDay)
                     {
-                        item.IsToday = true;
                         item.Date = "сегодня";
                     }
 
@@ -284,9 +277,8 @@ namespace Garant.Platform.Services.Service.Blog
                     if (newsInput != null)
                     {
                         // создаст новость
-                        result = await _blogRepository.CreateNewsAsync(newsInput.Name, newsInput.Text,
-                            images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop,
-                            newsInput.IsPaid);
+                        result = await _blogRepository.CreateNewsAsync(newsInput.Title, newsInput.Text,
+                            "../../../assets/images/" + images.Files[0].FileName, newsInput.Type);
                     }
                 }
 
@@ -327,9 +319,8 @@ namespace Garant.Platform.Services.Service.Blog
                     if (newsInput != null)
                     {
                         // обновит новость в БД
-                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId, newsInput.Name, newsInput.Text,
-                            images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop,
-                            newsInput.IsPaid);
+                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId, newsInput.Title, newsInput.Text,
+                            "../../../assets/images/" + images.Files[0].FileName, newsInput.Type);
                     }
                 }
 
@@ -567,6 +558,36 @@ namespace Garant.Platform.Services.Service.Blog
                 return result;
             }
 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит новость по ее Id.
+        /// </summary>
+        /// <param name="newsId">Id новости.</param>
+        /// <returns>Данные новости.</returns>
+        public async Task<NewsOutput> GetNewAsync(long newsId)
+        {
+            try
+            {
+                if (newsId <= 0)
+                {
+                    throw new EmptyNewsIdException();
+                }
+
+                var getNew = await _blogRepository.GetNewByIdAsync(newsId);
+                var cast = AutoFac.Resolve<IMapper>();
+                var result = cast.Map<NewsOutput>(getNew);
+
+                return result;
+            }
+            
             catch (Exception e)
             {
                 Console.WriteLine(e);

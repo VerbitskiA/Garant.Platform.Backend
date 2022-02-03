@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Base;
@@ -40,6 +41,7 @@ namespace Garant.Platform.Controllers.Blog
         }
 
         /// <summary>
+        /// TODO: вернуться и переделать, когда будет разработана система лояльности.
         /// Метод получит список новостей, у которых стоит флаг IsPaid. Т.е те, которые проплачены за размещение на главной.
         /// </summary>
         /// <returns>Список новостей.</returns>
@@ -47,9 +49,10 @@ namespace Garant.Platform.Controllers.Blog
         [HttpPost, Route("pay-news")]
         public async Task<IActionResult> GetTopNewsMainPageAsync()
         {
-            var result = await _blogService.GetTopNewsMainPageAsync();
-
-            return Ok(result);
+            // var result = await _blogService.GetTopNewsMainPageAsync();
+            //
+            // return Ok(result);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -257,6 +260,25 @@ namespace Garant.Platform.Controllers.Blog
         public async Task<ArticleOutput> GetBlogArticleAsync([FromQuery] long articleId)
         {
             var result = await _blogService.GetBlogArticleAsync(articleId);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод получит новость по ее Id.
+        /// </summary>
+        /// <param name="newsId">Id новости.</param>
+        /// <returns>Данные новости.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("get-new")]
+        [ProducesResponseType(200, Type = typeof(NewsOutput))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(500)]
+        public async Task<NewsOutput> GetNewAsync([FromQuery] long newsId)
+        {
+            var result = await _blogService.GetNewAsync(newsId);
 
             return result;
         }

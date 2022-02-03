@@ -1,5 +1,4 @@
 ﻿using Garant.Platform.Abstractions.Blog;
-using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Blog.Output;
@@ -136,34 +135,32 @@ namespace Garant.Platform.Services.Service.Blog
         /// <summary>
         /// Метод создаст новость.
         /// </summary>
-        /// <param name="name">Название новости.</param>
+        /// <param name="title">Название новости.</param>
         /// <param name="text">Текст новости.</param>
         /// <param name="url">Путь к изображению.</param>
-        /// <param name="isToday">Создана ли сегодня.</param>
-        /// <param name="type">Тип статьи.</param>
-        /// <param name="isMarginTop">Нужен ли отступ сверху.</param>
-        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
+        /// <param name="type">Тип статьи.</param>param>
         /// <returns>Данные новости.</returns>
-        public async Task<NewsOutput> CreateNewsAsync(string name, string text, string url, bool isToday, string type,
-            bool isMarginTop, bool isPaid)
+        public async Task<NewsOutput> CreateNewsAsync(string title, string text, string url, string type)
         {
             try
             {
                 var news = new NewsEntity
                 {
-                    Name = name,
+                    Title = title,
                     Text = text,
                     Url = url,
-                    IsToday = isToday,
                     Type = type,
-                    IsMarginTop = isMarginTop,
-                    IsPaid = isPaid,
                     DateCreated = DateTime.Now
                 };
+
+                var lastPosition = await _postgreDbContext.News.OrderByDescending(o => o.NewsId).Select(s => s.Position)
+                    .FirstOrDefaultAsync();
+
+                news.Position = ++lastPosition;
+                
                 await _postgreDbContext.News.AddAsync(news);
                 await _postgreDbContext.SaveChangesAsync();
-
-
+                
                 var jsonString = JsonConvert.SerializeObject(news);
                 var result = JsonConvert.DeserializeObject<NewsOutput>(jsonString);
 
@@ -330,12 +327,12 @@ namespace Garant.Platform.Services.Service.Blog
                         {
                             NewsId = n.NewsId,
                             DateCreated = n.DateCreated,
-                            IsMarginTop = n.IsMarginTop,
                             IsPaid = n.IsPaid,
-                            Name = n.Name,
+                            Title = n.Title,
                             Text = n.Text,
                             Type = n.Type,
-                            Url = n.Url
+                            Url = n.Url,
+                            Position = n.Position
                         })
                     .ToListAsync();
 
@@ -345,16 +342,9 @@ namespace Garant.Platform.Services.Service.Blog
 
                 foreach (var item in result)
                 {
-                    // Первому элементу не нужен отступ.
-                    if (i == 0)
-                    {
-                        item.IsMarginTop = false;
-                    }
-
                     // Если день совпадает с сегодня, то проставит флаг и надпись.
                     if (item.DateCreated.Day == nowDay)
                     {
-                        item.IsToday = true;
                         item.Date = "сегодня";
                     }
 
@@ -500,16 +490,12 @@ namespace Garant.Platform.Services.Service.Blog
         /// Метод обновит новость.
         /// </summary>
         /// <param name="newsId">Идентификатор новости.</param>
-        /// <param name="name">Название новости.</param>
+        /// <param name="title">Название новости.</param>
         /// <param name="text">Текст новости.</param>
         /// <param name="url">Путь к изображению.</param>
-        /// <param name="isToday">Создана ли сегодня.</param>
         /// <param name="type">Тип статьи.</param>
-        /// <param name="isMarginTop">Нужен ли отступ сверху.</param>
-        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
         /// <returns>Данные новости.</returns>
-        public async Task<NewsOutput> UpdateNewsAsync(long newsId, string name, string text, string url, bool isToday,
-            string type, bool isMarginTop, bool isPaid)
+        public async Task<NewsOutput> UpdateNewsAsync(long newsId, string title, string text, string url, string type)
         {
             try
             {
@@ -521,13 +507,10 @@ namespace Garant.Platform.Services.Service.Blog
                 var news = new NewsEntity
                 {
                     NewsId = newsId,
-                    Name = name,
+                    Title = title,
                     Text = text,
                     Url = url,
-                    IsToday = isToday,
                     Type = type,
-                    IsMarginTop = isMarginTop,
-                    IsPaid = isPaid,
                     DateCreated = DateTime.Now
                 };
 
@@ -621,6 +604,29 @@ namespace Garant.Platform.Services.Service.Blog
             {
                 var result = await _postgreDbContext.Articles.Where(a => a.ArticleId == articleId)
                     .FirstOrDefaultAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит новость по ее Id.
+        /// </summary>
+        /// <param name="newsId">Id новости.</param>
+        /// <returns>Данные новости.</returns>
+        public async Task<NewsEntity> GetNewByIdAsync(long newsId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.News.FirstOrDefaultAsync(n => n.NewsId == newsId);
 
                 return result;
             }

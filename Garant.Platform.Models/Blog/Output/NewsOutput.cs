@@ -15,7 +15,7 @@ namespace Garant.Platform.Models.Blog.Output
         /// <summary>
         /// Название новости.
         /// </summary>
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         /// <summary>
         /// Основной текст новости.
@@ -33,33 +33,22 @@ namespace Garant.Platform.Models.Blog.Output
         public DateTime DateCreated { get; set; }
 
         /// <summary>
-        /// Флаг отобразить ли надпись сегодня вместо даты.
-        /// </summary>
-        public bool IsToday { get; set; }
-
-        /// <summary>
-        /// Время создания новости.
-        /// </summary>
-        public string Time { get; set; }
-
-        /// <summary>
-        /// Дата создания новости.
-        /// </summary>
-        public string Date { get; set; }
-
-        /// <summary>
         /// Тип.
         /// </summary>
         public string Type { get; set; }
 
         /// <summary>
-        /// Флаг применить ли отступ сверху от новости.
-        /// </summary>
-        public bool IsMarginTop { get; set; }
-
-        /// <summary>
         /// Флаг оплаты размещения новости на главной странице.
         /// </summary>
         public bool IsPaid { get; set; }
+
+        /// <summary>
+        /// Позиция.
+        /// </summary>
+        public int Position { get; set; }
+
+        public string Date { get; set; }
+        
+        public string Time { get; set; }
     }
 }

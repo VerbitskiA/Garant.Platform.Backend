@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Models.Entities.Blog;
+using Garant.Platform.Models.Entities.News;
 
 namespace Garant.Platform.Abstractions.Blog
 {
@@ -14,29 +15,23 @@ namespace Garant.Platform.Abstractions.Blog
         /// <summary>
         /// Метод создаст новость.
         /// </summary>
-        /// <param name="name">Название новости.</param>
+        /// <param name="title">Название новости.</param>
         /// <param name="text">Текст новости.</param>
         /// <param name="url">Путь к изображению.</param>
-        /// <param name="isToday">Создана ли сегодня.</param>
-        /// <param name="type">Тип статьи.</param>
-        /// <param name="isMarginTop">Нужен ли отступ сверху.</param>
-        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
+        /// <param name="type">Тип статьи.</param>param>
         /// <returns>Данные новости.</returns>
-        Task<NewsOutput> CreateNewsAsync(string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid);
+        Task<NewsOutput> CreateNewsAsync(string title, string text, string url, string type);
 
         /// <summary>
         /// Метод обновит новость.
         /// </summary>
         /// <param name="newsId">Идентификатор новости.</param>
-        /// <param name="name">Название новости.</param>
+        /// <param name="title">Название новости.</param>
         /// <param name="text">Текст новости.</param>
         /// <param name="url">Путь к изображению.</param>
-        /// <param name="isToday">Создана ли сегодня.</param>
         /// <param name="type">Тип статьи.</param>
-        /// <param name="isMarginTop">Нужен ли отступ сверху.</param>
-        /// <param name="isPaid">Оплачено ли размещение на главной.</param>
         /// <returns>Данные новости.</returns>
-        Task<NewsOutput> UpdateNewsAsync(long newsId, string name, string text, string url, bool isToday, string type, bool isMarginTop, bool isPaid);
+        Task<NewsOutput> UpdateNewsAsync(long newsId, string title, string text, string url, string type);
 
         /// <summary>
         /// Метод вернёт список тем блогов.
@@ -139,5 +134,12 @@ namespace Garant.Platform.Abstractions.Blog
         /// <param name="articleId">Id статьи.</param>
         /// <returns>Данные статьи.</returns>
         Task<ArticleEntity> GetBlogArticleByUdAsync(long articleId);
+        
+        /// <summary>
+        /// Метод получит новость по ее Id.
+        /// </summary>
+        /// <param name="newsId">Id новости.</param>
+        /// <returns>Данные новости.</returns>
+        Task<NewsEntity> GetNewByIdAsync(long newsId);
     }
 }
