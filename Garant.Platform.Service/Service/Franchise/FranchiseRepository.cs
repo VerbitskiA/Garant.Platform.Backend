@@ -464,9 +464,9 @@ namespace Garant.Platform.Services.Service.Franchise
                         userId = findUser.UserId;
                     }
 
-                    // Найдет франшизу с таким названием.
-                    var findFranchise = await FindFranchiseByTitleAsync(franchiseInput.Title);
-                    var urls = await _commonService.JoinArrayWithDelimeterAsync(franchiseInput.UrlsFranchise);
+                    // Найдет франшизу по Id.
+                    var findFranchise = await FindFranchiseByIdAsync(franchiseInput.FranchiseId);
+                    var urls = await _commonService.JoinArrayWithDelimeterAsync(franchiseInput.UrlsFranchise) ?? string.Empty;
 
                     // Создаст новую франшизу.
                     if (franchiseInput.IsNew && findFranchise == null)
@@ -632,6 +632,72 @@ namespace Garant.Platform.Services.Service.Franchise
             {
                 var result = await _postgreDbContext.Franchises
                     .Where(f => f.Title.Equals(title))
+                    .Select(f => new FranchiseEntity
+                    {
+                        FranchiseId = f.FranchiseId,
+                        ActivityDetail = f.ActivityDetail,
+                        BaseDate = f.BaseDate,
+                        BusinessCount = f.BusinessCount,
+                        Category = f.Category,
+                        SubCategory = f.SubCategory,
+                        DateCreate = f.DateCreate,
+                        DotCount = f.DotCount,
+                        FinIndicators = f.FinIndicators,
+                        FranchisePacks = f.FranchisePacks,
+                        UrlsDetails = f.UrlsDetails,
+                        UrlLogo = f.UrlLogo,
+                        NameFinIndicators = f.FinIndicators,
+                        NameFinModelFile = f.NameFinModelFile,
+                        NameFranchisePhoto = f.NameFranchisePhoto,
+                        NamePresentFile = f.NamePresentFile,
+                        TrainingPhotoName = f.TrainingPhotoName,
+                        Title = f.Title,
+                        Text = f.Text,
+                        Price = f.Price,
+                        ViewBusiness = f.ViewBusiness,
+                        IsGarant = f.IsGarant,
+                        ProfitMonth = f.ProfitMonth,
+                        ProfitPrice = f.ProfitPrice,
+                        Status = f.Status,
+                        YearStart = f.YearStart,
+                        GeneralInvest = f.GeneralInvest,
+                        LumpSumPayment = f.LumpSumPayment,
+                        Royalty = f.Royalty,
+                        Payback = f.Payback,
+                        LaunchDate = f.LaunchDate,
+                        InvestInclude = f.InvestInclude,
+                        Peculiarity = f.Peculiarity,
+                        PaymentDetail = f.PaymentDetail,
+                        TrainingDetails = f.TrainingDetails,
+                        UrlVideo = f.UrlVideo,
+                        Reviews = f.Reviews,
+                        Url = f.Url
+                    })
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Метод найдет франшизу по Id.
+        /// </summary>
+        /// <param name="franchiseId">Id франшизы.</param>
+        /// <returns>Данные франшизы.</returns>
+        public async Task<FranchiseEntity> FindFranchiseByIdAsync(long franchiseId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Franchises
+                    .Where(f => f.FranchiseId == franchiseId)
                     .Select(f => new FranchiseEntity
                     {
                         FranchiseId = f.FranchiseId,

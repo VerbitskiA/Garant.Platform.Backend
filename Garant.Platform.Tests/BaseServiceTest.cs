@@ -1,4 +1,5 @@
 ﻿using Garant.Platform.Base.Service;
+using Garant.Platform.Configurator.Services;
 using Garant.Platform.Core.Data;
 using Garant.Platform.FTP.Service;
 using Garant.Platform.Mailings.Service;
@@ -42,6 +43,8 @@ namespace Garant.Platform.Tests
         protected ControlService ControlService;
         protected BlogService BlogService;
         protected BlogRepository BlogRepository;
+        protected ConfiguratorRepository ConfiguratorRepository;
+        protected ConfiguratorService ConfiguratorService;
 
         public BaseServiceTest()
         { 
@@ -63,7 +66,7 @@ namespace Garant.Platform.Tests
             BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
             PaginationRepository = new PaginationRepository(PostgreDbContext);
 
-            BlogRepository = new BlogRepository(PostgreDbContext, CommonService);
+            BlogRepository = new BlogRepository(PostgreDbContext);
             BlogService = new BlogService(PostgreDbContext, BlogRepository, FtpService);
 
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
@@ -75,6 +78,8 @@ namespace Garant.Platform.Tests
             DocumentService = new DocumentService(PostgreDbContext, FtpService, DocumentRepository);
             ControlRepository = new ControlRepository(PostgreDbContext);
             ControlService = new ControlService(PostgreDbContext, ControlRepository, UserRepository);
+            ConfiguratorRepository = new ConfiguratorRepository(PostgreDbContext);
+            ConfiguratorService = new ConfiguratorService(PostgreDbContext, ConfiguratorRepository);
         }
     }
 }

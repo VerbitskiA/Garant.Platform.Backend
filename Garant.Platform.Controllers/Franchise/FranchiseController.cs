@@ -111,7 +111,7 @@ namespace Garant.Platform.Controllers.Franchise
         }
 
         /// <summary>
-        /// Метод создаст новую  или обновит существующую франшизу.
+        /// Метод создаст новую или обновит существующую франшизу.
         /// </summary>
         /// <param name="franchiseFilesInput">Входные файлы.</param>
         /// <param name="franchiseDataInput">Данные в строке json.</param>
@@ -130,11 +130,11 @@ namespace Garant.Platform.Controllers.Franchise
         /// </summary>
         /// <param name="franchiseInput">Входная модель.</param>
         /// <returns></returns>
-        [HttpPost, Route("get-franchise")]
+        [HttpGet, Route("get-franchise")]
         [ProducesResponseType(200, Type = typeof(FranchiseOutput))]
-        public async Task<IActionResult> GetFranchiseAsync([FromBody] FranchiseInput franchiseInput)
+        public async Task<IActionResult> GetFranchiseAsync([FromQuery] long franchiseId)
         {
-            var result = await _franchiseService.GetFranchiseAsync(franchiseInput.FranchiseId);
+            var result = await _franchiseService.GetFranchiseAsync(franchiseId);
 
             return Ok(result);
         }

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Garant.Platform.Models.Entities.User
 {
     /// <summary>
-    /// Класс сопоставляется с таблицей сотрудников сервиса Гарант dbo.Employees.
+    /// Класс сопоставляется с таблицей сотрудников сервиса.
     /// </summary>
     [Table("Employees", Schema = "dbo")]
     public class EmployeeEntity
@@ -91,5 +91,11 @@ namespace Garant.Platform.Models.Entities.User
         /// </summary>
         [Column("TelegramTag", TypeName = "varchar(150)")]
         public string TelegramTag { get; set; }
+
+        /// <summary>
+        /// Пароль.
+        /// </summary>
+        [Column("Password", TypeName = "varchar(200)")]
+        public string Password { get; set; }
     }
 }

@@ -55,7 +55,7 @@ namespace Garant.Platform.Services.Service.Business
                     return null;
                 }
 
-                long lastBusinessId = 1000000;
+                long lastBusinessId = 1;
 
                 // Если в таблице нет записей, то добавленная первая будет иметь id 1000000.
                 var count = await _postgreDbContext.Businesses.Select(f => f.BusinessId).CountAsync();
