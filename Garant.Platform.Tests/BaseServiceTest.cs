@@ -6,6 +6,7 @@ using Garant.Platform.Messaging.Service.Chat;
 using Garant.Platform.Services.Control;
 using Garant.Platform.Services.Document;
 using Garant.Platform.Services.Request;
+using Garant.Platform.Services.Service.Blog;
 using Garant.Platform.Services.Service.Business;
 using Garant.Platform.Services.Service.Franchise;
 using Garant.Platform.Services.Service.Pagination;
@@ -39,6 +40,8 @@ namespace Garant.Platform.Tests
         protected DocumentRepository DocumentRepository;
         protected ControlRepository ControlRepository;
         protected ControlService ControlService;
+        protected BlogService BlogService;
+        protected BlogRepository BlogRepository;
 
         public BaseServiceTest()
         { 
@@ -60,10 +63,12 @@ namespace Garant.Platform.Tests
             BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
             PaginationRepository = new PaginationRepository(PostgreDbContext);
 
+            BlogRepository = new BlogRepository(PostgreDbContext, CommonService);
+            BlogService = new BlogService(PostgreDbContext, BlogRepository, FtpService);
+
             MailingService = new MailingService(PostgreDbContext, AppConfiguration);
             UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
-            FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);
-            BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
+            FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);            
             ChatRepository = new ChatRepository(PostgreDbContext);
             RequestService = new RequestService(FranchiseRepository, BusinessRepository, PostgreDbContext);
             DocumentRepository = new DocumentRepository(PostgreDbContext, UserRepository);

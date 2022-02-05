@@ -39,9 +39,8 @@ namespace Garant.Platform.Services.AutofacModules
             builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<UserRepository>().Named<IUserRepository>("UserRepository");
             builder.RegisterType<UserRepository>().As<IUserRepository>();
-
+              
             // Общий сервис.
-
             builder.RegisterType<SignInManager<UserEntity>>().InstancePerLifetimeScope();
             builder.RegisterType<UserManager<UserEntity>>().InstancePerLifetimeScope();
 
@@ -59,11 +58,13 @@ namespace Garant.Platform.Services.AutofacModules
 
             // Сервис объявлений.
             builder.RegisterType<AdService>().Named<IAdService>("AdService");
-            builder.RegisterType<AdService>().As<IFranchiseService>();
+            builder.RegisterType<AdService>().As<IAdService>();
 
             // Сервис блогов.
             builder.RegisterType<BlogService>().Named<IBlogService>("BlogService");
-            builder.RegisterType<BlogService>().As<IFranchiseService>();
+            builder.RegisterType<BlogService>().As<IBlogService>();
+            builder.RegisterType<BlogRepository>().Named<IBlogRepository>("BlogRepository");
+            builder.RegisterType<BlogRepository>().As<IBlogRepository>();
 
             // Сервис пагинации.
             builder.RegisterType<PaginationService>().Named<IPaginationService>("PaginationService");

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Garant.Platform.Models.Entities.Blog
@@ -32,5 +33,26 @@ namespace Garant.Platform.Models.Entities.Blog
         /// </summary>
         [Column("IsPaid", TypeName = "bool")]
         public bool IsPaid { get; set; }
+
+        /// <summary>
+        /// Позиция при размещении.
+        /// </summary>
+        [Column("Position", TypeName = "int4")]
+        public int Position { get; set; }
+
+        /// <summary>
+        /// FK. Идентификатор темы блога.
+        /// </summary>
+        [ForeignKey("Blogs_BlogThemeId_fkey")]
+        [Column("BlogThemeId", TypeName = "bigserial")]
+        public long BlogThemeId { get; set; }
+
+        /// <summary>
+        /// Дата создания блога
+        /// </summary>
+        [Column("DateCreated", TypeName = "timestamp")]
+        public DateTime DateCreated { get; set; }
+
+        public BlogThemeEntity BlogTheme { get; set; }
     }
 }
