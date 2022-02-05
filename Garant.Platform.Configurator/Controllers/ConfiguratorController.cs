@@ -166,5 +166,22 @@ namespace Garant.Platform.Configurator.Controllers
 
             return result;
         }
+        
+        /// <summary>
+        /// Метод создаст или обновит карточку бизнеса.
+        /// </summary>
+        /// <param name="businessFilesInput">Файлы карточки.</param>
+        /// <param name="businessDataInput">Входная модель.</param>
+        /// <returns>Данные карточки бизнеса.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("create-update-business")]
+        [ProducesResponseType(200, Type = typeof(CreateUpdateBusinessOutput))]
+        public async Task<IActionResult> CreateUpdateBusinessAsync([FromForm] IFormCollection businessFilesInput, [FromForm] string businessDataInput)
+        {
+            var result = await _businessService.CreateUpdateBusinessAsync(businessFilesInput, businessDataInput, GetUserName());
+
+            return Ok(result);
+        }
     }
 }
