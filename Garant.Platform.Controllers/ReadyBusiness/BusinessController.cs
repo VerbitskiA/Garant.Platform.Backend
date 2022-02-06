@@ -62,6 +62,7 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         /// </summary>
         /// <param name="businessInput">Входная модель.</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost, Route("get-business")]
         [ProducesResponseType(200, Type = typeof(BusinessOutput))]
         public async Task<IActionResult> GetFranchiseAsync([FromBody] BusinessInput businessInput)

@@ -466,7 +466,8 @@ namespace Garant.Platform.Services.Service.Franchise
 
                     // Найдет франшизу по Id.
                     var findFranchise = await FindFranchiseByIdAsync(franchiseInput.FranchiseId);
-                    var urls = await _commonService.JoinArrayWithDelimeterAsync(franchiseInput.UrlsFranchise) ?? string.Empty;
+                    var urls = await _commonService.JoinArrayWithDelimeterAsync(franchiseInput.UrlsFranchise);
+                    long franchiseId = 0;
 
                     // Создаст новую франшизу.
                     if (franchiseInput.IsNew && findFranchise == null)
@@ -514,6 +515,12 @@ namespace Garant.Platform.Services.Service.Franchise
                             UserId = userId,
                             Url = urls
                         });
+                        await _postgreDbContext.SaveChangesAsync();
+
+                        franchiseId = await _postgreDbContext.Franchises
+                            .OrderByDescending(o => o.FranchiseId)
+                            .Select(f => f.FranchiseId)
+                            .FirstOrDefaultAsync();
                     }
 
                     // Обновит франшизу.
@@ -564,9 +571,9 @@ namespace Garant.Platform.Services.Service.Franchise
                         findFranchise.Url = urls;
 
                         _postgreDbContext.Update(findFranchise);
+                        await _postgreDbContext.SaveChangesAsync();
+                        franchiseId = findFranchise.FranchiseId;
                     }
-
-                    await _postgreDbContext.SaveChangesAsync();
 
                     result = new CreateUpdateFranchiseOutput
                     {
@@ -605,7 +612,8 @@ namespace Garant.Platform.Services.Service.Franchise
                         PaymentDetail = franchiseInput.PaymentDetail,
                         TrainingDetails = franchiseInput.TrainingDetails,
                         UrlVideo = franchiseInput.UrlVideo,
-                        Reviews = franchiseInput.Reviews
+                        Reviews = franchiseInput.Reviews,
+                        FranchiseId = franchiseId
                     };
                 }
 
