@@ -5,9 +5,14 @@ namespace Garant.Platform.Models.Blog.Input
     public class CreateNewsInput
     {
         /// <summary>
-        /// Название новости
+        /// PK.
         /// </summary>
-        public string Name { get; set; }
+        public long NewsId { get; set; }
+
+        /// <summary>
+        /// Заголовок новости.
+        /// </summary>
+        public string Title { get; set; }
 
         /// <summary>
         /// Основной текст новости.
@@ -25,23 +30,18 @@ namespace Garant.Platform.Models.Blog.Input
         public DateTime DateCreated { get; set; }
 
         /// <summary>
-        /// Флаг отобразить ли надпись сегодня вместо даты.
-        /// </summary>
-        public bool IsToday { get; set; }        
-
-        /// <summary>
-        /// Тип.
+        /// Тематика новости.
         /// </summary>
         public string Type { get; set; }
 
         /// <summary>
-        /// Флаг применить ли отступ сверху от новости.
-        /// </summary>
-        public bool IsMarginTop { get; set; }
-
-        /// <summary>
-        /// Флаг оплаты размещения новости на главной странице.
+        /// Флаг оплаты размещения новости в топе.
         /// </summary>
         public bool IsPaid { get; set; }
+
+        /// <summary>
+        /// Позиция.
+        /// </summary>
+        public int Position { get; set; }
     }
 }

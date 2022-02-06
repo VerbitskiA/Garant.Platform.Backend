@@ -214,6 +214,7 @@ namespace Garant.Platform.Controllers.User
         /// Метод получит переход пользователя.
         /// </summary>
         /// <returns>Данные перехода.</returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("get-transition")]
         [ProducesResponseType(200, Type = typeof(TransitionOutput))]

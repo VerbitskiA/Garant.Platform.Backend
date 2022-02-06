@@ -258,5 +258,26 @@ namespace Garant.Platform.Commerce.Service.Garant
                 throw;
             }
         }
+
+        public async  Task<long> GetDealIdAsync(string userId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Deals
+                    .Where(d => d.UserId.Equals(userId))
+                    .Select(d => d.DealId)
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

@@ -37,22 +37,19 @@ namespace Garant.Platform.Models.Entities.Blog
         /// <summary>
         /// Позиция при размещении.
         /// </summary>
-        [Column("Position", TypeName = "int4")]
+        [Column("Position", TypeName = "int")]
         public int Position { get; set; }
 
         /// <summary>
-        /// FK. Идентификатор темы блога.
+        /// Идентификатор темы блога.
         /// </summary>
-        [ForeignKey("Blogs_BlogThemeId_fkey")]
-        [Column("BlogThemeId", TypeName = "bigserial")]
-        public long BlogThemeId { get; set; }
+        [Column("ThemeCategoryCode", TypeName = "varchar(100)")]
+        public string ThemeCategoryCode { get; set; }
 
         /// <summary>
         /// Дата создания блога
         /// </summary>
         [Column("DateCreated", TypeName = "timestamp")]
         public DateTime DateCreated { get; set; }
-
-        public BlogThemeEntity BlogTheme { get; set; }
     }
 }

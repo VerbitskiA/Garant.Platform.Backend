@@ -31,5 +31,28 @@ namespace Garant.Platform.Tests.Header
 
             Assert.IsTrue(result.Any());
         }
+
+        [TestMethod]
+        public async Task InitMainGarantHeaderFieldsAsyncTest()
+        {
+            var mock = new Mock<IUserService>();
+            mock.Setup(a => a.InitHeaderAsync("MainGarant"));
+            var component = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
+            var result = await component.InitHeaderAsync("MainGarant");
+
+            Assert.IsTrue(result.Any());
+        }
+
+        [TestMethod]
+        public async Task InitDopGarantHeaderFieldsAsyncTest()
+        {
+            var mock = new Mock<IUserService>();
+            mock.Setup(a => a.InitHeaderAsync("DopGarant"));
+            var component = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
+            var result = await component.InitHeaderAsync("DopGarant");
+
+            Assert.IsTrue(result.Any());
+        }
+        
     }
 }
