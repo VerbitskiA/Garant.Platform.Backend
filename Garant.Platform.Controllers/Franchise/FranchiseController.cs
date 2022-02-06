@@ -130,6 +130,7 @@ namespace Garant.Platform.Controllers.Franchise
         /// </summary>
         /// <param name="franchiseInput">Входная модель.</param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet, Route("get-franchise")]
         [ProducesResponseType(200, Type = typeof(FranchiseOutput))]
         public async Task<IActionResult> GetFranchiseAsync([FromQuery] long franchiseId)

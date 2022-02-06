@@ -401,13 +401,13 @@ namespace Garant.Platform.Services.Service.Business
                     .FirstOrDefaultAsync();
 
                 // Найдет фио пользователя, создавшего франшизу.
-                var fio = await _postgreDbContext.Users
-                    .Where(u => u.Id.Equals(userId))
-                    .Select(u => new FranchiseOutput
-                    {
-                        FullName = (u.LastName ?? string.Empty) + " " + (u.FirstName ?? string.Empty) + " " + (u.Patronymic ?? string.Empty)
-                    })
-                    .FirstOrDefaultAsync();
+                // var fio = await _postgreDbContext.Users
+                //     .Where(u => u.Id.Equals(userId))
+                //     .Select(u => new FranchiseOutput
+                //     {
+                //         FullName = (u.LastName ?? string.Empty) + " " + (u.FirstName ?? string.Empty) + " " + (u.Patronymic ?? string.Empty)
+                //     })
+                //     .FirstOrDefaultAsync();
 
                 var result = await (from b in _postgreDbContext.Businesses
                                     where b.BusinessId == businessId
