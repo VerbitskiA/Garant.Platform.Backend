@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Garant.Platform.Configurator.Models.Output;
+using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.Entities.User;
 
 namespace Garant.Platform.Configurator.Abstractions
@@ -32,5 +35,25 @@ namespace Garant.Platform.Configurator.Abstractions
         /// <param name="phoneNumber">Номер телефона сотрудника.</param>
         /// <returns>Статус проверки.</returns>
         Task<bool> CheckEmployeeByEmailAsync(string email, string phoneNumber);
+        
+        /// <summary>
+        /// Метод получит список меню конфигуратора.
+        /// </summary>
+        /// <returns>Список меню.</returns>
+        Task<IEnumerable<ConfiguratorMenuOutput>> GetMenuItemsAsync();
+        
+        /// <summary>
+        /// Метод авторизует сотрудника сервиса.
+        /// </summary>
+        /// <param name="inputData">Email или телефон.</param>
+        /// <param name="password">Пароль.</param>
+        /// <returns>Данные сотрудника.</returns>
+        Task<EmployeeEntity> ConfiguratorLoginAsync(string inputData, string password);
+        
+        /// <summary>
+        /// Метод получит список действий при работе с блогами.
+        /// </summary>
+        /// <returns>Список действий.</returns>
+        Task<IEnumerable<BlogActionOutput>> GetBlogActionsAsync();
     }
 }

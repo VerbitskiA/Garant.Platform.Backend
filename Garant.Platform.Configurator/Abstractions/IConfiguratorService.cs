@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Garant.Platform.Configurator.Models.Output;
+using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.User.Output;
 
 namespace Garant.Platform.Configurator.Abstractions
@@ -24,5 +27,25 @@ namespace Garant.Platform.Configurator.Abstractions
         Task<CreateEmployeeOutput> CreateEmployeeAsync(string employeeRoleName, string employeeRoleSystemName,
             string employeeStatus, string firstName, string lastName, string patronymic, string phoneNumber,
             string email, string telegramTag);
+
+        /// <summary>
+        /// Метод получит список меню конфигуратора.
+        /// </summary>
+        /// <returns>Список меню.</returns>
+        Task<IEnumerable<ConfiguratorMenuOutput>> GetMenuItemsAsync();
+
+        /// <summary>
+        /// Метод авторизует сотрудника сервиса.
+        /// </summary>
+        /// <param name="inputData">Email или телефон.</param>
+        /// <param name="password">Пароль.</param>
+        /// <returns>Данные сотрудника.</returns>
+        Task<ConfiguratorLoginOutput> ConfiguratorLoginAsync(string inputData, string password);
+
+        /// <summary>
+        /// Метод получит список действий при работе с блогами.
+        /// </summary>
+        /// <returns>Список действий.</returns>
+        Task<IEnumerable<BlogActionOutput>> GetBlogActionsAsync();
     }
 }

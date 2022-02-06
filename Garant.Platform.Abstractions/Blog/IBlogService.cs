@@ -94,5 +94,32 @@ namespace Garant.Platform.Abstractions.Blog
         /// <param name="images">Файлы изображений.</param>
         /// <returns>Обновлённый блог.</returns>
         Task<BlogOutput> UpdateBlogAsync(string blogData, IFormCollection images);
+
+        /// <summary>
+        /// Метод получит список тем для статей блогов.
+        /// </summary>
+        /// <returns>Список тем.</returns>
+        Task<IEnumerable<ArticleThemeOutput>> GetArticleThemesAsync();
+
+        /// <summary>
+        /// Метод получит блог по его Id.
+        /// </summary>
+        /// <param name="blogId">Id блога.</param>
+        /// <returns>Данные блога.</returns>
+        Task<BlogOutput> GetBlogAsync(long blogId);
+
+        /// <summary>
+        /// Метод получит статью блога.
+        /// </summary>
+        /// <param name="articleId">Id статьи.</param>
+        /// <returns>Данные статьи.</returns>
+        Task<ArticleOutput> GetBlogArticleAsync(long articleId);
+
+        /// <summary>
+        /// Метод получит новость по ее Id.
+        /// </summary>
+        /// <param name="newsId">Id новости.</param>
+        /// <returns>Данные новости.</returns>
+        Task<NewsOutput> GetNewAsync(long newsId);
     }
 }

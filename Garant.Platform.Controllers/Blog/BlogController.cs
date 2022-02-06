@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Base;
@@ -40,6 +41,7 @@ namespace Garant.Platform.Controllers.Blog
         }
 
         /// <summary>
+        /// TODO: вернуться и переделать, когда будет разработана система лояльности.
         /// Метод получит список новостей, у которых стоит флаг IsPaid. Т.е те, которые проплачены за размещение на главной.
         /// </summary>
         /// <returns>Список новостей.</returns>
@@ -47,9 +49,10 @@ namespace Garant.Platform.Controllers.Blog
         [HttpPost, Route("pay-news")]
         public async Task<IActionResult> GetTopNewsMainPageAsync()
         {
-            var result = await _blogService.GetTopNewsMainPageAsync();
-
-            return Ok(result);
+            // var result = await _blogService.GetTopNewsMainPageAsync();
+            //
+            // return Ok(result);
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -203,6 +206,81 @@ namespace Garant.Platform.Controllers.Blog
             var result = await _blogService.GetArticlesFromBlogAsync(getBlogArticlesInput.BlogId);
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список тем для статей блогов.
+        /// </summary>
+        /// <returns>Список тем.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("get-article-themes")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ArticleThemeOutput>))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(500)]
+        public async Task<IEnumerable<ArticleThemeOutput>> GetArticleThemesAsync()
+        {
+            var result = await _blogService.GetArticleThemesAsync();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод получит блог по его Id.
+        /// </summary>
+        /// <param name="blogId">Id блога.</param>
+        /// <returns>Данные блога.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("get-blog")]
+        [ProducesResponseType(200, Type = typeof(BlogOutput))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(500)]
+        public async Task<BlogOutput> GetBlogAsync([FromQuery] long blogId)
+        {
+            var result = await _blogService.GetBlogAsync(blogId);
+
+            return result;
+        }
+        
+        /// <summary>
+        /// Метод получит статью блога.
+        /// </summary>
+        /// <param name="articleId">Id статьи.</param>
+        /// <returns>Данные статьи.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("get-article")]
+        [ProducesResponseType(200, Type = typeof(ArticleOutput))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(500)]
+        public async Task<ArticleOutput> GetBlogArticleAsync([FromQuery] long articleId)
+        {
+            var result = await _blogService.GetBlogArticleAsync(articleId);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод получит новость по ее Id.
+        /// </summary>
+        /// <param name="newsId">Id новости.</param>
+        /// <returns>Данные новости.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("get-new")]
+        [ProducesResponseType(200, Type = typeof(NewsOutput))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(500)]
+        public async Task<NewsOutput> GetNewAsync([FromQuery] long newsId)
+        {
+            var result = await _blogService.GetNewAsync(newsId);
+
+            return result;
         }
     }
 }
