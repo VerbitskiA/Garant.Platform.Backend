@@ -704,7 +704,9 @@ namespace Garant.Platform.Services.Service.Blog
         {
             try
             {
-                var deletedBlog = await _postgreDbContext.Blogs.FirstOrDefaultAsync(u => u.BlogId.Equals(blogId));
+                var deletedBlog = await _postgreDbContext.Blogs
+                    .Include(u=>u.Articles)
+                    .FirstOrDefaultAsync(u => u.BlogId.Equals(blogId));
 
                 _postgreDbContext.Blogs.Remove(deletedBlog);
 
