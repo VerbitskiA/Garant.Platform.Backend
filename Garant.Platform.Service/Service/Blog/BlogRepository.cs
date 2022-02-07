@@ -648,13 +648,78 @@ namespace Garant.Platform.Services.Service.Blog
         /// <returns></returns>
         public async Task<Task> DeleteNewAsync(long newsId)
         {
-            var deletedNew = await _postgreDbContext.News.FirstOrDefaultAsync(u => u.NewsId.Equals(newsId));
+            try
+            {
+                var deletedNew = await _postgreDbContext.News.FirstOrDefaultAsync(u => u.NewsId.Equals(newsId));
 
-            _postgreDbContext.News.Remove(deletedNew);            
+                _postgreDbContext.News.Remove(deletedNew);
 
-            await _postgreDbContext.SaveChangesAsync();
+                await _postgreDbContext.SaveChangesAsync();
 
-            return Task.CompletedTask;
+                return Task.CompletedTask;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод удалит статью.
+        /// </summary>
+        /// <param name="articleId">Идентификатор статьи.</param>
+        /// <returns></returns>
+        public async Task<Task> DeleteArticleAsync(long articleId)
+        {
+            try
+            {
+                var deletedArticle = await _postgreDbContext.Articles.FirstOrDefaultAsync(u => u.ArticleId.Equals(articleId));
+
+                _postgreDbContext.Articles.Remove(deletedArticle);
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return Task.CompletedTask;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод удалит блог со статьями.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns></returns>
+        public async Task<Task> DeleteBlogAsync(long blogId)
+        {
+            try
+            {
+                var deletedBlog = await _postgreDbContext.Blogs.FirstOrDefaultAsync(u => u.BlogId.Equals(blogId));
+
+                _postgreDbContext.Blogs.Remove(deletedBlog);
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return Task.CompletedTask;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
         }
     }
 }

@@ -309,5 +309,59 @@ namespace Garant.Platform.Controllers.Blog
 
             return Ok();
         }
+
+        /// <summary>
+        /// Метод удалит статью.
+        /// </summary>
+        /// <param name="articleId">Идентификатор статьи.</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpDelete]
+        [Route("delete-article")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> DeleteArticleAsync([FromQuery] long articleId)
+        {
+            ArticleOutput getArticle = await _blogService.GetBlogArticleAsync(articleId);
+
+            if (getArticle is null)
+            {
+                return NotFound();
+            }
+
+            await _blogService.DeleteArticleAsync(articleId);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Метод удалит блог со всеми его статьями.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpDelete]
+        [Route("delete-blog")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> DeleteBlogAsync([FromQuery] long blogId)
+        {
+            BlogOutput getBlog = await _blogService.GetBlogAsync(blogId);
+
+            if (getBlog is null)
+            {
+                return NotFound();
+            }
+
+            await _blogService.DeleteBlogAsync(blogId);
+
+            return Ok();
+        }
     }
 }
