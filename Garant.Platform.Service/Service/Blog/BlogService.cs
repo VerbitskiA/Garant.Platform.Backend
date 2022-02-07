@@ -596,5 +596,17 @@ namespace Garant.Platform.Services.Service.Blog
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод удалит новость.
+        /// </summary>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <returns></returns>
+        public async Task<Task> DeleteNewAsync(long newsId)
+        {
+            await _blogRepository.DeleteNewAsync(newsId);
+
+            return Task.CompletedTask;
+        }
     }
 }

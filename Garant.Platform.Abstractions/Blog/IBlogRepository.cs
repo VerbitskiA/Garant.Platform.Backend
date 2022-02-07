@@ -141,5 +141,12 @@ namespace Garant.Platform.Abstractions.Blog
         /// <param name="newsId">Id новости.</param>
         /// <returns>Данные новости.</returns>
         Task<NewsEntity> GetNewByIdAsync(long newsId);
+
+        /// <summary>
+        /// Метод удалит новость.
+        /// </summary>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <returns></returns>
+        Task DeleteNewAsync(long newsId);
     }
 }

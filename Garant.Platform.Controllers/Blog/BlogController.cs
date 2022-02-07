@@ -282,5 +282,32 @@ namespace Garant.Platform.Controllers.Blog
 
             return result;
         }
+
+        /// <summary>
+        /// Метод удалит новость.
+        /// </summary>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <returns>200 - если удаление успешное, 404 - если новость не найдена.</returns>
+        [AllowAnonymous]
+        [HttpDelete]
+        [Route("delete-new")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> DeleteNewAsync([FromQuery] long newsId)
+        {
+            NewsOutput getNew = await _blogService.GetNewAsync(newsId);
+
+            if (getNew is null)
+            {
+                return NotFound();
+            }
+
+            await _blogService.DeleteNewAsync(newsId);
+
+            return Ok();
+        }
     }
 }

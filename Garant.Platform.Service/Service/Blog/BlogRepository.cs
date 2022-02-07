@@ -639,5 +639,22 @@ namespace Garant.Platform.Services.Service.Blog
                 throw;
             }
         }
+
+
+        /// <summary>
+        /// Метод удалит новость.
+        /// </summary>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <returns></returns>
+        public async Task<Task> DeleteNewAsync(long newsId)
+        {
+            var deletedNew = await _postgreDbContext.News.FirstOrDefaultAsync(u => u.NewsId.Equals(newsId));
+
+            _postgreDbContext.News.Remove(deletedNew);            
+
+            await _postgreDbContext.SaveChangesAsync();
+
+            return Task.CompletedTask;
+        }
     }
 }
