@@ -1,14 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.Request;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
+using Garant.Platform.Models.Entities.Business;
 using Garant.Platform.Models.Request.Output;
 
 namespace Garant.Platform.Services.Request
 {
+    /// <summary>
+    /// Класс реализует методы сервиса заявок.
+    /// </summary>
     public sealed class RequestService : IRequestService
     {
         private readonly IFranchiseRepository _franchiseRepository;
@@ -78,6 +86,32 @@ namespace Garant.Platform.Services.Request
                 return result;
             }
 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список заявок для вкладки профиля "Уведомления".
+        /// <param name="account">Аккаунт.</param>
+        /// </summary>
+        /// <returns>Список заявок.</returns>
+        public async Task<IEnumerable<RequestBusinessOutput>> GetBusinessRequestsAsync(string account)
+        {
+            try
+            {
+                var requestsList = await _businessRepository.GetBusinessRequestsAsync(account);
+
+                var mapper = AutoFac.Resolve<IMapper>();
+                var result = mapper.Map<IEnumerable<RequestBusinessOutput>>(requestsList);
+
+                return result;
+            }
+            
             catch (Exception e)
             {
                 Console.WriteLine(e);
