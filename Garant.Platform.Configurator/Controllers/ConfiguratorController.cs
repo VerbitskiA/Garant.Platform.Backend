@@ -118,7 +118,7 @@ namespace Garant.Platform.Configurator.Controllers
         [ProducesResponseType(200, Type = typeof(CreateUpdateFranchiseOutput))]
         public async Task<IActionResult> CreateUpdateFranchiseConfiguratorAsync([FromForm] IFormCollection franchiseFilesInput, [FromForm] string franchiseDataInput)
         {
-            var result = await _franchiseService.CreateUpdateFranchiseAsync(franchiseFilesInput, franchiseDataInput, GetUserName());
+            var result = await _franchiseService.CreateUpdateFranchiseAsync(franchiseFilesInput, franchiseDataInput, GetUserName() ?? "info@gobizy.com");
 
             return Ok(result);
         }
@@ -179,7 +179,7 @@ namespace Garant.Platform.Configurator.Controllers
         [ProducesResponseType(200, Type = typeof(CreateUpdateBusinessOutput))]
         public async Task<IActionResult> CreateUpdateBusinessAsync([FromForm] IFormCollection businessFilesInput, [FromForm] string businessDataInput)
         {
-            var result = await _businessService.CreateUpdateBusinessAsync(businessFilesInput, businessDataInput, GetUserName());
+            var result = await _businessService.CreateUpdateBusinessAsync(businessFilesInput, businessDataInput, GetUserName() ?? "info@gobizy.com");
 
             return Ok(result);
         }

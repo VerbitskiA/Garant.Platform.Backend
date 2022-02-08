@@ -74,8 +74,16 @@ namespace Garant.Platform.Commerce.Service.Garant
                     {
                         var iterationList = JsonConvert.DeserializeObject<List<ConvertInvestIncludePriceOutput>>(franchise.InvestInclude);
 
-                        // Получит Id сделки.
+                        // Получит дату создания сделки.
                         var dateCreateDeal = await _garantActionRepository.GetOwnerIdItemDealAsync(franchise.UserId);
+
+                        // Получит Id сделки.
+                        var dealId = await _garantActionRepository.GetDealIdAsync(franchise.UserId);
+
+                        var mainHeaders = await _userRepository.InitHeaderAsync("MainGarant");
+                        var headerFields = mainHeaders.Select(s => s.Name).ToList();
+                        var dopHeaders = await _userRepository.InitHeaderAsync("DopGarant");
+                        var dopHeaderFields = dopHeaders.Select(s => s.Name).ToList();
 
                         // Сравнит Id.
                         var isOwner = userId.Equals(franchise.UserId);
@@ -85,7 +93,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
 
-                            var franchise1IterationsNotOwnerList = GetDataFranchise1IterationNotOwner(franchise.FranchiseId, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, dateCreateDeal);
+                            var franchise1IterationsNotOwnerList = GetDataFranchise1IterationNotOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, dateCreateDeal);
 
                             return franchise1IterationsNotOwnerList;
                         }
@@ -100,7 +108,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var franchise1IterationsOwnerList = GetDataFranchise1IterationOwner(franchise.FranchiseId, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, dateCreateDeal);
+                            var franchise1IterationsOwnerList = GetDataFranchise1IterationOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, dateCreateDeal);
 
                             return franchise1IterationsOwnerList;
                         }
@@ -110,7 +118,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
 
-                            var franchise2IterationsNotOwnerList = await GetDataFranchise2IterationNotOwner(franchise.FranchiseId, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise2IterationsNotOwnerList = await GetDataFranchise2IterationNotOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise2IterationsNotOwnerList;
                         }
@@ -126,10 +134,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var franchise2IterationsOwnerList = await GetDataFranchise2IterationOwner(franchise.FranchiseId,
-                                franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName,
-                                userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId,
-                                franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise2IterationsOwnerList = await GetDataFranchise2IterationOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise2IterationsOwnerList;
                         }
@@ -139,7 +144,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
 
-                            var franchise3IterationsNotOwnerList = await GetDataFranchise3IterationNotOwner(franchise.FranchiseId, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise3IterationsNotOwnerList = await GetDataFranchise3IterationNotOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise3IterationsNotOwnerList;
                         }
@@ -155,7 +160,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var franchise3IterationsOwnerList = await GetDataFranchise3IterationOwner(franchise.FranchiseId, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise3IterationsOwnerList = await GetDataFranchise3IterationOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise3IterationsOwnerList;
                         }
@@ -165,7 +170,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
 
-                            var franchise4IterationsNotOwnerList = await GetDataFranchise4IterationNotOwner(franchise.FranchiseId, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise4IterationsNotOwnerList = await GetDataFranchise4IterationNotOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise4IterationsNotOwnerList;
                         }
@@ -181,7 +186,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var franchise4IterationsOwnerList = await GetDataFranchise4IterationOwner(franchise.FranchiseId, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise4IterationsOwnerList = await GetDataFranchise4IterationOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise4IterationsOwnerList;
                         }
@@ -197,6 +202,12 @@ namespace Garant.Platform.Commerce.Service.Garant
                     {
                         var iterationList = JsonConvert.DeserializeObject<List<ConvertInvestIncludePriceOutput>>(business.InvestPrice);
 
+                        // Получит Id сделки.
+                        var dealId = await _garantActionRepository.GetDealIdAsync(business.UserId);
+
+                        var mainHeaders = _userRepository.InitHeaderAsync("MainGarant").Result.Select(s => s.Name).ToList();
+                        var dopHeaders = _userRepository.InitHeaderAsync("DopGarant").Result.Select(s => s.Name).ToList();
+
                         var dateCreateDeal = await _garantActionRepository.GetOwnerIdItemDealAsync(business.UserId);
 
                         // Сравнит Id.
@@ -207,7 +218,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(business.UserId);
 
-                            var business1IterationsNotOwnerList = GetDataBusiness1IterationNotOwner(business.BusinessId, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, dateCreateDeal);
+                            var business1IterationsNotOwnerList = GetDataBusiness1IterationNotOwner(business.BusinessId, dealId, mainHeaders, dopHeaders, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, dateCreateDeal);
 
                             return business1IterationsNotOwnerList;
                         }
@@ -222,7 +233,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var business1IterationsOwnerList = GetDataBusiness1IterationOwner(business.BusinessId, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, dateCreateDeal);
+                            var business1IterationsOwnerList = GetDataBusiness1IterationOwner(business.BusinessId, dealId, mainHeaders, dopHeaders, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, dateCreateDeal);
 
                             return business1IterationsOwnerList;
                         }
@@ -232,7 +243,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(business.UserId);
 
-                            var business2IterationsNotOwnerList = await GetDataBusiness2IterationNotOwner(business.BusinessId, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
+                            var business2IterationsNotOwnerList = await GetDataBusiness2IterationNotOwner(business.BusinessId, dealId, mainHeaders, dopHeaders, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
 
                             return business2IterationsNotOwnerList;
                         }
@@ -248,7 +259,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var business2IterationsOwnerList = await GetDataBusiness2IterationOwner(business.BusinessId,
+                            var business2IterationsOwnerList = await GetDataBusiness2IterationOwner(business.BusinessId, dealId, mainHeaders, dopHeaders,
                                 business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName,
                                 userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId,
                                 business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
@@ -261,7 +272,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(business.UserId);
 
-                            var business3IterationsNotOwnerList = await GetDataBusiness3IterationNotOwner(business.BusinessId, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
+                            var business3IterationsNotOwnerList = await GetDataBusiness3IterationNotOwner(business.BusinessId, dealId, mainHeaders, dopHeaders, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
 
                             return business3IterationsNotOwnerList;
                         }
@@ -277,7 +288,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var business3IterationsOwnerList = await GetDataBusiness3IterationOwner(business.BusinessId, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
+                            var business3IterationsOwnerList = await GetDataBusiness3IterationOwner(business.BusinessId, dealId, mainHeaders, dopHeaders, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
 
                             return business3IterationsOwnerList;
                         }
@@ -287,7 +298,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(business.UserId);
 
-                            var business4IterationsNotOwnerList = await GetDataBusiness4IterationNotOwner(business.BusinessId, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
+                            var business4IterationsNotOwnerList = await GetDataBusiness4IterationNotOwner(business.BusinessId, dealId, mainHeaders, dopHeaders, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
 
                             return business4IterationsNotOwnerList;
                         }
@@ -303,7 +314,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var business4IterationsOwnerList = await GetDataBusiness4IterationOwner(business.BusinessId, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
+                            var business4IterationsOwnerList = await GetDataBusiness4IterationOwner(business.BusinessId, dealId, mainHeaders, dopHeaders, business.TotalInvest, business.BusinessName, business.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, business.InvestPrice, iterationList, isChat, account, dateCreateDeal);
 
                             return business4IterationsOwnerList;
                         }
@@ -326,6 +337,9 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// Метод формирует данные франшизы для 1 этапа не для владельца.
         /// </summary>
         /// <param name="franchiseId">Id франшизы.</param>
+        /// <param name="dealId">Id сделки.</param>
+        /// <param name="mainHeaders">Список main-заголовков.</param>
+        /// <param name="dopHeaders">Список dop-заголовков.</param>
         /// <param name="totalInvest">Всего инвестиций.</param>
         /// <param name="title">Заголовок.</param>
         /// <param name="url">Путь.</param>
@@ -337,11 +351,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private InitGarantDataOutput GetDataFranchise1IterationNotOwner(long franchiseId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, DateTime dateCreateDeal)
+        private InitGarantDataOutput GetDataFranchise1IterationNotOwner(long franchiseId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = franchiseId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = string.Format("{0:0,0}", totalInvest),
                 BlackBlockText = @"Как доверить посреднику большую сумму? Холдирование – это временная блокировка (замораживание) определенной суммы на банковском счете.
 Осуществляется банком-эмитентом в момент авторизации на срок, в течение которого проводит расчеты банк-эквайер. Деньги не поступают
@@ -394,11 +411,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private InitGarantDataOutput GetDataBusiness1IterationNotOwner(long businessId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, DateTime dateCreateDeal)
+        private InitGarantDataOutput GetDataBusiness1IterationNotOwner(long businessId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = businessId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = string.Format("{0:0,0}", totalInvest),
                 BlackBlockText = @"Как доверить посреднику большую сумму? Холдирование – это временная блокировка (замораживание) определенной суммы на банковском счете.
 Осуществляется банком-эмитентом в момент авторизации на срок, в течение которого проводит расчеты банк-эквайер. Деньги не поступают
@@ -451,12 +471,15 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private InitGarantDataOutput GetDataFranchise1IterationOwner(long franchiseId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, DateTime dateCreateDeal)
+        private InitGarantDataOutput GetDataFranchise1IterationOwner(long franchiseId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, DateTime dateCreateDeal)
         {
             // Если нужно подтянуть данные владельца предмета сделки.
             var result = new InitGarantDataOutput
             {
                 ItemDealId = franchiseId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = @"Покупатель холдировал средства и теперь необходима помощь в создании договора? Юрист сервиса GoBizy готов помочь в составлении
 основного договора по продаже бизнеса и составления актов приема-передачи.",
@@ -507,12 +530,15 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private InitGarantDataOutput GetDataBusiness1IterationOwner(long businessId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, DateTime dateCreateDeal)
+        private InitGarantDataOutput GetDataBusiness1IterationOwner(long businessId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, DateTime dateCreateDeal)
         {
             // Если нужно подтянуть данные владельца предмета сделки.
             var result = new InitGarantDataOutput
             {
                 ItemDealId = businessId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = @"Покупатель холдировал средства и теперь необходима помощь в создании договора? Юрист сервиса GoBizy готов помочь в составлении
 основного договора по продаже бизнеса и составления актов приема-передачи.",
@@ -563,11 +589,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataFranchise2IterationNotOwner(long franchiseId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataFranchise2IterationNotOwner(long franchiseId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = franchiseId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = @"Этапы сделки планируются автоматически - прикрепляются из карточки бизнеса, а именно из раздела “Входит в стоимость бизнеса”. 
 Однако, если что-то вас не устраивает вы можете согласовать иные этапы с продавцом - воспользуйтесь чатом для связи с продавцом.
@@ -628,11 +657,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataBusiness2IterationNotOwner(long businessId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataBusiness2IterationNotOwner(long businessId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = businessId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = @"Этапы сделки планируются автоматически - прикрепляются из карточки бизнеса, а именно из раздела “Входит в стоимость бизнеса”. 
 Однако, если что-то вас не устраивает вы можете согласовать иные этапы с продавцом - воспользуйтесь чатом для связи с продавцом.
@@ -693,12 +725,15 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataFranchise2IterationOwner(long franchiseId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataFranchise2IterationOwner(long franchiseId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             // Если нужно подтянуть данные владельца предмета сделки.
             var result = new InitGarantDataOutput
             {
                 ItemDealId = franchiseId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = @"Покупатель холдировал средства и теперь необходима помощь в создании договора? Юрист сервиса GoBizy готов помочь в составлении
 основного договора по продаже бизнеса и составления актов приема-передачи.",
@@ -763,12 +798,15 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataBusiness2IterationOwner(long businessId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataBusiness2IterationOwner(long businessId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             // Если нужно подтянуть данные владельца предмета сделки.
             var result = new InitGarantDataOutput
             {
                 ItemDealId = businessId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = @"Покупатель холдировал средства и теперь необходима помощь в создании договора? Юрист сервиса GoBizy готов помочь в составлении
 основного договора по продаже бизнеса и составления актов приема-передачи.",
@@ -833,11 +871,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataFranchise3IterationNotOwner(long franchiseId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataFranchise3IterationNotOwner(long franchiseId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = franchiseId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = @"Этапы сделки планируются автоматически - прикрепляются из карточки бизнеса, а именно из раздела “Входит в стоимость бизнеса”. 
 Однако, если что-то вас не устраивает вы можете согласовать иные этапы с продавцом - воспользуйтесь чатом для связи с продавцом.
@@ -910,11 +951,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataBusiness3IterationNotOwner(long businessId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataBusiness3IterationNotOwner(long businessId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = businessId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = @"Этапы сделки планируются автоматически - прикрепляются из карточки бизнеса, а именно из раздела “Входит в стоимость бизнеса”. 
 Однако, если что-то вас не устраивает вы можете согласовать иные этапы с продавцом - воспользуйтесь чатом для связи с продавцом.
@@ -987,11 +1031,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataFranchise3IterationOwner(long franchiseId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataFranchise3IterationOwner(long franchiseId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = franchiseId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = @"Этапы сделки планируются автоматически - прикрепляются из карточки бизнеса, а именно из раздела “Входит в стоимость бизнеса”. 
 Однако, если что-то вас не устраивает вы можете согласовать иные этапы с продавцом - воспользуйтесь чатом для связи с продавцом.
@@ -1062,11 +1109,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataBusiness3IterationOwner(long businessId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataBusiness3IterationOwner(long businessId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = businessId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = @"Этапы сделки планируются автоматически - прикрепляются из карточки бизнеса, а именно из раздела “Входит в стоимость бизнеса”. 
 Однако, если что-то вас не устраивает вы можете согласовать иные этапы с продавцом - воспользуйтесь чатом для связи с продавцом.
@@ -1137,11 +1187,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataFranchise4IterationNotOwner(long franchiseId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataFranchise4IterationNotOwner(long franchiseId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = franchiseId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = "Отправить акт на согласование продавцу",
                 BlackBlockTitle = "Оплата и исполнение этапов сделки",
@@ -1207,11 +1260,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataBusiness4IterationOwner(long businessId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataBusiness4IterationOwner(long businessId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = businessId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = string.Empty,
                 BlackBlockTitle = "Оплата и исполнение этапов сделки",
@@ -1277,11 +1333,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные франшизы.</returns>
-        private async Task<InitGarantDataOutput> GetDataFranchise4IterationOwner(long franchiseId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataFranchise4IterationOwner(long franchiseId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = franchiseId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = string.Empty,
                 BlackBlockTitle = "Оплата и исполнение этапов сделки",
@@ -1348,11 +1407,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         /// <param name="userId">Id пользователя.</param>
         /// <param name="dateCreateDeal">Дата создания сделки.</param>
         /// <returns>Данные бизнеса.</returns>
-        private async Task<InitGarantDataOutput> GetDataBusiness4IterationNotOwner(long businessId, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
+        private async Task<InitGarantDataOutput> GetDataBusiness4IterationNotOwner(long businessId, long dealId, List<string> mainHeaders, List<string> dopHeaders, string totalInvest, string title, string url, string firstName, string lastName, string otherFirstName, string otherLastName, string orderType, string userId, string investInclude, List<ConvertInvestIncludePriceOutput> iterationList, bool isChat, string account, DateTime dateCreateDeal)
         {
             var result = new InitGarantDataOutput
             {
                 ItemDealId = businessId,
+                DealId = dealId,
+                MainHeaders = mainHeaders,
+                DopHeaders = dopHeaders,
                 TotalAmount = totalInvest,
                 BlackBlockText = "Отправить акт на согласование продавцу",
                 BlackBlockTitle = "Оплата и исполнение этапов сделки",

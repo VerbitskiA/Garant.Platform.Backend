@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Garant.Platform.Messaging.Models.Chat.Output;
+using Garant.Platform.Models.Header.Output;
 
 namespace Garant.Platform.Commerce.Models.Garant.Output
 {
@@ -8,6 +9,21 @@ namespace Garant.Platform.Commerce.Models.Garant.Output
     /// </summary>
     public class InitGarantDataOutput
     {
+        /// <summary>
+        /// Список заголовков с типом Main
+        /// </summary>
+        public List<string> MainHeaders { get; set; }
+
+        /// <summary>
+        /// Список заголовков с типом Dop
+        /// </summary>
+        public List<string> DopHeaders { get; set; }
+
+        /// <summary>
+        /// Id сделки.
+        /// </summary>
+        public long DealId { get; set; }
+
         /// <summary>
         /// Заголовок левого блока.
         /// </summary>
