@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Models.Blog.Output;
 using Microsoft.AspNetCore.Http;
@@ -142,5 +143,13 @@ namespace Garant.Platform.Abstractions.Blog
         /// <param name="blogId">Идентификатор блога.</param>
         /// <returns></returns>
         Task<Task> DeleteBlogAsync(long blogId);
+
+       /// <summary>
+       /// Метод увеличит счётчик просмотров новости один раз в сутки на пользователя.
+       /// </summary>
+       /// <param name="userId">Идентификатор пользователя.</param>
+       /// <param name="newsId">Идентификатор новости.</param>
+       /// <returns>Данные новости.</returns>
+       Task<NewsOutput> IncrementViewsNewOnceADayAsync(string userId, long newsId);
     }
 }

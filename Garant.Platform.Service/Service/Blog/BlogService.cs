@@ -43,17 +43,17 @@ namespace Garant.Platform.Services.Service.Blog
             {
                 //TODO: сделать через репозиторий
                 var result = await (from b in _postgreDbContext.Blogs
-                        where b.IsPaid.Equals(true)
-                        select new BlogOutput
-                        {
-                            BlogId = b.BlogId,
-                            Title = b.Title,
-                            Url = b.Url,
-                            IsPaid = b.IsPaid,
-                            Position = b.Position,
-                            DateCreated = b.DateCreated,
-                            ThemeCategoryCode = b.ThemeCategoryCode
-                        })
+                                    where b.IsPaid.Equals(true)
+                                    select new BlogOutput
+                                    {
+                                        BlogId = b.BlogId,
+                                        Title = b.Title,
+                                        Url = b.Url,
+                                        IsPaid = b.IsPaid,
+                                        Position = b.Position,
+                                        DateCreated = b.DateCreated,
+                                        ThemeCategoryCode = b.ThemeCategoryCode
+                                    })
                     .Take(3)
                     .ToListAsync();
 
@@ -79,18 +79,18 @@ namespace Garant.Platform.Services.Service.Blog
             {
                 //TODO: сделать через репозиторий
                 var result = await (from n in _postgreDbContext.News
-                        where n.IsPaid.Equals(true)
-                        select new NewsOutput
-                        {
-                            NewsId = n.NewsId,
-                            Text = n.Text,
-                            DateCreated = n.DateCreated,
-                            IsPaid = n.IsPaid,
-                            Title = n.Title,
-                            Type = n.Type,
-                            Url = n.Url,
-                            Position = n.Position
-                        })
+                                    where n.IsPaid.Equals(true)
+                                    select new NewsOutput
+                                    {
+                                        NewsId = n.NewsId,
+                                        Text = n.Text,
+                                        DateCreated = n.DateCreated,
+                                        IsPaid = n.IsPaid,
+                                        Title = n.Title,
+                                        Type = n.Type,
+                                        Url = n.Url,
+                                        Position = n.Position
+                                    })
                     .ToListAsync();
 
                 // Вычислит поля даты и времени.
@@ -549,7 +549,7 @@ namespace Garant.Platform.Services.Service.Blog
                 {
                     throw new NotFoundArticleByIdException(articleId);
                 }
-                
+
                 var article = await _blogRepository.GetBlogArticleByUdAsync(articleId);
 
                 var cast = AutoFac.Resolve<IMapper>();
@@ -587,7 +587,7 @@ namespace Garant.Platform.Services.Service.Blog
 
                 return result;
             }
-            
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
@@ -655,6 +655,33 @@ namespace Garant.Platform.Services.Service.Blog
                 await _blogRepository.DeleteBlogAsync(blogId);
 
                 return Task.CompletedTask;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров новости один раз в сутки на пользователя.
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя.</param>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <returns>Данные новости.</returns>
+        public async Task<NewsOutput> IncrementViewsNewOnceADayAsync(string userId, long newsId)
+        {
+            try
+            {
+                var res = await _blogRepository.IncrementViewsNewOnceADayAsync(userId, newsId);              
+
+                var cast = AutoFac.Resolve<IMapper>();
+                var result = cast.Map<NewsOutput>(res);
+
+                return result;
             }
 
             catch (Exception e)

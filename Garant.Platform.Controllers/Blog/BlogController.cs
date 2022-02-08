@@ -363,5 +363,25 @@ namespace Garant.Platform.Controllers.Blog
 
             return Ok();
         }
+
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров новости на одного пользователя в сутки.
+        /// </summary>
+        /// <param name="incrementViewNew">Входная модель.</param>
+        /// <returns>Данные новости.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("increment-view-new")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]        
+        [ProducesResponseType(500)]
+        public async Task<NewsOutput> IncrementViewsNewOnceADayAsync([FromBody] IncrementViewNew incrementViewNew)
+        {
+            var res = await _blogService.IncrementViewsNewOnceADayAsync(incrementViewNew.UserId, incrementViewNew.NewId);
+
+            return res;           
+        }
     }
 }

@@ -723,5 +723,62 @@ namespace Garant.Platform.Services.Service.Blog
                 throw;
             }
         }
+
+
+        /// <summary>
+        /// Метод увелечит количество просмотров новости один раз в сутки на пользователя.
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя.</param>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <returns>Данные новости.</returns>
+        public async Task<NewsEntity> IncrementViewsNewOnceADayAsync(string userId, long newsId)
+        {
+            //TODO: удалять записи когда удаляется новость или юзер.
+
+            var getUser = await _postgreDbContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(userId));
+
+            if (getUser is null)
+            {
+                throw new NotFoundUserException(userId);
+            }
+
+            var getNew = await _postgreDbContext.News.FirstOrDefaultAsync(n => n.NewsId.Equals(newsId));
+
+            if (getNew is null)
+            {
+                throw new NotFoundNewException(newsId);
+            }
+
+            var getViewsNews = await _postgreDbContext.NewsViews.FirstOrDefaultAsync(v => v.NewsId.Equals(newsId) && v.UserId.Equals(userId));
+
+            var viewDate = DateTime.Now;           
+
+            if (getViewsNews is null)
+            {
+                //пользователь новость не смотрел
+                NewsViewsEntity viewsNewsEntity = new()
+                {
+                    NewsId = newsId,
+                    UserId = userId,
+                    ViewDate = viewDate
+                };
+
+                //Добавляем запись о просмотре
+                await _postgreDbContext.NewsViews.AddAsync(viewsNewsEntity);
+                getNew.ViewsCount++;
+            }
+            else
+            {
+                if (!viewDate.Date.Equals(getViewsNews.ViewDate.Date))
+                {
+                    getViewsNews.ViewDate = viewDate;
+                    getNew.ViewsCount++;
+                }
+            }
+            
+            await _postgreDbContext.SaveChangesAsync();
+
+            return getNew;
+        }
     }
 }
