@@ -23,6 +23,7 @@ namespace Garant.Platform.Core.Mapper
             CreateMap<ArticleEntity, ArticleOutput>();
             CreateMap<NewsEntity, NewsOutput>();
             CreateMap<RequestBusinessEntity, RequestBusinessOutput>();
+            CreateMap<RequestBusinessEntity, RequestFranchiseOutput>();
         }
     }
 }

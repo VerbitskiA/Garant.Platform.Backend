@@ -48,8 +48,8 @@ namespace Garant.Platform.Models.Request.Output
         public bool IsSuccessCreatedRequest { get; set; }
 
         /// <summary>
-        /// Текст после добавления заявки.
+        /// Статус заявки.
         /// </summary>
-        public string StatusText { get; set; }
+        public string RequestStatus { get; set; }
     }
 }

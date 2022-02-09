@@ -56,15 +56,15 @@ namespace Garant.Platform.Controllers.Request
         }
 
         /// <summary>
-        /// Метод получит список заявок для вкладки профиля "Уведомления".
+        /// Метод получит список заявок пользователя для вкладки профиля "Уведомления".
         /// </summary>
         /// <returns>Список заявок.</returns>
         [HttpGet]
         [Route("get-requests")]
-        [ProducesResponseType(200, Type = typeof(RequestBusinessOutput))]
-        public async Task<IEnumerable<RequestBusinessOutput>> GetBusinessRequestsAsync()
+        [ProducesResponseType(200, Type = typeof(IEnumerable<RequestOutput>))]
+        public async Task<IEnumerable<RequestOutput>> GetUserRequestsAsync()
         {
-            var result = await _requestService.GetBusinessRequestsAsync(GetUserName());
+            var result = await _requestService.GetUserRequestsAsync(GetUserName());
 
             return result;
         }

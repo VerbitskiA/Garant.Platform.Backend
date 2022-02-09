@@ -35,6 +35,6 @@ namespace Garant.Platform.Abstractions.Request
         /// <param name="account">Аккаунт.</param>
         /// </summary>
         /// <returns>Список заявок.</returns>
-        Task<IEnumerable<RequestBusinessOutput>> GetBusinessRequestsAsync(string account);
+        Task<IEnumerable<RequestOutput>> GetUserRequestsAsync(string account);
     }
 }

@@ -23,7 +23,8 @@ namespace Garant.Platform.Services.Request
         private readonly IBusinessRepository _businessRepository;
         private readonly PostgreDbContext _postgreDbContext;
 
-        public RequestService(IFranchiseRepository franchiseRepository, IBusinessRepository businessRepository, PostgreDbContext postgreDbContext)
+        public RequestService(IFranchiseRepository franchiseRepository, IBusinessRepository businessRepository,
+            PostgreDbContext postgreDbContext)
         {
             _franchiseRepository = franchiseRepository;
             _businessRepository = businessRepository;
@@ -39,7 +40,8 @@ namespace Garant.Platform.Services.Request
         /// <param name="account">Аккаунт пользователя.</param>
         /// <param name="franchiseId">Id франшизы, по которой оставлена заявка.</param>
         /// <returns>Данные заявки.</returns>
-        public async Task<RequestFranchiseOutput> CreateRequestFranchiseAsync(string userName, string phone, string city, string account, long franchiseId)
+        public async Task<RequestFranchiseOutput> CreateRequestFranchiseAsync(string userName, string phone,
+            string city, string account, long franchiseId)
         {
             try
             {
@@ -48,7 +50,6 @@ namespace Garant.Platform.Services.Request
                 if (result != null)
                 {
                     result.IsSuccessCreatedRequest = true;
-                    result.StatusText = "Ваша заявка успешно отправлена на модерацию.";
                 }
 
                 return result;
@@ -71,7 +72,8 @@ namespace Garant.Platform.Services.Request
         /// <param name="account">Аккаунт пользователя.</param>
         /// <param name="businessId">Id бизнеса, по которому оставлена заявка.</param>
         /// <returns>Данные заявки.</returns>
-        public async Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string account, long businessId)
+        public async Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone,
+            string account, long businessId)
         {
             try
             {
@@ -100,23 +102,70 @@ namespace Garant.Platform.Services.Request
         /// <param name="account">Аккаунт.</param>
         /// </summary>
         /// <returns>Список заявок.</returns>
-        public async Task<IEnumerable<RequestBusinessOutput>> GetBusinessRequestsAsync(string account)
+        public async Task<IEnumerable<RequestOutput>> GetUserRequestsAsync(string account)
         {
             try
             {
-                var requestsList = await _businessRepository.GetBusinessRequestsAsync(account);
+                IEnumerable<RequestBusinessOutput> businessRequests = null;
+                IEnumerable<RequestFranchiseOutput> franchiseRequests = null;
+                var result = new List<RequestOutput>();
+
+                // Получит список заявок по бизнесам.
+                var requestsBusinessList = await _businessRepository.GetBusinessRequestsAsync(account);
 
                 var mapper = AutoFac.Resolve<IMapper>();
-                var result = mapper.Map<IEnumerable<RequestBusinessOutput>>(requestsList);
+
+                // Если есть заявки по бизнесам.
+                if (requestsBusinessList.Any())
+                {
+                    businessRequests = mapper.Map<IEnumerable<RequestBusinessOutput>>(requestsBusinessList);
+                }
+
+                // Получит список заявок по франшизам.
+                var requestsFranchiseList = await _franchiseRepository.GetFranchiseRequestsAsync(account);
+
+                // Если есть заявки по франшизам.
+                if (requestsFranchiseList.Any())
+                {
+                    franchiseRequests = mapper.Map<IEnumerable<RequestFranchiseOutput>>(requestsBusinessList);
+                }
+
+                // Добавит бизнесы к результату.
+                if (businessRequests != null)
+                {
+                    foreach (var b in businessRequests)
+                    {
+                        result.Add(new RequestOutput
+                        {
+                            RequestId = b.RequestId,
+                            RequestItemId = b.BusinessId,
+                            UserId = b.UserId
+                        });
+                    }
+                }
+
+                // Добавит франшизы к результату.
+                if (franchiseRequests != null)
+                {
+                    foreach (var f in franchiseRequests)
+                    {
+                        result.Add(new RequestOutput
+                        {
+                            RequestId = f.RequestId,
+                            RequestItemId = f.FranchiseId,
+                            UserId = f.UserId
+                        });
+                    }
+                }
 
                 return result;
             }
-            
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
+                await logger.LogError();
                 throw;
             }
         }
