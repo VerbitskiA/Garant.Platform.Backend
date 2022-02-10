@@ -6,6 +6,7 @@ using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
@@ -891,6 +892,40 @@ namespace Garant.Platform.Services.Service.Business
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод проверит существование заявок бизнеса.
+        /// </summary>
+        /// <param name="id">Id предмета заявки (франшизы или бизнеса).</param>
+        /// <param name="account">Текущий пользователь.</param>
+        /// <returns>Статус проверки.</returns>
+        public async Task<bool> CheckBusinessRequestAsync(long id, string account)
+        {
+            try
+            {
+                // Найдет Id текущего пользователя.
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new UserMessageException($"Пользователя {account} не существует в системе" );
+                }
+
+                var result = await _postgreDbContext.RequestsBusinesses
+                    .Where(r => r.BusinessId == id && r.RequestStatus.Equals("Confirmed"))
+                    .AnyAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }

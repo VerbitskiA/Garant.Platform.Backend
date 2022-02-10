@@ -161,5 +161,13 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <returns>Данные заявки.</returns>
         Task<RequestFranchiseOutput> CreateRequestFranchiseAsync(string userName, string phone,
             string city, string account, long franchiseId);
+        
+        /// <summary>
+        /// Метод проверит существование заявок франшиз.
+        /// </summary>
+        /// <param name="id">Id предмета заявки (франшизы или бизнеса).</param>
+        /// <param name="account">Текущий пользователь.</param>
+        /// <returns>Статус проверки.</returns>
+        Task<bool> CheckFranchiseRequestAsync(long id, string account);
     }
 }

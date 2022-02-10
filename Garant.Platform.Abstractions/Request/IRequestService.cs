@@ -28,5 +28,14 @@ namespace Garant.Platform.Abstractions.Request
         /// <param name="businessId">Id бизнеса, по которому оставлена заявка.</param>
         /// <returns>Данные заявки.</returns>
         Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string account, long businessId);
+
+        /// <summary>
+        /// Метод проверит существование заявок.
+        /// </summary>
+        /// <param name="id">Id франшизы или бизнеса.</param>
+        /// <param name="type">Тип франшиза или бизнес.</param>
+        /// <param name="account">Текущий пользователь.</param>
+        /// <returns>Статус проверки.</returns>
+        Task<bool> CheckConfirmedRequestAsync(string id, string type, string account);
     }
 }

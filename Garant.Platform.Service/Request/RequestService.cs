@@ -4,6 +4,7 @@ using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.Request;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Request.Output;
 
@@ -83,6 +84,60 @@ namespace Garant.Platform.Services.Request
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод проверит существование заявок.
+        /// </summary>
+        /// <param name="id">Id франшизы или бизнеса.</param>
+        /// <param name="type">Тип франшиза или бизнес.</param>
+        /// <param name="account">Текущий пользователь.</param>
+        /// <returns>Статус проверки.</returns>
+        public async Task<bool> CheckConfirmedRequestAsync(string id, string type, string account)
+        {
+            try
+            {
+                if (Convert.ToInt64(id) <= 0 || string.IsNullOrEmpty(type))
+                {
+                    throw new EmptyRequestInputParamsException(id, type);
+                }
+
+                // Если нужно искать заявки бизнеса.
+                if (type.Equals("Business"))
+                {
+                    // Найдет заявки бизнеса, которые подтверждены продавцом.
+                    var isAnyConfirmedRequests = await _businessRepository.CheckBusinessRequestAsync(Convert.ToInt64(id), account);
+
+                    // Если подтвержденных заявок нет, вернет отказ.
+                    if (!isAnyConfirmedRequests)
+                    {
+                        return false;
+                    }
+                }
+
+                // Если нужно искать заявки франшиз.
+                if (type.Equals("Franchise"))
+                {
+                    // Найдет заявки франшиз, которые подтверждены продавцом.
+                    var isAnyConfirmedRequests = await _franchiseRepository.CheckFranchiseRequestAsync(Convert.ToInt64(id), account);
+
+                    // Если подтвержденных заявок нет, вернет отказ.
+                    if (!isAnyConfirmedRequests)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }
