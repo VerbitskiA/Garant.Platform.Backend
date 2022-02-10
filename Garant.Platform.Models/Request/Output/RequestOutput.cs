@@ -19,5 +19,25 @@
         /// Id пользователя, который оставил заявку.
         /// </summary>
         public string UserId { get; set; }
+
+        /// <summary>
+        /// Тип заявки (по франшизе или бизнесу).
+        /// </summary>
+        public string RequestType { get; set; }
+
+        /// <summary>
+        /// Заголовок оповещения.
+        /// </summary>
+        public string NotifyTitle { get; set; }
+
+        /// <summary>
+        /// Описание оповещения. 
+        /// </summary>
+        public string NotifyDescription { get; set; }
+
+        /// <summary>
+        /// Статус заявки.
+        /// </summary>
+        public string RequestStatus { get; set; }
     }
 }

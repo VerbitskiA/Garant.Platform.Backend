@@ -3,6 +3,7 @@ using Garant.Platform.Models.Blog.Output;
 using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.Entities.Blog;
 using Garant.Platform.Models.Entities.Business;
+using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Entities.News;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Request.Output;
@@ -23,7 +24,7 @@ namespace Garant.Platform.Core.Mapper
             CreateMap<ArticleEntity, ArticleOutput>();
             CreateMap<NewsEntity, NewsOutput>();
             CreateMap<RequestBusinessEntity, RequestBusinessOutput>();
-            CreateMap<RequestBusinessEntity, RequestFranchiseOutput>();
+            CreateMap<RequestFranchiseEntity, RequestFranchiseOutput>();
         }
     }
 }

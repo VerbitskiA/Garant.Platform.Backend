@@ -9,7 +9,6 @@ using Garant.Platform.Abstractions.Request;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
-using Garant.Platform.Models.Entities.Business;
 using Garant.Platform.Models.Request.Output;
 
 namespace Garant.Platform.Services.Request
@@ -127,7 +126,7 @@ namespace Garant.Platform.Services.Request
                 // Если есть заявки по франшизам.
                 if (requestsFranchiseList.Any())
                 {
-                    franchiseRequests = mapper.Map<IEnumerable<RequestFranchiseOutput>>(requestsBusinessList);
+                    franchiseRequests = mapper.Map<IEnumerable<RequestFranchiseOutput>>(requestsFranchiseList);
                 }
 
                 // Добавит бизнесы к результату.
@@ -135,12 +134,21 @@ namespace Garant.Platform.Services.Request
                 {
                     foreach (var b in businessRequests)
                     {
-                        result.Add(new RequestOutput
+                        var request = new RequestOutput
                         {
                             RequestId = b.RequestId,
                             RequestItemId = b.BusinessId,
-                            UserId = b.UserId
-                        });
+                            UserId = b.UserId,
+                            RequestType = "Business",
+                            RequestStatus = b.RequestStatus
+                        };
+                        
+                        var status = await GetRequestInfoAsync(b.RequestStatus);
+
+                        request.NotifyTitle = status.Item1;
+                        request.NotifyDescription = status.Item2;
+                        
+                        result.Add(request);
                     }
                 }
 
@@ -149,12 +157,20 @@ namespace Garant.Platform.Services.Request
                 {
                     foreach (var f in franchiseRequests)
                     {
-                        result.Add(new RequestOutput
+                        var request = new RequestOutput
                         {
                             RequestId = f.RequestId,
                             RequestItemId = f.FranchiseId,
-                            UserId = f.UserId
-                        });
+                            UserId = f.UserId,
+                            RequestType = "Franchise"
+                        };
+
+                        var status = await GetRequestInfoAsync(f.RequestStatus);
+
+                        request.NotifyTitle = status.Item1;
+                        request.NotifyDescription = status.Item2;
+
+                        result.Add(request);
                     }
                 }
 
@@ -168,6 +184,24 @@ namespace Garant.Platform.Services.Request
                 await logger.LogError();
                 throw;
             }
+        }
+        
+        /// <summary>
+        /// Метод вернет заголовок и описание статуса заявки исходя из ее статуса.
+        /// </summary>
+        /// <param name="requestStatus">Статус заявки.&</param>
+        /// <returns>Заголовок и описание статуса заявки.</returns>
+        private async Task<(string, string)> GetRequestInfoAsync(string requestStatus) {
+            var result = (string.Empty, string.Empty);
+            
+            // Если на рассмотрении.
+            if (requestStatus.Equals("Review"))
+            {
+                result.Item1 = "Заявка на рассмотрении";
+                result.Item2 = "Ваша заявка находится на рассмотрении. В случае изменения ее статуса вы получите оповещение.";
+            }
+
+            return await Task.FromResult(result);
         }
     }
 }
