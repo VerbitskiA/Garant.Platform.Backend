@@ -126,5 +126,12 @@ namespace Garant.Platform.Abstractions.Business
         /// <param name="businessId">Id бизнеса, по которому оставлена заявка.</param>
         /// <returns>Данные заявки.</returns>
         Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string account, long businessId);
+        
+        /// <summary>
+        /// Метод получит список заявок для вкладки профиля "Уведомления".
+        /// <param name="account">Аккаунт.</param>
+        /// </summary>
+        /// <returns>Список заявок.</returns>
+        Task<IEnumerable<RequestBusinessEntity>> GetBusinessRequestsAsync(string account);
     }
 }

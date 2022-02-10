@@ -51,5 +51,10 @@ namespace Garant.Platform.Models.Request.Output
         /// Id бизнеса, по которому оставлена заявка.
         /// </summary>
         public long BusinessId { get; set; }
+        
+        /// <summary>
+        /// Статус заявки.
+        /// </summary>
+        public string RequestStatus { get; set; }
     }
 }
