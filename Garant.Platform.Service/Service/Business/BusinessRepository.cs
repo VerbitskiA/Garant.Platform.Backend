@@ -897,6 +897,37 @@ namespace Garant.Platform.Services.Service.Business
         }
 
         /// <summary>
+        /// Метод получит список заявок для вкладки профиля "Уведомления".
+        /// <param name="account">Аккаунт.</param>
+        /// </summary>
+        /// <returns>Список заявок.</returns>
+        public async Task<IEnumerable<RequestBusinessEntity>> GetBusinessRequestsAsync(string account)
+        {
+            try
+            {
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new NotFoundUserIdException(account);
+                }
+                
+                // Получит список заявок пользовтеля.
+                var result = await _postgreDbContext.RequestsBusinesses.Where(r => r.UserId.Equals(userId)).ToListAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Метод проверит существование заявок бизнеса.
         /// </summary>
         /// <param name="id">Id предмета заявки (франшизы или бизнеса).</param>
