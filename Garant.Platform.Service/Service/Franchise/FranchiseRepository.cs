@@ -1151,28 +1151,25 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
-
+        
         /// <summary>
-        /// Метод проверит существование заявок франшиз.
+        /// Метод получит список заявок по франшизам для вкладки профиля "Уведомления".
+        /// <param name="account">Аккаунт.</param>
         /// </summary>
-        /// <param name="id">Id предмета заявки (франшизы или бизнеса).</param>
-        /// <param name="account">Текущий пользователь.</param>
-        /// <returns>Статус проверки.</returns>
-        public async Task<bool> CheckFranchiseRequestAsync(long id, string account)
+        /// <returns>Список заявок.</returns>
+        public async Task<IEnumerable<RequestFranchiseEntity>> GetFranchiseRequestsAsync(string account)
         {
             try
             {
-                // Найдет Id текущего пользователя.
                 var userId = await _userRepository.FindUserIdUniverseAsync(account);
 
                 if (string.IsNullOrEmpty(userId))
                 {
-                    throw new UserMessageException($"Пользователя {account} не существует в системе" );
+                    throw new NotFoundUserIdException(account);
                 }
-
-                var result = await _postgreDbContext.RequestsFranchises
-                    .Where(r => r.FranchiseId == id && r.RequestStatus.Equals("Confirmed"))
-                    .AnyAsync();
+                
+                // Получит список заявок пользовтеля.
+                var result = await _postgreDbContext.RequestsFranchises.Where(r => r.UserId.Equals(userId)).ToListAsync();
 
                 return result;
             }

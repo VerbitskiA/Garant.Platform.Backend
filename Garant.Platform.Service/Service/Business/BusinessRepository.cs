@@ -11,7 +11,6 @@ using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
 using Garant.Platform.Models.Entities.Business;
-using Garant.Platform.Models.Franchise.Output;
 using Garant.Platform.Models.Request.Output;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -914,40 +913,6 @@ namespace Garant.Platform.Services.Service.Business
                 
                 // Получит список заявок пользовтеля.
                 var result = await _postgreDbContext.RequestsBusinesses.Where(r => r.UserId.Equals(userId)).ToListAsync();
-
-                return result;
-            }
-            
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogError();
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Метод проверит существование заявок бизнеса.
-        /// </summary>
-        /// <param name="id">Id предмета заявки (франшизы или бизнеса).</param>
-        /// <param name="account">Текущий пользователь.</param>
-        /// <returns>Статус проверки.</returns>
-        public async Task<bool> CheckBusinessRequestAsync(long id, string account)
-        {
-            try
-            {
-                // Найдет Id текущего пользователя.
-                var userId = await _userRepository.FindUserIdUniverseAsync(account);
-
-                if (string.IsNullOrEmpty(userId))
-                {
-                    throw new UserMessageException($"Пользователя {account} не существует в системе" );
-                }
-
-                var result = await _postgreDbContext.RequestsBusinesses
-                    .Where(r => r.BusinessId == id && r.RequestStatus.Equals("Confirmed"))
-                    .AnyAsync();
 
                 return result;
             }

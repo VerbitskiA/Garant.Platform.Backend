@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Garant.Platform.Models.Request.Output;
 
 namespace Garant.Platform.Abstractions.Request
@@ -30,12 +31,10 @@ namespace Garant.Platform.Abstractions.Request
         Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string account, long businessId);
 
         /// <summary>
-        /// Метод проверит существование заявок.
+        /// Метод получит список заявок для вкладки профиля "Уведомления".
+        /// <param name="account">Аккаунт.</param>
         /// </summary>
-        /// <param name="id">Id франшизы или бизнеса.</param>
-        /// <param name="type">Тип франшиза или бизнес.</param>
-        /// <param name="account">Текущий пользователь.</param>
-        /// <returns>Статус проверки.</returns>
-        Task<bool> CheckConfirmedRequestAsync(string id, string type, string account);
+        /// <returns>Список заявок.</returns>
+        Task<IEnumerable<RequestOutput>> GetUserRequestsAsync(string account);
     }
 }

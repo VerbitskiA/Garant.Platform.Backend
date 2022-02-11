@@ -68,20 +68,5 @@ namespace Garant.Platform.Controllers.Request
 
             return result;
         }
-
-        /// <summary>
-        /// Метод проверит, подтверждена ли заявка.
-        /// </summary>
-        /// <param name="id">Id франшизы или бизнеса.</param>
-        /// <param name="type">Тип франшиза или бизнес.</param>
-        /// <returns>Статус проверки.</returns>
-        [HttpGet]
-        [Route("check-confirmed-request")]
-        public async Task<bool> CheckConfirmedRequestAsync([FromQuery] string id, string type)
-        {
-            var result = await _requestService.CheckConfirmedRequestAsync(id, type, GetUserName());
-
-            return result;
-        }
     }
 }
