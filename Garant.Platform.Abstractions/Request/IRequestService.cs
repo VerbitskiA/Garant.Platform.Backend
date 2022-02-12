@@ -45,5 +45,13 @@ namespace Garant.Platform.Abstractions.Request
         Task<IEnumerable<RequestDealOutput>> GetDealsAsync(string account);
 
         Task<(string, string)> GetDealRequestInfoAsync(string status);
+
+        /// <summary>
+        /// етод проверит подтверждена ли заявка продавцом.
+        /// </summary>
+        /// <param name="requestId">Id аявки.</param>
+        /// <param name="type">Тип заявки.</param>
+        /// <returns>Статус проверки.</returns>
+        Task<bool> CheckConfirmRequestAsync(long requestId, string type);
     }
 }

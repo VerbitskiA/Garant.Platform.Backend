@@ -190,5 +190,53 @@ namespace Garant.Platform.Services.Request
                 throw;
             }
         }
+
+        /// <summary>
+        /// етод проверит подтверждена ли заявка продавцом.
+        /// </summary>
+        /// <param name="requestId">Id аявки.</param>
+        /// <param name="type">Тип заявки.</param>
+        /// <returns>Статус проверки.</returns>
+        public async Task<bool> CheckConfirmRequestAsync(long requestId, string type)
+        {
+            try
+            {
+                // Если бизнес.
+                if (type.Equals("Business"))
+                {
+                    var checkBusinessRequest = await _postgreDbContext.RequestsBusinesses
+                        .Where(b => b.RequestId == requestId && b.RequestStatus.Equals("Confirmed"))
+                        .FirstOrDefaultAsync();
+
+                    if (checkBusinessRequest == null)
+                    {
+                        return false;
+                    }
+                }
+                
+                // Если франшиза.
+                if (type.Equals("Franchise"))
+                {
+                    var checkFranchiseRequest = await _postgreDbContext.RequestsFranchises
+                        .Where(b => b.RequestId == requestId && b.RequestStatus.Equals("Confirmed"))
+                        .FirstOrDefaultAsync();
+
+                    if (checkFranchiseRequest == null)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

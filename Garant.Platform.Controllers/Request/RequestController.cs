@@ -82,5 +82,21 @@ namespace Garant.Platform.Controllers.Request
 
             return result;
         }
+
+        /// <summary>
+        /// етод проверит подтверждена ли заявка продавцом.
+        /// </summary>
+        /// <param name="requestId">Id аявки.</param>
+        /// <param name="type">Тип заявки.</param>
+        /// <returns>Статус проверки.</returns>
+        [HttpGet]
+        [Route("check-confirm-request")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<bool> CheckConfirmRequestAsync([FromQuery] long requestId, string type)
+        {
+            var result = await _requestService.CheckConfirmRequestAsync(requestId, type);
+
+            return result;
+        }
     }
 }

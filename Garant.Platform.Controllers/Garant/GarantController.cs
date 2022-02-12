@@ -100,7 +100,7 @@ namespace Garant.Platform.Controllers.Garant
         }
 
         /// <summary>
-        /// Метод проверит существование сделки, чтобы ее не дублировать.
+        /// Метод проверит существование сделки.
         /// </summary>
         /// <param name="dealInput">Входная модель.</param>
         /// <returns>Статус проверки.</returns>

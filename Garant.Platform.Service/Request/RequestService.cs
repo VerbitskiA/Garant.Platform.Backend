@@ -247,5 +247,29 @@ namespace Garant.Platform.Services.Request
 
             return await Task.FromResult(result);
         }
+
+        /// <summary>
+        /// етод проверит подтверждена ли заявка продавцом.
+        /// </summary>
+        /// <param name="requestId">Id аявки.</param>
+        /// <param name="type">Тип заявки.</param>
+        /// <returns>Статус проверки.</returns>
+        public async Task<bool> CheckConfirmRequestAsync(long requestId, string type)
+        {
+            try
+            {
+                var result = await _requestRepository.CheckConfirmRequestAsync(requestId, type);
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }
