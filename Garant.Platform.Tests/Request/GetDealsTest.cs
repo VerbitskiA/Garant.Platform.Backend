@@ -11,7 +11,7 @@ namespace Garant.Platform.Tests.Request
         public async Task GetDealsAsyncTest()
         {
             var result = await RequestService.GetDealsAsync("lelya.ivanov.2023@list.ru");
-            
+
             Assert.IsTrue(result.Any());
         }
     }

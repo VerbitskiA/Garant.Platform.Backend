@@ -64,9 +64,13 @@ namespace Garant.Platform.Services.Request
                     })
                     .FirstOrDefaultAsync();
 
-                if (currentUserInfo == null)
+                var currentUserFio = string.Empty;
+
+                if (currentUserInfo != null)
                 {
-                    throw new NotFoundUserInfoException(account);
+                    currentUserFio = currentUserInfo.FirstName
+                        + currentUserInfo.LastName?.Substring(0, 1)
+                        + currentUserInfo.Patronymic?.Substring(0, 1);
                 }
 
                 // Получит заявки по бизнесам и франшизам.
@@ -82,6 +86,26 @@ namespace Garant.Platform.Services.Request
                     foreach (var item in requestsFranchisesList)
                     {
                         var franchise = await _franchiseRepository.GetFranchiseAsync(item.FranchiseId, null);
+                        
+                        // Найдет ФИО владельца.
+                        var ownerUserInfo = await _postgreDbContext.UsersInformation
+                            .Where(u => u.UserId.Equals(franchise.UserId))
+                            .Select(u => new
+                            {
+                                u.FirstName,
+                                u.LastName,
+                                u.Patronymic
+                            })
+                            .FirstOrDefaultAsync();
+                        
+                        var ownerUserFio = string.Empty;
+
+                        if (ownerUserInfo != null)
+                        {
+                            ownerUserFio = ownerUserInfo.FirstName + " "
+                                           + ownerUserInfo.LastName?.Substring(0, 1) + "."
+                                           + ownerUserInfo.Patronymic?.Substring(0, 1);
+                        }
 
                         result.Add(new RequestDealOutput
                         {
@@ -92,9 +116,8 @@ namespace Garant.Platform.Services.Request
                             Status = item.RequestStatus,
                             MiddleText = "Сделка между",
                             Type = "Franchise",
-                            CurrentUserName = currentUserInfo.FirstName
-                                              + currentUserInfo.LastName.Substring(0, 1)
-                                              + currentUserInfo.Patronymic.Substring(0, 1)
+                            CurrentUserName = currentUserFio,
+                            OwnerDeaItemUserName = ownerUserFio
                         });
                     }
                 }
@@ -107,6 +130,26 @@ namespace Garant.Platform.Services.Request
                     foreach (var item in requestBusinessList)
                     {
                         var business = await _businessRepository.GetBusinessAsync(item.BusinessId, null);
+                        
+                        // Найдет ФИО владельца.
+                        var ownerUserInfo = await _postgreDbContext.UsersInformation
+                            .Where(u => u.UserId.Equals(business.UserId))
+                            .Select(u => new
+                            {
+                                u.FirstName,
+                                u.LastName,
+                                u.Patronymic
+                            })
+                            .FirstOrDefaultAsync();
+                        
+                        var ownerUserFio = string.Empty;
+
+                        if (ownerUserInfo != null)
+                        {
+                            ownerUserFio = ownerUserInfo.FirstName + " "
+                                           + ownerUserInfo.LastName?.Substring(0, 1) + "."
+                                           + ownerUserInfo.Patronymic?.Substring(0, 1);
+                        }
 
                         result.Add(new RequestDealOutput
                         {
@@ -117,9 +160,8 @@ namespace Garant.Platform.Services.Request
                             Status = item.RequestStatus,
                             MiddleText = "Сделка между",
                             Type = "Business",
-                            CurrentUserName = currentUserInfo.FirstName
-                                              + currentUserInfo.LastName?.Substring(0, 1)
-                                              + currentUserInfo.Patronymic?.Substring(0, 1)
+                            CurrentUserName = currentUserFio,
+                            OwnerDeaItemUserName = ownerUserFio
                         });
                     }
                 }
