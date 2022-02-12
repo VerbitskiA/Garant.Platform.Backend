@@ -56,5 +56,20 @@
         /// Текст кнопки действия.
         /// </summary>
         public string ButtonActionText { get; set; }
+
+        /// <summary>
+        /// Изображение предмета сделки.
+        /// </summary>
+        public string ItemDealUrl { get; set; }
+
+        /// <summary>
+        /// Текст статуса.
+        /// </summary>
+        public string StatusText { get; set; }
+
+        /// <summary>
+        /// Заголовок для статуса.
+        /// </summary>
+        public string StatusTitle { get; set; }
     }
 }

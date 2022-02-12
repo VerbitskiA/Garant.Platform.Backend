@@ -77,6 +77,8 @@ namespace Garant.Platform.Services.AutofacModules
             // Сервис заявок.
             builder.RegisterType<RequestService>().Named<IRequestService>("RequestService");
             builder.RegisterType<RequestService>().As<IRequestService>();
+            builder.RegisterType<RequestRepository>().Named<IRequestRepository>("RequestRepository");
+            builder.RegisterType<RequestRepository>().As<IRequestRepository>();
 
             // Сервис документов.
             builder.RegisterType<DocumentService>().Named<IDocumentService>("DocumentService");

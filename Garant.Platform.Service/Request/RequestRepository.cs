@@ -9,6 +9,7 @@ using Garant.Platform.Abstractions.User;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Request.Output;
 using Microsoft.EntityFrameworkCore;
 
@@ -68,8 +69,8 @@ namespace Garant.Platform.Services.Request
 
                 if (currentUserInfo != null)
                 {
-                    currentUserFio = currentUserInfo.FirstName
-                        + currentUserInfo.LastName?.Substring(0, 1)
+                    currentUserFio = currentUserInfo.FirstName + " "
+                        + currentUserInfo.LastName?.Substring(0, 1) + "."
                         + currentUserInfo.Patronymic?.Substring(0, 1);
                 }
 
@@ -107,6 +108,9 @@ namespace Garant.Platform.Services.Request
                                            + ownerUserInfo.Patronymic?.Substring(0, 1);
                         }
 
+                        var requestService = AutoFac.Resolve<IRequestService>();
+                        var statusText = await requestService.GetDealRequestInfoAsync(item.RequestStatus);
+
                         result.Add(new RequestDealOutput
                         {
                             ButtonActionText = "Перейти в сделку",
@@ -117,7 +121,10 @@ namespace Garant.Platform.Services.Request
                             MiddleText = "Сделка между",
                             Type = "Franchise",
                             CurrentUserName = currentUserFio,
-                            OwnerDeaItemUserName = ownerUserFio
+                            OwnerDeaItemUserName = ownerUserFio,
+                            ItemDealUrl = franchise.Url,
+                            StatusTitle = "Статус сделки:",
+                            StatusText = statusText.Item1,
                         });
                     }
                 }
@@ -150,6 +157,9 @@ namespace Garant.Platform.Services.Request
                                            + ownerUserInfo.LastName?.Substring(0, 1) + "."
                                            + ownerUserInfo.Patronymic?.Substring(0, 1);
                         }
+                        
+                        var requestService = AutoFac.Resolve<IRequestService>();
+                        var statusText = await requestService.GetDealRequestInfoAsync(item.RequestStatus);
 
                         result.Add(new RequestDealOutput
                         {
@@ -161,7 +171,10 @@ namespace Garant.Platform.Services.Request
                             MiddleText = "Сделка между",
                             Type = "Business",
                             CurrentUserName = currentUserFio,
-                            OwnerDeaItemUserName = ownerUserFio
+                            OwnerDeaItemUserName = ownerUserFio,
+                            ItemDealUrl = business.Url,
+                            StatusText = statusText.Item1,
+                            StatusTitle = "Статус сделки:",
                         });
                     }
                 }

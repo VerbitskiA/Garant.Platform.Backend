@@ -230,5 +230,22 @@ namespace Garant.Platform.Services.Request
                 throw;
             }
         }
+        
+        /// <summary>
+        /// Метод вернет заголовок и описание статуса заявки исходя из ее статуса.
+        /// </summary>
+        /// <param name="requestStatus">Статус заявки.&</param>
+        /// <returns>Заголовок и описание статуса заявки.</returns>
+        public async Task<(string, string)> GetDealRequestInfoAsync(string requestStatus) {
+            var result = (string.Empty, string.Empty);
+            
+            // Если на рассмотрении.
+            if (requestStatus.Equals("Review"))
+            {
+                result.Item1 = "Ожидает действий";
+            }
+
+            return await Task.FromResult(result);
+        }
     }
 }
