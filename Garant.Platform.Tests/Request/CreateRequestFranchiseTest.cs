@@ -14,7 +14,7 @@ namespace Garant.Platform.Tests.Request
         {
             var mock = new Mock<IRequestService>();
             mock.Setup(a => a.CreateRequestFranchiseAsync("Антон", "79845673245", "Москва", "ivan@mail.ru", 1000005));
-            var component = new RequestService(FranchiseRepository, BusinessRepository, PostgreDbContext);
+            var component = new RequestService(FranchiseRepository, BusinessRepository, PostgreDbContext, RequestRepository);
             var result = await component.CreateRequestFranchiseAsync("Антон", "79845673245", "Москва", "ivan@mail.ru", 1000005);
 
             Assert.IsTrue(result != null);

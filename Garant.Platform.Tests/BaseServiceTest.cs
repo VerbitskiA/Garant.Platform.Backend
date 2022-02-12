@@ -45,6 +45,7 @@ namespace Garant.Platform.Tests
         protected BlogRepository BlogRepository;
         protected ConfiguratorRepository ConfiguratorRepository;
         protected ConfiguratorService ConfiguratorService;
+        protected RequestRepository RequestRepository;
 
         public BaseServiceTest()
         { 
@@ -73,7 +74,8 @@ namespace Garant.Platform.Tests
             UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
             FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);            
             ChatRepository = new ChatRepository(PostgreDbContext);
-            RequestService = new RequestService(FranchiseRepository, BusinessRepository, PostgreDbContext);
+            RequestRepository = new RequestRepository(PostgreDbContext, UserRepository, FranchiseRepository, BusinessRepository);
+            RequestService = new RequestService(FranchiseRepository, BusinessRepository, PostgreDbContext, RequestRepository);
             DocumentRepository = new DocumentRepository(PostgreDbContext, UserRepository);
             DocumentService = new DocumentService(PostgreDbContext, FtpService, DocumentRepository);
             ControlRepository = new ControlRepository(PostgreDbContext);
