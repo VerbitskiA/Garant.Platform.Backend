@@ -147,28 +147,28 @@ namespace Garant.Platform.Abstractions.Blog
         /// </summary>
         /// <param name="newsId">Идентификатор новости.</param>
         /// <returns></returns>
-        Task<Task> DeleteNewAsync(long newsId);
+        Task DeleteNewAsync(long newsId);
 
         /// <summary>
         /// Метод удалит статью.
         /// </summary>
         /// <param name="articleId">Идентификатор статьи.</param>
         /// <returns></returns>
-        Task<Task> DeleteArticleAsync(long articleId);
+        Task DeleteArticleAsync(long articleId);
 
         /// <summary>
         /// Метод удалит блог со статьями.
         /// </summary>
         /// <param name="blogId">Идентификатор блога.</param>
         /// <returns></returns>
-        Task<Task> DeleteBlogAsync(long blogId);
+        Task DeleteBlogAsync(long blogId);
 
         /// <summary>
         /// Метод увелечит количество просмотров новости один раз в сутки на пользователя.
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя.</param>
+        /// <param name="account">Данные об аккаунте пользователя.</param>
         /// <param name="newsId">Идентификатор новости.</param>
-        /// <returns>Данные новости.</returns>
-        Task<NewsEntity> IncrementViewsNewOnceADayAsync(string userId, long newsId);        
+        /// <returns></returns>
+        Task<bool> IncrementViewsNewOnceADayAsync(string account, long newsId);        
     }
 }

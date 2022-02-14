@@ -287,24 +287,16 @@ namespace Garant.Platform.Controllers.Blog
         /// Метод удалит новость.
         /// </summary>
         /// <param name="newsId">Идентификатор новости.</param>
-        /// <returns>200 - если удаление успешное, 404 - если новость не найдена.</returns>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpDelete]
         [Route("delete-new")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(403, Type = typeof(string))]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(403, Type = typeof(string))]        
         [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteNewAsync([FromQuery] long newsId)
         {
-            NewsOutput getNew = await _blogService.GetNewAsync(newsId);
-
-            if (getNew is null)
-            {
-                return NotFound();
-            }
-
             await _blogService.DeleteNewAsync(newsId);
 
             return Ok();
@@ -320,18 +312,10 @@ namespace Garant.Platform.Controllers.Blog
         [Route("delete-article")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(403, Type = typeof(string))]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(403, Type = typeof(string))]        
         [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteArticleAsync([FromQuery] long articleId)
         {
-            ArticleOutput getArticle = await _blogService.GetBlogArticleAsync(articleId);
-
-            if (getArticle is null)
-            {
-                return NotFound();
-            }
-
             await _blogService.DeleteArticleAsync(articleId);
 
             return Ok();
@@ -347,18 +331,10 @@ namespace Garant.Platform.Controllers.Blog
         [Route("delete-blog")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        [ProducesResponseType(403, Type = typeof(string))]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(403, Type = typeof(string))]        
         [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteBlogAsync([FromQuery] long blogId)
         {
-            BlogOutput getBlog = await _blogService.GetBlogAsync(blogId);
-
-            if (getBlog is null)
-            {
-                return NotFound();
-            }
-
             await _blogService.DeleteBlogAsync(blogId);
 
             return Ok();
@@ -368,18 +344,17 @@ namespace Garant.Platform.Controllers.Blog
         /// <summary>
         /// Метод увеличит счётчик просмотров новости на одного пользователя в сутки.
         /// </summary>
-        /// <param name="incrementViewNew">Входная модель.</param>
-        /// <returns>Данные новости.</returns>
-        [AllowAnonymous]
+        /// <param name="newId">Идентификатор новости.</param>
+        /// <returns>Данные новости.</returns>        
         [HttpPost]
         [Route("increment-view-new")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403, Type = typeof(string))]        
         [ProducesResponseType(500)]
-        public async Task<NewsOutput> IncrementViewsNewOnceADayAsync([FromBody] IncrementViewNew incrementViewNew)
+        public async Task<bool> IncrementViewsNewOnceADayAsync([FromBody] long newId)
         {
-            var res = await _blogService.IncrementViewsNewOnceADayAsync(incrementViewNew.UserId, incrementViewNew.NewId);
+            var res = await _blogService.IncrementViewsNewOnceADayAsync(GetUserName(), newId);
 
             return res;           
         }

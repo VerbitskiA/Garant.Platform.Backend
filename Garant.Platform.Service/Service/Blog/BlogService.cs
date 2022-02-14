@@ -602,13 +602,11 @@ namespace Garant.Platform.Services.Service.Blog
         /// </summary>
         /// <param name="newsId">Идентификатор новости.</param>
         /// <returns></returns>
-        public async Task<Task> DeleteNewAsync(long newsId)
+        public async Task DeleteNewAsync(long newsId)
         {
             try
             {
-                await _blogRepository.DeleteNewAsync(newsId);
-
-                return Task.CompletedTask;
+                await _blogRepository.DeleteNewAsync(newsId);                
             }
 
             catch (Exception e)
@@ -625,13 +623,11 @@ namespace Garant.Platform.Services.Service.Blog
         /// </summary>
         /// <param name="articleId">Идентификатор статьи.</param>
         /// <returns></returns>
-        public async Task<Task> DeleteArticleAsync(long articleId)
+        public async Task DeleteArticleAsync(long articleId)
         {
             try
             {
-                await _blogRepository.DeleteArticleAsync(articleId);
-
-                return Task.CompletedTask;
+                await _blogRepository.DeleteArticleAsync(articleId);               
             }
 
             catch (Exception e)
@@ -648,13 +644,11 @@ namespace Garant.Platform.Services.Service.Blog
         /// </summary>
         /// <param name="blogId">Идентификатор блога.</param>
         /// <returns></returns>
-        public async Task<Task> DeleteBlogAsync(long blogId)
+        public async Task DeleteBlogAsync(long blogId)
         {
             try
             {
-                await _blogRepository.DeleteBlogAsync(blogId);
-
-                return Task.CompletedTask;
+                await _blogRepository.DeleteBlogAsync(blogId);                
             }
 
             catch (Exception e)
@@ -669,19 +663,16 @@ namespace Garant.Platform.Services.Service.Blog
         /// <summary>
         /// Метод увеличит счётчик просмотров новости один раз в сутки на пользователя.
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя.</param>
+        /// <param name="account">Данные об аккаунте пользователя.</param>
         /// <param name="newsId">Идентификатор новости.</param>
-        /// <returns>Данные новости.</returns>
-        public async Task<NewsOutput> IncrementViewsNewOnceADayAsync(string userId, long newsId)
+        /// <returns></returns>
+        public async Task<bool> IncrementViewsNewOnceADayAsync(string account, long newsId)
         {
             try
             {
-                var res = await _blogRepository.IncrementViewsNewOnceADayAsync(userId, newsId);              
+                var res = await _blogRepository.IncrementViewsNewOnceADayAsync(account, newsId); 
 
-                var cast = AutoFac.Resolve<IMapper>();
-                var result = cast.Map<NewsOutput>(res);
-
-                return result;
+                return res;
             }
 
             catch (Exception e)

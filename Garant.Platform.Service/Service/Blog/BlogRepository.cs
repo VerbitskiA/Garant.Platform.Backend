@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Exceptions;
+using Garant.Platform.Abstractions.User;
 
 namespace Garant.Platform.Services.Service.Blog
 {
@@ -20,10 +21,12 @@ namespace Garant.Platform.Services.Service.Blog
     public class BlogRepository : IBlogRepository
     {
         private readonly PostgreDbContext _postgreDbContext;
+        private readonly IUserRepository _userRepository;
 
-        public BlogRepository(PostgreDbContext postgreDbContext)
+        public BlogRepository(PostgreDbContext postgreDbContext, IUserRepository userRepository)
         {
             _postgreDbContext = postgreDbContext;
+            _userRepository = userRepository;
         }
 
         /// <summary>
@@ -332,7 +335,8 @@ namespace Garant.Platform.Services.Service.Blog
                             Text = n.Text,
                             Type = n.Type,
                             Url = n.Url,
-                            Position = n.Position
+                            Position = n.Position,
+                            ViewsCount = n.ViewsCount
                         })
                     .ToListAsync();
 
@@ -646,17 +650,18 @@ namespace Garant.Platform.Services.Service.Blog
         /// </summary>
         /// <param name="newsId">Идентификатор новости.</param>
         /// <returns></returns>
-        public async Task<Task> DeleteNewAsync(long newsId)
+        public async Task DeleteNewAsync(long newsId)
         {
             try
             {
                 var deletedNew = await _postgreDbContext.News.FirstOrDefaultAsync(u => u.NewsId.Equals(newsId));
 
-                _postgreDbContext.News.Remove(deletedNew);
+                if (deletedNew is not null)
+                {
+                    _postgreDbContext.News.Remove(deletedNew);
 
-                await _postgreDbContext.SaveChangesAsync();
-
-                return Task.CompletedTask;
+                    await _postgreDbContext.SaveChangesAsync();
+                }                              
             }
 
             catch (Exception e)
@@ -673,17 +678,18 @@ namespace Garant.Platform.Services.Service.Blog
         /// </summary>
         /// <param name="articleId">Идентификатор статьи.</param>
         /// <returns></returns>
-        public async Task<Task> DeleteArticleAsync(long articleId)
+        public async Task DeleteArticleAsync(long articleId)
         {
             try
             {
                 var deletedArticle = await _postgreDbContext.Articles.FirstOrDefaultAsync(u => u.ArticleId.Equals(articleId));
 
-                _postgreDbContext.Articles.Remove(deletedArticle);
+                if (deletedArticle is not null)
+                {
+                    _postgreDbContext.Articles.Remove(deletedArticle);
 
-                await _postgreDbContext.SaveChangesAsync();
-
-                return Task.CompletedTask;
+                    await _postgreDbContext.SaveChangesAsync();
+                }
             }
 
             catch (Exception e)
@@ -700,7 +706,7 @@ namespace Garant.Platform.Services.Service.Blog
         /// </summary>
         /// <param name="blogId">Идентификатор блога.</param>
         /// <returns></returns>
-        public async Task<Task> DeleteBlogAsync(long blogId)
+        public async Task DeleteBlogAsync(long blogId)
         {
             try
             {
@@ -708,11 +714,12 @@ namespace Garant.Platform.Services.Service.Blog
                     .Include(u=>u.Articles)
                     .FirstOrDefaultAsync(u => u.BlogId.Equals(blogId));
 
-                _postgreDbContext.Blogs.Remove(deletedBlog);
+                if (deletedBlog is not null)
+                {
+                    _postgreDbContext.Blogs.Remove(deletedBlog);
 
-                await _postgreDbContext.SaveChangesAsync();
-
-                return Task.CompletedTask;
+                    await _postgreDbContext.SaveChangesAsync();
+                }                
             }
 
             catch (Exception e)
@@ -728,18 +735,29 @@ namespace Garant.Platform.Services.Service.Blog
         /// <summary>
         /// Метод увелечит количество просмотров новости один раз в сутки на пользователя.
         /// </summary>
-        /// <param name="userId">Идентификатор пользователя.</param>
+        /// <param name="account">Данные об аккаунте пользователя.</param>
         /// <param name="newsId">Идентификатор новости.</param>
-        /// <returns>Данные новости.</returns>
-        public async Task<NewsEntity> IncrementViewsNewOnceADayAsync(string userId, long newsId)
+        /// <returns></returns>
+        public async Task<bool> IncrementViewsNewOnceADayAsync(string account, long newsId)
         {
             //TODO: удалять записи когда удаляется новость или юзер.
+            var userId = string.Empty;
+            // Найдет такого пользователя.
+            var findUser = await _userRepository.FindUserByEmailOrPhoneNumberAsync(account);
 
-            var getUser = await _postgreDbContext.Users.FirstOrDefaultAsync(u => u.Id.Equals(userId));
-
-            if (getUser is null)
+            // Если такого пользователя не найдено, значит поищет по коду.
+            if (findUser == null)
             {
-                throw new NotFoundUserException(userId);
+                var findUserIdByCode = await _userRepository.FindUserByCodeAsync(account);
+
+                if (!string.IsNullOrEmpty(findUserIdByCode))
+                {
+                    userId = findUserIdByCode;
+                }
+            }
+            else
+            {
+                userId = findUser.UserId;
             }
 
             var getNew = await _postgreDbContext.News.FirstOrDefaultAsync(n => n.NewsId.Equals(newsId));
@@ -769,16 +787,18 @@ namespace Garant.Platform.Services.Service.Blog
             }
             else
             {
-                if (!viewDate.Date.Equals(getViewsNews.ViewDate.Date))
+                if (viewDate.Date.Equals(getViewsNews.ViewDate.Date))
                 {
-                    getViewsNews.ViewDate = viewDate;
-                    getNew.ViewsCount++;
+                    return false;                    
                 }
+
+                getViewsNews.ViewDate = viewDate;
+                getNew.ViewsCount++;
             }
             
             await _postgreDbContext.SaveChangesAsync();
 
-            return getNew;
+            return true;
         }
     }
 }
