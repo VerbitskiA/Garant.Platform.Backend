@@ -182,5 +182,12 @@ namespace Garant.Platform.Abstractions.User
         /// </summary>
         /// <returns>Список пунктов ЛК.</returns>
         Task<IEnumerable<ProfileNavigationOutput>> GetProfileMenuListAsync();
+
+        /// <summary>
+        /// Метод проверит заполненность паспортных данных пользователя.
+        /// <param name="account">Аккаунт.</param>
+        /// </summary>
+        /// <returns>Статус проверки.</returns>
+        Task<bool> CheckUserPassportDataAsync(string account);
     }
 }

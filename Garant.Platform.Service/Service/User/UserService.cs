@@ -798,5 +798,62 @@ namespace Garant.Platform.Services.Service.User
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод проверит заполненность паспортных данных пользователя.
+        /// <param name="account">Аккаунт.</param>
+        /// </summary>
+        /// <returns>Статус проверки.</returns>
+        public async Task<bool> CheckUserPassportDataAsync(string account)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(account))
+                {
+                    throw new EmptyUserAccountException(account);
+                }
+
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new NotFoundUserIdException(account);
+                }
+
+                var userInfo = await _userRepository.GetUserProfileInfoByIdAsync(userId);
+
+                // Если не найдено информации по пользователю.
+                if (userInfo is null)
+                {
+                    throw new NotFoundUserInfoException(account);
+                }
+                
+                // Проверит заполненность паспортных данных.
+                if (string.IsNullOrEmpty(userInfo.Inn) 
+                    || string.IsNullOrEmpty(userInfo.Kpp)
+                    || string.IsNullOrEmpty(userInfo.Pc)
+                    || string.IsNullOrEmpty(userInfo.Bik)
+                    || string.IsNullOrEmpty(userInfo.PassportSerial.ToString())
+                    || string.IsNullOrEmpty(userInfo.PassportNumber.ToString())
+                    || string.IsNullOrEmpty(userInfo.CorrAccountNumber)
+                    || string.IsNullOrEmpty(userInfo.DateGive)
+                    || string.IsNullOrEmpty(userInfo.AddressRegister)
+                    || string.IsNullOrEmpty(userInfo.Code)
+                    || string.IsNullOrEmpty(userInfo.DefaultBankName))
+                {
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

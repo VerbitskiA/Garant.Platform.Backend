@@ -309,5 +309,18 @@ namespace Garant.Platform.Controllers.User
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод проверит заполненность паспортных данных пользователя.
+        /// </summary>
+        /// <returns>Статус проверки.</returns>
+        [HttpGet]
+        [Route("check-user-passport-data")]
+        public async Task<bool> CheckUserPassportDataAsync()
+        {
+            var result = await _userService.CheckUserPassportDataAsync(GetUserName());
+
+            return result;
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.Transition;
 using Garant.Platform.Models.Entities.User;
@@ -42,18 +43,18 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var result = await (from u in _postgreDbContext.Users
-                                    where u.Email.Equals(data)
-                                    select new UserOutput
-                                    {
-                                        Email = u.Email,
-                                        PhoneNumber = u.PhoneNumber,
-                                        DateRegister = u.DateRegister,
-                                        FirstName = u.FirstName,
-                                        LastName = u.LastName,
-                                        City = u.City,
-                                        IsWriteQuestion = u.IsWriteQuestion,
-                                        UserId = u.Id
-                                    })
+                        where u.Email.Equals(data)
+                        select new UserOutput
+                        {
+                            Email = u.Email,
+                            PhoneNumber = u.PhoneNumber,
+                            DateRegister = u.DateRegister,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            City = u.City,
+                            IsWriteQuestion = u.IsWriteQuestion,
+                            UserId = u.Id
+                        })
                     .FirstOrDefaultAsync();
 
                 if (result == null)
@@ -96,8 +97,8 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var result = await (from u in _postgreDbContext.Users
-                                    where u.Code.Equals(data)
-                                    select u.Id)
+                        where u.Code.Equals(data)
+                        select u.Id)
                     .FirstOrDefaultAsync();
 
                 return result;
@@ -153,16 +154,16 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var result = await (from f in _postgreDbContext.Footers
-                                    orderby f.Column
-                                    select new FooterOutput
-                                    {
-                                        Title = f.FooterTitle,
-                                        Name = f.FooterFieldName,
-                                        IsPlace = f.IsPlace,
-                                        IsSignleTitle = f.IsSignleTitle,
-                                        Column = f.Column,
-                                        Position = f.Position
-                                    })
+                        orderby f.Column
+                        select new FooterOutput
+                        {
+                            Title = f.FooterTitle,
+                            Name = f.FooterFieldName,
+                            IsPlace = f.IsPlace,
+                            IsSignleTitle = f.IsSignleTitle,
+                            Column = f.Column,
+                            Position = f.Position
+                        })
                     .ToListAsync();
 
                 return result;
@@ -191,7 +192,9 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="defaultBankName">Название банка которое нужно сохранить по умолчанию.</param>
         /// <param name="corrAccountNumber">Корреспондентский счёт банка получателя.</param>
         /// <returns>Данные пользователя.</returns>
-        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city, string email, string password, string values, string guid, string kpp, string bik, string defaultBankName, string corrAccountNumber, string inn)
+        public async Task<UserInformationOutput> SaveUserInfoAsync(string firstName, string lastName, string city,
+            string email, string password, string values, string guid, string kpp, string bik, string defaultBankName,
+            string corrAccountNumber, string inn)
         {
             try
             {
@@ -211,8 +214,8 @@ namespace Garant.Platform.Services.Service.User
 
                         // Изменит пароль в таблице пользователей.
                         var getUser = await (from u in _postgreDbContext.Users
-                                             where u.Id.Equals(user.UserId)
-                                             select u)
+                                where u.Id.Equals(user.UserId)
+                                select u)
                             .FirstOrDefaultAsync();
 
                         getUser.UserPassword = password;
@@ -223,8 +226,8 @@ namespace Garant.Platform.Services.Service.User
 
                     // Проверит, есть ли такие данные в таблицы доп.информации пользователей.
                     var checkUserInfoData = await (from ui in _postgreDbContext.UsersInformation
-                                                   where ui.UserId.Equals(user.UserId)
-                                                   select ui)
+                            where ui.UserId.Equals(user.UserId)
+                            select ui)
                         .FirstOrDefaultAsync();
 
                     // Если таких данных еще не было, то добавит.
@@ -262,8 +265,8 @@ namespace Garant.Platform.Services.Service.User
 
                         // Запишет guid в таблицу пользователей.
                         var getUser = await (from u in _postgreDbContext.Users
-                                             where u.Id.Equals(user.UserId)
-                                             select u)
+                                where u.Id.Equals(user.UserId)
+                                select u)
                             .FirstOrDefaultAsync();
 
                         getUser.ConfirmEmailCode = guid;
@@ -299,7 +302,8 @@ namespace Garant.Platform.Services.Service.User
                     }
 
                     // Обновит пароль в таблице Identity, потому что изначально он там пустой.
-                    var baseUser = await _postgreDbContext.BaseUsers.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
+                    var baseUser = await _postgreDbContext.BaseUsers.Where(u => u.Email.Equals(email))
+                        .FirstOrDefaultAsync();
 
                     if (baseUser != null)
                     {
@@ -346,10 +350,10 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var result = await (from u in _postgreDbContext.Users
-                                    where u.Email.Equals(data)
-                                          || u.PhoneNumber.Equals(data)
-                                          || u.UserName.Equals(data)
-                                    select u.PasswordHash)
+                        where u.Email.Equals(data)
+                              || u.PhoneNumber.Equals(data)
+                              || u.UserName.Equals(data)
+                        select u.PasswordHash)
                     .FirstOrDefaultAsync();
 
                 return result;
@@ -374,8 +378,8 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var userCode = await (from u in _postgreDbContext.Users
-                                      where u.ConfirmEmailCode.Equals(code)
-                                      select u)
+                        where u.ConfirmEmailCode.Equals(code)
+                        select u)
                     .FirstOrDefaultAsync();
 
                 return userCode != null;
@@ -454,18 +458,18 @@ namespace Garant.Platform.Services.Service.User
                 if (!isSingle && isAll)
                 {
                     result = await (from s in _postgreDbContext.Suggestions
-                                    where s.IsSingle.Equals(false)
-                                          && s.IsAll.Equals(true)
-                                    select new SuggestionOutput
-                                    {
-                                        Button1Text = s.Button1Text,
-                                        Button2Text = s.Button2Text,
-                                        IsAll = s.IsAll,
-                                        IsDisplay = s.IsDisplay,
-                                        IsSingle = s.IsSingle,
-                                        Text = s.Text,
-                                        UserId = s.UserId
-                                    })
+                            where s.IsSingle.Equals(false)
+                                  && s.IsAll.Equals(true)
+                            select new SuggestionOutput
+                            {
+                                Button1Text = s.Button1Text,
+                                Button2Text = s.Button2Text,
+                                IsAll = s.IsAll,
+                                IsDisplay = s.IsDisplay,
+                                IsSingle = s.IsSingle,
+                                Text = s.Text,
+                                UserId = s.UserId
+                            })
                         .ToListAsync();
                 }
 
@@ -491,15 +495,15 @@ namespace Garant.Platform.Services.Service.User
             try
             {
                 var result = await (from b in _postgreDbContext.Breadcrumbs
-                                    where b.SelectorPage.Equals(selectorPage)
-                                    orderby b.Position
-                                    select new BreadcrumbOutput
-                                    {
-                                        Label = b.Label,
-                                        SelectorPage = b.SelectorPage,
-                                        Url = b.Url,
-                                        Position = b.Position
-                                    })
+                        where b.SelectorPage.Equals(selectorPage)
+                        orderby b.Position
+                        select new BreadcrumbOutput
+                        {
+                            Label = b.Label,
+                            SelectorPage = b.SelectorPage,
+                            Url = b.Url,
+                            Position = b.Position
+                        })
                     .ToListAsync();
 
                 return result;
@@ -523,7 +527,8 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="otherId">Id другого пользователя.</param>
         /// <param name="typeItem">Тип предмета обсуждения.</param>
         /// <returns>Флаг записи перехода.</returns>
-        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId, string otherId, string typeItem)
+        public async Task<bool> SetTransitionAsync(string account, string transitionType, long referenceId,
+            string otherId, string typeItem)
         {
             try
             {
@@ -600,7 +605,8 @@ namespace Garant.Platform.Services.Service.User
                 };
 
                 // Доп. проверки для чата.
-                if (!string.IsNullOrEmpty(otherId) && !string.IsNullOrEmpty(typeItem) || !string.IsNullOrEmpty(typeItem) && typeItem.Equals("PaymentAct"))
+                if (!string.IsNullOrEmpty(otherId) && !string.IsNullOrEmpty(typeItem) ||
+                    !string.IsNullOrEmpty(typeItem) && typeItem.Equals("PaymentAct"))
                 {
                     transition.OtherId = otherId;
                     transition.TypeItem = typeItem;
@@ -701,7 +707,8 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="otherId">Id заказа в системе банка.</param>
         /// <param name="userId">Id пользователя.</param>
         /// <returns>Данные перехода.</returns>
-        public async Task<TransitionOutput> GetTransitionWithParamsAsync(long referenceId, string transitionType, string userId)
+        public async Task<TransitionOutput> GetTransitionWithParamsAsync(long referenceId, string transitionType,
+            string userId)
         {
             try
             {
@@ -749,7 +756,8 @@ namespace Garant.Platform.Services.Service.User
                         FirstName = u.FirstName,
                         LastName = u.LastName,
                         Patronymic = u.Patronymic,
-                        FullName = (u.LastName ?? string.Empty) + " " + (u.FirstName ?? string.Empty) + " " + (u.Patronymic ?? string.Empty)
+                        FullName = (u.LastName ?? string.Empty) + " " + (u.FirstName ?? string.Empty) + " " +
+                                   (u.Patronymic ?? string.Empty)
                     })
                     .FirstOrDefaultAsync();
 
@@ -763,7 +771,8 @@ namespace Garant.Platform.Services.Service.User
                             FirstName = u.FirstName,
                             LastName = u.LastName,
                             Patronymic = u.Patronymic,
-                            FullName = (u.LastName ?? string.Empty) + (u.FirstName ?? string.Empty) + (u.Patronymic ?? string.Empty)
+                            FullName = (u.LastName ?? string.Empty) + (u.FirstName ?? string.Empty) +
+                                       (u.Patronymic ?? string.Empty)
                         })
                         .FirstOrDefaultAsync();
                 }
@@ -778,7 +787,8 @@ namespace Garant.Platform.Services.Service.User
                             FirstName = u.FirstName,
                             LastName = u.LastName,
                             Patronymic = u.Patronymic,
-                            FullName = (u.LastName ?? string.Empty) + (u.FirstName ?? string.Empty) + (u.Patronymic ?? string.Empty)
+                            FullName = (u.LastName ?? string.Empty) + (u.FirstName ?? string.Empty) +
+                                       (u.Patronymic ?? string.Empty)
                         })
                         .FirstOrDefaultAsync();
                 }
@@ -876,7 +886,8 @@ namespace Garant.Platform.Services.Service.User
         /// <param name="account">Логин или Email.</param>
         /// <param name="documentName">Название документа.</param>
         /// <returns>Данные формы.</returns>
-        public async Task<UserInformationOutput> SaveProfileFormAsync(UserInformationInput userInformationInput, string account, string documentName)
+        public async Task<UserInformationOutput> SaveProfileFormAsync(UserInformationInput userInformationInput,
+            string account, string documentName)
         {
             try
             {
