@@ -1066,7 +1066,8 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var result = await _postgreDbContext.Franchises
-                    .Where(f => f.Title.Contains(searchText) || f.ActivityDetail.Contains(searchText))
+                    .Where(f => f.Title.ToLower().Contains(searchText.ToLower()) 
+                                || f.ActivityDetail.ToLower().Contains(searchText.ToLower()))
                     .Select(f => new FranchiseOutput
                     {
                         DateCreate = f.DateCreate,
