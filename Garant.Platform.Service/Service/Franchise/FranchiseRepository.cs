@@ -6,6 +6,7 @@ using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Franchise.Input;
@@ -464,9 +465,10 @@ namespace Garant.Platform.Services.Service.Franchise
                         userId = findUser.UserId;
                     }
 
-                    // Найдет франшизу с таким названием.
-                    var findFranchise = await FindFranchiseByTitleAsync(franchiseInput.Title);
+                    // Найдет франшизу по Id.
+                    var findFranchise = await FindFranchiseByIdAsync(franchiseInput.FranchiseId);
                     var urls = await _commonService.JoinArrayWithDelimeterAsync(franchiseInput.UrlsFranchise);
+                    long franchiseId = 0;
 
                     // Создаст новую франшизу.
                     if (franchiseInput.IsNew && findFranchise == null)
@@ -475,7 +477,7 @@ namespace Garant.Platform.Services.Service.Franchise
                         {
                             FranchiseId = lastFranchiseId,
                             ActivityDetail = franchiseInput.ActivityDetail,
-                            BaseDate = DateTime.Now.Year,
+                            BaseDate = franchiseInput.BaseDate,
                             BusinessCount = franchiseInput.BusinessCount,
                             Category = franchiseInput.Category,
                             SubCategory = franchiseInput.SubCategory,
@@ -514,13 +516,19 @@ namespace Garant.Platform.Services.Service.Franchise
                             UserId = userId,
                             Url = urls
                         });
+                        await _postgreDbContext.SaveChangesAsync();
+
+                        franchiseId = await _postgreDbContext.Franchises
+                            .OrderByDescending(o => o.FranchiseId)
+                            .Select(f => f.FranchiseId)
+                            .FirstOrDefaultAsync();
                     }
 
                     // Обновит франшизу.
                     else if (!franchiseInput.IsNew && findFranchise != null)
                     {
                         findFranchise.ActivityDetail = franchiseInput.ActivityDetail;
-                        findFranchise.BaseDate = DateTime.Now.Year;
+                        findFranchise.BaseDate = franchiseInput.BaseDate;
                         findFranchise.BusinessCount = franchiseInput.BusinessCount;
                         findFranchise.Category = franchiseInput.Category;
                         findFranchise.SubCategory = franchiseInput.SubCategory;
@@ -564,9 +572,9 @@ namespace Garant.Platform.Services.Service.Franchise
                         findFranchise.Url = urls;
 
                         _postgreDbContext.Update(findFranchise);
+                        await _postgreDbContext.SaveChangesAsync();
+                        franchiseId = findFranchise.FranchiseId;
                     }
-
-                    await _postgreDbContext.SaveChangesAsync();
 
                     result = new CreateUpdateFranchiseOutput
                     {
@@ -605,7 +613,8 @@ namespace Garant.Platform.Services.Service.Franchise
                         PaymentDetail = franchiseInput.PaymentDetail,
                         TrainingDetails = franchiseInput.TrainingDetails,
                         UrlVideo = franchiseInput.UrlVideo,
-                        Reviews = franchiseInput.Reviews
+                        Reviews = franchiseInput.Reviews,
+                        FranchiseId = franchiseId
                     };
                 }
 
@@ -632,6 +641,72 @@ namespace Garant.Platform.Services.Service.Franchise
             {
                 var result = await _postgreDbContext.Franchises
                     .Where(f => f.Title.Equals(title))
+                    .Select(f => new FranchiseEntity
+                    {
+                        FranchiseId = f.FranchiseId,
+                        ActivityDetail = f.ActivityDetail,
+                        BaseDate = f.BaseDate,
+                        BusinessCount = f.BusinessCount,
+                        Category = f.Category,
+                        SubCategory = f.SubCategory,
+                        DateCreate = f.DateCreate,
+                        DotCount = f.DotCount,
+                        FinIndicators = f.FinIndicators,
+                        FranchisePacks = f.FranchisePacks,
+                        UrlsDetails = f.UrlsDetails,
+                        UrlLogo = f.UrlLogo,
+                        NameFinIndicators = f.FinIndicators,
+                        NameFinModelFile = f.NameFinModelFile,
+                        NameFranchisePhoto = f.NameFranchisePhoto,
+                        NamePresentFile = f.NamePresentFile,
+                        TrainingPhotoName = f.TrainingPhotoName,
+                        Title = f.Title,
+                        Text = f.Text,
+                        Price = f.Price,
+                        ViewBusiness = f.ViewBusiness,
+                        IsGarant = f.IsGarant,
+                        ProfitMonth = f.ProfitMonth,
+                        ProfitPrice = f.ProfitPrice,
+                        Status = f.Status,
+                        YearStart = f.YearStart,
+                        GeneralInvest = f.GeneralInvest,
+                        LumpSumPayment = f.LumpSumPayment,
+                        Royalty = f.Royalty,
+                        Payback = f.Payback,
+                        LaunchDate = f.LaunchDate,
+                        InvestInclude = f.InvestInclude,
+                        Peculiarity = f.Peculiarity,
+                        PaymentDetail = f.PaymentDetail,
+                        TrainingDetails = f.TrainingDetails,
+                        UrlVideo = f.UrlVideo,
+                        Reviews = f.Reviews,
+                        Url = f.Url
+                    })
+                    .FirstOrDefaultAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Метод найдет франшизу по Id.
+        /// </summary>
+        /// <param name="franchiseId">Id франшизы.</param>
+        /// <returns>Данные франшизы.</returns>
+        public async Task<FranchiseEntity> FindFranchiseByIdAsync(long franchiseId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Franchises
+                    .Where(f => f.FranchiseId == franchiseId)
                     .Select(f => new FranchiseEntity
                     {
                         FranchiseId = f.FranchiseId,
@@ -991,7 +1066,8 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var result = await _postgreDbContext.Franchises
-                    .Where(f => f.Title.Contains(searchText) || f.ActivityDetail.Contains(searchText))
+                    .Where(f => f.Title.ToLower().Contains(searchText.ToLower()) 
+                                || f.ActivityDetail.ToLower().Contains(searchText.ToLower()))
                     .Select(f => new FranchiseOutput
                     {
                         DateCreate = f.DateCreate,
@@ -1073,6 +1149,37 @@ namespace Garant.Platform.Services.Service.Franchise
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Метод получит список заявок по франшизам для вкладки профиля "Уведомления".
+        /// <param name="account">Аккаунт.</param>
+        /// </summary>
+        /// <returns>Список заявок.</returns>
+        public async Task<IEnumerable<RequestFranchiseEntity>> GetFranchiseRequestsAsync(string account)
+        {
+            try
+            {
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new NotFoundUserIdException(account);
+                }
+                
+                // Получит список заявок пользовтеля.
+                var result = await _postgreDbContext.RequestsFranchises.Where(r => r.UserId.Equals(userId)).ToListAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }

@@ -1,9 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Garant.Platform.Configurator.Abstractions;
+using Garant.Platform.Configurator.Enums;
+using Garant.Platform.Configurator.Models.Output;
+using Garant.Platform.Core.Consts;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,7 +56,8 @@ namespace Garant.Platform.Configurator.Services
                     Patronymic = patronymic,
                     PhoneNumber = phoneNumber,
                     TelegramTag = telegramTag,
-                    FullName = firstName + " " + lastName + " " + (patronymic ?? string.Empty)
+                    FullName = firstName + " " + lastName + " " + (patronymic ?? string.Empty),
+                    Password = Convert.ToBase64String(Guid.NewGuid().ToByteArray())
                 };
                 
                 await _postgreDbContext.Employees.AddAsync(addEmployee);
@@ -85,6 +93,128 @@ namespace Garant.Platform.Configurator.Services
                 return employee != null;
             }
 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список меню конфигуратора.
+        /// </summary>
+        /// <returns>Список меню.</returns>
+        public async Task<IEnumerable<ConfiguratorMenuOutput>> GetMenuItemsAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.ConfiguratorMenuItems
+                    .Select(c => new ConfiguratorMenuOutput
+                    {
+                        ActionName = c.ActionName,
+                        MenuItemId = c.MenuItemId,
+                        MenuItemName = c.MenuItemName,
+                        MenuItemSysName = c.MenuItemSysName,
+                        Position = c.Position
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод авторизует сотрудника сервиса.
+        /// </summary>
+        /// <param name="inputData">Email или телефон.</param>
+        /// <param name="password">Пароль.</param>
+        /// <returns>Данные сотрудника.</returns>
+        public async Task<EmployeeEntity> ConfiguratorLoginAsync(string inputData, string password)
+        {
+            try
+            {
+                EmployeeEntity employee = null;
+
+                // Если почта.
+                if (inputData.Contains("@"))
+                {
+                    var isCorrectEmail = Regex.Match(inputData, RegularExpressions.REGULAR_EMAIL);
+
+                    // Если Email прошел проверку.
+                    if (isCorrectEmail.Success)
+                    {
+                        // Проверит существование сотрудника.
+                        employee = await _postgreDbContext.Employees.FirstOrDefaultAsync(e => e.Email.Equals(inputData));
+
+                        // Если сотрудника не найдено.
+                        if (employee == null)
+                        {
+                            throw new NotFoundEmployeeException();
+                        }
+                        
+                        // Проставит доступ к панели.
+                        employee.AccessPanel = (int)AccessTypePanelEnum.Granted;
+                    }
+                }
+                
+                // Если номер телефона.
+                if (Regex.Match(inputData, RegularExpressions.REGULAR_PHONE_NUMBER).Success)
+                {
+                    // Проверит существование сотрудника.
+                    employee = await _postgreDbContext.Employees.FirstOrDefaultAsync(e => e.PhoneNumber.Equals(inputData));
+
+                    // Если сотрудника не найдено.
+                    if (employee == null)
+                    {
+                        throw new NotFoundEmployeeException();
+                    }
+                    
+                    // Проставит доступ к панели.
+                    employee.AccessPanel = (int)AccessTypePanelEnum.Granted;
+                }
+
+                return employee;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список действий при работе с блогами.
+        /// </summary>
+        /// <returns>Список действий.</returns>
+        public async Task<IEnumerable<BlogActionOutput>> GetBlogActionsAsync()
+        {
+            try
+            {
+                var result = await _postgreDbContext.BlogActions
+                    .Select(ba => new BlogActionOutput
+                    {
+                        BlogActionId = ba.BlogActionId,
+                        BlogActionName = ba.BlogActionName,
+                        BlogActionSysName = ba.BlogActionSysName
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+            
             catch (Exception e)
             {
                 Console.WriteLine(e);

@@ -198,5 +198,10 @@ namespace Garant.Platform.Models.Franchise.Output
         /// Отзывы о франшизе (json).
         /// </summary>
         public string Reviews { get; set; }
+
+        /// <summary>
+        /// Id франшизы.
+        /// </summary>
+        public long FranchiseId { get; set; }
     }
 }

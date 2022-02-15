@@ -33,9 +33,9 @@ namespace Garant.Platform.Models.Blog.Output
         public int Position { get; set; }
 
         /// <summary>
-        /// Идентификатор темы блога.
+        /// Код темы блога.
         /// </summary>
-        public long BlogThemeId { get; set; }
+        public string ThemeCategoryCode { get; set; }
 
         /// <summary>
         /// Дата создания.

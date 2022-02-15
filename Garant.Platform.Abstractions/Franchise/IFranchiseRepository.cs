@@ -94,6 +94,13 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="title">Название франшизы.</param>
         /// <returns>Данные франшизы.</returns>
         Task<FranchiseEntity> FindFranchiseByTitleAsync(string title);
+        
+        /// <summary>
+        /// Метод найдет франшизу по Id.
+        /// </summary>
+        /// <param name="franchiseId">Id франшизы.</param>
+        /// <returns>Данные франшизы.</returns>
+        Task<FranchiseEntity> FindFranchiseByIdAsync(long franchiseId);
 
         /// <summary>
         /// Метод получит франшизу для просмотра или изменения.
@@ -154,5 +161,12 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <returns>Данные заявки.</returns>
         Task<RequestFranchiseOutput> CreateRequestFranchiseAsync(string userName, string phone,
             string city, string account, long franchiseId);
+
+        /// <summary>
+        /// Метод получит список заявок по франшизам для вкладки профиля "Уведомления".
+        /// <param name="account">Аккаунт.</param>
+        /// </summary>
+        /// <returns>Список заявок.</returns>
+        Task<IEnumerable<RequestFranchiseEntity>> GetFranchiseRequestsAsync(string account);
     }
 }

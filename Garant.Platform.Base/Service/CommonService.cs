@@ -263,6 +263,11 @@ namespace Garant.Platform.Base.Service
                 var delimiter = string.Empty;
                 var urls = string.Empty;
 
+                if (arr == null)
+                {
+                    return string.Empty;
+                }
+
                 if (arr.Any())
                 {
                     foreach (var url in arr)

@@ -80,8 +80,10 @@ namespace Garant.Platform.Commerce.Service.Garant
                         // Получит Id сделки.
                         var dealId = await _garantActionRepository.GetDealIdAsync(franchise.UserId);
 
-                        var mainHeaders = _userRepository.InitHeaderAsync("MainGarant").Result.Select(s => s.Name).ToList();
-                        var dopHeaders = _userRepository.InitHeaderAsync("DopGarant").Result.Select(s => s.Name).ToList();
+                        var mainHeaders = await _userRepository.InitHeaderAsync("MainGarant");
+                        var headerFields = mainHeaders.Select(s => s.Name).ToList();
+                        var dopHeaders = await _userRepository.InitHeaderAsync("DopGarant");
+                        var dopHeaderFields = dopHeaders.Select(s => s.Name).ToList();
 
                         // Сравнит Id.
                         var isOwner = userId.Equals(franchise.UserId);
@@ -91,7 +93,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
 
-                            var franchise1IterationsNotOwnerList = GetDataFranchise1IterationNotOwner(franchise.FranchiseId, dealId, mainHeaders, dopHeaders, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, dateCreateDeal);
+                            var franchise1IterationsNotOwnerList = GetDataFranchise1IterationNotOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, dateCreateDeal);
 
                             return franchise1IterationsNotOwnerList;
                         }
@@ -106,7 +108,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var franchise1IterationsOwnerList = GetDataFranchise1IterationOwner(franchise.FranchiseId, dealId, mainHeaders, dopHeaders, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, dateCreateDeal);
+                            var franchise1IterationsOwnerList = GetDataFranchise1IterationOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, dateCreateDeal);
 
                             return franchise1IterationsOwnerList;
                         }
@@ -116,7 +118,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
 
-                            var franchise2IterationsNotOwnerList = await GetDataFranchise2IterationNotOwner(franchise.FranchiseId, dealId, mainHeaders, dopHeaders, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise2IterationsNotOwnerList = await GetDataFranchise2IterationNotOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise2IterationsNotOwnerList;
                         }
@@ -132,10 +134,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var franchise2IterationsOwnerList = await GetDataFranchise2IterationOwner(franchise.FranchiseId, dealId, mainHeaders, dopHeaders,
-                                franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName,
-                                userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId,
-                                franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise2IterationsOwnerList = await GetDataFranchise2IterationOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise2IterationsOwnerList;
                         }
@@ -145,7 +144,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
 
-                            var franchise3IterationsNotOwnerList = await GetDataFranchise3IterationNotOwner(franchise.FranchiseId, dealId, mainHeaders, dopHeaders, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise3IterationsNotOwnerList = await GetDataFranchise3IterationNotOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise3IterationsNotOwnerList;
                         }
@@ -161,7 +160,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var franchise3IterationsOwnerList = await GetDataFranchise3IterationOwner(franchise.FranchiseId, dealId, mainHeaders, dopHeaders, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise3IterationsOwnerList = await GetDataFranchise3IterationOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise3IterationsOwnerList;
                         }
@@ -171,7 +170,7 @@ namespace Garant.Platform.Commerce.Service.Garant
                         {
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(franchise.UserId);
 
-                            var franchise4IterationsNotOwnerList = await GetDataFranchise4IterationNotOwner(franchise.FranchiseId, dealId, mainHeaders, dopHeaders, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise4IterationsNotOwnerList = await GetDataFranchise4IterationNotOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, userId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise4IterationsNotOwnerList;
                         }
@@ -187,7 +186,7 @@ namespace Garant.Platform.Commerce.Service.Garant
 
                             var otherAccount = await _userRepository.GetUserProfileInfoByIdAsync(otherUserId);
 
-                            var franchise4IterationsOwnerList = await GetDataFranchise4IterationOwner(franchise.FranchiseId, dealId, mainHeaders, dopHeaders, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
+                            var franchise4IterationsOwnerList = await GetDataFranchise4IterationOwner(franchise.FranchiseId, dealId, headerFields, dopHeaderFields, franchise.TotalInvest, franchise.Title, franchise.Url.Split(",")[0], userName.FirstName, userName.LastName, otherAccount.FirstName, otherAccount.LastName, orderType, otherUserId, franchise.InvestInclude, iterationList, isChat, account, dateCreateDeal);
 
                             return franchise4IterationsOwnerList;
                         }

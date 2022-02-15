@@ -11,6 +11,7 @@ using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Franchise.Input;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Garant.Platform.Services.Service.Franchise
 {
@@ -269,13 +270,12 @@ namespace Garant.Platform.Services.Service.Franchise
         {
             try
             {
-                var files = new FormCollection(null, franchiseFilesInput.Files).Files;
-                var franchiseInput = JsonSerializer.Deserialize<CreateUpdateFranchiseInput>(franchiseDataInput);
+                var franchiseInput = JsonConvert.DeserializeObject<CreateUpdateFranchiseInput>(franchiseDataInput);
                 CreateUpdateFranchiseOutput result = null;
 
-                if (files.Any())
+                if (franchiseFilesInput.Files.Any())
                 {
-                    await _ftpService.UploadFilesFtpAsync(files);
+                    await _ftpService.UploadFilesFtpAsync(franchiseFilesInput.Files);
                 }
 
                 if (franchiseInput == null)
@@ -288,7 +288,7 @@ namespace Garant.Platform.Services.Service.Franchise
                 lastFranchiseId++;
 
                 // Создаст или обновит франшизу.
-                result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput, lastFranchiseId, franchiseInput.UrlsFranchise, files, account);
+                result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput, lastFranchiseId, franchiseInput.UrlsFranchise, franchiseFilesInput.Files, account);
 
                 return result;
             }

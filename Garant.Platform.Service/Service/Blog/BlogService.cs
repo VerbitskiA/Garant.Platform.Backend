@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Garant.Platform.Abstractions.Blog;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Blog.Input;
 using Garant.Platform.Models.Blog.Output;
@@ -40,17 +43,17 @@ namespace Garant.Platform.Services.Service.Blog
             {
                 //TODO: сделать через репозиторий
                 var result = await (from b in _postgreDbContext.Blogs
-                                    where b.IsPaid.Equals(true)
-                                    select new BlogOutput
-                                    {
-                                        BlogId = b.BlogId,
-                                        Title = b.Title,
-                                        Url = b.Url,
-                                        IsPaid = b.IsPaid,
-                                        Position = b.Position,
-                                        DateCreated = b.DateCreated,
-                                        BlogThemeId = b.BlogThemeId
-                                    })
+                        where b.IsPaid.Equals(true)
+                        select new BlogOutput
+                        {
+                            BlogId = b.BlogId,
+                            Title = b.Title,
+                            Url = b.Url,
+                            IsPaid = b.IsPaid,
+                            Position = b.Position,
+                            DateCreated = b.DateCreated,
+                            ThemeCategoryCode = b.ThemeCategoryCode
+                        })
                     .Take(3)
                     .ToListAsync();
 
@@ -76,18 +79,18 @@ namespace Garant.Platform.Services.Service.Blog
             {
                 //TODO: сделать через репозиторий
                 var result = await (from n in _postgreDbContext.News
-                                    where n.IsPaid.Equals(true)
-                                    select new NewsOutput
-                                    {
-                                        NewsId = n.NewsId,
-                                        Text = n.Text,
-                                        DateCreated = n.DateCreated,
-                                        IsMarginTop = n.IsMarginTop,
-                                        IsPaid = n.IsPaid,
-                                        Name = n.Name,
-                                        Type = n.Type,
-                                        Url = n.Url
-                                    })
+                        where n.IsPaid.Equals(true)
+                        select new NewsOutput
+                        {
+                            NewsId = n.NewsId,
+                            Text = n.Text,
+                            DateCreated = n.DateCreated,
+                            IsPaid = n.IsPaid,
+                            Title = n.Title,
+                            Type = n.Type,
+                            Url = n.Url,
+                            Position = n.Position
+                        })
                     .ToListAsync();
 
                 // Вычислит поля даты и времени.
@@ -96,16 +99,9 @@ namespace Garant.Platform.Services.Service.Blog
 
                 foreach (var item in result)
                 {
-                    // Первому элементу не нужен отступ.
-                    if (i == 0)
-                    {
-                        item.IsMarginTop = false;
-                    }
-
                     // Если день совпадает с сегодня, то проставит флаг и надпись.
                     if (item.DateCreated.Day == nowDay)
                     {
-                        item.IsToday = true;
                         item.Date = "сегодня";
                     }
 
@@ -175,7 +171,6 @@ namespace Garant.Platform.Services.Service.Blog
                 await logger.LogError();
                 throw;
             }
-
         }
 
         /// <summary>
@@ -197,7 +192,8 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // создаст блог в БД
-                        result = await _blogRepository.CreateBlogAsync(blogInput.Title, images.Files[0].FileName, blogInput.IsPaid, blogInput.Position, blogInput.BlogThemeId);
+                        result = await _blogRepository.CreateBlogAsync(blogInput.Title,
+                            "../../../assets/images/" + images.Files[0].FileName, blogInput.ThemeCategoryCode);
                     }
                 }
 
@@ -238,7 +234,9 @@ namespace Garant.Platform.Services.Service.Blog
                     if (blogInput != null)
                     {
                         // обновит блог в БД
-                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title, images.Files[0].FileName, blogInput.IsPaid, blogInput.Position, blogInput.BlogThemeId);
+                        result = await _blogRepository.UpdateBlogAsync(blogInput.BlogId, blogInput.Title,
+                            "../../../assets/images/" + images.Files[0].FileName, blogInput.IsPaid, blogInput.Position,
+                            blogInput.ThemeCategoryCode);
                     }
                 }
 
@@ -279,7 +277,8 @@ namespace Garant.Platform.Services.Service.Blog
                     if (newsInput != null)
                     {
                         // создаст новость
-                        result = await _blogRepository.CreateNewsAsync(newsInput.Name, newsInput.Text, images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
+                        result = await _blogRepository.CreateNewsAsync(newsInput.Title, newsInput.Text,
+                            "../../../assets/images/" + images.Files[0].FileName, newsInput.Type);
                     }
                 }
 
@@ -320,7 +319,8 @@ namespace Garant.Platform.Services.Service.Blog
                     if (newsInput != null)
                     {
                         // обновит новость в БД
-                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId, newsInput.Name, newsInput.Text, images.Files[0].FileName, newsInput.IsToday, newsInput.Type, newsInput.IsMarginTop, newsInput.IsPaid);
+                        result = await _blogRepository.UpdateNewsAsync(newsInput.NewsId, newsInput.Title, newsInput.Text,
+                            "../../../assets/images/" + images.Files[0].FileName, newsInput.Type);
                     }
                 }
 
@@ -346,7 +346,7 @@ namespace Garant.Platform.Services.Service.Blog
         /// Метод создаст статью.
         /// </summary>
         /// <param name="articleData">Данные статьи.</param>
-        /// <param name="images">Изображения статьи.</param>
+        /// <param name="images">Данные статьи.</param>
         /// <returns>Данные статьи.</returns>
         public async Task<ArticleOutput> CreateArticleAsync(string articleData, IFormCollection images)
         {
@@ -360,15 +360,13 @@ namespace Garant.Platform.Services.Service.Blog
 
                     if (articleInput != null)
                     {
-                        string[] urls = new string[images.Files.Count];
+                        // Создаст статью.
+                        var previewFileName = images.Files.FirstOrDefault(f => f.Name.Equals("previewFile"))?.FileName;
+                        var articleFileName = images.Files.FirstOrDefault(f => f.Name.Equals("articleFile"))?.FileName;
 
-                        for (int i = 0; i < images.Files.Count; i++)
-                        {
-                            urls[i] = images.Files[i].FileName;
-                        }
-
-                        // создаст статью
-                        result = await _blogRepository.CreateArticleAsync(articleInput.BlogId, urls, articleInput.Title, articleInput.Position, articleInput.Description, articleInput.Text, articleInput.ArticleCode);
+                        result = await _blogRepository.CreateArticleAsync(articleInput.BlogId, previewFileName,
+                            articleFileName, articleInput.Title, articleInput.Description, articleInput.Text,
+                            Guid.NewGuid().ToString(), articleInput.SignatureText);
                     }
                 }
 
@@ -415,8 +413,11 @@ namespace Garant.Platform.Services.Service.Blog
                         {
                             urls[i] = images.Files[i].FileName;
                         }
+
                         // обновит статью в БД
-                        result = await _blogRepository.UpdateArticleAsync(articleInput.ArticleId, articleInput.BlogId, urls,  articleInput.Title, articleInput.Position, articleInput.Description, articleInput.Text, articleInput.ArticleCode);
+                        result = await _blogRepository.UpdateArticleAsync(articleInput.ArticleId, articleInput.BlogId,
+                            urls, articleInput.Title, articleInput.Position, articleInput.Description,
+                            articleInput.Text, articleInput.ArticleCode);
                     }
                 }
 
@@ -474,6 +475,119 @@ namespace Garant.Platform.Services.Service.Blog
                 return result;
             }
 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список тем для статей блогов.
+        /// </summary>
+        /// <returns>Список тем.</returns>
+        public async Task<IEnumerable<ArticleThemeOutput>> GetArticleThemesAsync()
+        {
+            try
+            {
+                var result = await _blogRepository.GetArticleThemesAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит блог по его Id.
+        /// </summary>
+        /// <param name="blogId">Id блога.</param>
+        /// <returns>Данные блога.</returns>
+        public async Task<BlogOutput> GetBlogAsync(long blogId)
+        {
+            try
+            {
+                if (blogId <= 0)
+                {
+                    throw new EmptyBlogIdException();
+                }
+
+                var blog = await _blogRepository.GetBlogByIdAsync(blogId);
+                var mapper = AutoFac.Resolve<IMapper>();
+                var result = mapper.Map<BlogOutput>(blog);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит статью блога.
+        /// </summary>
+        /// <param name="articleId">Id статьи.</param>
+        /// <returns>Данные статьи.</returns>
+        public async Task<ArticleOutput> GetBlogArticleAsync(long articleId)
+        {
+            try
+            {
+                if (articleId <= 0)
+                {
+                    throw new NotFoundArticleByIdException(articleId);
+                }
+                
+                var article = await _blogRepository.GetBlogArticleByUdAsync(articleId);
+
+                var cast = AutoFac.Resolve<IMapper>();
+                var result = cast.Map<ArticleOutput>(article);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит новость по ее Id.
+        /// </summary>
+        /// <param name="newsId">Id новости.</param>
+        /// <returns>Данные новости.</returns>
+        public async Task<NewsOutput> GetNewAsync(long newsId)
+        {
+            try
+            {
+                if (newsId <= 0)
+                {
+                    throw new EmptyNewsIdException();
+                }
+
+                var getNew = await _blogRepository.GetNewByIdAsync(newsId);
+                var cast = AutoFac.Resolve<IMapper>();
+                var result = cast.Map<NewsOutput>(getNew);
+
+                return result;
+            }
+            
             catch (Exception e)
             {
                 Console.WriteLine(e);
