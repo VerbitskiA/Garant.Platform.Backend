@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -51,5 +52,10 @@ namespace Garant.Platform.Models.Entities.Blog
         /// </summary>
         [Column("DateCreated", TypeName = "timestamp")]
         public DateTime DateCreated { get; set; }
+
+        /// <summary>
+        /// Статьи блога.
+        /// </summary>
+        public List<ArticleEntity> Articles { get; set; }
     }
 }
