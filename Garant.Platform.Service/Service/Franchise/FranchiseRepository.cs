@@ -477,7 +477,7 @@ namespace Garant.Platform.Services.Service.Franchise
                         {
                             FranchiseId = lastFranchiseId,
                             ActivityDetail = franchiseInput.ActivityDetail,
-                            BaseDate = DateTime.Now.Year,
+                            BaseDate = franchiseInput.BaseDate,
                             BusinessCount = franchiseInput.BusinessCount,
                             Category = franchiseInput.Category,
                             SubCategory = franchiseInput.SubCategory,
@@ -528,7 +528,7 @@ namespace Garant.Platform.Services.Service.Franchise
                     else if (!franchiseInput.IsNew && findFranchise != null)
                     {
                         findFranchise.ActivityDetail = franchiseInput.ActivityDetail;
-                        findFranchise.BaseDate = DateTime.Now.Year;
+                        findFranchise.BaseDate = franchiseInput.BaseDate;
                         findFranchise.BusinessCount = franchiseInput.BusinessCount;
                         findFranchise.Category = franchiseInput.Category;
                         findFranchise.SubCategory = franchiseInput.SubCategory;
@@ -1066,7 +1066,8 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var result = await _postgreDbContext.Franchises
-                    .Where(f => f.Title.Contains(searchText) || f.ActivityDetail.Contains(searchText))
+                    .Where(f => f.Title.ToLower().Contains(searchText.ToLower()) 
+                                || f.ActivityDetail.ToLower().Contains(searchText.ToLower()))
                     .Select(f => new FranchiseOutput
                     {
                         DateCreate = f.DateCreate,

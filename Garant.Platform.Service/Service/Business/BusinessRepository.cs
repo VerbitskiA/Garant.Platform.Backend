@@ -812,7 +812,8 @@ namespace Garant.Platform.Services.Service.Business
             try
             {
                 var result = await _postgreDbContext.Businesses
-                    .Where(f => f.BusinessName.Contains(searchText) || f.ActivityDetail.Contains(searchText))
+                    .Where(f => f.BusinessName.ToLower().Contains(searchText.ToLower()) 
+                                || f.ActivityDetail.ToLower().Contains(searchText.ToLower()))
                     .Select(f => new BusinessOutput
                     {
                         DateCreate = f.DateCreate,
