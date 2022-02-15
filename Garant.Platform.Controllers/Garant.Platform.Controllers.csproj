@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Garant.Platform.Service\Garant.Platform.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Chat" />
+  </ItemGroup>
+
 </Project>

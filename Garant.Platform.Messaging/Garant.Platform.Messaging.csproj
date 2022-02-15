@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Garant.Platform.Abstractions\Garant.Platform.Abstractions.csproj" />
+    <ProjectReference Include="..\Garant.Platform.Base\Garant.Platform.Base.csproj" />
     <ProjectReference Include="..\Garant.Platform.Core\Garant.Platform.Core.csproj" />
     <ProjectReference Include="..\Garant.Platform.Models\Garant.Platform.Models.csproj" />
   </ItemGroup>
