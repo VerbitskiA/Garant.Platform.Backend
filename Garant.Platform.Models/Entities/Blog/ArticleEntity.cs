@@ -19,7 +19,12 @@ namespace Garant.Platform.Models.Entities.Blog
         /// <summary>
         /// FK, идентификатор блога.
         /// </summary>
-        public long BlogId { get; set; }        
+        public long BlogId { get; set; }
+
+        /// <summary>
+        /// Блог.
+        /// </summary>
+        public BlogEntity Blog { get; set; }
 
         /// <summary>
         /// Изображение превью облажки.

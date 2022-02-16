@@ -282,5 +282,81 @@ namespace Garant.Platform.Controllers.Blog
 
             return result;
         }
+
+        /// <summary>
+        /// Метод удалит новость.
+        /// </summary>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpDelete]
+        [Route("delete-new")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]        
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> DeleteNewAsync([FromQuery] long newsId)
+        {
+            await _blogService.DeleteNewAsync(newsId);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Метод удалит статью.
+        /// </summary>
+        /// <param name="articleId">Идентификатор статьи.</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpDelete]
+        [Route("delete-article")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]        
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> DeleteArticleAsync([FromQuery] long articleId)
+        {
+            await _blogService.DeleteArticleAsync(articleId);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Метод удалит блог со всеми его статьями.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpDelete]
+        [Route("delete-blog")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]        
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> DeleteBlogAsync([FromQuery] long blogId)
+        {
+            await _blogService.DeleteBlogAsync(blogId);
+
+            return Ok();
+        }
+
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров новости на одного пользователя в сутки.
+        /// </summary>
+        /// <param name="newId">Идентификатор новости.</param>
+        /// <returns>Данные новости.</returns>        
+        [HttpPost]
+        [Route("increment-view-new")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]        
+        [ProducesResponseType(500)]
+        public async Task<bool> IncrementViewsNewOnceADayAsync([FromBody] long newId)
+        {
+            var res = await _blogService.IncrementViewsNewOnceADayAsync(GetUserName(), newId);
+
+            return res;           
+        }
     }
 }

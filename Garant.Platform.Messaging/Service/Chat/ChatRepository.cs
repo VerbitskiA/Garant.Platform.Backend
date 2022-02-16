@@ -342,7 +342,7 @@ namespace Garant.Platform.Messaging.Service.Chat
                 // Найдет дату начала диалога.
                 var result = await _postgreDbContext.MainInfoDialogs
                     .Where(d => d.DialogId == dialogId)
-                    .Select(d => d.Created.ToString("f"))
+                    .Select(d => d.Created.ToString("dd.MM.yyyy HH:mm"))
                     .FirstOrDefaultAsync();
 
                 return result;

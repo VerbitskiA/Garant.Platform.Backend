@@ -57,5 +57,11 @@ namespace Garant.Platform.Models.Entities.News
         /// </summary>
         [Column("Position", TypeName = "int")]
         public int Position { get; set; }
+
+        /// <summary>
+        /// Количество просмотров.
+        /// </summary>
+        [Column("ViewsCount", TypeName = "bigint")]
+        public long ViewsCount { get; set; }
     }
 }
