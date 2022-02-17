@@ -73,6 +73,30 @@ namespace Garant.Platform.Services.Service.Business
                     // Найдет бизнес с таким названием.
                     var findBusiness = await GetBusinessAsync(businessInput.BusinessName);
                     var urls = await _commonService.JoinArrayWithDelimeterAsync(urlsBusiness);
+                    var activityPhotoName = string.Empty;
+                    var assetsPhotoName = string.Empty;
+                    var nameFinModelFile = string.Empty;
+                    var reasonsSalePhotoName = string.Empty;
+
+                    if (files.Any(c => c.Name.Equals("filesTextBusiness")))
+                    {
+                        activityPhotoName = files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName;
+                    }
+
+                    if (files.Any(c => c.Name.Equals("filesAssets")))
+                    {
+                        assetsPhotoName = files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName;
+                    }
+                    
+                    if (files.Any(c => c.Name.Equals("finModelFile")))
+                    {
+                        nameFinModelFile = files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName;
+                    }
+                    
+                    if (files.Any(c => c.Name.Equals("filesReasonsSale")))
+                    {
+                        reasonsSalePhotoName = files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName;
+                    }
 
                     // Создаст новый бизнес.
                     if (businessInput.IsNew && findBusiness == null)
@@ -81,10 +105,10 @@ namespace Garant.Platform.Services.Service.Business
                         {
                             BusinessId = lastBusinessId,
                             ActivityDetail = businessInput.ActivityDetail,
-                            ActivityPhotoName = files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName,
+                            ActivityPhotoName = activityPhotoName,
                             Address = businessInput.Address,
                             Assets = businessInput.Assets,
-                            AssetsPhotoName = files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName,
+                            AssetsPhotoName = assetsPhotoName,
                             BusinessAge = businessInput.BusinessAge,
                             BusinessName = businessInput.BusinessName,
                             EmployeeCountYear = businessInput.EmployeeCountYear,
@@ -101,9 +125,9 @@ namespace Garant.Platform.Services.Service.Business
                             Share = businessInput.Share,
                             Site = businessInput.Site,
                             Peculiarity = businessInput.Peculiarity,
-                            NameFinModelFile = files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
+                            NameFinModelFile = nameFinModelFile,
                             ReasonsSale = businessInput.ReasonsSale,
-                            ReasonsSalePhotoName = files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName,
+                            ReasonsSalePhotoName = reasonsSalePhotoName,
                             UrlVideo = businessInput.UrlVideo,
                             IsGarant = businessInput.IsGarant,
                             UserId = userId,
@@ -119,13 +143,11 @@ namespace Garant.Platform.Services.Service.Business
                     else if (!businessInput.IsNew && findBusiness != null)
                     {
                         findBusiness.ActivityDetail = businessInput.ActivityDetail;
-                        findBusiness.ActivityPhotoName =
-                            files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName;
-                        findBusiness.Address = businessInput.Address;
+                        findBusiness.ActivityPhotoName = activityPhotoName;
+                            findBusiness.Address = businessInput.Address;
                         findBusiness.Assets = businessInput.Assets;
-                        findBusiness.AssetsPhotoName =
-                            files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName;
-                        findBusiness.BusinessAge = businessInput.BusinessAge;
+                        findBusiness.AssetsPhotoName = assetsPhotoName;
+                            findBusiness.BusinessAge = businessInput.BusinessAge;
                         findBusiness.BusinessName = businessInput.BusinessName;
                         findBusiness.EmployeeCountYear = businessInput.EmployeeCountYear;
                         findBusiness.Form = businessInput.Form;
@@ -141,11 +163,8 @@ namespace Garant.Platform.Services.Service.Business
                         findBusiness.Share = businessInput.Share;
                         findBusiness.Site = businessInput.Site;
                         findBusiness.Peculiarity = businessInput.Peculiarity;
-                        findBusiness.NameFinModelFile =
-                            files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName;
-                        findBusiness.ReasonsSale = businessInput.ReasonsSale;
-                        findBusiness.ReasonsSalePhotoName =
-                            files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName;
+                        findBusiness.NameFinModelFile = nameFinModelFile;
+                        findBusiness.ReasonsSalePhotoName = reasonsSalePhotoName;
                         findBusiness.UrlVideo = businessInput.UrlVideo;
                         findBusiness.IsGarant = businessInput.IsGarant;
                         findBusiness.DateCreate = DateTime.Now;
@@ -162,10 +181,10 @@ namespace Garant.Platform.Services.Service.Business
                     result = new CreateUpdateBusinessOutput
                     {
                         ActivityDetail = businessInput.ActivityDetail,
-                        ActivityPhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName,
+                        ActivityPhotoName = string.IsNullOrEmpty(activityPhotoName) ? string.Empty : "../../../assets/images/" + files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName,
                         Address = businessInput.Address,
                         Assets = businessInput.Assets,
-                        AssetsPhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName,
+                        AssetsPhotoName = string.IsNullOrEmpty(assetsPhotoName) ? string.Empty : "../../../assets/images/" + files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName,
                         BusinessAge = businessInput.BusinessAge,
                         BusinessId = lastBusinessId,
                         BusinessName = businessInput.BusinessName,
@@ -183,9 +202,9 @@ namespace Garant.Platform.Services.Service.Business
                         Share = businessInput.Share,
                         Site = businessInput.Site,
                         Peculiarity = businessInput.Peculiarity,
-                        NameFinModelFile = "../../../assets/images/" + files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
+                        NameFinModelFile = string.IsNullOrEmpty(nameFinModelFile) ? string.Empty : "../../../assets/images/" + files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
                         ReasonsSale = businessInput.ReasonsSale,
-                        ReasonsSalePhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName,
+                        ReasonsSalePhotoName = string.IsNullOrEmpty(reasonsSalePhotoName) ? string.Empty : "../../../assets/images/" + files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName,
                         UrlVideo = businessInput.UrlVideo,
                         IsGarant = businessInput.IsGarant,
                         DateCreate = DateTime.Now,
@@ -394,21 +413,6 @@ namespace Garant.Platform.Services.Service.Business
         {
             try
             {
-                // Найдет кто создал бизнес.
-                var userId = await _postgreDbContext.Businesses
-                    .Where(f => f.BusinessId == businessId)
-                    .Select(f => f.UserId)
-                    .FirstOrDefaultAsync();
-
-                // Найдет фио пользователя, создавшего франшизу.
-                // var fio = await _postgreDbContext.Users
-                //     .Where(u => u.Id.Equals(userId))
-                //     .Select(u => new FranchiseOutput
-                //     {
-                //         FullName = (u.LastName ?? string.Empty) + " " + (u.FirstName ?? string.Empty) + " " + (u.Patronymic ?? string.Empty)
-                //     })
-                //     .FirstOrDefaultAsync();
-
                 var result = await (from b in _postgreDbContext.Businesses
                                     where b.BusinessId == businessId
                                     select new BusinessOutput

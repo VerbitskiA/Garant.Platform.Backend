@@ -435,9 +435,7 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="lastFranchiseId">Id последней франшизы.</param>
         /// <param name="urlsDetails">Пути к доп.изображениям.</param>
         /// <returns>Данные франшизы.</returns>
-        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(
-            CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, string[] urlsDetails,
-            IFormFileCollection files, string account)
+        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, string[] urlsDetails, IFormFileCollection files, string account)
         {
             try
             {
@@ -469,6 +467,33 @@ namespace Garant.Platform.Services.Service.Franchise
                     var findFranchise = await FindFranchiseByIdAsync(franchiseInput.FranchiseId);
                     var urls = await _commonService.JoinArrayWithDelimeterAsync(franchiseInput.UrlsFranchise);
                     long franchiseId = 0;
+                    var urlLogo = string.Empty;
+                    var nameFinModelFile = string.Empty;
+                    var namePresentFile = string.Empty;
+                    var trainingPhotoName = string.Empty;
+                        
+                    // Если есть изображение логотипа.
+                    if (files.Any(c => c.Name.Equals("filesLogo")))
+                    {
+                        urlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName;   
+                    }
+
+                    // Если есть файл финансовой модели.
+                    if (files.Any(c => c.Name.Equals("finModelFile")))
+                    {
+                        nameFinModelFile = files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName;
+                    }
+
+                    // Если есть файл презентации.
+                    if (files.Any(c => c.Name.Equals("presentFile")))
+                    {
+                        namePresentFile = files.Where(c => c.Name.Equals("presentFile")).ToArray()[0].FileName;
+                    }
+
+                    if (files.Any(c => c.Name.Equals("trainingPhoto")))
+                    {
+                        trainingPhotoName = files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName;
+                    }
 
                     // Создаст новую франшизу.
                     if (franchiseInput.IsNew && findFranchise == null)
@@ -486,12 +511,12 @@ namespace Garant.Platform.Services.Service.Franchise
                             FinIndicators = franchiseInput.FinIndicators,
                             FranchisePacks = franchiseInput.FranchisePacks,
                             //UrlsDetails = urlsDetails.ToArray(),
-                            UrlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName,
+                            UrlLogo = urlLogo,
                             NameFinIndicators = franchiseInput.FinIndicators,
-                            NameFinModelFile = files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
-                            NameFranchisePhoto = files.Where(c => c.Name.Equals("franchiseFile")).ToArray()[0].FileName,
-                            NamePresentFile = files.Where(c => c.Name.Equals("presentFile")).ToArray()[0].FileName,
-                            TrainingPhotoName = files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName,
+                            NameFinModelFile = nameFinModelFile,
+                            // NameFranchisePhoto = ,
+                            NamePresentFile = namePresentFile,
+                            TrainingPhotoName = trainingPhotoName,
                             Title = franchiseInput.Title,
                             Text = franchiseInput.Text,
                             Price = franchiseInput.Price,
@@ -537,17 +562,17 @@ namespace Garant.Platform.Services.Service.Franchise
                         findFranchise.FinIndicators = franchiseInput.FinIndicators;
                         findFranchise.FranchisePacks = franchiseInput.FranchisePacks;
                         //findFranchise.UrlsDetails = urlsDetails.ToArray();
-                        findFranchise.UrlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName;
+                        findFranchise.UrlLogo = urlLogo;
                         findFranchise.NameFinIndicators = franchiseInput.FinIndicators;
-                        findFranchise.NameFinModelFile =
-                            files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName;
-                        findFranchise.NamePresentFile =
-                            findFranchise.NameFranchisePhoto =
-                                files.Where(c => c.Name.Equals("franchiseFile")).ToArray()[0].FileName;
-                        findFranchise.NamePresentFile =
-                            files.Where(c => c.Name.Equals("presentFile")).ToArray()[0].FileName;
-                        findFranchise.TrainingPhotoName =
-                            files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName;
+                        findFranchise.NameFinModelFile = nameFinModelFile;
+                        // findFranchise.NamePresentFile =
+                        //     findFranchise.NameFranchisePhoto =
+                        //         files.Where(c => c.Name.Equals("franchiseFile")).ToArray()[0].FileName;
+                        // findFranchise.NamePresentFile = namePresentFile;
+                        // findFranchise.TrainingPhotoName =
+                        //     files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName;
+                        findFranchise.NamePresentFile = namePresentFile;
+                        findFranchise.TrainingPhotoName = trainingPhotoName;
                         findFranchise.Title = franchiseInput.Title;
                         findFranchise.Text = franchiseInput.Text;
                         findFranchise.Price = franchiseInput.Price;
@@ -588,12 +613,12 @@ namespace Garant.Platform.Services.Service.Franchise
                         FinIndicators = franchiseInput.FinIndicators,
                         FranchisePacks = franchiseInput.FranchisePacks,
                         //UrlsDetails = urlsDetails.ToArray(),
-                        FileLogoUrl = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName,
+                        FileLogoUrl = urlLogo,
                         NameFinIndicators = franchiseInput.FinIndicators,
-                        FinModelFileUrl = "/docs" + files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
-                        FranchisePhotoUrl = "../../../assets/images/" + files.Where(c => c.Name.Equals("franchiseFile")).ToArray()[0].FileName,
-                        PresentFileUrl = "/docs" + files.Where(c => c.Name.Equals("presentFile")).ToArray()[0].FileName,
-                        TrainingPhotoUrl = "../../../assets/images/" + files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName,
+                        FinModelFileUrl = nameFinModelFile == string.Empty ? string.Empty : "/docs" + nameFinModelFile,
+                        // FranchisePhotoUrl = "../../../assets/images/" + files.Where(c => c.Name.Equals("franchiseFile")).ToArray()[0].FileName,
+                        PresentFileUrl = namePresentFile == string.Empty ? string.Empty : "/docs" + namePresentFile,
+                        TrainingPhotoUrl = trainingPhotoName == string.Empty ? string.Empty : "../../../assets/images/" + files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName,
                         Title = franchiseInput.Title,
                         Text = franchiseInput.Text,
                         Price = franchiseInput.Price,
