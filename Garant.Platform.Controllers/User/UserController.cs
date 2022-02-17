@@ -200,6 +200,7 @@ namespace Garant.Platform.Controllers.User
         /// </summary>
         /// <param name="transitionInput">Входная модель.</param>
         /// <returns>Флаг записи перехода.</returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("set-transition")]
         [ProducesResponseType(200, Type = typeof(bool))]
@@ -243,6 +244,7 @@ namespace Garant.Platform.Controllers.User
         /// Метод получит фио авторизованного пользователя.
         /// </summary>
         /// <returns>Данные пользователя.</returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("user-fio")]
         [ProducesResponseType(200, Type = typeof(UserOutput))]
