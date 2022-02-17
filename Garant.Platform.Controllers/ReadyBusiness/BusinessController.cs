@@ -162,6 +162,30 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         }
 
         /// <summary>
+        /// Метод получит список бизнеса на основе фильтров и данных пагинации.
+        /// </summary>
+        /// <param name="filtersWithPaginationInput">Входная модель фильтров с пагинацией.</param>
+        /// <returns>Список бизнеса и данные пагинации.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("filter-businesses-with-pagination")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
+        public async Task<IActionResult> FilterBusinessesWithPaginationAsync([FromBody] FiltersWithPaginationInput filtersWithPaginationInput)
+        {
+            var result = await _businessService.FilterBusinessesWithPaginationAsync(filtersWithPaginationInput.TypeSortPrice,
+                                                                                    filtersWithPaginationInput.MinPrice, 
+                                                                                    filtersWithPaginationInput.MaxPrice, 
+                                                                                    filtersWithPaginationInput.City,
+                                                                                    filtersWithPaginationInput.CategoryCode,
+                                                                                    filtersWithPaginationInput.MinProfitPrice,
+                                                                                    filtersWithPaginationInput.MaxProfitPrice,                                                                                    
+                                                                                    filtersWithPaginationInput.PageNumber,
+                                                                                    filtersWithPaginationInput.CountRows,
+                                                                                    filtersWithPaginationInput.IsGarant);
+
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Метод получит новый бизнес, который был создан в текущем месяце.
         /// </summary>
         /// <returns>Список бизнеса.</returns>
