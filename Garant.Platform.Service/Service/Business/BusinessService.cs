@@ -125,10 +125,6 @@ namespace Garant.Platform.Services.Service.Business
             {
                 var result = await _businessRepository.GetBusinessAsync(businessId, mode);
 
-                // Приведет к числу и потом к строке чтобы убрать передние нули, если они будут.
-                // var newPrice = Convert.ToInt32(price);
-                // result.Price = newPrice.ToString();
-
                 return result;
             }
 
