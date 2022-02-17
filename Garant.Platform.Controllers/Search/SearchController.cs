@@ -29,6 +29,7 @@ namespace Garant.Platform.Controllers.Search
         /// </summary>
         /// <param name="searchInput">Входная модель.</param>
         /// <returns>Список с результатами.</returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("search-data")]
         [ProducesResponseType(200, Type = typeof(IEnumerable))]
