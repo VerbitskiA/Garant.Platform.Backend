@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Document;
 using Garant.Platform.Base;
@@ -294,6 +295,21 @@ namespace Garant.Platform.Controllers.Document
             var result = await _documentRepository.ApproveActCustomerAsync(documentInput.DocumentItemId, documentInput.DocumentType);
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод скачает файл.
+        /// </summary>
+        /// <param name="fileName">Имя файла.</param>
+        /// <returns>Файл для скачивания фронтом.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("download")]
+        public async Task<FileContentResult> DownloadfileAsync([FromQuery] [Required] string fileName)
+        {
+            var result = await _documentService.DownloadFileAsync(fileName);
+
+            return result;
         }
     }
 }
