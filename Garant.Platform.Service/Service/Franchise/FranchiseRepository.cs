@@ -492,7 +492,7 @@ namespace Garant.Platform.Services.Service.Franchise
 
                     if (files.Any(c => c.Name.Equals("trainingPhoto")))
                     {
-                        trainingPhotoName = files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName;
+                        trainingPhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName;
                     }
 
                     // Создаст новую франшизу.
