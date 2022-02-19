@@ -7,6 +7,7 @@ using Garant.Platform.Models.Franchise.Output;
 using System.Linq;
 using System.Text.Json;
 using Garant.Platform.Abstractions.Franchise;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Franchise.Input;
 using Microsoft.AspNetCore.Http;
@@ -382,12 +383,19 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <summary>
         /// Метод получит список подкатегорий франшиз.
         /// </summary>
+        /// <param name="categoryCode">Код категории, для которой нужно получить список подкатегорий.</param>
+        /// <param name="categorySysName">Системное имя категории, для которой нужно получить список подкатегорий.</param>
         /// <returns>Список подкатегорий.</returns>
-        public async Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync()
+        public async Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync(string categoryCode, string categorySysName)
         {
             try
             {
-                var result = await _franchiseRepository.GetSubCategoryListAsync();
+                if (string.IsNullOrEmpty(categoryCode) || string.IsNullOrEmpty(categorySysName))
+                {
+                    throw new EmptyParamsFranchiseSubCategoryException();
+                }
+                
+                var result = await _franchiseRepository.GetSubCategoryListAsync(categoryCode, categorySysName);
 
                 return result;
             }

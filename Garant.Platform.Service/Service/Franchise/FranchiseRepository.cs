@@ -1011,7 +1011,8 @@ namespace Garant.Platform.Services.Service.Franchise
                     .Select(fc => new CategoryOutput
                     {
                         CategoryCode = fc.FranchiseCategoryCode,
-                        CategoryName = fc.FranchiseCategoryName
+                        CategoryName = fc.FranchiseCategoryName,
+                        FranchiseCategorySysName = fc.FranchiseCategorySysName
                     })
                     .ToListAsync();
 
@@ -1030,16 +1031,23 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <summary>
         /// Метод получит список подкатегорий франшиз.
         /// </summary>
+        /// <param name="categoryCode">Код категории, для которой нужно получить список подкатегорий.</param>
+        /// <param name="categorySysName">Системное имя категории, для которой нужно получить список подкатегорий.</param>
         /// <returns>Список подкатегорий.</returns>
-        public async Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync()
+        public async Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync(string categoryCode, string categorySysName)
         {
             try
             {
                 var result = await _postgreDbContext.FranchiseSubCategories
+                    .Where(fc => fc.FranchiseCategoryCode.Equals(categoryCode) 
+                                 && fc.FranchiseCategorySysName.Equals(categorySysName))
                     .Select(fc => new SubCategoryOutput
                     {
                         SubCategoryCode = fc.FranchiseSubCategoryCode,
-                        SubCategoryName = fc.FranchiseSubCategoryName
+                        SubCategoryName = fc.FranchiseSubCategoryName,
+                        FranchiseCategoryCode = fc.FranchiseCategoryCode,
+                        FranchiseCategorySysName = fc.FranchiseCategorySysName,
+                        FranchiseSubCategorySysName = fc.FranchiseSubCategorySysName
                     })
                     .ToListAsync();
 

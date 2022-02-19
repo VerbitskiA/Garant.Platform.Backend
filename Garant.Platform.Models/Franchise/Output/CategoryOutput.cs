@@ -14,5 +14,10 @@
         /// Вид бизнеса.
         /// </summary>
         public string CategoryName { get; set; }
+        
+        /// <summary>
+        /// Системное название сферы.
+        /// </summary>
+        public string FranchiseCategorySysName { get; set; }
     }
 }

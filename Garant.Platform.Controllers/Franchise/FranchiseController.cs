@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Base;
@@ -157,7 +158,8 @@ namespace Garant.Platform.Controllers.Franchise
         /// Метод получит список категорий франшиз.
         /// </summary>
         /// <returns>Список категорий.</returns>
-        [HttpPost]
+        [AllowAnonymous]
+        [HttpGet]
         [Route("category-list")]
         public async Task<IActionResult> GetCategoryListAsync()
         {
@@ -169,12 +171,15 @@ namespace Garant.Platform.Controllers.Franchise
         /// <summary>
         /// Метод получит список подкатегорий франшиз.
         /// </summary>
+        /// <param name="categoryCode">Код категории, для которой нужно получить список подкатегорий.</param>
+        /// <param name="categorySysName">Системное имя категории, для которой нужно получить список подкатегорий.</param>
         /// <returns>Список подкатегорий.</returns>
-        [HttpPost]
+        [AllowAnonymous]
+        [HttpGet]
         [Route("subcategory-list")]
-        public async Task<IActionResult> GetSubCategoryListAsync()
+        public async Task<IActionResult> GetSubCategoryListAsync([FromQuery] [Required] string categoryCode, [Required] string categorySysName)
         {
-            var result = await _franchiseService.GetSubCategoryListAsync();
+            var result = await _franchiseService.GetSubCategoryListAsync(categoryCode, categorySysName);
 
             return Ok(result);
         }

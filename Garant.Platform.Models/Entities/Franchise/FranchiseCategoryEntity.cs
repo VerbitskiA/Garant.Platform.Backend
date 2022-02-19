@@ -44,5 +44,11 @@ namespace Garant.Platform.Models.Entities.Franchise
         /// </summary>
         [Column("CategoryName", TypeName = "varchar(200)")]
         public string FranchiseCategoryName { get; set; }
+        
+        /// <summary>
+        /// Системное название сферы.
+        /// </summary>
+        [Column("FranchiseCategorySysName", TypeName = "varchar(150)")]
+        public string FranchiseCategorySysName { get; set; }
     }
 }

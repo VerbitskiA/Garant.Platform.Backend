@@ -133,8 +133,10 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <summary>
         /// Метод получит список подкатегорий франшиз.
         /// </summary>
+        /// <param name="categoryCode">Код категории, для которой нужно получить список подкатегорий.</param>
+        /// <param name="categorySysName">Системное имя категории, для которой нужно получить список подкатегорий.</param>
         /// <returns>Список подкатегорий.</returns>
-        Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync();
+        Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync(string categoryCode, string categorySysName);
 
         /// <summary>
         /// Метод получит заголовок франшизы по Id пользователя.
