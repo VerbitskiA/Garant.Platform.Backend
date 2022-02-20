@@ -22,7 +22,8 @@ namespace Garant.Platform.Services.Service.Franchise
         private readonly IFtpService _ftpService;
         private readonly IFranchiseRepository _franchiseRepository;
 
-        public FranchiseService(PostgreDbContext postgreDbContext, IFtpService ftpService, IFranchiseRepository franchiseRepository)
+        public FranchiseService(PostgreDbContext postgreDbContext, IFtpService ftpService,
+            IFranchiseRepository franchiseRepository)
         {
             _postgreDbContext = postgreDbContext;
             _ftpService = ftpService;
@@ -183,11 +184,14 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="minPriceInvest">Сумма инвестиций от.</param>
         /// <param name="maxPriceInvest">Сумма инвестиций до.</param>
         /// <returns>Список франшиз после фильтрации.</returns>
-        public async Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice, double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false)
+        public async Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice,
+            double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest,
+            bool isGarant = false)
         {
             try
             {
-                var items = await _franchiseRepository.FilterFranchisesAsync(typeSort, minPrice, maxPrice, viewCode, categoryCode, minPriceInvest, maxPriceInvest, isGarant);
+                var items = await _franchiseRepository.FilterFranchisesAsync(typeSort, minPrice, maxPrice, viewCode,
+                    categoryCode, minPriceInvest, maxPriceInvest, isGarant);
 
                 foreach (var item in items)
                 {
@@ -267,7 +271,8 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="franchiseDataInput">Данные в строке json.</param>
         /// <param name="account">Логин.</param>
         /// <returns>Данные франшизы.</returns>
-        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(IFormCollection franchiseFilesInput, string franchiseDataInput, string account)
+        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(IFormCollection franchiseFilesInput,
+            string franchiseDataInput, string account)
         {
             try
             {
@@ -289,7 +294,8 @@ namespace Garant.Platform.Services.Service.Franchise
                 lastFranchiseId++;
 
                 // Создаст или обновит франшизу.
-                result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput, lastFranchiseId, franchiseInput.UrlsFranchise, franchiseFilesInput.Files, account);
+                result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput, lastFranchiseId,
+                    franchiseInput.UrlsFranchise, franchiseFilesInput.Files, account);
 
                 return result;
             }
@@ -332,7 +338,8 @@ namespace Garant.Platform.Services.Service.Franchise
         /// </summary>
         /// <param name="form">Файлы.</param>
         /// <returns>Список названий файлов.</returns>
-        public async Task<IEnumerable<string>> AddTempFilesBeforeCreateFranchiseAsync(IFormCollection form, string account)
+        public async Task<IEnumerable<string>> AddTempFilesBeforeCreateFranchiseAsync(IFormCollection form,
+            string account)
         {
             try
             {
@@ -386,7 +393,8 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="categoryCode">Код категории, для которой нужно получить список подкатегорий.</param>
         /// <param name="categorySysName">Системное имя категории, для которой нужно получить список подкатегорий.</param>
         /// <returns>Список подкатегорий.</returns>
-        public async Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync(string categoryCode, string categorySysName)
+        public async Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync(string categoryCode,
+            string categorySysName)
         {
             try
             {
@@ -394,12 +402,61 @@ namespace Garant.Platform.Services.Service.Franchise
                 {
                     throw new EmptyParamsFranchiseSubCategoryException();
                 }
-                
+
                 var result = await _franchiseRepository.GetSubCategoryListAsync(categoryCode, categorySysName);
 
                 return result;
             }
 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод найдет сферы в соответствии с поисковым запросом.
+        /// </summary>
+        /// <param name="searchText">Поисковый запрос.</param>
+        /// <returns>Список сфер.</returns>
+        public async Task<IEnumerable<CategoryOutput>> SearchSphereAsync(string searchText)
+        {
+            try
+            {
+                var result = await _franchiseRepository.SearchSphereAsync(searchText);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод найдет категории в соответствии с поисковым запросом.
+        /// </summary>
+        /// <param name="searchText">Поисковый запрос.</param>
+        /// <param name="categoryCode">Код сферы.</param>
+        /// <param name="categorySysName">Системное название сферы.</param>
+        /// <returns>Список категорий.</returns>
+        public async Task<IEnumerable<SubCategoryOutput>> SearchCategoryAsync(string searchText, string categoryCode,
+            string categorySysName)
+        {
+            try
+            {
+                var result = await _franchiseRepository.SearchCategoryAsync(searchText, categoryCode, categorySysName);
+
+                return result;
+            }
+            
             catch (Exception e)
             {
                 Console.WriteLine(e);
