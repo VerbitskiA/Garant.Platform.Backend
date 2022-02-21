@@ -1,9 +1,9 @@
 ﻿namespace Garant.Platform.Models.Franchise.Input
 {
     /// <summary>
-    /// Класс модели фильтров с пагинацией.
+    /// Класс модели фильтров бизнеса с пагинацией.
     /// </summary>
-    public class FiltersWithPaginationInput
+    public class FilterBusinessesWithPaginationInput
     {
         /// <summary>
         /// Тип сортировки: Asc - по возрастанию, Desc - по убыванию.

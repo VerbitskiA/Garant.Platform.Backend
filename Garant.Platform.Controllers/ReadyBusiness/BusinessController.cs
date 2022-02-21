@@ -167,9 +167,9 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         /// <param name="filtersWithPaginationInput">Входная модель фильтров с пагинацией.</param>
         /// <returns>Список бизнеса и данные пагинации.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("filter-businesses-with-pagination")]
+        [HttpPost, Route("filter-pagination")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
-        public async Task<IActionResult> FilterBusinessesWithPaginationAsync([FromBody] FiltersWithPaginationInput filtersWithPaginationInput)
+        public async Task<IActionResult> FilterBusinessesWithPaginationAsync([FromBody] FilterBusinessesWithPaginationInput filtersWithPaginationInput)
         {
             var result = await _businessService.FilterBusinessesWithPaginationAsync(filtersWithPaginationInput.TypeSortPrice,
                                                                                     filtersWithPaginationInput.MinPrice, 

@@ -82,6 +82,17 @@ namespace Garant.Platform.Controllers.Franchise
             return Ok(result);
         }
 
+        [AllowAnonymous]
+        [HttpPost, Route("filter-pagination")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IActionResult> FilterFranchisesWithPaginationAsync([FromBody] FilterInput fitFilterInput)
+        {
+            //var result = await _franchiseService.FilterFranchisesWithPaginationAsync();
+
+            return Ok();            
+        }
+
+
         /// <summary>
         /// Метод получит новые франшизы, которые были созданы в текущем месяце.
         /// </summary>
