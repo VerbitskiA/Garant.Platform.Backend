@@ -1208,5 +1208,99 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод фильтрует франшизы с учётом пагинации.
+        /// </summary>
+        /// <param name="typeSort">Тип сортировки цены (по возрастанию или убыванию).</param>
+        /// <param name="viewCode">Код вида бизнеса.</param>
+        /// <param name="categoryCode">Код категории.</param>
+        /// <param name="minPriceInvest">Сумма инвестиций от.</param>
+        /// <param name="maxPriceInvest">Сумма инвестиций до.</param>
+        /// <param name="minProfit">Прибыль от.</param>
+        /// <param name="maxProfit">Прибыль до.</param>
+        /// <param name="pageNumber">Номер страницы.</param>
+        /// <param name="countRows">Количество объектов.</param>
+        /// <param name="isGarant">Покупка через гарант.</param>
+        /// <returns>Список франшиз после фильтрации.</returns>
+        public async Task<List<FranchiseOutput>> FilterFranchisesIndependentlyAsync(string typeSort, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant = false)
+        {
+            try
+            {
+                List<FranchiseOutput> items = null;
+                IQueryable<FranchiseEntity> query = _postgreDbContext.Franchises;
+
+                //Применяем фильтры, если они указаны                
+                if (minProfit > 0)
+                {
+                    query = query.Where(q => q.ProfitPrice >= Convert.ToDouble(minProfit)).AsQueryable();
+                }
+                if (maxProfit > 0)
+                {
+                    query = query.Where(q => q.ProfitPrice <= Convert.ToDouble(maxProfit)).AsQueryable();
+                }
+                if (minPriceInvest > 0)
+                {
+                    query = query.Where(q => q.Price >= Convert.ToDouble(minPriceInvest)).AsQueryable();
+                }
+                if (maxPriceInvest > 0)
+                {
+                    query = query.Where(q => q.Price <= Convert.ToDouble(maxPriceInvest)).AsQueryable();
+                }
+                if (!string.IsNullOrEmpty(viewCode))
+                {
+                    query = query.Where(q => q.ViewBusiness.Equals(viewCode)).AsQueryable();
+                }
+                if (!string.IsNullOrEmpty(categoryCode))
+                {
+                    query = query.Where(q => q.Category.Equals(categoryCode)).AsQueryable();
+                }
+                query = query.Where(q => q.IsGarant.Equals(isGarant)).AsQueryable();
+
+                if (query != null)
+                {
+                    if (typeSort.Equals("Asc"))
+                    {
+                        query = query.OrderBy(u => u.Price);
+                    }
+
+                    if (typeSort.Equals("Desc"))
+                    {
+                        query = query.OrderByDescending(u => u.Price);
+                    }
+
+                    items = await query.Select(f => new FranchiseOutput
+                    {
+                        DateCreate = f.DateCreate,
+                        Price = string.Format("{0:0,0}", f.Price),
+                        CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                        DayDeclination = "дня",
+                        Text = f.Text,
+                        TextDoPrice = f.TextDoPrice,
+                        Title = f.Title,
+                        Url = f.Url,
+                        IsGarant = f.IsGarant,
+                        ProfitPrice = f.ProfitPrice,
+                        TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
+                        FranchiseId = f.FranchiseId
+                    }).ToListAsync();
+
+                    foreach (var item in items)
+                    {
+                        item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                    }
+                }
+
+                return items;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }
