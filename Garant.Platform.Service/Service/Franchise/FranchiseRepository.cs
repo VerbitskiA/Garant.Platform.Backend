@@ -38,21 +38,22 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var items = await (from p in _postgreDbContext.Franchises
-                                   select new FranchiseOutput
-                                   {
-                                       DateCreate = p.DateCreate,
-                                       Price = string.Format("{0:0,0}", p.Price),
-                                       CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
-                                       DayDeclination = "дня",
-                                       Text = p.Text,
-                                       TextDoPrice = p.TextDoPrice,
-                                       Title = p.Title,
-                                       Url = p.Url,
-                                       IsGarant = p.IsGarant,
-                                       ProfitPrice = p.ProfitPrice,
-                                       TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
-                                       FranchiseId = p.FranchiseId
-                                   })
+                        where p.IsAccepted == true
+                        select new FranchiseOutput
+                        {
+                            DateCreate = p.DateCreate,
+                            Price = string.Format("{0:0,0}", p.Price),
+                            CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                            DayDeclination = "дня",
+                            Text = p.Text,
+                            TextDoPrice = p.TextDoPrice,
+                            Title = p.Title,
+                            Url = p.Url,
+                            IsGarant = p.IsGarant,
+                            ProfitPrice = p.ProfitPrice,
+                            TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                            FranchiseId = p.FranchiseId
+                        })
                     .ToListAsync();
 
                 foreach (var item in items)
@@ -1294,6 +1295,45 @@ namespace Garant.Platform.Services.Service.Franchise
                 return result;
             }
             
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Метод получит список франшиз, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> GetNotAcceptedFranchisesAsync()
+        {
+            try
+            {
+                var items = await (from p in _postgreDbContext.Franchises
+                        where p.IsAccepted == false && p.IsRejected == false
+                        select new FranchiseOutput
+                        {
+                            DateCreate = p.DateCreate,
+                            Price = string.Format("{0:0,0}", p.Price),
+                            CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                            DayDeclination = "дня",
+                            Text = p.Text,
+                            TextDoPrice = p.TextDoPrice,
+                            Title = p.Title,
+                            Url = p.Url,
+                            IsGarant = p.IsGarant,
+                            ProfitPrice = p.ProfitPrice,
+                            TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                            FranchiseId = p.FranchiseId
+                        })
+                    .ToListAsync();
+
+                return items;
+            }
+
             catch (Exception e)
             {
                 Console.WriteLine(e);

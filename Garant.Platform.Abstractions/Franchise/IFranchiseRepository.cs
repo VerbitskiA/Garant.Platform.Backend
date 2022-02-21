@@ -187,5 +187,11 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <returns>Список категорий.</returns>
         Task<IEnumerable<SubCategoryOutput>> SearchCategoryAsync(string searchText, string categoryCode,
             string categorySysName);
+
+        /// <summary>
+        /// Метод получит список франшиз, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        Task<IEnumerable<FranchiseOutput>> GetNotAcceptedFranchisesAsync();
     }
 }

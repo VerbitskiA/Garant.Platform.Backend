@@ -465,5 +465,27 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод получит список франшиз, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> GetNotAcceptedFranchisesAsync()
+        {
+            try
+            {
+                var result = await _franchiseRepository.GetNotAcceptedFranchisesAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

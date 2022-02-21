@@ -183,5 +183,19 @@ namespace Garant.Platform.Configurator.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод получит список франшиз, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("franchises-not-accepted")]
+        public async Task<IEnumerable<FranchiseOutput>> GetNotAcceptedFranchisesAsync()
+        {
+            var result = await _franchiseService.GetNotAcceptedFranchisesAsync();
+
+            return result;
+        }
     }
 }
