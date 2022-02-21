@@ -471,11 +471,11 @@ namespace Garant.Platform.Services.Service.Franchise
                     var nameFinModelFile = string.Empty;
                     var namePresentFile = string.Empty;
                     var trainingPhotoName = string.Empty;
-                        
+
                     // Если есть изображение логотипа.
                     if (files.Any(c => c.Name.Equals("filesLogo")))
                     {
-                        urlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName;   
+                        urlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName;
                     }
 
                     // Если есть файл финансовой модели.
@@ -720,7 +720,7 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Метод найдет франшизу по Id.
         /// </summary>
@@ -1091,7 +1091,7 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var result = await _postgreDbContext.Franchises
-                    .Where(f => f.Title.ToLower().Contains(searchText.ToLower()) 
+                    .Where(f => f.Title.ToLower().Contains(searchText.ToLower())
                                 || f.ActivityDetail.ToLower().Contains(searchText.ToLower()))
                     .Select(f => new FranchiseOutput
                     {
@@ -1177,7 +1177,7 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Метод получит список заявок по франшизам для вкладки профиля "Уведомления".
         /// <param name="account">Аккаунт.</param>
@@ -1193,13 +1193,13 @@ namespace Garant.Platform.Services.Service.Franchise
                 {
                     throw new NotFoundUserIdException(account);
                 }
-                
+
                 // Получит список заявок пользовтеля.
                 var result = await _postgreDbContext.RequestsFranchises.Where(r => r.UserId.Equals(userId)).ToListAsync();
 
                 return result;
             }
-            
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
@@ -1223,7 +1223,7 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="countRows">Количество объектов.</param>
         /// <param name="isGarant">Покупка через гарант.</param>
         /// <returns>Список франшиз после фильтрации.</returns>
-        public async Task<List<FranchiseOutput>> FilterFranchisesIndependentlyAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant = false)
+        public async Task<List<FranchiseOutput>> FilterFranchisesIndependentlyAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant)
         {
             try
             {
@@ -1257,7 +1257,7 @@ namespace Garant.Platform.Services.Service.Franchise
                 }
                 query = query.Where(q => q.IsGarant.Equals(isGarant)).AsQueryable();
 
-                if (query != null)
+                if (typeSort is not null)
                 {
                     if (typeSort.Equals("Asc"))
                     {
@@ -1268,6 +1268,10 @@ namespace Garant.Platform.Services.Service.Franchise
                     {
                         query = query.OrderByDescending(u => u.GeneralInvest);
                     }
+                }
+
+                if (query is not null)
+                {
 
                     items = await query.Select(f => new FranchiseOutput
                     {
@@ -1289,7 +1293,9 @@ namespace Garant.Platform.Services.Service.Franchise
                     {
                         item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
                     }
+
                 }
+
 
                 return items;
             }

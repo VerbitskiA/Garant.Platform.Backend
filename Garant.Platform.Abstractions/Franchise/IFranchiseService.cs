@@ -75,7 +75,7 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="countRows">Количество объектов.</param>
         /// <param name="isGarant">Покупка через гарант.</param>
         /// <returns>Список франшиз после фильтрации и данные для пагинации..</returns>
-        Task<IndexOutput> FilterFranchisesWithPaginationAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant = false);
+        Task<IndexOutput> FilterFranchisesWithPaginationAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant);
 
         /// <summary>
         /// Метод получит новые франшизы, которые были созданы в текущем месяце.

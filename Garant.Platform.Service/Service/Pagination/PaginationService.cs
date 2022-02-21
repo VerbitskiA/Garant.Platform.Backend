@@ -34,7 +34,7 @@ namespace Garant.Platform.Services.Service.Pagination
             {
                 var countRows = 12;   // Кол-во заданий на странице.
 
-                var franchisesList = await _postgreDbContext.Franchises.OrderBy(o => o.FranchiseId).ToListAsync();
+                var franchisesList = await _postgreDbContext.Franchises.Where(o=>o.IsGarant).OrderBy(o => o.FranchiseId).ToListAsync();
 
                 var count = franchisesList.Count;
                 var items = franchisesList.Take(countRows).ToList();
@@ -78,6 +78,7 @@ namespace Garant.Platform.Services.Service.Pagination
         {
             try
             {
+                //TODO: Не используется, пагинации происходит при фильтрации
                 var franchisesList = await _postgreDbContext.Franchises.OrderBy(o => o.FranchiseId).ToListAsync();
 
                 var count = franchisesList.Count;

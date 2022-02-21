@@ -416,7 +416,7 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="countRows">Количество объектов.</param>
         /// <param name="isGarant">Покупка через гарант.</param>
         /// <returns>Список франшиз после фильтрации и данные для пагинации.</returns>
-        public async Task<IndexOutput> FilterFranchisesWithPaginationAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant = false)
+        public async Task<IndexOutput> FilterFranchisesWithPaginationAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant)
         {
             try
             {
