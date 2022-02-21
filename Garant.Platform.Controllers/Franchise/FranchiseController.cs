@@ -93,8 +93,8 @@ namespace Garant.Platform.Controllers.Franchise
         public async Task<IActionResult> FilterFranchisesWithPaginationAsync([FromBody] FilterFranchisesWithPaginationInput filterInput)
         {
             var result = await _franchiseService.FilterFranchisesWithPaginationAsync(filterInput.TypeSortPrice, filterInput.ViewBusinessesCode, filterInput.CategoryCode,
-                                                                                    filterInput.MinInvestPrice, filterInput.MaxInvestPrice, filterInput.MinProfitPrice,
-                                                                                    filterInput.MaxProfitPrice, filterInput.PageNumber, filterInput.CountRows, filterInput.IsGarant);
+                                                                                    filterInput.MinInvest, filterInput.MaxInvest, filterInput.MinProfit,
+                                                                                    filterInput.MaxProfit, filterInput.PageNumber, filterInput.CountRows, filterInput.IsGarant);
             return Ok(result);
         }
 

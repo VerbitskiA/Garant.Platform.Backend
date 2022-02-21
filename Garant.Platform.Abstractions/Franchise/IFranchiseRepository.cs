@@ -69,15 +69,15 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="typeSort">Тип сортировки цены (по возрастанию или убыванию).</param>
         /// <param name="viewCode">Код вида бизнеса.</param>
         /// <param name="categoryCode">Код категории.</param>
-        /// <param name="minPriceInvest">Сумма инвестиций от.</param>
-        /// <param name="maxPriceInvest">Сумма инвестиций до.</param>
+        /// <param name="minInvest">Сумма инвестиций от.</param>
+        /// <param name="maxInvest">Сумма инвестиций до.</param>
         /// <param name="minProfit">Прибыль от.</param>
         /// <param name="maxProfit">Прибыль до.</param>
         /// <param name="pageNumber">Номер страницы.</param>
         /// <param name="countRows">Количество объектов.</param>
         /// <param name="isGarant">Покупка через гарант.</param>
         /// <returns>Список франшиз после фильтрации.</returns>
-        Task<List<FranchiseOutput>> FilterFranchisesIndependentlyAsync(string typeSort, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant = false);
+        Task<List<FranchiseOutput>> FilterFranchisesIndependentlyAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant = false);
 
         /// <summary>
         /// Метод получит новые франшизы, которые были созданы в текущем месяце.

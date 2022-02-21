@@ -23,22 +23,22 @@
         /// <summary>
         /// Минимальные ивестиции от.
         /// </summary>
-        public double MinInvestPrice { get; set; }
+        public double MinInvest { get; set; }
 
         /// <summary>
         /// Максимальные инвестии до.
         /// </summary>
-        public double MaxInvestPrice { get; set; }        
+        public double MaxInvest { get; set; }        
 
         /// <summary>
         /// Минимальная прибыль в месяц.
         /// </summary>
-        public double MinProfitPrice { get; set; }
+        public double MinProfit { get; set; }
 
         /// <summary>
         /// Максимальная прибыль в месяц.
         /// </summary>
-        public double MaxProfitPrice { get; set; }
+        public double MaxProfit { get; set; }
 
         /// <summary>
         /// Номер страницы
