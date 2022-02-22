@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Configurator.Abstractions;
-using Garant.Platform.Configurator.Enums;
 using Garant.Platform.Configurator.Exceptions;
 using Garant.Platform.Configurator.Models.Output;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Configurator.Output;
+using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.User.Output;
 
 namespace Garant.Platform.Configurator.Services
@@ -21,11 +24,25 @@ namespace Garant.Platform.Configurator.Services
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IConfiguratorRepository _configuratorRepository;
+        private readonly IFranchiseService _franchiseService;
+        private readonly IBusinessService _businessService;
+        private readonly IFranchiseRepository _franchiseRepository;
+        private readonly IBusinessRepository _businessRepository;
 
-        public ConfiguratorService(PostgreDbContext postgreDbContext, IConfiguratorRepository configuratorRepository)
+        public ConfiguratorService(PostgreDbContext postgreDbContext, 
+            IConfiguratorRepository configuratorRepository,
+            IFranchiseService franchiseService,
+            IBusinessService businessService,
+            IFranchiseRepository franchiseRepository,
+            IBusinessRepository businessRepository)
         {
             _postgreDbContext = postgreDbContext;
             _configuratorRepository = configuratorRepository;
+            _franchiseService = franchiseService;
+            _businessService = businessService;
+            _franchiseRepository = franchiseRepository;
+            _businessRepository = businessRepository;
+
         }
 
         /// <summary>
@@ -155,6 +172,70 @@ namespace Garant.Platform.Configurator.Services
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод утвердит карточку. После этого карточка попадает в каталоги.
+        /// </summary>
+        /// <param name="cardId">Id карточки.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <returns>Статус утверждения.</returns>
+        public async Task<bool> AcceptCardAsync(long cardId, string cardType)
+        {
+            try
+            {
+                if (cardId <= 0)
+                {
+                    throw new EmptyCardIdException(cardId);
+                }
+
+                if (string.IsNullOrEmpty(cardType))
+                {
+                    throw new EmptyCardTypeException(cardType);
+                }
+
+                if (cardType.Equals("Franchise"))
+                {
+                    var franchise = await _franchiseService.GetFranchiseAsync(cardId);
+
+                    if (franchise != null)
+                    {
+                        //TODO тут ошибка обновления а вообще это вынести в репозиторий франшиз
+                        franchise.IsAccepted = true;
+                        _postgreDbContext.Franchises.Update(franchise);
+                        await _postgreDbContext.SaveChangesAsync();
+
+                        return true;
+                    }
+                    
+                    return false;
+                }
+                
+                if (cardType.Equals("Business"))
+                {
+                    var business = await _businessService.GetBusinessAsync(cardId);
+                    
+                    if (business != null)
+                    {
+                        business.IsAccepted = true;
+                        await _postgreDbContext.SaveChangesAsync();
+
+                        return true;
+                    }
+                    
+                    return false;
+                }
+
+                return false;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }

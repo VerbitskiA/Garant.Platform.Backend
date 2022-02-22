@@ -45,6 +45,7 @@ namespace Garant.Platform.Tests
         protected BlogRepository BlogRepository;
         protected ConfiguratorRepository ConfiguratorRepository;
         protected ConfiguratorService ConfiguratorService;
+        protected BusinessService BusinessService;
 
         public BaseServiceTest()
         { 
@@ -64,6 +65,7 @@ namespace Garant.Platform.Tests
             UserRepository = new UserRepository(PostgreDbContext, CommonService);
             FranchiseRepository = new FranchiseRepository(PostgreDbContext, UserRepository, CommonService);
             BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
+            BusinessService = new BusinessService(PostgreDbContext, BusinessRepository, FtpService);
             PaginationRepository = new PaginationRepository(PostgreDbContext);
 
             BlogRepository = new BlogRepository(PostgreDbContext, UserRepository);
@@ -79,7 +81,7 @@ namespace Garant.Platform.Tests
             ControlRepository = new ControlRepository(PostgreDbContext);
             ControlService = new ControlService(PostgreDbContext, ControlRepository, UserRepository);
             ConfiguratorRepository = new ConfiguratorRepository(PostgreDbContext);
-            ConfiguratorService = new ConfiguratorService(PostgreDbContext, ConfiguratorRepository);
+            ConfiguratorService = new ConfiguratorService(PostgreDbContext, ConfiguratorRepository, FranchiseService, BusinessService, FranchiseRepository, BusinessRepository);
         }
     }
 }

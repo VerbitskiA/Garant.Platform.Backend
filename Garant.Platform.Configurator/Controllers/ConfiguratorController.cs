@@ -191,9 +191,27 @@ namespace Garant.Platform.Configurator.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("franchises-not-accepted")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
         public async Task<IEnumerable<FranchiseOutput>> GetNotAcceptedFranchisesAsync()
         {
             var result = await _franchiseService.GetNotAcceptedFranchisesAsync();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод утвердит карточку. После этого карточка попадает в каталоги.
+        /// </summary>
+        /// <param name="cardId">Id карточки.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <returns>Статус утверждения.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("accept-card")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<bool> AcceptCardAsync([FromQuery] long cardId, string cardType)
+        {
+            var result = await _configuratorService.AcceptCardAsync(cardId, cardType);
 
             return result;
         }

@@ -193,5 +193,12 @@ namespace Garant.Platform.Abstractions.Franchise
         /// </summary>
         /// <returns>Список франшиз.</returns>
         Task<IEnumerable<FranchiseOutput>> GetNotAcceptedFranchisesAsync();
+
+        /// <summary>
+        /// Метод получит полные данные о франшизе.
+        /// </summary>
+        /// <param name="franchiseId">Id франшизы.</param>
+        /// <returns>Данные франшизы.</returns>
+        Task<FranchiseEntity> GetFullFranchiseAsync(long franchiseId);
     }
 }

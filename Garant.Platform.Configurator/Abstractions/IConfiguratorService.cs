@@ -47,5 +47,13 @@ namespace Garant.Platform.Configurator.Abstractions
         /// </summary>
         /// <returns>Список действий.</returns>
         Task<IEnumerable<BlogActionOutput>> GetBlogActionsAsync();
+
+        /// <summary>
+        /// Метод утвердит карточку. После этого карточка попадает в каталоги.
+        /// </summary>
+        /// <param name="cardId">Id карточки.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <returns>Статус утверждения.</returns>
+        Task<bool> AcceptCardAsync(long cardId, string cardType);
     }
 }
