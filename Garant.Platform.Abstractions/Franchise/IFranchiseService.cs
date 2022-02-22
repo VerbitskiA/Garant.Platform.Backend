@@ -122,7 +122,26 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <summary>
         /// Метод получит список подкатегорий франшиз.
         /// </summary>
+        /// <param name="categoryCode">Код категории, для которой нужно получить список подкатегорий.</param>
+        /// <param name="categorySysName">Системное имя категории, для которой нужно получить список подкатегорий.</param>
         /// <returns>Список подкатегорий.</returns>
-        Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync();
+        Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync(string categoryCode, string categorySysName);
+
+        /// <summary>
+        /// Метод найдет сферы в соответствии с поисковым запросом.
+        /// </summary>
+        /// <param name="searchText">Поисковый запрос.</param>SearchCategoryAsync
+        /// <returns>Список сфер.</returns>
+        Task<IEnumerable<CategoryOutput>> SearchSphereAsync(string searchText);
+
+        /// <summary>
+        /// Метод найдет категории в соответствии с поисковым запросом.
+        /// </summary>
+        /// <param name="searchText">Поисковый запрос.</param>
+        /// <param name="categoryCode">Код сферы.</param>
+        /// <param name="categorySysName">Системное название сферы.</param>
+        /// <returns>Список категорий.</returns>
+        Task<IEnumerable<SubCategoryOutput>> SearchCategoryAsync(string searchText, string categoryCode,
+            string categorySysName);
     }
 }

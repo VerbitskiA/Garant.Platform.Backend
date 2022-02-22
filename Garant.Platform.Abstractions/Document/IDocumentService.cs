@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Garant.Platform.Models.Document.Output;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Abstractions.Document
 {
@@ -68,5 +69,12 @@ namespace Garant.Platform.Abstractions.Document
         /// <param name="documentItemId">Id сделки.</param>
         /// <returns>Список актов покупателя.</returns>
         Task<IEnumerable<DocumentOutput>> GetCustomerActsAsync(long documentItemId);
+
+        /// <summary>
+        /// Метод скачает файл.
+        /// </summary>
+        /// <param name="fileName">Имя файла.</param>
+        /// <returns>Файл для скачивания фронтом.</returns>
+        Task<FileContentResult> DownloadFileAsync(string fileName);
     }
 }

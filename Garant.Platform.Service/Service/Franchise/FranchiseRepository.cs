@@ -493,7 +493,7 @@ namespace Garant.Platform.Services.Service.Franchise
 
                     if (files.Any(c => c.Name.Equals("trainingPhoto")))
                     {
-                        trainingPhotoName = files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName;
+                        trainingPhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("trainingPhoto")).ToArray()[0].FileName;
                     }
 
                     // Создаст новую франшизу.
@@ -1012,7 +1012,8 @@ namespace Garant.Platform.Services.Service.Franchise
                     .Select(fc => new CategoryOutput
                     {
                         CategoryCode = fc.FranchiseCategoryCode,
-                        CategoryName = fc.FranchiseCategoryName
+                        CategoryName = fc.FranchiseCategoryName,
+                        FranchiseCategorySysName = fc.FranchiseCategorySysName
                     })
                     .ToListAsync();
 
@@ -1031,16 +1032,23 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <summary>
         /// Метод получит список подкатегорий франшиз.
         /// </summary>
+        /// <param name="categoryCode">Код категории, для которой нужно получить список подкатегорий.</param>
+        /// <param name="categorySysName">Системное имя категории, для которой нужно получить список подкатегорий.</param>
         /// <returns>Список подкатегорий.</returns>
-        public async Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync()
+        public async Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync(string categoryCode, string categorySysName)
         {
             try
             {
                 var result = await _postgreDbContext.FranchiseSubCategories
+                    .Where(fc => fc.FranchiseCategoryCode.Equals(categoryCode) 
+                                 && fc.FranchiseCategorySysName.Equals(categorySysName))
                     .Select(fc => new SubCategoryOutput
                     {
                         SubCategoryCode = fc.FranchiseSubCategoryCode,
-                        SubCategoryName = fc.FranchiseSubCategoryName
+                        SubCategoryName = fc.FranchiseSubCategoryName,
+                        FranchiseCategoryCode = fc.FranchiseCategoryCode,
+                        FranchiseCategorySysName = fc.FranchiseCategorySysName,
+                        FranchiseSubCategorySysName = fc.FranchiseSubCategorySysName
                     })
                     .ToListAsync();
 
@@ -1301,6 +1309,92 @@ namespace Garant.Platform.Services.Service.Franchise
                 return items;
             }
 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод найдет сферы в соответствии с поисковым запросом.
+        /// </summary>
+        /// <param name="searchText">Поисковый запрос.</param>
+        /// <returns>Список сфер.</returns>
+        public async Task<IEnumerable<CategoryOutput>> SearchSphereAsync(string searchText)
+        {
+            try
+            {
+                IEnumerable<CategoryOutput> result = null;
+                
+                // Если пусто, то вернуть все записи.
+                if (string.IsNullOrEmpty(searchText))
+                {
+                    result = await GetCategoryListAsync();
+
+                    return result;
+                }
+
+                result = await _postgreDbContext.FranchiseCategories
+                    .Where(fc => fc.FranchiseCategoryName.ToLower().Contains(searchText.ToLower()))
+                    .Select(fc => new CategoryOutput
+                    {
+                        CategoryCode = fc.FranchiseCategoryCode,
+                        CategoryName = fc.FranchiseCategoryName,
+                        FranchiseCategorySysName = fc.FranchiseCategorySysName
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод найдет категории в соответствии с поисковым запросом.
+        /// </summary>
+        /// <param name="searchText">Поисковый запрос.</param>
+        /// <param name="categoryCode">Код сферы.</param>
+        /// <param name="categorySysName">Системное название сферы.</param>
+        /// <returns>Список категорий.</returns>
+        public async Task<IEnumerable<SubCategoryOutput>> SearchCategoryAsync(string searchText, string categoryCode, string categorySysName)
+        {
+            try
+            {
+                IEnumerable<SubCategoryOutput> result = null;
+                
+                // Если пусто, то вернуть все записи.
+                if (string.IsNullOrEmpty(searchText) 
+                    && !string.IsNullOrEmpty(categoryCode) 
+                    && !string.IsNullOrEmpty(categorySysName))
+                {
+                    result = await GetSubCategoryListAsync(categoryCode, categorySysName);
+
+                    return result;
+                }
+
+                result = await _postgreDbContext.FranchiseSubCategories
+                    .Where(fc => fc.FranchiseSubCategoryName.ToLower().Contains(searchText.ToLower()))
+                    .Select(fc => new SubCategoryOutput
+                    {
+                        SubCategoryCode = fc.FranchiseSubCategoryCode,
+                        SubCategoryName = fc.FranchiseSubCategoryName,
+                        FranchiseSubCategorySysName = fc.FranchiseSubCategorySysName
+                    })
+                    .ToListAsync();
+
+                return result;
+            }
+            
             catch (Exception e)
             {
                 Console.WriteLine(e);

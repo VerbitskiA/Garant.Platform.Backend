@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Base;
@@ -77,7 +78,10 @@ namespace Garant.Platform.Controllers.Franchise
         [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
         public async Task<IActionResult> FilterFranchisesAsync([FromBody] FilterInput fitFilterInput)
         {
-            var result = await _franchiseService.FilterFranchisesAsync(fitFilterInput.TypeSortPrice, fitFilterInput.ProfitMinPrice, fitFilterInput.ProfitMaxPrice, fitFilterInput.ViewCode, fitFilterInput.CategoryCode, fitFilterInput.MinPriceInvest, fitFilterInput.MaxPriceInvest, fitFilterInput.IsGarant);
+            var result = await _franchiseService.FilterFranchisesAsync(fitFilterInput.TypeSortPrice,
+                fitFilterInput.ProfitMinPrice, fitFilterInput.ProfitMaxPrice, fitFilterInput.ViewCode,
+                fitFilterInput.CategoryCode, fitFilterInput.MinPriceInvest, fitFilterInput.MaxPriceInvest,
+                fitFilterInput.IsGarant);
 
             return Ok(result);
         }
@@ -135,9 +139,12 @@ namespace Garant.Platform.Controllers.Franchise
         /// <returns>Данные франшизы.</returns>
         [HttpPost, Route("create-update-franchise")]
         [ProducesResponseType(200, Type = typeof(CreateUpdateFranchiseOutput))]
-        public async Task<IActionResult> CreateUpdateFranchiseAsync([FromForm] IFormCollection franchiseFilesInput, [FromForm] string franchiseDataInput)
+        public async Task<IActionResult> CreateUpdateFranchiseAsync([FromForm] IFormCollection franchiseFilesInput,
+            [FromForm] string franchiseDataInput)
         {
-            var result = await _franchiseService.CreateUpdateFranchiseAsync(franchiseFilesInput, franchiseDataInput, GetUserName());
+            var result =
+                await _franchiseService.CreateUpdateFranchiseAsync(franchiseFilesInput, franchiseDataInput,
+                    GetUserName());
 
             return Ok(result);
         }
@@ -174,8 +181,10 @@ namespace Garant.Platform.Controllers.Franchise
         /// Метод получит список категорий франшиз.
         /// </summary>
         /// <returns>Список категорий.</returns>
-        [HttpPost]
+        [AllowAnonymous]
+        [HttpGet]
         [Route("category-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<CategoryOutput>))]
         public async Task<IActionResult> GetCategoryListAsync()
         {
             var result = await _franchiseService.GetCategoryListAsync();
@@ -186,14 +195,50 @@ namespace Garant.Platform.Controllers.Franchise
         /// <summary>
         /// Метод получит список подкатегорий франшиз.
         /// </summary>
+        /// <param name="categoryCode">Код категории, для которой нужно получить список подкатегорий.</param>
+        /// <param name="categorySysName">Системное имя категории, для которой нужно получить список подкатегорий.</param>
         /// <returns>Список подкатегорий.</returns>
-        [HttpPost]
+        [AllowAnonymous]
+        [HttpGet]
         [Route("subcategory-list")]
-        public async Task<IActionResult> GetSubCategoryListAsync()
+        public async Task<IActionResult> GetSubCategoryListAsync([FromQuery] [Required] string categoryCode,
+            [Required] string categorySysName)
         {
-            var result = await _franchiseService.GetSubCategoryListAsync();
+            var result = await _franchiseService.GetSubCategoryListAsync(categoryCode, categorySysName);
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод найдет сферы в соответствии с поисковым запросом.
+        /// </summary>
+        /// <param name="searchText">Поисковый запрос.</param>
+        /// <returns>Список сфер.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("search-sphere")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<CategoryOutput>))]
+        public async Task<IEnumerable<CategoryOutput>> SearchSphereAsync([FromQuery] [Required] string searchText)
+        {
+            var result = await _franchiseService.SearchSphereAsync(searchText);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод найдет категории в соответствии с поисковым запросом.
+        /// </summary>
+        /// <param name="searchText">Поисковый запрос.</param>
+        /// <returns>Список сфер.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("search-category")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<SubCategoryOutput>))]
+        public async Task<IEnumerable<SubCategoryOutput>> SearchCategoryAsync([FromQuery] [Required] string searchText, string categoryCode, [Required] string categorySysName)
+        {
+            var result = await _franchiseService.SearchCategoryAsync(searchText, categoryCode, categorySysName);
+
+            return result;
         }
     }
 }
