@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Models.Business.Output;
+using Garant.Platform.Models.Pagination.Output;
 using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Abstractions.Business
@@ -77,6 +78,24 @@ namespace Garant.Platform.Abstractions.Business
         /// <param name="isGarant">Флаг гаранта.</param>
         /// <returns>Список бизнесов после фильтрации.</returns>
         Task<IEnumerable<BusinessOutput>> FilterBusinessesAsync(string typeSortPrice, double profitMinPrice, double profitMaxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false);
+
+        /// <summary>
+        /// Метод фильтрует бизнес по параметрам с учётом пагинации.
+        /// </summary>
+        /// <param name="typeSortPrice">Тип сортировки цены (убыванию, возрастанию).</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="categoryCode">Код вида бизнеса.</param>
+        /// <param name="profitMinPrice">Прибыль в месяц от.</param>
+        /// <param name="profitMaxPrice">прибыль в месяц до.</param>
+        /// <param name="pageNumber">Номер страницы.</param>
+        /// <param name="countRows">Количество записей.</param>
+        /// <param name="isGarant">Флаг гаранта.</param>
+        /// <returns>Список бизнесов после фильтрации и данные пагинации.</returns>
+        Task<IndexOutput> FilterBusinessesWithPaginationAsync(string typeSortPrice, double minPrice, double maxPrice,
+                                                                           string city, string categoryCode, double profitMinPrice,
+                                                                           double profitMaxPrice, int pageNumber, int countRows, bool isGarant = true);
 
         /// <summary>
         /// Метод получит новый бизнес, который был создан в текущем месяце.

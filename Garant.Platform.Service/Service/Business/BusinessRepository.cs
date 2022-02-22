@@ -69,7 +69,7 @@ namespace Garant.Platform.Services.Service.Business
                     {
                         userId = findUser.UserId;
                     }
-                    
+
                     // Найдет бизнес с таким названием.
                     var findBusiness = await GetBusinessAsync(businessInput.BusinessName);
                     var urls = await _commonService.JoinArrayWithDelimeterAsync(urlsBusiness);
@@ -676,8 +676,9 @@ namespace Garant.Platform.Services.Service.Business
                 List<BusinessOutput> items = null;
                 IQueryable<BusinessOutput> query = null;
 
+                //TODO: какая-то путаница с параметрами, сортировка по Id происходит
                 // Сортировать на возрастанию цены.
-                if (typeSortPrice.Equals("Asc")) 
+                if (typeSortPrice.Equals("Asc"))
                 {
                     query = (from f in _postgreDbContext.Businesses
                              where f.Category.Equals(categoryCode)
@@ -707,26 +708,26 @@ namespace Garant.Platform.Services.Service.Business
                 else if (typeSortPrice.Equals("Desc"))
                 {
                     query = (from f in _postgreDbContext.Businesses
-                            where f.Category.Equals(categoryCode)
-                                  && (f.Price <= profitMaxPrice && f.Price >= profitMinPrice)
-                                  && (f.ProfitPrice >= minPriceInvest && f.ProfitPrice <= maxPriceInvest)
-                                  && f.IsGarant == isGarant
-                            orderby f.BusinessId descending 
-                            select new BusinessOutput
-                            {
-                                DateCreate = f.DateCreate,
-                                Price = string.Format("{0:0,0}", f.Price),
-                                CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                                DayDeclination = "дня",
-                                Text = f.Text,
-                                TextDoPrice = f.TextDoPrice,
-                                BusinessName = f.BusinessName,
-                                Url = f.UrlsBusiness,
-                                IsGarant = f.IsGarant,
-                                ProfitPrice = f.ProfitPrice,
-                                TotalInvest = string.Format("{0:0,0}", f.ProfitPrice),
-                                BusinessId = f.BusinessId
-                            })
+                             where f.Category.Equals(categoryCode)
+                                   && (f.Price <= profitMaxPrice && f.Price >= profitMinPrice)
+                                   && (f.ProfitPrice >= minPriceInvest && f.ProfitPrice <= maxPriceInvest)
+                                   && f.IsGarant == isGarant
+                             orderby f.BusinessId descending
+                             select new BusinessOutput
+                             {
+                                 DateCreate = f.DateCreate,
+                                 Price = string.Format("{0:0,0}", f.Price),
+                                 CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                 DayDeclination = "дня",
+                                 Text = f.Text,
+                                 TextDoPrice = f.TextDoPrice,
+                                 BusinessName = f.BusinessName,
+                                 Url = f.UrlsBusiness,
+                                 IsGarant = f.IsGarant,
+                                 ProfitPrice = f.ProfitPrice,
+                                 TotalInvest = string.Format("{0:0,0}", f.ProfitPrice),
+                                 BusinessId = f.BusinessId
+                             })
                         .AsQueryable();
                 }
 
@@ -816,7 +817,7 @@ namespace Garant.Platform.Services.Service.Business
             try
             {
                 var result = await _postgreDbContext.Businesses
-                    .Where(f => f.BusinessName.ToLower().Contains(searchText.ToLower()) 
+                    .Where(f => f.BusinessName.ToLower().Contains(searchText.ToLower())
                                 || f.ActivityDetail.ToLower().Contains(searchText.ToLower()))
                     .Select(f => new BusinessOutput
                     {
@@ -915,13 +916,111 @@ namespace Garant.Platform.Services.Service.Business
                 {
                     throw new NotFoundUserIdException(account);
                 }
-                
+
                 // Получит список заявок пользовтеля.
                 var result = await _postgreDbContext.RequestsBusinesses.Where(r => r.UserId.Equals(userId)).ToListAsync();
 
                 return result;
             }
-            
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод применяет фильтры независимо друг от друга.
+        /// </summary>
+        /// <param name="typeSortPrice">Тип сортировки цены (убыванию, возрастанию).</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="categoryCode">Код категории.</param>        
+        /// <param name="minProfit">Прибыль в месяц от.</param>
+        /// <param name="maxProfit">Прибыль в месяц до.</param>
+        /// <param name="isGarant">Флаг гаранта.</param>
+        /// <returns>Список бизнесов после фильтрации.</returns>
+        public async Task<List<BusinessOutput>> FilterBusinessesIndependentlyAsync(string typeSortPrice, double minPrice, double maxPrice,
+                                                                                   string city, string categoryCode, double minProfit,
+                                                                                   double maxProfit, bool isGarant = true)
+        {
+            try
+            {
+                List<BusinessOutput> items = null;
+                IQueryable<BusinessEntity> query = _postgreDbContext.Businesses;
+
+                //Применяем фильтры, если они указаны                
+                if (minProfit > 0)
+                {
+                    query = query.Where(q => q.ProfitPrice >= Convert.ToDouble(minProfit)).AsQueryable();
+                }
+                if (maxProfit > 0)
+                {
+                    query = query.Where(q => q.ProfitPrice <= Convert.ToDouble(maxProfit)).AsQueryable();
+                }
+                if (minPrice > 0)
+                {
+                    query = query.Where(q => q.Price >= Convert.ToDouble(minPrice)).AsQueryable();
+                }
+                if (maxPrice > 0)
+                {
+                    query = query.Where(q => q.Price <= Convert.ToDouble(maxPrice)).AsQueryable();
+                }
+                if (!string.IsNullOrEmpty(city))
+                {
+                    query = query.Where(q => q.BusinessCity.Equals(city)).AsQueryable();
+                }
+                if (!string.IsNullOrEmpty(categoryCode))
+                {
+                    query = query.Where(q => q.Category.Equals(categoryCode)).AsQueryable();
+                }
+                query = query.Where(q => q.IsGarant.Equals(isGarant)).AsQueryable();
+
+                if (typeSortPrice is not null)
+                {
+                    if (typeSortPrice.Equals("Asc"))
+                    {
+                        query = query.OrderBy(u => u.Price);
+                    }
+
+                    if (typeSortPrice.Equals("Desc"))
+                    {
+                        query = query.OrderByDescending(u => u.Price);
+                    }
+                                       
+                }
+
+                if (query is not null)
+                {
+                    items = await query.Select(f => new BusinessOutput
+                    {
+                        DateCreate = f.DateCreate,
+                        Price = string.Format("{0:0,0}", f.Price),
+                        CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                        DayDeclination = "дня",
+                        Text = f.Text,
+                        TextDoPrice = f.TextDoPrice,
+                        BusinessName = f.BusinessName,
+                        Url = f.UrlsBusiness,
+                        IsGarant = f.IsGarant,
+                        ProfitPrice = f.ProfitPrice,
+                        TotalInvest = string.Format("{0:0,0}", f.ProfitPrice),
+                        BusinessId = f.BusinessId
+                    }).ToListAsync();
+
+                    foreach (var item in items)
+                    {
+                        item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                    }
+                }                
+
+                return items;
+            }
+
             catch (Exception e)
             {
                 Console.WriteLine(e);

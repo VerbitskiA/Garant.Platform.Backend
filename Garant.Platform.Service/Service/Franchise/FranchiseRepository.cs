@@ -248,6 +248,7 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <returns>Список франшиз после фильтрации.</returns>
         public async Task<List<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice, double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false)
         {
+            //Убрать, если не используется, фильтрация происходит с пагинацией.
             try
             {
                 List<FranchiseOutput> items = null;
@@ -471,11 +472,11 @@ namespace Garant.Platform.Services.Service.Franchise
                     var nameFinModelFile = string.Empty;
                     var namePresentFile = string.Empty;
                     var trainingPhotoName = string.Empty;
-                        
+
                     // Если есть изображение логотипа.
                     if (files.Any(c => c.Name.Equals("filesLogo")))
                     {
-                        urlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName;   
+                        urlLogo = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesLogo")).ToArray()[0].FileName;
                     }
 
                     // Если есть файл финансовой модели.
@@ -720,7 +721,7 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Метод найдет франшизу по Id.
         /// </summary>
@@ -1099,7 +1100,7 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var result = await _postgreDbContext.Franchises
-                    .Where(f => f.Title.ToLower().Contains(searchText.ToLower()) 
+                    .Where(f => f.Title.ToLower().Contains(searchText.ToLower())
                                 || f.ActivityDetail.ToLower().Contains(searchText.ToLower()))
                     .Select(f => new FranchiseOutput
                     {
@@ -1185,7 +1186,7 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Метод получит список заявок по франшизам для вкладки профиля "Уведомления".
         /// <param name="account">Аккаунт.</param>
@@ -1201,13 +1202,113 @@ namespace Garant.Platform.Services.Service.Franchise
                 {
                     throw new NotFoundUserIdException(account);
                 }
-                
+
                 // Получит список заявок пользовтеля.
                 var result = await _postgreDbContext.RequestsFranchises.Where(r => r.UserId.Equals(userId)).ToListAsync();
 
                 return result;
             }
-            
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод фильтрует франшизы с учётом пагинации.
+        /// </summary>
+        /// <param name="typeSort">Тип сортировки цены (по возрастанию или убыванию).</param>
+        /// <param name="viewCode">Код вида бизнеса.</param>
+        /// <param name="categoryCode">Код категории.</param>
+        /// <param name="minInvest">Сумма инвестиций от.</param>
+        /// <param name="maxInvest">Сумма инвестиций до.</param>
+        /// <param name="minProfit">Прибыль от.</param>
+        /// <param name="maxProfit">Прибыль до.</param>
+        /// <param name="pageNumber">Номер страницы.</param>
+        /// <param name="countRows">Количество объектов.</param>
+        /// <param name="isGarant">Покупка через гарант.</param>
+        /// <returns>Список франшиз после фильтрации.</returns>
+        public async Task<List<FranchiseOutput>> FilterFranchisesIndependentlyAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant = true)
+        {
+            try
+            {
+                List<FranchiseOutput> items = null;
+                IQueryable<FranchiseEntity> query = _postgreDbContext.Franchises;
+
+                //Применяем фильтры, если они указаны                
+                if (minProfit > 0)
+                {
+                    query = query.Where(q => q.ProfitPrice >= Convert.ToDouble(minProfit)).AsQueryable();
+                }
+                if (maxProfit > 0)
+                {
+                    query = query.Where(q => q.ProfitPrice <= Convert.ToDouble(maxProfit)).AsQueryable();
+                }
+                if (minInvest > 0)
+                {
+                    query = query.Where(q => q.GeneralInvest >= Convert.ToDouble(minInvest)).AsQueryable();
+                }
+                if (maxInvest > 0)
+                {
+                    query = query.Where(q => q.GeneralInvest <= Convert.ToDouble(maxInvest)).AsQueryable();
+                }
+                if (!string.IsNullOrEmpty(viewCode))
+                {
+                    query = query.Where(q => q.ViewBusiness.Equals(viewCode)).AsQueryable();
+                }
+                if (!string.IsNullOrEmpty(categoryCode))
+                {
+                    query = query.Where(q => q.Category.Equals(categoryCode)).AsQueryable();
+                }
+                query = query.Where(q => q.IsGarant.Equals(isGarant)).AsQueryable();
+
+                if (typeSort is not null)
+                {
+                    if (typeSort.Equals("Asc"))
+                    {
+                        query = query.OrderBy(u => u.GeneralInvest);
+                    }
+
+                    if (typeSort.Equals("Desc"))
+                    {
+                        query = query.OrderByDescending(u => u.GeneralInvest);
+                    }
+                }
+
+                if (query is not null)
+                {
+
+                    items = await query.Select(f => new FranchiseOutput
+                    {
+                        DateCreate = f.DateCreate,
+                        Price = string.Format("{0:0,0}", f.Price),
+                        CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                        DayDeclination = "дня",
+                        Text = f.Text,
+                        TextDoPrice = f.TextDoPrice,
+                        Title = f.Title,
+                        Url = f.Url,
+                        IsGarant = f.IsGarant,
+                        ProfitPrice = f.ProfitPrice,
+                        TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
+                        FranchiseId = f.FranchiseId
+                    }).ToListAsync();
+
+                    foreach (var item in items)
+                    {
+                        item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                    }
+
+                }
+
+
+                return items;
+            }
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
