@@ -999,5 +999,77 @@ namespace Garant.Platform.Services.Service.Business
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод обновит поле отклонения карточки бизнеса
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        public async Task<bool> UpdateRejectedBusinessAsync(long businessId, string comment)
+        {
+            try
+            {
+                var result = await (from b in _postgreDbContext.Businesses
+                        where b.BusinessId == businessId
+                        select new BusinessOutput
+                        {
+                            ActivityDetail = b.ActivityDetail,
+                            ActivityPhotoName = b.ActivityPhotoName,
+                            Address = b.Address,
+                            Assets = b.Assets,
+                            AssetsPhotoName = b.AssetsPhotoName,
+                            BusinessAge = b.BusinessAge,
+                            BusinessId = b.BusinessId,
+                            BusinessName = b.BusinessName,
+                            EmployeeCountYear = b.EmployeeCountYear,
+                            Form = b.Form,
+                            Status = b.Status,
+                            Price = string.Format("{0:0,0}", b.Price),
+                            UrlsBusiness = b.UrlsBusiness,
+                            Url = b.UrlsBusiness,
+                            TurnPrice = b.TurnPrice,
+                            ProfitPrice = b.ProfitPrice,
+                            Payback = b.Payback,
+                            Profitability = b.Profitability,
+                            InvestPrice = b.InvestPrice,
+                            Text = b.Text,
+                            Share = b.Share,
+                            Site = b.Site,
+                            Peculiarity = b.Peculiarity,
+                            NameFinModelFile = b.NameFinModelFile,
+                            ReasonsSale = b.ReasonsSale,
+                            ReasonsSalePhotoName = b.ReasonsSalePhotoName,
+                            UrlVideo = b.UrlVideo,
+                            IsGarant = b.IsGarant,
+                            UserId = b.UserId,
+                            DateCreate = b.DateCreate,
+                            Category = b.Category,
+                            SubCategory = b.SubCategory
+                        })
+                    .FirstOrDefaultAsync();
+
+                if (result != null)
+                {
+                    result.IsRejected = true;
+                    result.IsAccepted = false;
+                    result.CommentRejection = comment;
+                    _postgreDbContext.Businesses.Update(result);
+                    await _postgreDbContext.SaveChangesAsync();
+
+                    return true;
+                }
+
+                return false;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

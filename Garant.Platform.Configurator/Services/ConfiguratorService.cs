@@ -214,5 +214,57 @@ namespace Garant.Platform.Configurator.Services
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод отклонит публикацию карточки. 
+        /// </summary>
+        /// <param name="cardId">Id карточки.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        public async Task<bool> RejectCardAsync(long cardId, string cardType, string comment)
+        {
+            try
+            {
+                var resultStatus = false;
+                
+                if (cardId <= 0)
+                {
+                    throw new EmptyCardIdException(cardId);
+                }
+
+                if (string.IsNullOrEmpty(cardType))
+                {
+                    throw new EmptyCardTypeException(cardType);
+                }
+
+                if (string.IsNullOrEmpty(comment))
+                {
+                    throw new EmptyCommentRejectionException();
+                }
+                
+                // Отклонит карточку франшизы.
+                if (cardType.Equals("Franchise"))
+                {
+                    resultStatus = await _franchiseRepository.UpdateRejectedFranchiseAsync(cardId, comment);
+                }
+                
+                // Отклонит карточку бизнеса.
+                if (cardType.Equals("Business"))
+                {
+                    resultStatus = await _businessRepository.UpdateRejectedBusinessAsync(cardId, comment);
+                }
+
+                return resultStatus;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

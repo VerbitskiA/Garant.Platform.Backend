@@ -200,5 +200,13 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="franchiseId">Id франшизы.</param>
         /// <returns>Статус одобрения.</returns>
         Task<bool> UpdateAcceptedFranchiseAsync(long franchiseId);
+
+        /// <summary>
+        /// Метод обновит поле отклонения карточки франшизы.
+        /// </summary>
+        /// <param name="franchiseId">Id франшизы.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        Task<bool> UpdateRejectedFranchiseAsync(long cardId, string comment);
     }
 }

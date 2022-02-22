@@ -140,5 +140,13 @@ namespace Garant.Platform.Abstractions.Business
         /// <param name="businessId">Id бизнеса.</param>
         /// <returns>Статус одобрения.</returns>
         Task<bool> UpdateAcceptedBusinessAsync(long businessId);
+
+        /// <summary>
+        /// Метод обновит поле отклонения карточки бизнеса
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        Task<bool> UpdateRejectedBusinessAsync(long businessId, string comment);
     }
 }

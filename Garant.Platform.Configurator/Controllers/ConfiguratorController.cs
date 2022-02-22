@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.Franchise;
@@ -209,9 +210,26 @@ namespace Garant.Platform.Configurator.Controllers
         [HttpGet]
         [Route("accept-card")]
         [ProducesResponseType(200, Type = typeof(bool))]
-        public async Task<bool> AcceptCardAsync([FromQuery] long cardId, string cardType)
+        public async Task<bool> AcceptCardAsync([FromQuery] [Required] long cardId, [Required] string cardType)
         {
             var result = await _configuratorService.AcceptCardAsync(cardId, cardType);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод отклонит публикацию карточки. 
+        /// </summary>
+        /// <param name="cardId">Id карточки.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("reject-card")]
+        public async Task<bool> RejectCardAsync([FromQuery] [Required] long cardId, [Required] string cardType, [Required] string comment)
+        {
+            var result = await _configuratorService.RejectCardAsync(cardId, cardType, comment);
 
             return result;
         }

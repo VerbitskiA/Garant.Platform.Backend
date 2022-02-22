@@ -55,5 +55,14 @@ namespace Garant.Platform.Configurator.Abstractions
         /// <param name="cardType">Тип карточки.</param>
         /// <returns>Статус утверждения.</returns>
         Task<bool> AcceptCardAsync(long cardId, string cardType);
+
+        /// <summary>
+        /// Метод отклонит публикацию карточки. 
+        /// </summary>
+        /// <param name="cardId">Id карточки.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        Task<bool> RejectCardAsync(long cardId, string cardType, string comment);
     }
 }
