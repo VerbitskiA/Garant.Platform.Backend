@@ -12,7 +12,6 @@ using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Configurator.Output;
-using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.User.Output;
 
 namespace Garant.Platform.Configurator.Services
@@ -24,22 +23,16 @@ namespace Garant.Platform.Configurator.Services
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IConfiguratorRepository _configuratorRepository;
-        private readonly IFranchiseService _franchiseService;
-        private readonly IBusinessService _businessService;
         private readonly IFranchiseRepository _franchiseRepository;
         private readonly IBusinessRepository _businessRepository;
 
         public ConfiguratorService(PostgreDbContext postgreDbContext, 
             IConfiguratorRepository configuratorRepository,
-            IFranchiseService franchiseService,
-            IBusinessService businessService,
             IFranchiseRepository franchiseRepository,
             IBusinessRepository businessRepository)
         {
             _postgreDbContext = postgreDbContext;
             _configuratorRepository = configuratorRepository;
-            _franchiseService = franchiseService;
-            _businessService = businessService;
             _franchiseRepository = franchiseRepository;
             _businessRepository = businessRepository;
 
@@ -186,6 +179,8 @@ namespace Garant.Platform.Configurator.Services
         {
             try
             {
+                var resultStatus = false;
+                
                 if (cardId <= 0)
                 {
                     throw new EmptyCardIdException(cardId);
@@ -196,39 +191,19 @@ namespace Garant.Platform.Configurator.Services
                     throw new EmptyCardTypeException(cardType);
                 }
 
+                // Одобрит карточку франшизы.
                 if (cardType.Equals("Franchise"))
                 {
-                    var franchise = await _franchiseService.GetFranchiseAsync(cardId);
-
-                    if (franchise != null)
-                    {
-                        //TODO тут ошибка обновления а вообще это вынести в репозиторий франшиз
-                        franchise.IsAccepted = true;
-                        _postgreDbContext.Franchises.Update(franchise);
-                        await _postgreDbContext.SaveChangesAsync();
-
-                        return true;
-                    }
-                    
-                    return false;
+                    resultStatus = await _franchiseRepository.UpdateAcceptedFranchiseAsync(cardId);
                 }
                 
+                // Одобрит карточку бизнеса.
                 if (cardType.Equals("Business"))
                 {
-                    var business = await _businessService.GetBusinessAsync(cardId);
-                    
-                    if (business != null)
-                    {
-                        business.IsAccepted = true;
-                        await _postgreDbContext.SaveChangesAsync();
-
-                        return true;
-                    }
-                    
-                    return false;
+                    resultStatus = await _businessRepository.UpdateAcceptedBusinessAsync(cardId);
                 }
 
-                return false;
+                return resultStatus;
             }
             
             catch (Exception e)

@@ -1360,30 +1360,14 @@ namespace Garant.Platform.Services.Service.Franchise
         }
 
         /// <summary>
-        /// Метод получит полные данные о франшизе.
+        /// Метод обновит поле одобрения карточки франшизы.
         /// </summary>
         /// <param name="franchiseId">Id франшизы.</param>
-        /// <returns>Данные франшизы.</returns>
-        public async Task<FranchiseEntity> GetFullFranchiseAsync(long franchiseId)
+        /// <returns>Статус одобрения.</returns>
+        public async Task<bool> UpdateAcceptedFranchiseAsync(long franchiseId)
         {
             try
             {
-                // Найдет кто создал франшизу.
-                var userId = await _postgreDbContext.Franchises
-                    .Where(f => f.FranchiseId == franchiseId)
-                    .Select(f => f.UserId)
-                    .FirstOrDefaultAsync();
-
-                // Найдет фио пользователя, создавшего франшизу.
-                var fio = await _postgreDbContext.Users
-                    .Where(u => u.Id.Equals(userId))
-                    .Select(u => new FranchiseOutput
-                    {
-                        FullName = (u.LastName ?? string.Empty) + " " + (u.FirstName ?? string.Empty) + " " +
-                                   (u.Patronymic ?? string.Empty)
-                    })
-                    .FirstOrDefaultAsync();
-
                 var result = await (from f in _postgreDbContext.Franchises
                         where f.FranchiseId == franchiseId
                         select new FranchiseEntity
@@ -1430,7 +1414,16 @@ namespace Garant.Platform.Services.Service.Franchise
                         })
                     .FirstOrDefaultAsync();
 
-                return result;
+                if (result != null)
+                {
+                    result.IsAccepted = true;
+                    _postgreDbContext.Franchises.Update(result);
+                    await _postgreDbContext.SaveChangesAsync();
+
+                    return true;
+                }
+
+                return false;
             }
 
             catch (Exception e)

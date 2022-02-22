@@ -133,5 +133,12 @@ namespace Garant.Platform.Abstractions.Business
         /// </summary>
         /// <returns>Список заявок.</returns>
         Task<IEnumerable<RequestBusinessEntity>> GetBusinessRequestsAsync(string account);
+
+        /// <summary>
+        /// Метод обновит поле одобрения карточки бизнеса.
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <returns>Статус одобрения.</returns>
+        Task<bool> UpdateAcceptedBusinessAsync(long businessId);
     }
 }
