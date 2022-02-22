@@ -326,7 +326,7 @@ namespace Garant.Platform.Services.Service.Business
         /// <returns>Список бизнесов после фильтрации и данные для пагинации.</returns>
         public async Task<IndexOutput> FilterBusinessesWithPaginationAsync(string typeSortPrice, double minPrice, double maxPrice, 
                                                                            string city, string categoryCode, double profitMinPrice, 
-                                                                           double profitMaxPrice, int pageNumber, int countRows, bool isGarant = false)
+                                                                           double profitMaxPrice, int pageNumber, int countRows, bool isGarant = true)
         {
             try
             {

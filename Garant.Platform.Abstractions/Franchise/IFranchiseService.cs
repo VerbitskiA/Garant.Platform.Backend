@@ -59,7 +59,7 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="minPriceInvest">Сумма инвестиций от.</param>
         /// <param name="maxPriceInvest">Сумма инвестиций до.</param>
         /// <returns>Список франшиз после фильтрации.</returns>
-        Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice, double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false);
+        Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice, double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = true);
 
         /// <summary>
         /// Метод фильтрует франшизы с учётом пагинации.

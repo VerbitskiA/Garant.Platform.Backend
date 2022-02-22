@@ -118,7 +118,7 @@ namespace Garant.Platform.Abstractions.Business
         /// <returns>Список бизнесов после фильтрации.</returns>
         Task<List<BusinessOutput>> FilterBusinessesIndependentlyAsync(string typeSortPrice, double minPrice, double maxPrice,
                                                                                    string city, string categoryCode, double minProfit,
-                                                                                   double maxProfit, bool isGarant = false);
+                                                                                   double maxProfit, bool isGarant = true);
 
         /// <summary>
         /// Метод получит новый бизнес, который был создан в текущем месяце.

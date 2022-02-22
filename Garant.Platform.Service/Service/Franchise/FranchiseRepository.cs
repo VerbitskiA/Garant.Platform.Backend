@@ -248,6 +248,7 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <returns>Список франшиз после фильтрации.</returns>
         public async Task<List<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice, double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false)
         {
+            //Убрать, если не используется, фильтрация происходит с пагинацией.
             try
             {
                 List<FranchiseOutput> items = null;
@@ -1223,7 +1224,7 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="countRows">Количество объектов.</param>
         /// <param name="isGarant">Покупка через гарант.</param>
         /// <returns>Список франшиз после фильтрации.</returns>
-        public async Task<List<FranchiseOutput>> FilterFranchisesIndependentlyAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant)
+        public async Task<List<FranchiseOutput>> FilterFranchisesIndependentlyAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant = true)
         {
             try
             {

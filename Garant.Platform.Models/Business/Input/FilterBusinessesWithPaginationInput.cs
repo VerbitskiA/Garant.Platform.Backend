@@ -33,12 +33,12 @@
         /// <summary>
         /// Минимальная прибыль в месяц.
         /// </summary>
-        public double MinProfitPrice { get; set; }
+        public double MinProfit { get; set; }
 
         /// <summary>
         /// Максимальная прибыль в месяц.
         /// </summary>
-        public double MaxProfitPrice { get; set; }
+        public double MaxProfit { get; set; }
 
         /// <summary>
         /// Номер страницы

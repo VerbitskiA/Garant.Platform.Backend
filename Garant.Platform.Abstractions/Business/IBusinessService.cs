@@ -95,7 +95,7 @@ namespace Garant.Platform.Abstractions.Business
         /// <returns>Список бизнесов после фильтрации и данные пагинации.</returns>
         Task<IndexOutput> FilterBusinessesWithPaginationAsync(string typeSortPrice, double minPrice, double maxPrice,
                                                                            string city, string categoryCode, double profitMinPrice,
-                                                                           double profitMaxPrice, int pageNumber, int countRows, bool isGarant = false);
+                                                                           double profitMaxPrice, int pageNumber, int countRows, bool isGarant = true);
 
         /// <summary>
         /// Метод получит новый бизнес, который был создан в текущем месяце.

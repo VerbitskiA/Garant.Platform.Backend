@@ -946,7 +946,7 @@ namespace Garant.Platform.Services.Service.Business
         /// <returns>Список бизнесов после фильтрации.</returns>
         public async Task<List<BusinessOutput>> FilterBusinessesIndependentlyAsync(string typeSortPrice, double minPrice, double maxPrice,
                                                                                    string city, string categoryCode, double minProfit,
-                                                                                   double maxProfit, bool isGarant = false)
+                                                                                   double maxProfit, bool isGarant = true)
         {
             try
             {
@@ -980,7 +980,7 @@ namespace Garant.Platform.Services.Service.Business
                 }
                 query = query.Where(q => q.IsGarant.Equals(isGarant)).AsQueryable();
 
-                if (query != null)
+                if (typeSortPrice is not null)
                 {
                     if (typeSortPrice.Equals("Asc"))
                     {
@@ -991,7 +991,11 @@ namespace Garant.Platform.Services.Service.Business
                     {
                         query = query.OrderByDescending(u => u.Price);
                     }
+                                       
+                }
 
+                if (query is not null)
+                {
                     items = await query.Select(f => new BusinessOutput
                     {
                         DateCreate = f.DateCreate,
@@ -1012,7 +1016,7 @@ namespace Garant.Platform.Services.Service.Business
                     {
                         item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
                     }
-                }
+                }                
 
                 return items;
             }

@@ -176,8 +176,8 @@ namespace Garant.Platform.Controllers.ReadyBusiness
                                                                                     filtersWithPaginationInput.MaxPrice, 
                                                                                     filtersWithPaginationInput.City,
                                                                                     filtersWithPaginationInput.CategoryCode,
-                                                                                    filtersWithPaginationInput.MinProfitPrice,
-                                                                                    filtersWithPaginationInput.MaxProfitPrice,                                                                                    
+                                                                                    filtersWithPaginationInput.MinProfit,
+                                                                                    filtersWithPaginationInput.MaxProfit,                                                                                    
                                                                                     filtersWithPaginationInput.PageNumber,
                                                                                     filtersWithPaginationInput.CountRows,
                                                                                     filtersWithPaginationInput.IsGarant);
