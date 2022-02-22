@@ -349,7 +349,7 @@ namespace Garant.Platform.Services.Service.Business
                     Results = items,
                     TotalCount = count,
                     IsLoadAll = count < countRows,
-                    IsVisiblePagination = count > 10,
+                    IsVisiblePagination = count > countRows,
                     CountAll = count
                 };
 

@@ -54,7 +54,7 @@ namespace Garant.Platform.Services.Service.Pagination
                     Results = items,
                     TotalCount = count,
                     IsLoadAll = count < countRows,
-                    IsVisiblePagination = count > 10,
+                    IsVisiblePagination = count > countRows,
                     CountAll = count
                 };
 
@@ -149,7 +149,7 @@ namespace Garant.Platform.Services.Service.Pagination
                     Results = items,
                     TotalCount = count,
                     IsLoadAll = count < countRows,
-                    IsVisiblePagination = count > 10,
+                    IsVisiblePagination = count > countRows,
                     CountAll = count
                 };
 

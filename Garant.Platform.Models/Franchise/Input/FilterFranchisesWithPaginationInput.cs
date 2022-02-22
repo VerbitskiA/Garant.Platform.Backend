@@ -43,12 +43,12 @@
         /// <summary>
         /// Номер страницы
         /// </summary>
-        public int PageNumber { get; set; } = 1;
+        public int PageNumber { get; set; }
 
         /// <summary>
         /// Количество объектов.
         /// </summary>
-        public int CountRows { get; set; } = 10;
+        public int CountRows { get; set; }
 
         /// <summary>
         /// Флаг Гаранта.

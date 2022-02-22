@@ -505,7 +505,7 @@ namespace Garant.Platform.Services.Service.Franchise
                     Results = items,
                     TotalCount = count,
                     IsLoadAll = count < countRows,
-                    IsVisiblePagination = count > 10,
+                    IsVisiblePagination = count > countRows,
                     CountAll = count
                 };
 
