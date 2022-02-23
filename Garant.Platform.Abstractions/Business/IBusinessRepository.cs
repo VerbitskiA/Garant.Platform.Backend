@@ -148,5 +148,11 @@ namespace Garant.Platform.Abstractions.Business
         /// <param name="comment">Комментарий отклонения.</param>
         /// <returns>Статус отклонения.</returns>
         Task<bool> UpdateRejectedBusinessAsync(long businessId, string comment);
+
+        /// <summary>
+        /// Метод получит список бизнесов, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список бизнесов.</returns>
+        Task<IEnumerable<BusinessOutput>> GetNotAcceptedBusinessesAsync();
     }
 }

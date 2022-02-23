@@ -233,5 +233,20 @@ namespace Garant.Platform.Configurator.Controllers
 
             return result;
         }
+        
+        /// <summary>
+        /// Метод получит список бизнесов, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список бизнесов.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("businesses-not-accepted")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
+        public async Task<IEnumerable<BusinessOutput>> GetNotAcceptedBusinessesAsync()
+        {
+            var result = await _businessService.GetNotAcceptedBusinessesAsync();
+
+            return result;
+        }
     }
 }

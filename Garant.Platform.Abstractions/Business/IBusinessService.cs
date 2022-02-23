@@ -83,5 +83,11 @@ namespace Garant.Platform.Abstractions.Business
         /// </summary>
         /// <returns>Список бизнеса.</returns>
         Task<IEnumerable<BusinessOutput>> GetNewBusinesseListAsync();
+
+        /// <summary>
+        /// Метод получит список бизнесов, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список бизнесов.</returns>
+        Task<IEnumerable<BusinessOutput>> GetNotAcceptedBusinessesAsync();
     }
 }

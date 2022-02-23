@@ -23,7 +23,8 @@ namespace Garant.Platform.Services.Service.Business
         private readonly IBusinessRepository _businessRepository;
         private readonly IFtpService _ftpService;
 
-        public BusinessService(PostgreDbContext postgreDbContext, IBusinessRepository businessRepository, IFtpService ftpService)
+        public BusinessService(PostgreDbContext postgreDbContext, IBusinessRepository businessRepository,
+            IFtpService ftpService)
         {
             _postgreDbContext = postgreDbContext;
             _businessRepository = businessRepository;
@@ -37,7 +38,8 @@ namespace Garant.Platform.Services.Service.Business
         /// <param name="businessDataInput">Входная модель.</param>
         /// <param name="account">Логин.</param>
         /// <returns>Данные карточки бизнеса.</returns>
-        public async Task<CreateUpdateBusinessOutput> CreateUpdateBusinessAsync(IFormCollection businessFilesInput, string businessDataInput, string account)
+        public async Task<CreateUpdateBusinessOutput> CreateUpdateBusinessAsync(IFormCollection businessFilesInput,
+            string businessDataInput, string account)
         {
             try
             {
@@ -68,7 +70,8 @@ namespace Garant.Platform.Services.Service.Business
                 }
 
                 // Создаст или обновит бизнес.
-                result = await _businessRepository.CreateUpdateBusinessAsync(businessInput, lastBusinessId, businessInput.UrlsBusiness, files, account);
+                result = await _businessRepository.CreateUpdateBusinessAsync(businessInput, lastBusinessId,
+                    businessInput.UrlsBusiness, files, account);
 
                 return result;
             }
@@ -87,7 +90,8 @@ namespace Garant.Platform.Services.Service.Business
         /// </summary>
         /// <param name="form">Файлы.</param>
         /// <returns>Список названий файлов.</returns>
-        public async Task<IEnumerable<string>> AddTempFilesBeforeCreateBusinessAsync(IFormCollection form, string account)
+        public async Task<IEnumerable<string>> AddTempFilesBeforeCreateBusinessAsync(IFormCollection form,
+            string account)
         {
             try
             {
@@ -259,11 +263,14 @@ namespace Garant.Platform.Services.Service.Business
         /// <param name="maxPriceInvest">Сумма общих инвестиций до.</param>
         /// <param name="isGarant">Флаг гаранта.</param>
         /// <returns>Список бизнесов после фильтрации.</returns>
-        public async Task<IEnumerable<BusinessOutput>> FilterBusinessesAsync(string typeSortPrice, double profitMinPrice, double profitMaxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false)
+        public async Task<IEnumerable<BusinessOutput>> FilterBusinessesAsync(string typeSortPrice,
+            double profitMinPrice, double profitMaxPrice, string viewCode, string categoryCode, double minPriceInvest,
+            double maxPriceInvest, bool isGarant = false)
         {
             try
             {
-                var result = await _businessRepository.FilterBusinessesAsync(typeSortPrice, profitMinPrice, profitMaxPrice, viewCode, categoryCode, minPriceInvest, maxPriceInvest, isGarant);
+                var result = await _businessRepository.FilterBusinessesAsync(typeSortPrice, profitMinPrice,
+                    profitMaxPrice, viewCode, categoryCode, minPriceInvest, maxPriceInvest, isGarant);
 
                 foreach (var item in result)
                 {
@@ -296,6 +303,28 @@ namespace Garant.Platform.Services.Service.Business
                 {
                     item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
                 }
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список бизнесов, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список бизнесов.</returns>
+        public async Task<IEnumerable<BusinessOutput>> GetNotAcceptedBusinessesAsync()
+        {
+            try
+            {
+                var result = await _businessRepository.GetNotAcceptedBusinessesAsync();
 
                 return result;
             }
