@@ -87,6 +87,23 @@ namespace Garant.Platform.Controllers.Franchise
         }
 
         /// <summary>
+        /// Метод фильтрует франшизы и учётом пагинации.
+        /// </summary>
+        /// <param name="filterInput">Входная модель.</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost, Route("filter-pagination")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IActionResult> FilterFranchisesWithPaginationAsync([FromBody] FilterFranchisesWithPaginationInput filterInput)
+        {
+            var result = await _franchiseService.FilterFranchisesWithPaginationAsync(filterInput.TypeSortPrice, filterInput.ViewBusinessesCode, filterInput.CategoryCode,
+                                                                                    filterInput.MinInvest, filterInput.MaxInvest, filterInput.MinProfit,
+                                                                                    filterInput.MaxProfit, filterInput.PageNumber, filterInput.CountRows, filterInput.IsGarant);
+            return Ok(result);
+        }
+
+
+        /// <summary>
         /// Метод получит новые франшизы, которые были созданы в текущем месяце.
         /// </summary>
         /// <returns>Список франшиз.</returns>

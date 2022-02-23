@@ -13,6 +13,7 @@ using Garant.Platform.Models.Franchise.Input;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Garant.Platform.Models.Pagination.Output;
 
 namespace Garant.Platform.Services.Service.Franchise
 {
@@ -457,6 +458,66 @@ namespace Garant.Platform.Services.Service.Franchise
                 return result;
             }
             
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод фильтрует франшизы с учётом пагинации.
+        /// </summary>
+        /// <param name="typeSort">Тип сортировки цены (по возрастанию или убыванию).</param>
+        /// <param name="viewCode">Код вида бизнеса.</param>
+        /// <param name="categoryCode">Код категории.</param>
+        /// <param name="minInvest">Сумма инвестиций от.</param>
+        /// <param name="maxInvest">Сумма инвестиций до.</param>
+        /// <param name="minProfit">Прибыль от.</param>
+        /// <param name="maxProfit">Прибыль до.</param>
+        /// <param name="pageNumber">Номер страницы.</param>
+        /// <param name="countRows">Количество объектов.</param>
+        /// <param name="isGarant">Покупка через гарант.</param>
+        /// <returns>Список франшиз после фильтрации и данные для пагинации.</returns>
+        public async Task<IndexOutput> FilterFranchisesWithPaginationAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant = true)
+        {
+            try
+            {
+                var franchisesList = await _franchiseRepository.FilterFranchisesIndependentlyAsync(typeSort, viewCode, categoryCode, 
+                                                                                         minInvest, maxInvest, minProfit, 
+                                                                                         maxProfit, pageNumber, countRows, isGarant);
+
+
+                foreach (var item in franchisesList)
+                {
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
+                }
+
+                var count = franchisesList.Count;
+                var items = franchisesList.Skip((pageNumber - 1) * countRows).Take(countRows).ToList();
+
+                var pageData = new PaginationOutput(count, pageNumber, countRows);
+                var paginationData = new IndexOutput
+                {
+                    PageData = pageData,
+                    Results = items,
+                    TotalCount = count,
+                    IsLoadAll = count < countRows,
+                    IsVisiblePagination = count > countRows,
+                    CountAll = count
+                };
+
+                if (paginationData.IsLoadAll)
+                {
+                    var difference = countRows - count;
+                    paginationData.TotalCount += difference;
+                }
+
+                return paginationData;
+            }
+
             catch (Exception e)
             {
                 Console.WriteLine(e);

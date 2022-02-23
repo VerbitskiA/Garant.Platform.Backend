@@ -9,6 +9,7 @@ using Garant.Platform.Core.Logger;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
+using Garant.Platform.Models.Pagination.Output;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -327,6 +328,67 @@ namespace Garant.Platform.Services.Service.Business
                 var result = await _businessRepository.GetNotAcceptedBusinessesAsync();
 
                 return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод фильтрует бизнес по параметрам с учётом пагинации.
+        /// </summary>
+        /// <param name="typeSortPrice">Тип сортировки цены (убыванию, возрастанию).</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="categoryCode">Код вида бизнеса.</param>
+        /// <param name="profitMinPrice">Прибыль в месяц от.</param>
+        /// <param name="profitMaxPrice">прибыль в месяц до.</param>
+        /// <param name="pageNumber">Номер страницы.</param>
+        /// <param name="countRows">Количество записей.</param>
+        /// <param name="isGarant">Флаг гаранта.</param>
+        /// <returns>Список бизнесов после фильтрации и данные для пагинации.</returns>
+        public async Task<IndexOutput> FilterBusinessesWithPaginationAsync(string typeSortPrice, double minPrice, double maxPrice, 
+                                                                           string city, string categoryCode, double profitMinPrice, 
+                                                                           double profitMaxPrice, int pageNumber, int countRows, bool isGarant = true)
+        {
+            try
+            {
+                var businessList = await _businessRepository.FilterBusinessesIndependentlyAsync(typeSortPrice, minPrice, maxPrice, 
+                                                                                                city, categoryCode, profitMinPrice,
+                                                                                                profitMaxPrice, isGarant);
+
+                foreach (var item in businessList)
+                {
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
+                }
+
+                var count = businessList.Count;
+                var items = businessList.Skip((pageNumber - 1) * countRows).Take(countRows).ToList();
+
+                var pageData = new PaginationOutput(count, pageNumber, countRows);
+                var paginationData = new IndexOutput
+                {
+                    PageData = pageData,
+                    Results = items,
+                    TotalCount = count,
+                    IsLoadAll = count < countRows,
+                    IsVisiblePagination = count > countRows,
+                    CountAll = count
+                };
+
+                if (paginationData.IsLoadAll)
+                {
+                    var difference = countRows - count;
+                    paginationData.TotalCount += difference;
+                }
+
+                return paginationData;
             }
 
             catch (Exception e)
