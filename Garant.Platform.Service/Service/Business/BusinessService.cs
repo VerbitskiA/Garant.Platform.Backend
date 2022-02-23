@@ -353,15 +353,17 @@ namespace Garant.Platform.Services.Service.Business
         /// <param name="countRows">Количество записей.</param>
         /// <param name="isGarant">Флаг гаранта.</param>
         /// <returns>Список бизнесов после фильтрации и данные для пагинации.</returns>
-        public async Task<IndexOutput> FilterBusinessesWithPaginationAsync(string typeSortPrice, double minPrice, double maxPrice, 
-                                                                           string city, string categoryCode, double profitMinPrice, 
-                                                                           double profitMaxPrice, int pageNumber, int countRows, bool isGarant = true)
+        public async Task<IndexOutput> FilterBusinessesWithPaginationAsync(string typeSortPrice, double minPrice,
+            double maxPrice,
+            string city, string categoryCode, double profitMinPrice,
+            double profitMaxPrice, int pageNumber, int countRows, bool isGarant = true)
         {
             try
             {
-                var businessList = await _businessRepository.FilterBusinessesIndependentlyAsync(typeSortPrice, minPrice, maxPrice, 
-                                                                                                city, categoryCode, profitMinPrice,
-                                                                                                profitMaxPrice, isGarant);
+                var businessList = await _businessRepository.FilterBusinessesIndependentlyAsync(typeSortPrice, minPrice,
+                    maxPrice,
+                    city, categoryCode, profitMinPrice,
+                    profitMaxPrice, isGarant);
 
                 foreach (var item in businessList)
                 {

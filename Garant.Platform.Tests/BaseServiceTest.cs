@@ -66,7 +66,7 @@ namespace Garant.Platform.Tests
             FranchiseRepository = new FranchiseRepository(PostgreDbContext, UserRepository, CommonService);
             BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
             BusinessService = new BusinessService(PostgreDbContext, BusinessRepository, FtpService);
-            PaginationRepository = new PaginationRepository(PostgreDbContext);
+            PaginationRepository = new PaginationRepository(PostgreDbContext, CommonService);
 
             BlogRepository = new BlogRepository(PostgreDbContext, UserRepository);
             BlogService = new BlogService(PostgreDbContext, BlogRepository, FtpService);

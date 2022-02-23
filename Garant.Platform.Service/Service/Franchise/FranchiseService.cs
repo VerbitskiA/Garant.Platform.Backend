@@ -5,7 +5,6 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Franchise.Output;
 using System.Linq;
-using System.Text.Json;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.FTP.Abstraction;
@@ -457,7 +456,7 @@ namespace Garant.Platform.Services.Service.Franchise
 
                 return result;
             }
-            
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
@@ -481,13 +480,16 @@ namespace Garant.Platform.Services.Service.Franchise
         /// <param name="countRows">Количество объектов.</param>
         /// <param name="isGarant">Покупка через гарант.</param>
         /// <returns>Список франшиз после фильтрации и данные для пагинации.</returns>
-        public async Task<IndexOutput> FilterFranchisesWithPaginationAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant = true)
+        public async Task<IndexOutput> FilterFranchisesWithPaginationAsync(string typeSort, string viewCode,
+            string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber,
+            int countRows, bool isGarant = true)
         {
             try
             {
-                var franchisesList = await _franchiseRepository.FilterFranchisesIndependentlyAsync(typeSort, viewCode, categoryCode, 
-                                                                                         minInvest, maxInvest, minProfit, 
-                                                                                         maxProfit, pageNumber, countRows, isGarant);
+                var franchisesList = await _franchiseRepository.FilterFranchisesIndependentlyAsync(typeSort, viewCode,
+                    categoryCode,
+                    minInvest, maxInvest, minProfit,
+                    maxProfit, pageNumber, countRows, isGarant);
 
 
                 foreach (var item in franchisesList)
@@ -539,7 +541,7 @@ namespace Garant.Platform.Services.Service.Franchise
 
                 return result;
             }
-            
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
