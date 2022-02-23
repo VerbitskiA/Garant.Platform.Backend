@@ -69,10 +69,34 @@ namespace Garant.Platform.Services.Service.Business
                     {
                         userId = findUser.UserId;
                     }
-                    
+
                     // Найдет бизнес с таким названием.
                     var findBusiness = await GetBusinessAsync(businessInput.BusinessName);
                     var urls = await _commonService.JoinArrayWithDelimeterAsync(urlsBusiness);
+                    var activityPhotoName = string.Empty;
+                    var assetsPhotoName = string.Empty;
+                    var nameFinModelFile = string.Empty;
+                    var reasonsSalePhotoName = string.Empty;
+
+                    if (files.Any(c => c.Name.Equals("filesTextBusiness")))
+                    {
+                        activityPhotoName = files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName;
+                    }
+
+                    if (files.Any(c => c.Name.Equals("filesAssets")))
+                    {
+                        assetsPhotoName = files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName;
+                    }
+                    
+                    if (files.Any(c => c.Name.Equals("finModelFile")))
+                    {
+                        nameFinModelFile = files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName;
+                    }
+                    
+                    if (files.Any(c => c.Name.Equals("filesReasonsSale")))
+                    {
+                        reasonsSalePhotoName = files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName;
+                    }
 
                     // Создаст новый бизнес.
                     if (businessInput.IsNew && findBusiness == null)
@@ -81,10 +105,10 @@ namespace Garant.Platform.Services.Service.Business
                         {
                             BusinessId = lastBusinessId,
                             ActivityDetail = businessInput.ActivityDetail,
-                            ActivityPhotoName = files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName,
+                            ActivityPhotoName = activityPhotoName,
                             Address = businessInput.Address,
                             Assets = businessInput.Assets,
-                            AssetsPhotoName = files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName,
+                            AssetsPhotoName = assetsPhotoName,
                             BusinessAge = businessInput.BusinessAge,
                             BusinessName = businessInput.BusinessName,
                             EmployeeCountYear = businessInput.EmployeeCountYear,
@@ -101,9 +125,9 @@ namespace Garant.Platform.Services.Service.Business
                             Share = businessInput.Share,
                             Site = businessInput.Site,
                             Peculiarity = businessInput.Peculiarity,
-                            NameFinModelFile = files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
+                            NameFinModelFile = nameFinModelFile,
                             ReasonsSale = businessInput.ReasonsSale,
-                            ReasonsSalePhotoName = files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName,
+                            ReasonsSalePhotoName = reasonsSalePhotoName,
                             UrlVideo = businessInput.UrlVideo,
                             IsGarant = businessInput.IsGarant,
                             UserId = userId,
@@ -119,13 +143,11 @@ namespace Garant.Platform.Services.Service.Business
                     else if (!businessInput.IsNew && findBusiness != null)
                     {
                         findBusiness.ActivityDetail = businessInput.ActivityDetail;
-                        findBusiness.ActivityPhotoName =
-                            files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName;
-                        findBusiness.Address = businessInput.Address;
+                        findBusiness.ActivityPhotoName = activityPhotoName;
+                            findBusiness.Address = businessInput.Address;
                         findBusiness.Assets = businessInput.Assets;
-                        findBusiness.AssetsPhotoName =
-                            files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName;
-                        findBusiness.BusinessAge = businessInput.BusinessAge;
+                        findBusiness.AssetsPhotoName = assetsPhotoName;
+                            findBusiness.BusinessAge = businessInput.BusinessAge;
                         findBusiness.BusinessName = businessInput.BusinessName;
                         findBusiness.EmployeeCountYear = businessInput.EmployeeCountYear;
                         findBusiness.Form = businessInput.Form;
@@ -141,11 +163,8 @@ namespace Garant.Platform.Services.Service.Business
                         findBusiness.Share = businessInput.Share;
                         findBusiness.Site = businessInput.Site;
                         findBusiness.Peculiarity = businessInput.Peculiarity;
-                        findBusiness.NameFinModelFile =
-                            files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName;
-                        findBusiness.ReasonsSale = businessInput.ReasonsSale;
-                        findBusiness.ReasonsSalePhotoName =
-                            files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName;
+                        findBusiness.NameFinModelFile = nameFinModelFile;
+                        findBusiness.ReasonsSalePhotoName = reasonsSalePhotoName;
                         findBusiness.UrlVideo = businessInput.UrlVideo;
                         findBusiness.IsGarant = businessInput.IsGarant;
                         findBusiness.DateCreate = DateTime.Now;
@@ -162,10 +181,10 @@ namespace Garant.Platform.Services.Service.Business
                     result = new CreateUpdateBusinessOutput
                     {
                         ActivityDetail = businessInput.ActivityDetail,
-                        ActivityPhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName,
+                        ActivityPhotoName = string.IsNullOrEmpty(activityPhotoName) ? string.Empty : "../../../assets/images/" + files.Where(c => c.Name.Equals("filesTextBusiness")).ToArray()[0].FileName,
                         Address = businessInput.Address,
                         Assets = businessInput.Assets,
-                        AssetsPhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName,
+                        AssetsPhotoName = string.IsNullOrEmpty(assetsPhotoName) ? string.Empty : "../../../assets/images/" + files.Where(c => c.Name.Equals("filesAssets")).ToArray()[0].FileName,
                         BusinessAge = businessInput.BusinessAge,
                         BusinessId = lastBusinessId,
                         BusinessName = businessInput.BusinessName,
@@ -183,9 +202,9 @@ namespace Garant.Platform.Services.Service.Business
                         Share = businessInput.Share,
                         Site = businessInput.Site,
                         Peculiarity = businessInput.Peculiarity,
-                        NameFinModelFile = "../../../assets/images/" + files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
+                        NameFinModelFile = string.IsNullOrEmpty(nameFinModelFile) ? string.Empty : "../../../assets/images/" + files.Where(c => c.Name.Equals("finModelFile")).ToArray()[0].FileName,
                         ReasonsSale = businessInput.ReasonsSale,
-                        ReasonsSalePhotoName = "../../../assets/images/" + files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName,
+                        ReasonsSalePhotoName = string.IsNullOrEmpty(reasonsSalePhotoName) ? string.Empty : "../../../assets/images/" + files.Where(c => c.Name.Equals("filesReasonsSale")).ToArray()[0].FileName,
                         UrlVideo = businessInput.UrlVideo,
                         IsGarant = businessInput.IsGarant,
                         DateCreate = DateTime.Now,
@@ -394,21 +413,6 @@ namespace Garant.Platform.Services.Service.Business
         {
             try
             {
-                // Найдет кто создал бизнес.
-                var userId = await _postgreDbContext.Businesses
-                    .Where(f => f.BusinessId == businessId)
-                    .Select(f => f.UserId)
-                    .FirstOrDefaultAsync();
-
-                // Найдет фио пользователя, создавшего франшизу.
-                // var fio = await _postgreDbContext.Users
-                //     .Where(u => u.Id.Equals(userId))
-                //     .Select(u => new FranchiseOutput
-                //     {
-                //         FullName = (u.LastName ?? string.Empty) + " " + (u.FirstName ?? string.Empty) + " " + (u.Patronymic ?? string.Empty)
-                //     })
-                //     .FirstOrDefaultAsync();
-
                 var result = await (from b in _postgreDbContext.Businesses
                                     where b.BusinessId == businessId
                                     select new BusinessOutput
@@ -621,6 +625,7 @@ namespace Garant.Platform.Services.Service.Business
             try
             {
                 var result = await _postgreDbContext.Businesses
+                    .Where(b => b.IsAccepted == true)
                     .Select(b => new PopularBusinessOutput
                     {
                         DateCreate = b.DateCreate,
@@ -672,8 +677,9 @@ namespace Garant.Platform.Services.Service.Business
                 List<BusinessOutput> items = null;
                 IQueryable<BusinessOutput> query = null;
 
+                //TODO: какая-то путаница с параметрами, сортировка по Id происходит
                 // Сортировать на возрастанию цены.
-                if (typeSortPrice.Equals("Asc")) 
+                if (typeSortPrice.Equals("Asc"))
                 {
                     query = (from f in _postgreDbContext.Businesses
                              where f.Category.Equals(categoryCode)
@@ -703,26 +709,26 @@ namespace Garant.Platform.Services.Service.Business
                 else if (typeSortPrice.Equals("Desc"))
                 {
                     query = (from f in _postgreDbContext.Businesses
-                            where f.Category.Equals(categoryCode)
-                                  && (f.Price <= profitMaxPrice && f.Price >= profitMinPrice)
-                                  && (f.ProfitPrice >= minPriceInvest && f.ProfitPrice <= maxPriceInvest)
-                                  && f.IsGarant == isGarant
-                            orderby f.BusinessId descending 
-                            select new BusinessOutput
-                            {
-                                DateCreate = f.DateCreate,
-                                Price = string.Format("{0:0,0}", f.Price),
-                                CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                                DayDeclination = "дня",
-                                Text = f.Text,
-                                TextDoPrice = f.TextDoPrice,
-                                BusinessName = f.BusinessName,
-                                Url = f.UrlsBusiness,
-                                IsGarant = f.IsGarant,
-                                ProfitPrice = f.ProfitPrice,
-                                TotalInvest = string.Format("{0:0,0}", f.ProfitPrice),
-                                BusinessId = f.BusinessId
-                            })
+                             where f.Category.Equals(categoryCode)
+                                   && (f.Price <= profitMaxPrice && f.Price >= profitMinPrice)
+                                   && (f.ProfitPrice >= minPriceInvest && f.ProfitPrice <= maxPriceInvest)
+                                   && f.IsGarant == isGarant
+                             orderby f.BusinessId descending
+                             select new BusinessOutput
+                             {
+                                 DateCreate = f.DateCreate,
+                                 Price = string.Format("{0:0,0}", f.Price),
+                                 CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                 DayDeclination = "дня",
+                                 Text = f.Text,
+                                 TextDoPrice = f.TextDoPrice,
+                                 BusinessName = f.BusinessName,
+                                 Url = f.UrlsBusiness,
+                                 IsGarant = f.IsGarant,
+                                 ProfitPrice = f.ProfitPrice,
+                                 TotalInvest = string.Format("{0:0,0}", f.ProfitPrice),
+                                 BusinessId = f.BusinessId
+                             })
                         .AsQueryable();
                 }
 
@@ -812,7 +818,7 @@ namespace Garant.Platform.Services.Service.Business
             try
             {
                 var result = await _postgreDbContext.Businesses
-                    .Where(f => f.BusinessName.ToLower().Contains(searchText.ToLower()) 
+                    .Where(f => f.BusinessName.ToLower().Contains(searchText.ToLower())
                                 || f.ActivityDetail.ToLower().Contains(searchText.ToLower()))
                     .Select(f => new BusinessOutput
                     {
@@ -911,13 +917,291 @@ namespace Garant.Platform.Services.Service.Business
                 {
                     throw new NotFoundUserIdException(account);
                 }
-                
+
                 // Получит список заявок пользовтеля.
                 var result = await _postgreDbContext.RequestsBusinesses.Where(r => r.UserId.Equals(userId)).ToListAsync();
 
                 return result;
             }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод применяет фильтры независимо друг от друга.
+        /// </summary>
+        /// <param name="typeSortPrice">Тип сортировки цены (убыванию, возрастанию).</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="categoryCode">Код категории.</param>        
+        /// <param name="minProfit">Прибыль в месяц от.</param>
+        /// <param name="maxProfit">Прибыль в месяц до.</param>
+        /// <param name="isGarant">Флаг гаранта.</param>
+        /// <returns>Список бизнесов после фильтрации.</returns>
+        public async Task<List<BusinessOutput>> FilterBusinessesIndependentlyAsync(string typeSortPrice, double minPrice, double maxPrice,
+                                                                                   string city, string categoryCode, double minProfit,
+                                                                                   double maxProfit, bool isGarant = true)
+        {
+            try
+            {
+                List<BusinessOutput> items = null;
+                IQueryable<BusinessEntity> query = _postgreDbContext.Businesses;
+
+                //Применяем фильтры, если они указаны                
+                if (minProfit > 0)
+                {
+                    query = query.Where(q => q.ProfitPrice >= Convert.ToDouble(minProfit)).AsQueryable();
+                }
+                if (maxProfit > 0)
+                {
+                    query = query.Where(q => q.ProfitPrice <= Convert.ToDouble(maxProfit)).AsQueryable();
+                }
+                if (minPrice > 0)
+                {
+                    query = query.Where(q => q.Price >= Convert.ToDouble(minPrice)).AsQueryable();
+                }
+                if (maxPrice > 0)
+                {
+                    query = query.Where(q => q.Price <= Convert.ToDouble(maxPrice)).AsQueryable();
+                }
+                if (!string.IsNullOrEmpty(city))
+                {
+                    query = query.Where(q => q.BusinessCity.Equals(city)).AsQueryable();
+                }
+                if (!string.IsNullOrEmpty(categoryCode))
+                {
+                    query = query.Where(q => q.Category.Equals(categoryCode)).AsQueryable();
+                }
+                query = query.Where(q => q.IsGarant.Equals(isGarant)).AsQueryable();
+
+                if (typeSortPrice is not null)
+                {
+                    if (typeSortPrice.Equals("Asc"))
+                    {
+                        query = query.OrderBy(u => u.Price);
+                    }
+
+                    if (typeSortPrice.Equals("Desc"))
+                    {
+                        query = query.OrderByDescending(u => u.Price);
+                    }
+                                       
+                }
+
+                if (query is not null)
+                {
+                    items = await query.Select(f => new BusinessOutput
+                    {
+                        DateCreate = f.DateCreate,
+                        Price = string.Format("{0:0,0}", f.Price),
+                        CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                        DayDeclination = "дня",
+                        Text = f.Text,
+                        TextDoPrice = f.TextDoPrice,
+                        BusinessName = f.BusinessName,
+                        Url = f.UrlsBusiness,
+                        IsGarant = f.IsGarant,
+                        ProfitPrice = f.ProfitPrice,
+                        TotalInvest = string.Format("{0:0,0}", f.ProfitPrice),
+                        BusinessId = f.BusinessId
+                    }).ToListAsync();
+
+                    foreach (var item in items)
+                    {
+                        item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                    }
+                }                
+
+                return items;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод обновит поле одобрения карточки бизнеса.
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <returns>Статус одобрения.</returns>
+        public async Task<bool> UpdateAcceptedBusinessAsync(long businessId)
+        {
+            try
+            {
+                var result = await (from b in _postgreDbContext.Businesses
+                        where b.BusinessId == businessId
+                        select new BusinessEntity
+                        {
+                            BusinessId = b.BusinessId,
+                            ActivityDetail = b.ActivityDetail,
+                            ActivityPhotoName = b.ActivityPhotoName,
+                            Address = b.Address,
+                            Assets = b.Assets,
+                            AssetsPhotoName = b.AssetsPhotoName,
+                            BusinessAge = b.BusinessAge,
+                            BusinessName = b.BusinessName,
+                            EmployeeCountYear = b.EmployeeCountYear,
+                            Form = b.Form,
+                            Status = b.Status,
+                            UrlsBusiness = b.UrlsBusiness,
+                            TurnPrice = b.TurnPrice,
+                            ProfitPrice = b.ProfitPrice,
+                            Payback = b.Payback,
+                            Profitability = b.Profitability,
+                            InvestPrice = b.InvestPrice,
+                            Text = b.Text,
+                            Share = b.Share,
+                            Site = b.Site,
+                            Peculiarity = b.Peculiarity,
+                            NameFinModelFile = b.NameFinModelFile,
+                            ReasonsSale = b.ReasonsSale,
+                            ReasonsSalePhotoName = b.ReasonsSalePhotoName,
+                            UrlVideo = b.UrlVideo,
+                            IsGarant = b.IsGarant,
+                            UserId = b.UserId,
+                            DateCreate = b.DateCreate,
+                            Category = b.Category,
+                            SubCategory = b.SubCategory,
+                            TextDoPrice = b.TextDoPrice,
+                            BusinessCity = b.BusinessCity
+                        })
+                    .FirstOrDefaultAsync();
+
+                if (result != null)
+                {
+                    result.IsAccepted = true;
+                    _postgreDbContext.Businesses.Update(result);
+                    await _postgreDbContext.SaveChangesAsync();
+                    
+                    return true;
+                }
+
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод обновит поле отклонения карточки бизнеса
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        public async Task<bool> UpdateRejectedBusinessAsync(long businessId, string comment)
+        {
+            try
+            {
+                var result = await (from b in _postgreDbContext.Businesses
+                        where b.BusinessId == businessId
+                        select new BusinessEntity
+                        {
+                            BusinessId = b.BusinessId,
+                            ActivityDetail = b.ActivityDetail,
+                            ActivityPhotoName = b.ActivityPhotoName,
+                            Address = b.Address,
+                            Assets = b.Assets,
+                            AssetsPhotoName = b.AssetsPhotoName,
+                            BusinessAge = b.BusinessAge,
+                            BusinessName = b.BusinessName,
+                            EmployeeCountYear = b.EmployeeCountYear,
+                            Form = b.Form,
+                            Status = b.Status,
+                            UrlsBusiness = b.UrlsBusiness,
+                            TurnPrice = b.TurnPrice,
+                            ProfitPrice = b.ProfitPrice,
+                            Payback = b.Payback,
+                            Profitability = b.Profitability,
+                            InvestPrice = b.InvestPrice,
+                            Text = b.Text,
+                            Share = b.Share,
+                            Site = b.Site,
+                            Peculiarity = b.Peculiarity,
+                            NameFinModelFile = b.NameFinModelFile,
+                            ReasonsSale = b.ReasonsSale,
+                            ReasonsSalePhotoName = b.ReasonsSalePhotoName,
+                            UrlVideo = b.UrlVideo,
+                            IsGarant = b.IsGarant,
+                            UserId = b.UserId,
+                            DateCreate = b.DateCreate,
+                            Category = b.Category,
+                            SubCategory = b.SubCategory,
+                            TextDoPrice = b.TextDoPrice,
+                            BusinessCity = b.BusinessCity
+                        })
+                    .FirstOrDefaultAsync();
+
+                if (result != null)
+                {
+                    result.IsRejected = true;
+                    result.IsAccepted = false;
+                    result.CommentRejection = comment;
+                    _postgreDbContext.Businesses.Update(result);
+                    await _postgreDbContext.SaveChangesAsync();
+
+                    return true;
+                }
+
+                return false;
+            }
             
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Метод получит список бизнесов, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список бизнесов.</returns>
+        public async Task<IEnumerable<BusinessOutput>> GetNotAcceptedBusinessesAsync()
+        {
+            try
+            {
+                var items = await (from p in _postgreDbContext.Businesses
+                        where p.IsAccepted == false && p.IsRejected == false
+                        select new BusinessOutput
+                        {
+                            DateCreate = p.DateCreate,
+                            Price = string.Format("{0:0,0}", p.Price),
+                            CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                            DayDeclination = "дня",
+                            Text = p.Text,
+                            TextDoPrice = p.TextDoPrice,
+                            BusinessName = p.BusinessName,
+                            Url = p.UrlsBusiness,
+                            IsGarant = p.IsGarant,
+                            ProfitPrice = p.ProfitPrice,
+                            TotalInvest = string.Format("{0:0,0}", p.InvestPrice),
+                            BusinessId = p.BusinessId
+                        })
+                    .ToListAsync();
+
+                return items;
+            }
+
             catch (Exception e)
             {
                 Console.WriteLine(e);

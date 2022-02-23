@@ -105,6 +105,22 @@ namespace Garant.Platform.Abstractions.Business
             bool isGarant = false);
 
         /// <summary>
+        /// Метод применяет фильтры независимо друг от друга.
+        /// </summary>
+        /// <param name="typeSortPrice">Тип сортировки цены (убыванию, возрастанию).</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="categoryCode">Код категории.</param>        
+        /// <param name="minProfit">Прибыль в месяц от.</param>
+        /// <param name="maxProfit">Прибыль в месяц до.</param>
+        /// <param name="isGarant">Флаг гаранта.</param>
+        /// <returns>Список бизнесов после фильтрации.</returns>
+        Task<List<BusinessOutput>> FilterBusinessesIndependentlyAsync(string typeSortPrice, double minPrice, double maxPrice,
+                                                                                   string city, string categoryCode, double minProfit,
+                                                                                   double maxProfit, bool isGarant = true);
+
+        /// <summary>
         /// Метод получит новый бизнес, который был создан в текущем месяце.
         /// </summary>
         /// <returns>Список бизнеса.</returns>
@@ -133,5 +149,26 @@ namespace Garant.Platform.Abstractions.Business
         /// </summary>
         /// <returns>Список заявок.</returns>
         Task<IEnumerable<RequestBusinessEntity>> GetBusinessRequestsAsync(string account);
+
+        /// <summary>
+        /// Метод обновит поле одобрения карточки бизнеса.
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <returns>Статус одобрения.</returns>
+        Task<bool> UpdateAcceptedBusinessAsync(long businessId);
+
+        /// <summary>
+        /// Метод обновит поле отклонения карточки бизнеса
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        Task<bool> UpdateRejectedBusinessAsync(long businessId, string comment);
+
+        /// <summary>
+        /// Метод получит список бизнесов, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список бизнесов.</returns>
+        Task<IEnumerable<BusinessOutput>> GetNotAcceptedBusinessesAsync();
     }
 }

@@ -30,7 +30,11 @@ namespace Garant.Platform.Core.Data
             _options = options;
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) { }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<NewsViewsEntity>()
+                        .HasKey(c => new { c.NewsId, c.UserId });
+        }
 
         public DbSet<BaseUserEntity> BaseUsers { get; set; }
 
@@ -63,6 +67,11 @@ namespace Garant.Platform.Core.Data
         /// Таблица новостей Info.News.
         /// </summary>
         public DbSet<NewsEntity> News { get; set; }
+
+        /// <summary>
+        /// Класс сопоставляется с таблицей Info.NewsViews.
+        /// </summary>
+        public DbSet<NewsViewsEntity> NewsViews { get; set; }
 
         /// <summary>
         /// Таблица категорий Business.BusinessCategories.

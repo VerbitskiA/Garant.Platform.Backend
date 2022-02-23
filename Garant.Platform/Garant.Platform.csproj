@@ -45,4 +45,6 @@
     <ProjectReference Include="..\Garant.Platform.Service\Garant.Platform.Services.csproj" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
 </Project>
