@@ -2,6 +2,9 @@
 
 namespace Garant.Platform.Mailings.Abstraction
 {
+    /// <summary>
+    /// Абстракция сервиса рассылок.
+    /// </summary>
     public interface IMailingService
     {
         /// <summary>
@@ -25,5 +28,12 @@ namespace Garant.Platform.Mailings.Abstraction
         /// <param name="messageBody">Тело сообщения.</param>
         /// <param name="messageTitle">Заголовок сообщения.</param>
         Task SendAcceptEmailAsync(string mailTo, string messageBody, string messageTitle);
+
+        /// <summary>
+        /// Метод отправит на почту администрации сервиса оповещение о созданной карточке.
+        /// </summary>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <param name="cardUrl">Ссылка на карточку.</param>
+        Task SendMailAfterCreateCardAsync(string cardType, string cardUrl = null);
     }
 }

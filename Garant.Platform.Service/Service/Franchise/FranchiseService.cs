@@ -6,8 +6,11 @@ using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Franchise.Output;
 using System.Linq;
 using Garant.Platform.Abstractions.Franchise;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Exceptions;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.FTP.Abstraction;
+using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Franchise.Input;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -296,6 +299,15 @@ namespace Garant.Platform.Services.Service.Franchise
                 // Создаст или обновит франшизу.
                 result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput, lastFranchiseId,
                     franchiseInput.UrlsFranchise, franchiseFilesInput.Files, account);
+                
+                // Сформирует ссылку на карточку франшизы.
+                var commonRepository = AutoFac.Resolve<ICommonRepository>();
+                var cardUrl = await commonRepository.GetCardUrlAsync("ModerationFranchiseCard");
+                var newUrl = cardUrl + result.FranchiseId;
+                
+                // Отправит оповещение администрации сервиса.
+                var mailService = AutoFac.Resolve<IMailingService>();
+                await mailService.SendMailAfterCreateCardAsync("Франшиза", newUrl);
 
                 return result;
             }

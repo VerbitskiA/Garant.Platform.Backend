@@ -12,7 +12,7 @@ using MimeKit;
 namespace Garant.Platform.Mailings.Service
 {
     /// <summary>
-    /// Сервис рассылок.
+    /// Сервис реализует методы сервиса рассылок.
     /// </summary>
     public class MailingService : IMailingService
     {
@@ -49,6 +49,8 @@ namespace Garant.Platform.Mailings.Service
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }
@@ -85,10 +87,8 @@ namespace Garant.Platform.Mailings.Service
             catch (Exception e)
             {
                 Console.WriteLine(e);
-
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
-
+                await logger.LogError();
                 throw;
             }
         }
@@ -102,13 +102,13 @@ namespace Garant.Platform.Mailings.Service
             }
 
             // Для gmail.com.
-            else if (param.Contains("@gmail"))
+            if (param.Contains("@gmail"))
             {
                 return await Task.FromResult(("smtp.gmail.com", 587));
             }
 
             // Для yandex.ru.
-            else if (param.Contains("@yandex"))
+            if (param.Contains("@yandex"))
             {
                 return await Task.FromResult(("smtp.yandex.ru", 465));
             }
@@ -149,10 +149,50 @@ namespace Garant.Platform.Mailings.Service
             catch (Exception e)
             {
                 Console.WriteLine(e);
-
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
+                await logger.LogError();
+                throw;
+            }
+        }
 
+        /// <summary>
+        /// Метод отправит на почту администрации сервиса оповещение о созданной карточке.
+        /// </summary>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <param name="cardUrl">Ссылка на карточку.</param>
+        public async Task SendMailAfterCreateCardAsync(string cardType, string cardUrl = null)
+        {
+            try
+            {
+                var mailTo = _configuration.GetSection("MailingSettings:MailAdministrationService").Value;
+                var data = await GetHostAndPortAsync(mailTo);
+                var email = _configuration.GetSection("MailingSettings:Email").Value;
+                var password = _configuration.GetSection("MailingSettings:MailAdministrationServicePassword").Value;
+
+                var emailMessage = new MimeMessage();
+                emailMessage.From.Add(new MailboxAddress(email));
+                emailMessage.To.Add(new MailboxAddress(mailTo));
+                emailMessage.Subject = "Создана новая карточка";
+                emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                {
+                    Text = "Создана новая карточка. <br>" +
+                            $"Тип карточки: {cardType} <br>" +
+                            "Статус: На модерации. <br>" +
+                            $"Карточка расположена по ссылке: {cardUrl}"
+                };
+
+                using var client = new SmtpClient();
+                await client.ConnectAsync(data.Item1, data.Item2, MailKit.Security.SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(email, password);
+                await client.SendAsync(emailMessage);
+                await client.DisconnectAsync(true);
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }

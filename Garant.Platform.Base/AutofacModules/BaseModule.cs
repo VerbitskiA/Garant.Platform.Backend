@@ -13,9 +13,10 @@ namespace Garant.Platform.Base.AutofacModules
     {
         public static void InitModules(ContainerBuilder builder)
         {
-            // Сервис смс-рассылок.
             builder.RegisterType<CommonService>().Named<ICommonService>("CommonService");
             builder.RegisterType<CommonService>().As<ICommonService>();
+            builder.RegisterType<CommonRepository>().Named<ICommonRepository>("CommonRepository");
+            builder.RegisterType<CommonRepository>().As<ICommonRepository>();
         }
     }
 }

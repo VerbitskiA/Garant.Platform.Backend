@@ -5,7 +5,7 @@ using Garant.Platform.Messaging.Models.Notification.Output;
 namespace Garant.Platform.Messaging.Service.Notifications
 {
     /// <summary>
-    /// Класс реализует
+    /// Класс реализует методы сервиса уведомлений.
     /// </summary>
     public class NotificationsService : INotificationsService
     {
