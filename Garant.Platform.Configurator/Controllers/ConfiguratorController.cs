@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.Franchise;
@@ -182,6 +183,70 @@ namespace Garant.Platform.Configurator.Controllers
             var result = await _businessService.CreateUpdateBusinessAsync(businessFilesInput, businessDataInput, GetUserName() ?? "info@gobizy.com");
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Метод получит список франшиз, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("franchises-not-accepted")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IEnumerable<FranchiseOutput>> GetNotAcceptedFranchisesAsync()
+        {
+            var result = await _franchiseService.GetNotAcceptedFranchisesAsync();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод утвердит карточку. После этого карточка попадает в каталоги.
+        /// </summary>
+        /// <param name="cardId">Id карточки.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <returns>Статус утверждения.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("accept-card")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<bool> AcceptCardAsync([FromQuery] [Required] long cardId, [Required] string cardType)
+        {
+            var result = await _configuratorService.AcceptCardAsync(cardId, cardType);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод отклонит публикацию карточки. 
+        /// </summary>
+        /// <param name="cardId">Id карточки.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("reject-card")]
+        public async Task<bool> RejectCardAsync([FromQuery] [Required] long cardId, [Required] string cardType, [Required] string comment)
+        {
+            var result = await _configuratorService.RejectCardAsync(cardId, cardType, comment);
+
+            return result;
+        }
+        
+        /// <summary>
+        /// Метод получит список бизнесов, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список бизнесов.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("businesses-not-accepted")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
+        public async Task<IEnumerable<BusinessOutput>> GetNotAcceptedBusinessesAsync()
+        {
+            var result = await _businessService.GetNotAcceptedBusinessesAsync();
+
+            return result;
         }
     }
 }

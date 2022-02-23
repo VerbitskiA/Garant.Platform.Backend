@@ -625,6 +625,7 @@ namespace Garant.Platform.Services.Service.Business
             try
             {
                 var result = await _postgreDbContext.Businesses
+                    .Where(b => b.IsAccepted == true)
                     .Select(b => new PopularBusinessOutput
                     {
                         DateCreate = b.DateCreate,
@@ -1017,6 +1018,186 @@ namespace Garant.Platform.Services.Service.Business
                         item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
                     }
                 }                
+
+                return items;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод обновит поле одобрения карточки бизнеса.
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <returns>Статус одобрения.</returns>
+        public async Task<bool> UpdateAcceptedBusinessAsync(long businessId)
+        {
+            try
+            {
+                var result = await (from b in _postgreDbContext.Businesses
+                        where b.BusinessId == businessId
+                        select new BusinessEntity
+                        {
+                            BusinessId = b.BusinessId,
+                            ActivityDetail = b.ActivityDetail,
+                            ActivityPhotoName = b.ActivityPhotoName,
+                            Address = b.Address,
+                            Assets = b.Assets,
+                            AssetsPhotoName = b.AssetsPhotoName,
+                            BusinessAge = b.BusinessAge,
+                            BusinessName = b.BusinessName,
+                            EmployeeCountYear = b.EmployeeCountYear,
+                            Form = b.Form,
+                            Status = b.Status,
+                            UrlsBusiness = b.UrlsBusiness,
+                            TurnPrice = b.TurnPrice,
+                            ProfitPrice = b.ProfitPrice,
+                            Payback = b.Payback,
+                            Profitability = b.Profitability,
+                            InvestPrice = b.InvestPrice,
+                            Text = b.Text,
+                            Share = b.Share,
+                            Site = b.Site,
+                            Peculiarity = b.Peculiarity,
+                            NameFinModelFile = b.NameFinModelFile,
+                            ReasonsSale = b.ReasonsSale,
+                            ReasonsSalePhotoName = b.ReasonsSalePhotoName,
+                            UrlVideo = b.UrlVideo,
+                            IsGarant = b.IsGarant,
+                            UserId = b.UserId,
+                            DateCreate = b.DateCreate,
+                            Category = b.Category,
+                            SubCategory = b.SubCategory,
+                            TextDoPrice = b.TextDoPrice,
+                            BusinessCity = b.BusinessCity
+                        })
+                    .FirstOrDefaultAsync();
+
+                if (result != null)
+                {
+                    result.IsAccepted = true;
+                    _postgreDbContext.Businesses.Update(result);
+                    await _postgreDbContext.SaveChangesAsync();
+                    
+                    return true;
+                }
+
+                return false;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод обновит поле отклонения карточки бизнеса
+        /// </summary>
+        /// <param name="businessId">Id бизнеса.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        public async Task<bool> UpdateRejectedBusinessAsync(long businessId, string comment)
+        {
+            try
+            {
+                var result = await (from b in _postgreDbContext.Businesses
+                        where b.BusinessId == businessId
+                        select new BusinessEntity
+                        {
+                            BusinessId = b.BusinessId,
+                            ActivityDetail = b.ActivityDetail,
+                            ActivityPhotoName = b.ActivityPhotoName,
+                            Address = b.Address,
+                            Assets = b.Assets,
+                            AssetsPhotoName = b.AssetsPhotoName,
+                            BusinessAge = b.BusinessAge,
+                            BusinessName = b.BusinessName,
+                            EmployeeCountYear = b.EmployeeCountYear,
+                            Form = b.Form,
+                            Status = b.Status,
+                            UrlsBusiness = b.UrlsBusiness,
+                            TurnPrice = b.TurnPrice,
+                            ProfitPrice = b.ProfitPrice,
+                            Payback = b.Payback,
+                            Profitability = b.Profitability,
+                            InvestPrice = b.InvestPrice,
+                            Text = b.Text,
+                            Share = b.Share,
+                            Site = b.Site,
+                            Peculiarity = b.Peculiarity,
+                            NameFinModelFile = b.NameFinModelFile,
+                            ReasonsSale = b.ReasonsSale,
+                            ReasonsSalePhotoName = b.ReasonsSalePhotoName,
+                            UrlVideo = b.UrlVideo,
+                            IsGarant = b.IsGarant,
+                            UserId = b.UserId,
+                            DateCreate = b.DateCreate,
+                            Category = b.Category,
+                            SubCategory = b.SubCategory,
+                            TextDoPrice = b.TextDoPrice,
+                            BusinessCity = b.BusinessCity
+                        })
+                    .FirstOrDefaultAsync();
+
+                if (result != null)
+                {
+                    result.IsRejected = true;
+                    result.IsAccepted = false;
+                    result.CommentRejection = comment;
+                    _postgreDbContext.Businesses.Update(result);
+                    await _postgreDbContext.SaveChangesAsync();
+
+                    return true;
+                }
+
+                return false;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+        
+        /// <summary>
+        /// Метод получит список бизнесов, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список бизнесов.</returns>
+        public async Task<IEnumerable<BusinessOutput>> GetNotAcceptedBusinessesAsync()
+        {
+            try
+            {
+                var items = await (from p in _postgreDbContext.Businesses
+                        where p.IsAccepted == false && p.IsRejected == false
+                        select new BusinessOutput
+                        {
+                            DateCreate = p.DateCreate,
+                            Price = string.Format("{0:0,0}", p.Price),
+                            CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                            DayDeclination = "дня",
+                            Text = p.Text,
+                            TextDoPrice = p.TextDoPrice,
+                            BusinessName = p.BusinessName,
+                            Url = p.UrlsBusiness,
+                            IsGarant = p.IsGarant,
+                            ProfitPrice = p.ProfitPrice,
+                            TotalInvest = string.Format("{0:0,0}", p.InvestPrice),
+                            BusinessId = p.BusinessId
+                        })
+                    .ToListAsync();
 
                 return items;
             }

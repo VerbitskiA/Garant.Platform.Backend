@@ -205,5 +205,20 @@ namespace Garant.Platform.Models.Entities.Business
         /// </summary>
         [Column("BusinessCity", TypeName = "varchar(200)")]
         public string BusinessCity { get; set; }
+        
+        /// <summary>
+        /// Подтверждена ли карточка.
+        /// </summary>
+        public bool IsAccepted { get; set; }
+        
+        /// <summary>
+        /// Отклонена ли карточка.
+        /// </summary>
+        public bool IsRejected { get; set; }
+
+        /// <summary>
+        /// Комментарий причины отклонения.
+        /// </summary>
+        public string CommentRejection { get; set; }
     }
 }
