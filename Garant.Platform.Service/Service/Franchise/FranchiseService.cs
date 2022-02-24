@@ -308,6 +308,9 @@ namespace Garant.Platform.Services.Service.Franchise
                 // Отправит оповещение администрации сервиса.
                 var mailService = AutoFac.Resolve<IMailingService>();
                 await mailService.SendMailAfterCreateCardAsync("Франшиза", newUrl);
+                
+                //TODO тут отправлять на email юзеру но сначала надо получить его mail
+                // await mailService.SendMailUserAfterCreateCardAsync();
 
                 return result;
             }

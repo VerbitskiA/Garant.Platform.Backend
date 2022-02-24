@@ -35,5 +35,13 @@ namespace Garant.Platform.Mailings.Abstraction
         /// <param name="cardType">Тип карточки.</param>
         /// <param name="cardUrl">Ссылка на карточку.</param>
         Task SendMailAfterCreateCardAsync(string cardType, string cardUrl = null);
+
+        /// <summary>
+        /// Метод отправит уведомление о созданной карточке пользователю.
+        /// </summary>
+        /// <param name="mailTo">Email пользователя, которому будет отправлено письмо.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <param name="cardUrl">Ссылка на карточку.</param>
+        Task SendMailUserAfterCreateCardAsync(string mailTo, string cardType, string cardUrl = null);
     }
 }

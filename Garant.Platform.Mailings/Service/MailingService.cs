@@ -196,5 +196,48 @@ namespace Garant.Platform.Mailings.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод отправит уведомление о созданной карточке пользователю.
+        /// </summary>
+        /// <param name="mailTo">Email пользователя, которому будет отправлено письмо.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <param name="cardUrl">Ссылка на карточку.</param>
+        public async Task SendMailUserAfterCreateCardAsync(string mailTo, string cardType, string cardUrl = null)
+        {
+            try
+            {
+                var data = await GetHostAndPortAsync(mailTo);
+                var email = _configuration.GetSection("MailingSettings:Email").Value;
+                var password = _configuration.GetSection("MailingSettings:MailAdministrationServicePassword").Value;
+
+                var emailMessage = new MimeMessage();
+                emailMessage.From.Add(new MailboxAddress(email));
+                emailMessage.To.Add(new MailboxAddress(mailTo));
+                emailMessage.Subject = "Вы создали новую карточку";
+                emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                {
+                    Text = "Здравствуйте. <br> " +
+                           "Вы создали новую карточку. <br>" +
+                           $"Тип карточки: {cardType} <br>" +
+                           "Статус: На модерации. <br>" +
+                           $"Карточка расположена по ссылке: {cardUrl}"
+                };
+
+                using var client = new SmtpClient();
+                await client.ConnectAsync(data.Item1, data.Item2, MailKit.Security.SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(email, password);
+                await client.SendAsync(emailMessage);
+                await client.DisconnectAsync(true);
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }
