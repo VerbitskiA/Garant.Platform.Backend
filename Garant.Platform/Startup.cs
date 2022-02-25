@@ -36,11 +36,7 @@ namespace Garant.Platform
             services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
             {
                 builder
-                    .WithOrigins(
-                        "http://localhost:4200",
-                        "http://localhost:40493",
-                        "https://gobizy.com",
-                        "https://gobizy.ru")
+                    .WithOrigins(Configuration.GetSection("CorsUrls:Urls").Get<string[]>())
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
@@ -49,26 +45,24 @@ namespace Garant.Platform
             #region Для прода.
 
             // services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
-            //     opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"),
-            //         b => b.MigrationsAssembly("Garant.Platform.Core").EnableRetryOnFailure()));
+            //     opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection")));
             //
             // services.AddDbContext<IdentityDbContext>(options =>
-            //     options.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection"),
-            //         b => b.MigrationsAssembly("Garant.Platform.Core")));
+            //     options.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection")));
 
             #endregion
 
             #region Для теста.
 
             services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
-                opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
-            
+                opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection")));
+
             services.AddDbContext<IdentityDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection"), b => b.MigrationsAssembly("Garant.Platform.Core")));
+                options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection")));
 
             #endregion
 
-            services.AddIdentity<UserEntity, IdentityRole>(opts => 
+            services.AddIdentity<UserEntity, IdentityRole>(opts =>
                 {
                     opts.Password.RequiredLength = 5;
                     opts.Password.RequireNonAlphanumeric = false;
@@ -99,13 +93,10 @@ namespace Garant.Platform
                         ValidateIssuerSigningKey = true
                     };
                 });
-            
-            var mapperConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
-            
-            IMapper mapper = mapperConfig.CreateMapper();
+
+            var mapperConfig = new MapperConfiguration(mc => { mc.AddProfile(new MappingProfile()); });
+
+            var mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
 
             ApplicationContainer = AutoFac.Init(cb => { cb.Populate(services); });
