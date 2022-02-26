@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.MainPage;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
@@ -22,9 +23,10 @@ namespace Garant.Platform.Services.Service.MainPage
     {
         private readonly PostgreDbContext _postgreDbContext;
 
-        public MainPageService(PostgreDbContext postgreDbContext)
+        public MainPageService()
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>

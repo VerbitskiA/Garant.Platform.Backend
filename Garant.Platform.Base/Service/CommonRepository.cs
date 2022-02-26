@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
+using Garant.Platform.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Base.Service
@@ -15,9 +17,10 @@ namespace Garant.Platform.Base.Service
     {
         private readonly PostgreDbContext _postgreDbContext;
         
-        public CommonRepository(PostgreDbContext postgreDbContext)
+        public CommonRepository()
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>

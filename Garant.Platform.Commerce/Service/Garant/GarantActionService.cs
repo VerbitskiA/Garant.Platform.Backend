@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Commerce.Abstraction;
@@ -35,9 +36,14 @@ namespace Garant.Platform.Commerce.Service.Garant
         private readonly IBusinessService _businessService;
         private readonly IGarantActionRepository _garantActionRepository;
 
-        public GarantActionService(PostgreDbContext postgreDbContext, IUserRepository userRepository, IFranchiseService franchiseService, IChatService chatService, IBusinessService businessService, IGarantActionRepository garantActionRepository)
+        public GarantActionService(IUserRepository userRepository, 
+            IFranchiseService franchiseService, 
+            IChatService chatService, 
+            IBusinessService businessService, 
+            IGarantActionRepository garantActionRepository)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _userRepository = userRepository;
             _franchiseService = franchiseService;
             _chatService = chatService;

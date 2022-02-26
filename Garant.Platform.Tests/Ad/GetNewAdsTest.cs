@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Core.Abstraction;
-using Garant.Platform.Service.Service.Ad;
+using Garant.Platform.Services.Service.Ad;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Ad
         {
             var mock = new Mock<IAdService>();
             mock.Setup(a => a.GetNewAdsAsync());
-            var component = new AdService(PostgreDbContext);
+            var component = new AdService();
             var result = await component.GetNewAdsAsync();
 
             Assert.IsTrue(result.Any());

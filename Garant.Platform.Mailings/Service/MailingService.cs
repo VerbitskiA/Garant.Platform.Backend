@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Mailings.Abstraction;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
@@ -19,9 +21,10 @@ namespace Garant.Platform.Mailings.Service
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IConfiguration _configuration;
 
-        public MailingService(PostgreDbContext postgreDbContext, IConfiguration configuration)
+        public MailingService(IConfiguration configuration)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _configuration = configuration;
         }
 

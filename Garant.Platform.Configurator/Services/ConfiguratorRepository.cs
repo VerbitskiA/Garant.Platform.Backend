@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Configurator.Abstractions;
 using Garant.Platform.Configurator.Enums;
 using Garant.Platform.Configurator.Models.Output;
@@ -10,6 +11,7 @@ using Garant.Platform.Core.Consts;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.EntityFrameworkCore;
@@ -23,9 +25,10 @@ namespace Garant.Platform.Configurator.Services
     {
         private readonly PostgreDbContext _postgreDbContext;
 
-        public ConfiguratorRepository(PostgreDbContext postgreDbContext)
+        public ConfiguratorRepository()
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>

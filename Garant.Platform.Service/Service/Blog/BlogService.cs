@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Garant.Platform.Abstractions.Blog;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
@@ -26,9 +27,10 @@ namespace Garant.Platform.Services.Service.Blog
         private readonly IBlogRepository _blogRepository;
         private readonly IFtpService _ftpService;
 
-        public BlogService(PostgreDbContext postgreDbContext, IBlogRepository blogRepository, IFtpService ftpService)
+        public BlogService(IBlogRepository blogRepository, IFtpService ftpService)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _blogRepository = blogRepository;
             _ftpService = ftpService;
         }

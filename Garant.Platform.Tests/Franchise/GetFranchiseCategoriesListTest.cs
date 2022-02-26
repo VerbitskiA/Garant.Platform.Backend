@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Franchise
         {
             var mock = new Mock<IFranchiseService>();
             mock.Setup(a => a.GetFranchisesCategoriesListAsync());
-            var component = new FranchiseService(PostgreDbContext, null, FranchiseRepository);
+            var component = new FranchiseService(null, FranchiseRepository);
             var result = await component.GetFranchisesCategoriesListAsync();
 
             Assert.IsTrue(result.Any());

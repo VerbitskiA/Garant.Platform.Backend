@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
 using Garant.Platform.Models.Entities.Business;
@@ -26,9 +28,10 @@ namespace Garant.Platform.Services.Service.Business
         private readonly IUserRepository _userRepository;
         private readonly ICommonService _commonService;
 
-        public BusinessRepository(PostgreDbContext postgreDbContext, IUserRepository userRepository, ICommonService commonService)
+        public BusinessRepository(IUserRepository userRepository, ICommonService commonService)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _userRepository = userRepository;
             _commonService = commonService;
         }

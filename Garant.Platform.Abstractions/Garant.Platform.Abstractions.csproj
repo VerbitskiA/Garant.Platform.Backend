@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Configurations>Debug;Release;garant_ru;garant_en</Configurations>
+    <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Garant.Platform.Core\Garant.Platform.Core.csproj" />
     <ProjectReference Include="..\Garant.Platform.Models\Garant.Platform.Models.csproj" />
   </ItemGroup>
 </Project>

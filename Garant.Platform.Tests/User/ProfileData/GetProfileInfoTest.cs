@@ -14,7 +14,7 @@ namespace Garant.Platform.Tests.User.ProfileData
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.GetProfileInfoAsync("sierra_93@mail.ru"));
-            var component = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
+            var component = new UserService(null, null, MailingService, UserRepository, FtpService, CommonService);
             var result = await component.GetProfileInfoAsync("sierra_93@mail.ru");
 
             Assert.IsNotNull(result);

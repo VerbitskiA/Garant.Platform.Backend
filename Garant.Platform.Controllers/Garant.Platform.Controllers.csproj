@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Configurations>Debug;Release;garant_ru;garant_en</Configurations>
+    <Configurations>Debug;Release</Configurations>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
@@ -20,10 +20,6 @@
     <ProjectReference Include="..\Garant.Platform.Messaging\Garant.Platform.Messaging.csproj" />
     <ProjectReference Include="..\Garant.Platform.Models\Garant.Platform.Models.csproj" />
     <ProjectReference Include="..\Garant.Platform.Service\Garant.Platform.Services.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Chat" />
   </ItemGroup>
 
 </Project>

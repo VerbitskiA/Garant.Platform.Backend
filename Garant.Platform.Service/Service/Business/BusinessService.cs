@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
@@ -27,10 +28,11 @@ namespace Garant.Platform.Services.Service.Business
         private readonly IBusinessRepository _businessRepository;
         private readonly IFtpService _ftpService;
 
-        public BusinessService(PostgreDbContext postgreDbContext, IBusinessRepository businessRepository,
+        public BusinessService(IBusinessRepository businessRepository,
             IFtpService ftpService)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _businessRepository = businessRepository;
             _ftpService = ftpService;
         }

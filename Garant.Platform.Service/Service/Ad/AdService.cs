@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Data;
@@ -10,7 +11,7 @@ using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Ad.Output;
 using Microsoft.EntityFrameworkCore;
 
-namespace Garant.Platform.Service.Service.Ad
+namespace Garant.Platform.Services.Service.Ad
 {
     /// <summary>
     /// Сервис объявлений.
@@ -19,9 +20,10 @@ namespace Garant.Platform.Service.Service.Ad
     {
         private readonly PostgreDbContext _postgreDbContext;
 
-        public AdService(PostgreDbContext postgreDbContext)
+        public AdService()
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>

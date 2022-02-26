@@ -5,6 +5,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Models.Franchise.Output;
 using System.Linq;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Exceptions;
@@ -25,10 +26,11 @@ namespace Garant.Platform.Services.Service.Franchise
         private readonly IFtpService _ftpService;
         private readonly IFranchiseRepository _franchiseRepository;
 
-        public FranchiseService(PostgreDbContext postgreDbContext, IFtpService ftpService,
+        public FranchiseService(IFtpService ftpService,
             IFranchiseRepository franchiseRepository)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _ftpService = ftpService;
             _franchiseRepository = franchiseRepository;
         }

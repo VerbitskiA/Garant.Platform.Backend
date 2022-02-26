@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.LastBuy
         {
             var mock = new Mock<IMainPageService>();
             mock.Setup(a => a.GetSliderLastBuyAsync());
-            var component = new MainPageService(PostgreDbContext);
+            var component = new MainPageService();
             var result = await component.GetSliderLastBuyAsync();
 
             Assert.IsTrue(result.Count() < 6);

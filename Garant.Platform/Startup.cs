@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
@@ -54,11 +55,11 @@ namespace Garant.Platform
 
             #region Для теста.
 
-            services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
-                opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection")));
-
+            // services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
+            //     opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection")));
+            //
             services.AddDbContext<IdentityDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection")));
+                options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnectionRu")));
 
             #endregion
 
@@ -118,6 +119,14 @@ namespace Garant.Platform
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Garant.Platform v1"));
             app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
+            
+            // Наполнит словарь для динамической смены датаконтекстов при работе с разными БД.
+            var connStrs = new Dictionary<string, string>();
+            connStrs.TryAdd("NpgTestSqlConnectionRu", Configuration.GetConnectionString("NpgTestSqlConnectionRu"));
+            connStrs.TryAdd("NpgConfigurationConnectionRu", Configuration.GetConnectionString("NpgConfigurationConnectionRu"));
+            connStrs.TryAdd("NpgTestSqlConnectionEn", Configuration.GetConnectionString("NpgTestSqlConnectionEn"));
+            connStrs.TryAdd("NpgConfigurationConnectionEn", Configuration.GetConnectionString("NpgConfigurationConnectionEn"));
+            DbContextFactory.SetConnectionString(connStrs);
         }
     }
 }

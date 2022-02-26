@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Commerce.Abstraction;
 using Garant.Platform.Commerce.Models.Garant.Output;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Entities.Commerce;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,9 +19,10 @@ namespace Garant.Platform.Commerce.Service.Garant
     {
         private readonly PostgreDbContext _postgreDbContext;
 
-        public GarantActionRepository(PostgreDbContext postgreDbContext)
+        public GarantActionRepository()
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>

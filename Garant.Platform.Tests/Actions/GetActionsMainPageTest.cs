@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Actions
         {
             var mock = new Mock<IMainPageService>();
             mock.Setup(a => a.GetActionsMainPageAsync());
-            var component = new MainPageService(PostgreDbContext);
+            var component = new MainPageService();
             var result = await component.GetActionsMainPageAsync();
 
             Assert.IsTrue(result.Any());
