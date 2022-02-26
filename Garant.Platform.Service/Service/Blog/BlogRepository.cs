@@ -10,8 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Abstractions.User;
+using Garant.Platform.Core.Utils;
 
 namespace Garant.Platform.Services.Service.Blog
 {
@@ -23,9 +25,10 @@ namespace Garant.Platform.Services.Service.Blog
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IUserRepository _userRepository;
 
-        public BlogRepository(PostgreDbContext postgreDbContext, IUserRepository userRepository)
+        public BlogRepository(IUserRepository userRepository)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _userRepository = userRepository;
         }
 

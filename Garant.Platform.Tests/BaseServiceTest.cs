@@ -58,30 +58,30 @@ namespace Garant.Platform.Tests
             var optionsBuilder = new DbContextOptionsBuilder<PostgreDbContext>();
             optionsBuilder.UseNpgsql(PostgreConfigString);
             PostgreDbContext = new PostgreDbContext(optionsBuilder.Options);
-            FtpService = new FtpService(AppConfiguration, PostgreDbContext);
+            FtpService = new FtpService(AppConfiguration);
 
             // Настройка экземпляров сервисов для тестов.
-            CommonService = new CommonService(PostgreDbContext, null);
-            UserRepository = new UserRepository(PostgreDbContext, CommonService);
-            FranchiseRepository = new FranchiseRepository(PostgreDbContext, UserRepository, CommonService);
-            BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
-            BusinessService = new BusinessService(PostgreDbContext, BusinessRepository, FtpService);
-            PaginationRepository = new PaginationRepository(PostgreDbContext, CommonService);
+            CommonService = new CommonService(null);
+            UserRepository = new UserRepository(CommonService);
+            FranchiseRepository = new FranchiseRepository(UserRepository, CommonService);
+            BusinessRepository = new BusinessRepository(UserRepository, CommonService);
+            BusinessService = new BusinessService(BusinessRepository, FtpService);
+            PaginationRepository = new PaginationRepository(CommonService);
 
-            BlogRepository = new BlogRepository(PostgreDbContext, UserRepository);
-            BlogService = new BlogService(PostgreDbContext, BlogRepository, FtpService);
+            BlogRepository = new BlogRepository(UserRepository);
+            BlogService = new BlogService(BlogRepository, FtpService);
 
-            MailingService = new MailingService(PostgreDbContext, AppConfiguration);
-            UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
-            FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);            
-            ChatRepository = new ChatRepository(PostgreDbContext);
+            MailingService = new MailingService(AppConfiguration);
+            UserService = new UserService(null, null, MailingService, UserRepository, FtpService, CommonService);
+            FranchiseService = new FranchiseService(null, FranchiseRepository);            
+            ChatRepository = new ChatRepository();
             RequestService = new RequestService(FranchiseRepository, BusinessRepository, PostgreDbContext);
             DocumentRepository = new DocumentRepository(PostgreDbContext, UserRepository);
             DocumentService = new DocumentService(PostgreDbContext, FtpService, DocumentRepository);
             ControlRepository = new ControlRepository(PostgreDbContext);
             ControlService = new ControlService(PostgreDbContext, ControlRepository, UserRepository);
-            ConfiguratorRepository = new ConfiguratorRepository(PostgreDbContext);
-            ConfiguratorService = new ConfiguratorService(PostgreDbContext, ConfiguratorRepository, FranchiseRepository, BusinessRepository);
+            ConfiguratorRepository = new ConfiguratorRepository();
+            ConfiguratorService = new ConfiguratorService(ConfiguratorRepository, FranchiseRepository, BusinessRepository);
         }
     }
 }

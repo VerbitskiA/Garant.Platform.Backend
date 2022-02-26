@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Business
         {
             var mock = new Mock<IBusinessService>();
             mock.Setup(a => a.GetBusinessListAsync());
-            var component = new BusinessService(PostgreDbContext, BusinessRepository, null);
+            var component = new BusinessService(BusinessRepository, null);
             var result = await component.GetBusinessListAsync();
 
             Assert.IsTrue(result.Any());

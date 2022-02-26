@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Messaging.Abstraction.Chat;
 using Garant.Platform.Messaging.Enums;
 using Garant.Platform.Messaging.Exceptions;
@@ -25,10 +27,14 @@ namespace Garant.Platform.Messaging.Service.Chat
         private readonly IFranchiseRepository _franchiseRepository;
         private readonly IBusinessRepository _businessRepository;
 
-        public ChatService(IChatRepository chatRepository, PostgreDbContext postgreDbContext, IUserRepository userRepository, IFranchiseRepository franchiseRepository, IBusinessRepository businessRepository)
+        public ChatService(IChatRepository chatRepository, 
+            IUserRepository userRepository, 
+            IFranchiseRepository franchiseRepository, 
+            IBusinessRepository businessRepository)
         {
             _chatRepository = chatRepository;
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _userRepository = userRepository;
             _franchiseRepository = franchiseRepository;
             _businessRepository = businessRepository;

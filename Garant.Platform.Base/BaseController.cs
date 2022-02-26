@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Garant.Platform.Core.Enums;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Garant.Platform.Base
 {
@@ -28,6 +29,27 @@ namespace Garant.Platform.Base
         private string GetLoginFromCookie()
         {
             return HttpContext.Request.Cookies["user"];
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public string GetGeolocationFromCookies()
+        {
+            if (HttpContext == null)
+            {
+                return LocationTypeEnum.RU.ToString();
+            }
+            
+            if (HttpContext.Request.Cookies["geozone"]!.Equals(LocationTypeEnum.RU.ToString()))
+            {
+                return LocationTypeEnum.RU.ToString();
+            }
+            
+            if (HttpContext.Request.Cookies["geozone"]!.Equals(LocationTypeEnum.EN.ToString()))
+            {
+                return LocationTypeEnum.EN.ToString();
+            }
+
+            return LocationTypeEnum.RU.ToString();
         }
     }
 }

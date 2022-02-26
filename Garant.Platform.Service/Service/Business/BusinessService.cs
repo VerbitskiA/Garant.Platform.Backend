@@ -4,9 +4,13 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.FTP.Abstraction;
+using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
 using Garant.Platform.Models.Pagination.Output;
@@ -24,10 +28,11 @@ namespace Garant.Platform.Services.Service.Business
         private readonly IBusinessRepository _businessRepository;
         private readonly IFtpService _ftpService;
 
-        public BusinessService(PostgreDbContext postgreDbContext, IBusinessRepository businessRepository,
+        public BusinessService(IBusinessRepository businessRepository,
             IFtpService ftpService)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _businessRepository = businessRepository;
             _ftpService = ftpService;
         }
@@ -73,6 +78,15 @@ namespace Garant.Platform.Services.Service.Business
                 // Создаст или обновит бизнес.
                 result = await _businessRepository.CreateUpdateBusinessAsync(businessInput, lastBusinessId,
                     businessInput.UrlsBusiness, files, account);
+                
+                // Сформирует ссылку на карточку франшизы.
+                var commonRepository = AutoFac.Resolve<ICommonRepository>();
+                var cardUrl = await commonRepository.GetCardUrlAsync("ModerationBusinessCard");
+                var newUrl = cardUrl + result.BusinessId;
+                
+                // Отправит оповещение администрации сервиса.
+                var mailService = AutoFac.Resolve<IMailingService>();
+                await mailService.SendMailAfterCreateCardAsync("Бизнес", newUrl);
 
                 return result;
             }

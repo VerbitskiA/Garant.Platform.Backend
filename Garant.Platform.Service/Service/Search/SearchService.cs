@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.Search;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 
 namespace Garant.Platform.Services.Service.Search
 {
@@ -18,11 +20,13 @@ namespace Garant.Platform.Services.Service.Search
         private readonly IBusinessRepository _businessRepository;
         private readonly PostgreDbContext _postgreDbContext;
 
-        public SearchService(IFranchiseRepository franchiseRepository, IBusinessRepository businessRepository, PostgreDbContext postgreDbContext)
+        public SearchService(IFranchiseRepository franchiseRepository, 
+            IBusinessRepository businessRepository)
         {
             _franchiseRepository = franchiseRepository;
             _businessRepository = businessRepository;
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>

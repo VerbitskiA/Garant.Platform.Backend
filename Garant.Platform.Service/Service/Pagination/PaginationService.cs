@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.Pagination;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
-using Garant.Platform.Models.Business.Output;
-using Garant.Platform.Models.Franchise.Output;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Pagination.Output;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,9 +19,10 @@ namespace Garant.Platform.Services.Service.Pagination
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IPaginationRepository _paginationRepository;
 
-        public PaginationService(PostgreDbContext postgreDbContext, IPaginationRepository paginationRepository)
+        public PaginationService(IPaginationRepository paginationRepository)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _paginationRepository = paginationRepository;
         }
 

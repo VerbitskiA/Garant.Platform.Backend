@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Configurator.Abstractions;
 using Garant.Platform.Configurator.Exceptions;
@@ -26,12 +27,12 @@ namespace Garant.Platform.Configurator.Services
         private readonly IFranchiseRepository _franchiseRepository;
         private readonly IBusinessRepository _businessRepository;
 
-        public ConfiguratorService(PostgreDbContext postgreDbContext, 
-            IConfiguratorRepository configuratorRepository,
+        public ConfiguratorService(IConfiguratorRepository configuratorRepository,
             IFranchiseRepository franchiseRepository,
             IBusinessRepository businessRepository)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _configuratorRepository = configuratorRepository;
             _franchiseRepository = franchiseRepository;
             _businessRepository = businessRepository;

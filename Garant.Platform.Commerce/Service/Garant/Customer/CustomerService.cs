@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Commerce.Abstraction.Garant.Customer;
@@ -26,9 +27,12 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
         private readonly ICustomerRepository _customerRepository;
         private readonly ITinkoffService _tinkoffService;
 
-        public CustomerService(PostgreDbContext postgreDbContex, IUserRepository userRepository, ICustomerRepository customerRepository, ITinkoffService tinkoffService)
+        public CustomerService(IUserRepository userRepository, 
+            ICustomerRepository customerRepository, 
+            ITinkoffService tinkoffService)
         {
-            _postgreDbContext = postgreDbContex;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _userRepository = userRepository;
             _customerRepository = customerRepository;
             _tinkoffService = tinkoffService;

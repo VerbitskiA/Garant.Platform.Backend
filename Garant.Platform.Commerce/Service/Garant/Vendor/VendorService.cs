@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Commerce.Abstraction.Garant.Vendor;
@@ -19,9 +20,10 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IVendorRepository _vendorRepository;
 
-        public VendorService(PostgreDbContext postgreDbContext, IVendorRepository vendorRepository)
+        public VendorService(IVendorRepository vendorRepository)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _vendorRepository = vendorRepository;
         }
 

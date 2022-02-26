@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Blog
         {
             var mock = new Mock<IBlogService>();
             mock.Setup(a => a.GetBlogsListMainPageAsync());
-            var component = new BlogService(PostgreDbContext, BlogRepository,FtpService);
+            var component = new BlogService(BlogRepository,FtpService);
             var result = await component.GetBlogsListMainPageAsync();
 
             Assert.IsTrue(result.Any());
@@ -26,7 +26,7 @@ namespace Garant.Platform.Tests.Blog
         {
             var mock = new Mock<IBlogService>();
             mock.Setup(a => a.GetBlogsListAsync());
-            var component = new BlogService(PostgreDbContext, BlogRepository, FtpService);
+            var component = new BlogService(BlogRepository, FtpService);
             var result = await component.GetBlogsListAsync();
 
             Assert.IsTrue(result.Any());

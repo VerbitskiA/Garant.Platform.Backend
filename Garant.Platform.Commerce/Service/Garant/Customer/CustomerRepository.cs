@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Commerce.Abstraction.Garant.Customer;
 using Garant.Platform.Commerce.Models.Tinkoff.Input;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Commerce.Output;
 using Garant.Platform.Models.Entities.Commerce;
-using Garant.Platform.Models.Entities.Document;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Commerce.Service.Garant.Customer
@@ -19,9 +20,10 @@ namespace Garant.Platform.Commerce.Service.Garant.Customer
     {
         private readonly PostgreDbContext _postgreDbContext;
 
-        public CustomerRepository(PostgreDbContext postgreDbContext)
+        public CustomerRepository()
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>

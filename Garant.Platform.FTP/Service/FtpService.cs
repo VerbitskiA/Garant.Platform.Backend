@@ -3,8 +3,10 @@ using System.IO;
 using System.Net;
 using System.Net.FtpClient;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.FTP.Abstraction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +22,11 @@ namespace Garant.Platform.FTP.Service
         private readonly IConfiguration _configuration;
         private readonly PostgreDbContext _postgreDbContext;
 
-        public FtpService(IConfiguration configuration, PostgreDbContext postgreDbContext)
+        public FtpService(IConfiguration configuration)
         {
             _configuration = configuration;
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>

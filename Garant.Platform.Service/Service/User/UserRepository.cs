@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Entities.Transition;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Footer.Output;
@@ -26,9 +28,10 @@ namespace Garant.Platform.Services.Service.User
         private readonly PostgreDbContext _postgreDbContext;
         private readonly ICommonService _commonService;
 
-        public UserRepository(PostgreDbContext postgreDbContext, ICommonService commonService)
+        public UserRepository(ICommonService commonService)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _commonService = commonService;
         }
 

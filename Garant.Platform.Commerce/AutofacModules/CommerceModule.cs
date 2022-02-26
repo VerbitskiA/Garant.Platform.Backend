@@ -4,12 +4,10 @@ using Garant.Platform.Commerce.Abstraction.Garant;
 using Garant.Platform.Commerce.Abstraction.Garant.Customer;
 using Garant.Platform.Commerce.Abstraction.Garant.Vendor;
 using Garant.Platform.Commerce.Abstraction.Tinkoff;
-using Garant.Platform.Commerce.Abstraction.ЮKassa;
 using Garant.Platform.Commerce.Service.Garant;
 using Garant.Platform.Commerce.Service.Garant.Customer;
 using Garant.Platform.Commerce.Service.Garant.Vendor;
 using Garant.Platform.Commerce.Service.Tinkoff;
-using Garant.Platform.Commerce.Service.ЮKassa;
 using Garant.Platform.Core.Attributes;
 
 namespace Garant.Platform.Commerce.AutofacModules
@@ -22,10 +20,6 @@ namespace Garant.Platform.Commerce.AutofacModules
     {
         public static void InitModules(ContainerBuilder builder)
         {
-            // Сервис платежной системы ЮKassa.
-            builder.RegisterType<ЮKassaService>().Named<IЮKassaService>("ЮKassaService");
-            builder.RegisterType<ЮKassaService>().As<IЮKassaService>();
-
             // Сервис платежной системы Тинькофф.
             builder.RegisterType<TinkoffService>().Named<ITinkoffService>("TinkoffService");
             builder.RegisterType<TinkoffService>().As<ITinkoffService>();

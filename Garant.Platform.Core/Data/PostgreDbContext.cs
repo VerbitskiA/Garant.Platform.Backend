@@ -16,6 +16,7 @@ using Garant.Platform.Models.Entities.News;
 using Garant.Platform.Models.Entities.Suggestion;
 using Garant.Platform.Models.Entities.Transition;
 using Garant.Platform.Models.Entities.User;
+using Garant.Platform.Models.Notification;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Core.Data
@@ -266,5 +267,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица Info.ArticleThemes.
         /// </summary>
         public DbSet<ArticleThemeEntity> ArticleThemes { get; set; }
+
+        /// <summary>
+        /// Таблица Communications.Notification. 
+        /// </summary>
+        public DbSet<NotificationEntity> Notifications { get; set; }
     }
 }

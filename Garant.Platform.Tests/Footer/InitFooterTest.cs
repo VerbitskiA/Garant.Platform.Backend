@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Footer
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.InitFooterAsync());
-            var component = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
+            var component = new UserService(null, null, MailingService, UserRepository, FtpService, CommonService);
             var result = await component.InitFooterAsync();
 
             Assert.IsTrue(result.Any());

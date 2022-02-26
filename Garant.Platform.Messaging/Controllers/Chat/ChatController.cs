@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Garant.Platform.Controllers.Chat
+namespace Garant.Platform.Messaging.Controllers.Chat
 {
     /// <summary>
     /// Контроллер работы с чатом и сообщениями.
