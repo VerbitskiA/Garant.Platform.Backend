@@ -22,7 +22,7 @@ namespace Garant.Platform.Services.Service.MainPage
     public sealed class MainPageService : IMainPageService
     {
         private readonly PostgreDbContext _postgreDbContext;
-
+        
         public MainPageService()
         {
             var dbContext = AutoFac.Resolve<IDataBaseConfig>();

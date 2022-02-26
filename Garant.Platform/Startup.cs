@@ -44,20 +44,14 @@ namespace Garant.Platform
             }));
 
             #region Для прода.
-
-            // services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
-            //     opt.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection")));
-            //
+            
             // services.AddDbContext<IdentityDbContext>(options =>
-            //     options.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnection")));
+            //     options.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnectionRu")));
 
             #endregion
 
             #region Для теста.
-
-            // services.AddEntityFrameworkNpgsql().AddDbContext<PostgreDbContext>(opt =>
-            //     opt.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnection")));
-            //
+            
             services.AddDbContext<IdentityDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnectionRu")));
 
@@ -101,7 +95,10 @@ namespace Garant.Platform
             services.AddSingleton(mapper);
 
             ApplicationContainer = AutoFac.Init(cb => { cb.Populate(services); });
-
+            
+            // Добавит доступ к контексту из любого компонента.
+            services.AddHttpContextAccessor();
+            
             return new AutofacServiceProvider(ApplicationContainer);
         }
 

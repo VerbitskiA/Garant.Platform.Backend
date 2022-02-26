@@ -2,6 +2,8 @@
 using Garant.Platform.Base;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Enums;
+using Garant.Platform.Core.Utils;
+using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Services.DataBase
 {
@@ -21,7 +23,8 @@ namespace Garant.Platform.Services.DataBase
         /// <returns>Датаконтекст.</returns>
         public PostgreDbContext GetDbContext()
         {
-            var geozone = GetGeolocationFromCookies();
+            var context = AutoFac.Resolve<IHttpContextAccessor>();
+            var geozone = context.HttpContext?.Request.Cookies["geozone"];
             
             if (string.IsNullOrEmpty(geozone))
             {
@@ -47,7 +50,8 @@ namespace Garant.Platform.Services.DataBase
         /// <returns>Датаконтекст.</returns>
         public IdentityDbContext GetIdentityDbContext()
         {
-            var geozone = GetGeolocationFromCookies();
+            var context = AutoFac.Resolve<IHttpContextAccessor>();
+            var geozone = context.HttpContext?.Request.Cookies["geozone"];
             
             if (string.IsNullOrEmpty(geozone))
             {
