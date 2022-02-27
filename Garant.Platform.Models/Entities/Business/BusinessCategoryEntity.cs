@@ -36,13 +36,16 @@ namespace Garant.Platform.Models.Entities.Business
         /// <summary>
         /// Код категории бизнеса.
         /// </summary>
-        [Column("BusinessCode", TypeName = "varchar(100)")]
-        public string BusinessCode { get; set; }
+        [Column("BusinessCategoryCode", TypeName = "varchar(100)")]
+        public string BusinessCategoryCode { get; set; }
 
         /// <summary>
         /// Название категории бизнеса.
         /// </summary>
-        [Column("BusinessName", TypeName = "varchar(200)")]
-        public string BusinessName { get; set; }
+        [Column("BusinessCategoryName", TypeName = "varchar(200)")]
+        public string BusinessCategoryName { get; set; }
+
+        [Column("FranchiseCategorySysName", TypeName = "varchar(150)")]
+        public string FranchiseCategorySysName { get; set; }
     }
 }

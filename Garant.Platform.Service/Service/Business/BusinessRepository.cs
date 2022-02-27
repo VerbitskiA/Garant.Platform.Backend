@@ -478,8 +478,8 @@ namespace Garant.Platform.Services.Service.Business
                 var result = await _postgreDbContext.BusinessCategories
                     .Select(fc => new GetBusinessCategoryOutput
                     {
-                        CategoryCode = fc.BusinessCode,
-                        CategoryName = fc.BusinessName
+                        CategoryCode = fc.BusinessCategoryCode,
+                        CategoryName = fc.BusinessCategoryName
                     })
                     .ToListAsync();
 
@@ -623,13 +623,13 @@ namespace Garant.Platform.Services.Service.Business
         /// Метод получит список бизнеса.
         /// </summary>
         /// <returns>Список бизнеса.</returns>
-        public async Task<IEnumerable<PopularBusinessOutput>> GetBusinessListAsync()
+        public async Task<IEnumerable<BusinessOutput>> GetBusinessListAsync()
         {
             try
             {
                 var result = await _postgreDbContext.Businesses
                     .Where(b => b.IsAccepted == true)
-                    .Select(b => new PopularBusinessOutput
+                    .Select(b => new BusinessOutput
                     {
                         DateCreate = b.DateCreate,
                         Price = string.Format("{0:0,0}", b.Price),
@@ -637,7 +637,7 @@ namespace Garant.Platform.Services.Service.Business
                         DayDeclination = "дня",
                         Text = b.Text,
                         TextDoPrice = b.TextDoPrice,
-                        Title = b.BusinessName,
+                        BusinessName = b.BusinessName,
                         Url = b.UrlsBusiness,
                         TotalInvest = string.Format("{0:0,0}", b.InvestPrice),
                         BusinessId = b.BusinessId
@@ -1043,49 +1043,13 @@ namespace Garant.Platform.Services.Service.Business
         {
             try
             {
-                var result = await (from b in _postgreDbContext.Businesses
-                        where b.BusinessId == businessId
-                        select new BusinessEntity
-                        {
-                            BusinessId = b.BusinessId,
-                            ActivityDetail = b.ActivityDetail,
-                            ActivityPhotoName = b.ActivityPhotoName,
-                            Address = b.Address,
-                            Assets = b.Assets,
-                            AssetsPhotoName = b.AssetsPhotoName,
-                            BusinessAge = b.BusinessAge,
-                            BusinessName = b.BusinessName,
-                            EmployeeCountYear = b.EmployeeCountYear,
-                            Form = b.Form,
-                            Status = b.Status,
-                            UrlsBusiness = b.UrlsBusiness,
-                            TurnPrice = b.TurnPrice,
-                            ProfitPrice = b.ProfitPrice,
-                            Payback = b.Payback,
-                            Profitability = b.Profitability,
-                            InvestPrice = b.InvestPrice,
-                            Text = b.Text,
-                            Share = b.Share,
-                            Site = b.Site,
-                            Peculiarity = b.Peculiarity,
-                            NameFinModelFile = b.NameFinModelFile,
-                            ReasonsSale = b.ReasonsSale,
-                            ReasonsSalePhotoName = b.ReasonsSalePhotoName,
-                            UrlVideo = b.UrlVideo,
-                            IsGarant = b.IsGarant,
-                            UserId = b.UserId,
-                            DateCreate = b.DateCreate,
-                            Category = b.Category,
-                            SubCategory = b.SubCategory,
-                            TextDoPrice = b.TextDoPrice,
-                            BusinessCity = b.BusinessCity
-                        })
+                var result = await _postgreDbContext.Businesses
+                    .Where(b => b.BusinessId == businessId)
                     .FirstOrDefaultAsync();
 
                 if (result != null)
                 {
                     result.IsAccepted = true;
-                    _postgreDbContext.Businesses.Update(result);
                     await _postgreDbContext.SaveChangesAsync();
                     
                     return true;
@@ -1113,43 +1077,8 @@ namespace Garant.Platform.Services.Service.Business
         {
             try
             {
-                var result = await (from b in _postgreDbContext.Businesses
-                        where b.BusinessId == businessId
-                        select new BusinessEntity
-                        {
-                            BusinessId = b.BusinessId,
-                            ActivityDetail = b.ActivityDetail,
-                            ActivityPhotoName = b.ActivityPhotoName,
-                            Address = b.Address,
-                            Assets = b.Assets,
-                            AssetsPhotoName = b.AssetsPhotoName,
-                            BusinessAge = b.BusinessAge,
-                            BusinessName = b.BusinessName,
-                            EmployeeCountYear = b.EmployeeCountYear,
-                            Form = b.Form,
-                            Status = b.Status,
-                            UrlsBusiness = b.UrlsBusiness,
-                            TurnPrice = b.TurnPrice,
-                            ProfitPrice = b.ProfitPrice,
-                            Payback = b.Payback,
-                            Profitability = b.Profitability,
-                            InvestPrice = b.InvestPrice,
-                            Text = b.Text,
-                            Share = b.Share,
-                            Site = b.Site,
-                            Peculiarity = b.Peculiarity,
-                            NameFinModelFile = b.NameFinModelFile,
-                            ReasonsSale = b.ReasonsSale,
-                            ReasonsSalePhotoName = b.ReasonsSalePhotoName,
-                            UrlVideo = b.UrlVideo,
-                            IsGarant = b.IsGarant,
-                            UserId = b.UserId,
-                            DateCreate = b.DateCreate,
-                            Category = b.Category,
-                            SubCategory = b.SubCategory,
-                            TextDoPrice = b.TextDoPrice,
-                            BusinessCity = b.BusinessCity
-                        })
+                var result = await _postgreDbContext.Businesses
+                    .Where(b => b.BusinessId == businessId)
                     .FirstOrDefaultAsync();
 
                 if (result != null)
@@ -1157,7 +1086,6 @@ namespace Garant.Platform.Services.Service.Business
                     result.IsRejected = true;
                     result.IsAccepted = false;
                     result.CommentRejection = comment;
-                    _postgreDbContext.Businesses.Update(result);
                     await _postgreDbContext.SaveChangesAsync();
 
                     return true;

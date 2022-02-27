@@ -44,5 +44,23 @@ namespace Garant.Platform.Models.Entities.Business
         /// </summary>
         [Column("BusinessSubCategoryName", TypeName = "varchar(200)")]
         public string BusinessSubCategoryName { get; set; }
+        
+        /// <summary>
+        /// Системное название сферы.
+        /// </summary>
+        [Column("BusinessCategorySysName", TypeName = "varchar(150)")]
+        public string BusinessCategorySysName { get; set; }
+
+        /// <summary>
+        /// Системное название подкатегории.
+        /// </summary>
+        [Column("BusinessSubCategorySysName", TypeName = "varchar(150)")]
+        public string BusinessSubCategorySysName { get; set; }
+
+        /// <summary>
+        /// Код категории.
+        /// </summary>
+        [Column("BusinessCategoryCode", TypeName = "varchar(150)")]
+        public string BusinessCategoryCode { get; set; }
     }
 }

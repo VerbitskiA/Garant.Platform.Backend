@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.DataBase;
+using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.Pagination;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
@@ -17,13 +19,15 @@ namespace Garant.Platform.Services.Service.Pagination
     public sealed class PaginationService : IPaginationService
     {
         private readonly PostgreDbContext _postgreDbContext;
-        private readonly IPaginationRepository _paginationRepository;
+        private readonly IFranchiseService _franchiseService;
+        private readonly IBusinessService _businessService;
 
-        public PaginationService(IPaginationRepository paginationRepository)
+        public PaginationService(IFranchiseService franchiseService, IBusinessService businessService)
         {
             var dbContext = AutoFac.Resolve<IDataBaseConfig>();
             _postgreDbContext = dbContext.GetDbContext();
-            _paginationRepository = paginationRepository;
+            _franchiseService = franchiseService;
+            _businessService = businessService;
         }
 
         /// <summary>
@@ -37,8 +41,9 @@ namespace Garant.Platform.Services.Service.Pagination
             {
                 var countRows = 12;   // Кол-во заданий на странице.
 
-                //выбираются по умолчанию фрашниизы с флагом IsGarant == true
-                var franchisesList = await _paginationRepository.GetFranchisesListIsGarantAsync();
+                // Получит список франшиз.
+                var franchises = await _franchiseService.GetFranchisesListAsync();
+                var franchisesList = franchises.ToList();
 
                 var count = franchisesList.Count;
                 var items = franchisesList.Take(countRows).ToList();
@@ -131,9 +136,10 @@ namespace Garant.Platform.Services.Service.Pagination
         {
             try
             {
-                var countRows = 10;   // Кол-во заданий на странице.
+                var countRows = 12;   // Кол-во заданий на странице.
 
-                var businessList = await _paginationRepository.GetBusinessesListIsGarantAsync();
+                var business = await _businessService.GetBusinessListAsync();
+                var businessList = business.ToList();
 
                 var count = businessList.Count;
                 var items = businessList.Take(countRows).ToList();
@@ -183,7 +189,8 @@ namespace Garant.Platform.Services.Service.Pagination
             try
             {
                 //TODO: Не используется, пагинация происходит при фильтрации бизнеса.
-                var businessList = await _paginationRepository.GetBusinessListAsync();
+                var business = await _businessService.GetBusinessListAsync();
+                var businessList = business.ToList();
 
                 var count = businessList.Count;
                 var items = businessList.Skip((pageNumber - 1) * countRows).Take(countRows).ToList();

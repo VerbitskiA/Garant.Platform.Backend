@@ -14,7 +14,7 @@ namespace Garant.Platform.Tests.Pagination
         {
             var mock = new Mock<IPaginationService>();
             mock.Setup(a => a.GetInitPaginationCatalogFranchiseAsync(1));
-            var component = new PaginationService(PaginationRepository);
+            var component = new PaginationService(FranchiseService, BusinessService);
             var result = await component.GetInitPaginationCatalogFranchiseAsync(1);
 
             Assert.IsTrue(result.Results != null);

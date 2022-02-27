@@ -1473,56 +1473,13 @@ namespace Garant.Platform.Services.Service.Franchise
         {
             try
             {
-                var result = await (from f in _postgreDbContext.Franchises
-                        where f.FranchiseId == franchiseId
-                        select new FranchiseEntity
-                        {
-                            FranchiseId = f.FranchiseId,
-                            ActivityDetail = f.ActivityDetail,
-                            BaseDate = f.BaseDate,
-                            BusinessCount = f.BusinessCount,
-                            Category = f.Category,
-                            SubCategory = f.SubCategory,
-                            DateCreate = f.DateCreate,
-                            DotCount = f.DotCount,
-                            FinIndicators = f.FinIndicators,
-                            FranchisePacks = f.FranchisePacks,
-                            UrlsDetails = f.UrlsDetails,
-                            UrlLogo = f.UrlLogo,
-                            NameFinIndicators = f.FinIndicators,
-                            NameFinModelFile = f.NameFinModelFile,
-                            NameFranchisePhoto = f.NameFranchisePhoto,
-                            NamePresentFile = f.NamePresentFile,
-                            TrainingPhotoName = f.TrainingPhotoName,
-                            Title = f.Title,
-                            Text = f.Text,
-                            Price = f.Price,
-                            ViewBusiness = f.ViewBusiness,
-                            IsGarant = f.IsGarant,
-                            ProfitMonth = f.ProfitMonth,
-                            ProfitPrice = f.ProfitPrice,
-                            Status = f.Status,
-                            YearStart = f.YearStart,
-                            GeneralInvest = f.GeneralInvest,
-                            LumpSumPayment = f.LumpSumPayment,
-                            Royalty = f.Royalty,
-                            Payback = f.Payback,
-                            LaunchDate = f.LaunchDate,
-                            InvestInclude = f.InvestInclude,
-                            Peculiarity = f.Peculiarity,
-                            PaymentDetail = f.PaymentDetail,
-                            TrainingDetails = f.TrainingDetails,
-                            UrlVideo = f.UrlVideo,
-                            Reviews = f.Reviews,
-                            Url = f.Url,
-                            UserId = f.UserId
-                        })
+                var result = await _postgreDbContext.Franchises
+                    .Where(f => f.FranchiseId == franchiseId)
                     .FirstOrDefaultAsync();
 
                 if (result != null)
                 {
                     result.IsAccepted = true;
-                    _postgreDbContext.Franchises.Update(result);
                     await _postgreDbContext.SaveChangesAsync();
 
                     return true;
@@ -1550,50 +1507,8 @@ namespace Garant.Platform.Services.Service.Franchise
         {
             try
             {
-                var result = await (from f in _postgreDbContext.Franchises
-                        where f.FranchiseId == franchiseId
-                        select new FranchiseEntity
-                        {
-                            FranchiseId = f.FranchiseId,
-                            ActivityDetail = f.ActivityDetail,
-                            BaseDate = f.BaseDate,
-                            BusinessCount = f.BusinessCount,
-                            Category = f.Category,
-                            SubCategory = f.SubCategory,
-                            DateCreate = f.DateCreate,
-                            DotCount = f.DotCount,
-                            FinIndicators = f.FinIndicators,
-                            FranchisePacks = f.FranchisePacks,
-                            UrlsDetails = f.UrlsDetails,
-                            UrlLogo = f.UrlLogo,
-                            NameFinIndicators = f.FinIndicators,
-                            NameFinModelFile = f.NameFinModelFile,
-                            NameFranchisePhoto = f.NameFranchisePhoto,
-                            NamePresentFile = f.NamePresentFile,
-                            TrainingPhotoName = f.TrainingPhotoName,
-                            Title = f.Title,
-                            Text = f.Text,
-                            Price = f.Price,
-                            ViewBusiness = f.ViewBusiness,
-                            IsGarant = f.IsGarant,
-                            ProfitMonth = f.ProfitMonth,
-                            ProfitPrice = f.ProfitPrice,
-                            Status = f.Status,
-                            YearStart = f.YearStart,
-                            GeneralInvest = f.GeneralInvest,
-                            LumpSumPayment = f.LumpSumPayment,
-                            Royalty = f.Royalty,
-                            Payback = f.Payback,
-                            LaunchDate = f.LaunchDate,
-                            InvestInclude = f.InvestInclude,
-                            Peculiarity = f.Peculiarity,
-                            PaymentDetail = f.PaymentDetail,
-                            TrainingDetails = f.TrainingDetails,
-                            UrlVideo = f.UrlVideo,
-                            Reviews = f.Reviews,
-                            Url = f.Url,
-                            UserId = f.UserId
-                        })
+                var result = await _postgreDbContext.Franchises
+                    .Where(f => f.FranchiseId == franchiseId)
                     .FirstOrDefaultAsync();
 
                 if (result != null)
@@ -1601,7 +1516,6 @@ namespace Garant.Platform.Services.Service.Franchise
                     result.IsRejected = true;
                     result.IsAccepted = false;
                     result.CommentRejection = comment;
-                    _postgreDbContext.Franchises.Update(result);
                     await _postgreDbContext.SaveChangesAsync();
 
                     return true;

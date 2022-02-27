@@ -248,7 +248,7 @@ namespace Garant.Platform.Services.Service.Business
         /// Метод получит список бизнеса.
         /// </summary>
         /// <returns>Список бизнеса.</returns>
-        public async Task<IEnumerable<PopularBusinessOutput>> GetBusinessListAsync()
+        public async Task<IEnumerable<BusinessOutput>> GetBusinessListAsync()
         {
             try
             {

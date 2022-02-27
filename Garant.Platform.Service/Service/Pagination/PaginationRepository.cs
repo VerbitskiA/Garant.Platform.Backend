@@ -9,7 +9,6 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Business.Output;
-using Garant.Platform.Models.Franchise.Output;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Services.Service.Pagination
@@ -115,44 +114,6 @@ namespace Garant.Platform.Services.Service.Pagination
                 }
 
                 return businessList;
-            }
-
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogError();
-                throw;
-            }
-        }
-
-        public async Task<List<FranchiseOutput>> GetFranchisesListIsGarantAsync()
-        {
-            try
-            {
-                var franchisesList = await _postgreDbContext.Franchises.Where(o => o.IsGarant)
-                   .Select(f => new FranchiseOutput
-                   {
-                       DateCreate = f.DateCreate,
-                       Price = string.Format("{0:0,0}", f.Price),
-                       CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                       DayDeclination = "дня",
-                       Text = f.Text,
-                       TextDoPrice = f.TextDoPrice,
-                       Title = f.Title,
-                       Url = f.Url,
-                       IsGarant = f.IsGarant,
-                       ProfitPrice = f.ProfitPrice,
-                       TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
-                       FranchiseId = f.FranchiseId
-                   }).ToListAsync();
-
-                foreach (var item in franchisesList)
-                {
-                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);                    
-                }
-
-                return franchisesList;
             }
 
             catch (Exception e)

@@ -94,11 +94,14 @@ namespace Garant.Platform.Controllers.Franchise
         [AllowAnonymous]
         [HttpPost, Route("filter-pagination")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
-        public async Task<IActionResult> FilterFranchisesWithPaginationAsync([FromBody] FilterFranchisesWithPaginationInput filterInput)
+        public async Task<IActionResult> FilterFranchisesWithPaginationAsync(
+            [FromBody] FilterFranchisesWithPaginationInput filterInput)
         {
-            var result = await _franchiseService.FilterFranchisesWithPaginationAsync(filterInput.TypeSortPrice, filterInput.ViewBusinessesCode, filterInput.CategoryCode,
-                                                                                    filterInput.MinInvest, filterInput.MaxInvest, filterInput.MinProfit,
-                                                                                    filterInput.MaxProfit, filterInput.PageNumber, filterInput.CountRows, filterInput.IsGarant);
+            var result = await _franchiseService.FilterFranchisesWithPaginationAsync(filterInput.TypeSortPrice,
+                filterInput.ViewBusinessesCode, filterInput.CategoryCode,
+                filterInput.MinInvest, filterInput.MaxInvest, filterInput.MinProfit,
+                filterInput.MaxProfit, filterInput.PageNumber, filterInput.CountRows, filterInput.IsGarant);
+            
             return Ok(result);
         }
 
