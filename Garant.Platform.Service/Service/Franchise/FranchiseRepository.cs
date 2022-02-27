@@ -440,12 +440,9 @@ namespace Garant.Platform.Services.Service.Franchise
         /// </summary>
         /// <param name="files">Входные файлы.</param>
         /// <param name="franchiseInput">Входная модель.</param>
-        /// <param name="lastFranchiseId">Id последней франшизы.</param>
         /// <param name="urlsDetails">Пути к доп.изображениям.</param>
         /// <returns>Данные франшизы.</returns>
-        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(
-            CreateUpdateFranchiseInput franchiseInput, long lastFranchiseId, string[] urlsDetails,
-            IFormFileCollection files, string account)
+        public async Task<CreateUpdateFranchiseOutput> CreateUpdateFranchiseAsync(CreateUpdateFranchiseInput franchiseInput, string[] urlsDetails, IFormFileCollection files, string account)
         {
             try
             {
@@ -512,7 +509,6 @@ namespace Garant.Platform.Services.Service.Franchise
                     {
                         await _postgreDbContext.Franchises.AddAsync(new FranchiseEntity
                         {
-                            FranchiseId = lastFranchiseId,
                             ActivityDetail = franchiseInput.ActivityDetail,
                             BaseDate = franchiseInput.BaseDate,
                             BusinessCount = franchiseInput.BusinessCount,
@@ -555,10 +551,7 @@ namespace Garant.Platform.Services.Service.Franchise
                         });
                         await _postgreDbContext.SaveChangesAsync();
 
-                        franchiseId = await _postgreDbContext.Franchises
-                            .OrderByDescending(o => o.FranchiseId)
-                            .Select(f => f.FranchiseId)
-                            .FirstOrDefaultAsync();
+                        franchiseId = await _postgreDbContext.Franchises.MaxAsync(o => o.FranchiseId);
                     }
 
                     // Обновит франшизу.

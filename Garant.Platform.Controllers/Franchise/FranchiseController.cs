@@ -145,9 +145,7 @@ namespace Garant.Platform.Controllers.Franchise
         public async Task<IActionResult> CreateUpdateFranchiseAsync([FromForm] IFormCollection franchiseFilesInput,
             [FromForm] string franchiseDataInput)
         {
-            var result =
-                await _franchiseService.CreateUpdateFranchiseAsync(franchiseFilesInput, franchiseDataInput,
-                    GetUserName());
+            var result = await _franchiseService.CreateUpdateFranchiseAsync(franchiseFilesInput, franchiseDataInput, GetUserName());
 
             return Ok(result);
         }

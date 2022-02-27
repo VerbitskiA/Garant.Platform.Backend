@@ -63,20 +63,8 @@ namespace Garant.Platform.Services.Service.Business
                     return null;
                 }
 
-                long lastBusinessId = 1;
-
-                // Если в таблице нет записей, то добавленная первая будет иметь id 1000000.
-                var count = await _postgreDbContext.Businesses.Select(f => f.BusinessId).CountAsync();
-
-                if (count > 0)
-                {
-                    // Найдет последний Id бизнеса и увеличит его на 1.
-                    lastBusinessId = await _postgreDbContext.Businesses.MaxAsync(c => c.BusinessId);
-                    lastBusinessId++;
-                }
-
                 // Создаст или обновит бизнес.
-                result = await _businessRepository.CreateUpdateBusinessAsync(businessInput, lastBusinessId,
+                result = await _businessRepository.CreateUpdateBusinessAsync(businessInput,
                     businessInput.UrlsBusiness, files, account);
                 
                 // Сформирует ссылку на карточку франшизы.

@@ -41,11 +41,10 @@ namespace Garant.Platform.Services.Service.Business
         /// </summary>
         /// <param name="files">Входные файлы.</param>
         /// <param name="businessInput">Входная модель.</param>
-        /// <param name="lastBusinessId">Id последней франшизы.</param>
         /// <param name="urlsBusiness">Пути к доп.изображениям.</param>
         /// <param name="account">Логин.</param>
         /// <returns>Данные франшизы.</returns>
-        public async Task<CreateUpdateBusinessOutput> CreateUpdateBusinessAsync(CreateUpdateBusinessInput businessInput, long lastBusinessId, string[] urlsBusiness, IFormFileCollection files, string account)
+        public async Task<CreateUpdateBusinessOutput> CreateUpdateBusinessAsync(CreateUpdateBusinessInput businessInput, string[] urlsBusiness, IFormFileCollection files, string account)
         {
             try
             {
@@ -106,7 +105,6 @@ namespace Garant.Platform.Services.Service.Business
                     {
                         await _postgreDbContext.Businesses.AddAsync(new BusinessEntity
                         {
-                            BusinessId = lastBusinessId,
                             ActivityDetail = businessInput.ActivityDetail,
                             ActivityPhotoName = activityPhotoName,
                             Address = businessInput.Address,
@@ -180,6 +178,8 @@ namespace Garant.Platform.Services.Service.Business
                     }
 
                     await _postgreDbContext.SaveChangesAsync();
+
+                    var lastBusinessId = await _postgreDbContext.Businesses.MaxAsync(b => b.BusinessId);
 
                     result = new CreateUpdateBusinessOutput
                     {

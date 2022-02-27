@@ -294,12 +294,8 @@ namespace Garant.Platform.Services.Service.Franchise
                     return null;
                 }
 
-                // Найдет последний Id франшизы и увеличит его на 1.
-                var lastFranchiseId = await _postgreDbContext.Franchises.MaxAsync(c => c.FranchiseId);
-                lastFranchiseId++;
-
                 // Создаст или обновит франшизу.
-                result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput, lastFranchiseId,
+                result = await _franchiseRepository.CreateUpdateFranchiseAsync(franchiseInput,
                     franchiseInput.UrlsFranchise, franchiseFilesInput.Files, account);
                 
                 // Сформирует ссылку на карточку франшизы.

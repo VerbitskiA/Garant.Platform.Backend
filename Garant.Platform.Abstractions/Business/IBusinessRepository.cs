@@ -20,7 +20,7 @@ namespace Garant.Platform.Abstractions.Business
         /// <param name="businessDataInput">Входная модель.</param>
         /// <param name="account">Логин.</param>
         /// <returns>Данные карточки бизнеса.</returns>
-        Task<CreateUpdateBusinessOutput> CreateUpdateBusinessAsync(CreateUpdateBusinessInput businessInput, long lastBusinessId, string[] urlsBusiness, IFormFileCollection files, string account);
+        Task<CreateUpdateBusinessOutput> CreateUpdateBusinessAsync(CreateUpdateBusinessInput businessInput, string[] urlsBusiness, IFormFileCollection files, string account);
 
         /// <summary>
         /// Метод отправит файл в папку и временно запишет в БД.
