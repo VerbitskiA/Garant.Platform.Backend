@@ -81,7 +81,7 @@ namespace Garant.Platform.Services.Service.Franchise
         {
             try
             {
-                var result = await (from p in _postgreDbContext.Franchises
+                var result = await (from p in _postgreDbContext.PopularFranchises
                         select new PopularFranchiseOutput
                         {
                             DateCreate = p.DateCreate,
@@ -92,7 +92,7 @@ namespace Garant.Platform.Services.Service.Franchise
                             TextDoPrice = p.TextDoPrice,
                             Title = p.Title,
                             Url = p.Url,
-                            TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                            // TotalInvest = string.Format("{0:0,0}", p.),
                             FranchiseId = p.FranchiseId
                         })
                     .Take(4)

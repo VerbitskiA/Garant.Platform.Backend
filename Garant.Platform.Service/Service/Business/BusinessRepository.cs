@@ -791,7 +791,7 @@ namespace Garant.Platform.Services.Service.Business
                                        TotalInvest = string.Format("{0:0,0}", f.Price),
                                        BusinessId = f.BusinessId
                                    })
-                    .Take(10)
+                    .Take(4)
                     .ToListAsync();
 
                 foreach (var item in items)

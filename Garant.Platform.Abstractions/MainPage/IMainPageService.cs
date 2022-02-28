@@ -16,7 +16,7 @@ namespace Garant.Platform.Abstractions.MainPage
         /// Метод получит список категорий бизнеса.
         /// </summary>
         /// <returns>Список категорий бизнеса. Все это дело разбито на 4 столбца.</returns>
-        Task<GetResultBusinessCategoryOutput> GetCategoriesListAsync();
+        Task<GetResultCategoryOutput> GetCategoriesListAsync();
 
         /// <summary>
         /// Метод получит последние 5 записей недавно купленных франшиз.
