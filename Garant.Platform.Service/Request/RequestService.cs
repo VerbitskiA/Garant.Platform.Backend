@@ -6,7 +6,9 @@ using AutoMapper;
 using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.Request;
+using Garant.Platform.Abstractions.User;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Request.Output;
@@ -76,7 +78,41 @@ namespace Garant.Platform.Services.Request
         {
             try
             {
-                var result = await _businessRepository.CreateRequestBusinessAsync(userName, phone, account, businessId);
+                RequestBusinessOutput result = null;
+                var userRepository = AutoFac.Resolve<IUserRepository>();
+                var userId = await userRepository.FindUserIdUniverseAsync(account);
+                var userInfo = await userRepository.GetUserProfileInfoByIdAsync(userId);
+                
+                if (userInfo == null)
+                {
+                    throw new NotFoundUserInfoException(account);
+                }
+                
+                // TODO: доделать
+                // Проверит, заполнил ли пользователь все обязательные данные в профиле. 
+                // Если не заполнены, то выдаст сообщение SignalR.
+                if (string.IsNullOrEmpty(userInfo.FirstName) 
+                    || string.IsNullOrEmpty(userInfo.LastName)
+                    || string.IsNullOrEmpty(userInfo.Email)
+                    || string.IsNullOrEmpty(userInfo.PhoneNumber)
+                    || string.IsNullOrEmpty(userInfo.Inn)
+                    || string.IsNullOrEmpty(userInfo.Kpp)
+                    || string.IsNullOrEmpty(userInfo.Bik)
+                    || string.IsNullOrEmpty(userInfo.Kpp)
+                    || string.IsNullOrEmpty(userInfo.CorrAccountNumber)
+                    || string.IsNullOrEmpty(userInfo.DefaultBankName)
+                    || (userInfo.PassportSerial == null)
+                    || userInfo.PassportNumber == null
+                    || string.IsNullOrEmpty(userInfo.DateGive)
+                    || string.IsNullOrEmpty(userInfo.WhoGive)
+                    || string.IsNullOrEmpty(userInfo.DateGive)
+                    || string.IsNullOrEmpty(userInfo.Code)
+                    || string.IsNullOrEmpty(userInfo.AddressRegister))
+                {
+                    return result;
+                }
+                
+                result = await _businessRepository.CreateRequestBusinessAsync(userName, phone, account, businessId);
 
                 if (result != null)
                 {
