@@ -5,12 +5,16 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
 using Garant.Platform.Abstractions.DataBase;
+using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Mailings.Abstraction;
+using Garant.Platform.Messaging.Abstraction.Notifications;
+using Garant.Platform.Messaging.Consts;
+using Garant.Platform.Messaging.Enums;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
 using Garant.Platform.Models.Pagination.Output;
@@ -26,14 +30,23 @@ namespace Garant.Platform.Services.Service.Business
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IBusinessRepository _businessRepository;
         private readonly IFtpService _ftpService;
+        private readonly INotificationsService _notificationsService;
+        private readonly IUserRepository _userRepository;
+        private readonly INotificationsRepository _notificationsRepository;
 
         public BusinessService(IBusinessRepository businessRepository,
-            IFtpService ftpService)
+            IFtpService ftpService,
+            INotificationsService notificationsService,
+            IUserRepository userRepository,
+            INotificationsRepository notificationsRepository)
         {
             var dbContext = AutoFac.Resolve<IDataBaseConfig>();
             _postgreDbContext = dbContext.GetDbContext();
             _businessRepository = businessRepository;
             _ftpService = ftpService;
+            _notificationsService = notificationsService;
+            _userRepository = userRepository;
+            _notificationsRepository = notificationsRepository;
         }
 
         /// <summary>
@@ -74,6 +87,25 @@ namespace Garant.Platform.Services.Service.Business
                 // Отправит оповещение администрации сервиса.
                 var mailService = AutoFac.Resolve<IMailingService>();
                 await mailService.SendMailAfterCreateCardAsync("Бизнес", newUrl);
+                
+                // Отправит уведомление о модерации карточки через SignalR.
+                await _notificationsService.SendCardModerationAsync();
+
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+                var userInfo = await _userRepository.GetUserProfileInfoByIdAsync(userId);
+                
+                // Запишет уведомление в БД.
+                await _notificationsRepository.SaveNotifyAsync("AfterCreateCardNotify", NotifyMessage.CARD_MODERATION_TITLE, NotifyMessage.CARD_MODERATION_TEXT, NotificationLevelEnum.Success.ToString(), true, userId, "AfterCreateCard");
+
+                var userEmail = string.Empty;
+
+                if (userInfo != null)
+                {
+                    userEmail = userInfo.Email;
+                }
+                
+                // Отправит пользователю на почту уведомление о созданной карточке.
+                await mailService.SendMailUserAfterCreateCardAsync(userEmail, "Бизнес", newUrl);
 
                 return result;
             }
@@ -82,7 +114,7 @@ namespace Garant.Platform.Services.Service.Business
             {
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
+                await logger.LogError();
                 throw;
             }
         }

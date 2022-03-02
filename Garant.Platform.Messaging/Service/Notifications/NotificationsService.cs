@@ -26,5 +26,13 @@ namespace Garant.Platform.Messaging.Service.Notifications
         {
             await _hubContext.Clients.All.SendAsync("SendNotifyEmptyUserInfo", NotifyMessage.NOTIFY_EMPTY_USER_INFO);
         }
+
+        /// <summary>
+        /// Метод отправит уведомление об успешном создании карточки и отправки ее на модерацию.
+        /// </summary>
+        public async Task SendCardModerationAsync()
+        {
+            await _hubContext.Clients.All.SendAsync("SendCardModeration", NotifyMessage.NOTIFY_EMPTY_USER_INFO);
+        }
     }
 }

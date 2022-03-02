@@ -53,11 +53,51 @@ namespace Garant.Platform.Services.Request
         {
             try
             {
-                var result = await _franchiseRepository.CreateRequestFranchiseAsync(userName, phone, city, account, franchiseId);
+                RequestFranchiseOutput result = null;
+                var userRepository = AutoFac.Resolve<IUserRepository>();
+                var userId = await userRepository.FindUserIdUniverseAsync(account);
+                var userInfo = await userRepository.GetUserProfileInfoByIdAsync(userId);
+                
+                if (userInfo == null)
+                {
+                    throw new NotFoundUserInfoException(account);
+                }
+                
+                // Проверит, заполнил ли пользователь все обязательные данные в профиле. 
+                                // Если не заполнены, то выдаст сообщение SignalR.
+                                if (string.IsNullOrEmpty(userInfo.FirstName) 
+                                    || string.IsNullOrEmpty(userInfo.LastName)
+                                    || string.IsNullOrEmpty(userInfo.Email)
+                                    || string.IsNullOrEmpty(userInfo.PhoneNumber)
+                                    || string.IsNullOrEmpty(userInfo.Inn)
+                                    || string.IsNullOrEmpty(userInfo.Kpp)
+                                    || string.IsNullOrEmpty(userInfo.Bik)
+                                    || string.IsNullOrEmpty(userInfo.Kpp)
+                                    || string.IsNullOrEmpty(userInfo.CorrAccountNumber)
+                                    || string.IsNullOrEmpty(userInfo.DefaultBankName)
+                                    || (userInfo.PassportSerial == null)
+                                    || userInfo.PassportNumber == null
+                                    || string.IsNullOrEmpty(userInfo.DateGive)
+                                    || string.IsNullOrEmpty(userInfo.WhoGive)
+                                    || string.IsNullOrEmpty(userInfo.DateGive)
+                                    || string.IsNullOrEmpty(userInfo.Code)
+                                    || string.IsNullOrEmpty(userInfo.AddressRegister))
+                                {
+                                    await _notificationsService.SendNotifyEmptyUserInfoAsync();
+                                    
+                                    return new RequestFranchiseOutput
+                                    {
+                                        IsSuccessCreatedRequest = false,
+                                        RequestStatus = NotifyMessage.NOTIFY_EMPTY_USER_INFO
+                                    };
+                                }
+                
+                result = await _franchiseRepository.CreateRequestFranchiseAsync(userName, phone, city, account, franchiseId);
 
                 if (result != null)
                 {
                     result.IsSuccessCreatedRequest = true;
+                    result.RequestStatus = NotifyMessage.REQUEST_MODERATION;
                 }
 
                 return result;
@@ -67,7 +107,7 @@ namespace Garant.Platform.Services.Request
             {
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
+                await logger.LogError();
                 throw;
             }
         }

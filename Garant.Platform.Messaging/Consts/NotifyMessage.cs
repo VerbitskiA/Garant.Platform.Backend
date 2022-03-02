@@ -12,5 +12,9 @@
         public const string REQUEST_REVIEW = "Заявка на рассмотрении";
         
         public const string REQUEST_REVIEW_DETAIL = "Ваша заявка находится на рассмотрении. В случае изменения ее статуса вы получите оповещение.";
+
+        public const string CARD_MODERATION_TEXT = "Карточка успешно создана и отправлена на модерацию.";
+
+        public const string CARD_MODERATION_TITLE = "Создание новой карточки";
     }
 }
