@@ -13,6 +13,7 @@ using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Messaging.Abstraction.Notifications;
+using Garant.Platform.Messaging.Consts;
 using Garant.Platform.Models.Request.Output;
 
 namespace Garant.Platform.Services.Request
@@ -119,7 +120,7 @@ namespace Garant.Platform.Services.Request
                     return new RequestBusinessOutput
                     {
                         IsSuccessCreatedRequest = false,
-                        StatusText = "Не заполнены данные о себе. Перейдите в профиль для их заполнения."
+                        StatusText = NotifyMessage.NOTIFY_EMPTY_USER_INFO
                     };
                 }
                 
@@ -128,7 +129,7 @@ namespace Garant.Platform.Services.Request
                 if (result != null)
                 {
                     result.IsSuccessCreatedRequest = true;
-                    result.StatusText = "Ваша заявка успешно отправлена на модерацию.";
+                    result.StatusText = NotifyMessage.REQUEST_MODERATION;
                 }
 
                 return result;
@@ -138,7 +139,7 @@ namespace Garant.Platform.Services.Request
             {
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
+                await logger.LogError();
                 throw;
             }
         }
@@ -244,8 +245,8 @@ namespace Garant.Platform.Services.Request
             // Если на рассмотрении.
             if (requestStatus.Equals("Review"))
             {
-                result.Item1 = "Заявка на рассмотрении";
-                result.Item2 = "Ваша заявка находится на рассмотрении. В случае изменения ее статуса вы получите оповещение.";
+                result.Item1 = NotifyMessage.REQUEST_REVIEW;
+                result.Item2 = NotifyMessage.REQUEST_REVIEW_DETAIL;
             }
 
             return await Task.FromResult(result);

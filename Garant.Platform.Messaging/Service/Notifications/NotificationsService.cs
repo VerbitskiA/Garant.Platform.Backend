@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Messaging.Abstraction.Notifications;
+using Garant.Platform.Messaging.Consts;
 using Garant.Platform.Messaging.Core;
 using Microsoft.AspNetCore.SignalR;
 
@@ -23,7 +24,7 @@ namespace Garant.Platform.Messaging.Service.Notifications
         /// </summary>
         public async Task SendNotifyEmptyUserInfoAsync()
         {
-            await _hubContext.Clients.All.SendAsync("SendNotifyEmptyUserInfo", "Не заполнены данные о себе. Перейдите в профиль для их заполнения.");
+            await _hubContext.Clients.All.SendAsync("SendNotifyEmptyUserInfo", NotifyMessage.NOTIFY_EMPTY_USER_INFO);
         }
     }
 }
