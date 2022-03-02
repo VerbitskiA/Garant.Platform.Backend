@@ -6,6 +6,7 @@ using AutoMapper;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Mapper;
 using Garant.Platform.Core.Utils;
+using Garant.Platform.Messaging.Core;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -42,6 +43,8 @@ namespace Garant.Platform
                     .AllowAnyMethod()
                     .AllowCredentials();
             }));
+            
+            services.AddSignalR();
 
             #region Для прода.
             
@@ -98,7 +101,7 @@ namespace Garant.Platform
             
             // Добавит доступ к контексту из любого компонента.
             services.AddHttpContextAccessor();
-            
+
             return new AutofacServiceProvider(ApplicationContainer);
         }
 
@@ -115,8 +118,12 @@ namespace Garant.Platform
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Garant.Platform v1"));
-            app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
-            
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapHub<NotifyHub>("/notify");
+            });
+
             // Наполнит словарь для динамической смены датаконтекстов при работе с разными БД.
             var connStrs = new Dictionary<string, string>();
             connStrs.TryAdd("NpgTestSqlConnectionRu", Configuration.GetConnectionString("NpgTestSqlConnectionRu"));

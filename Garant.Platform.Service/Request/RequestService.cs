@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Abstractions.Request;
 using Garant.Platform.Abstractions.User;
@@ -11,6 +12,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
+using Garant.Platform.Messaging.Abstraction.Notifications;
 using Garant.Platform.Models.Request.Output;
 
 namespace Garant.Platform.Services.Request
@@ -23,13 +25,17 @@ namespace Garant.Platform.Services.Request
         private readonly IFranchiseRepository _franchiseRepository;
         private readonly IBusinessRepository _businessRepository;
         private readonly PostgreDbContext _postgreDbContext;
+        private readonly INotificationsService _notificationsService;
 
-        public RequestService(IFranchiseRepository franchiseRepository, IBusinessRepository businessRepository,
-            PostgreDbContext postgreDbContext)
+        public RequestService(IFranchiseRepository franchiseRepository, 
+            IBusinessRepository businessRepository,
+            INotificationsService notificationsService)
         {
             _franchiseRepository = franchiseRepository;
             _businessRepository = businessRepository;
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
+            _notificationsService = notificationsService;
         }
 
         /// <summary>
@@ -88,7 +94,6 @@ namespace Garant.Platform.Services.Request
                     throw new NotFoundUserInfoException(account);
                 }
                 
-                // TODO: доделать
                 // Проверит, заполнил ли пользователь все обязательные данные в профиле. 
                 // Если не заполнены, то выдаст сообщение SignalR.
                 if (string.IsNullOrEmpty(userInfo.FirstName) 
@@ -109,11 +114,17 @@ namespace Garant.Platform.Services.Request
                     || string.IsNullOrEmpty(userInfo.Code)
                     || string.IsNullOrEmpty(userInfo.AddressRegister))
                 {
-                    return result;
+                    await _notificationsService.SendNotifyEmptyUserInfoAsync();
+                    
+                    return new RequestBusinessOutput
+                    {
+                        IsSuccessCreatedRequest = false,
+                        StatusText = "Не заполнены данные о себе. Перейдите в профиль для их заполнения."
+                    };
                 }
                 
                 result = await _businessRepository.CreateRequestBusinessAsync(userName, phone, account, businessId);
-
+                
                 if (result != null)
                 {
                     result.IsSuccessCreatedRequest = true;

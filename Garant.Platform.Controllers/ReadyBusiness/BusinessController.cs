@@ -36,9 +36,11 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         [HttpPost]
         [Route("create-update-business")]
         [ProducesResponseType(200, Type = typeof(CreateUpdateBusinessOutput))]
-        public async Task<IActionResult> CreateUpdateBusinessAsync([FromForm] IFormCollection businessFilesInput, [FromForm] string businessDataInput)
+        public async Task<IActionResult> CreateUpdateBusinessAsync([FromForm] IFormCollection businessFilesInput,
+            [FromForm] string businessDataInput)
         {
-            var result = await _businessService.CreateUpdateBusinessAsync(businessFilesInput, businessDataInput, GetUserName());
+            var result =
+                await _businessService.CreateUpdateBusinessAsync(businessFilesInput, businessDataInput, GetUserName());
 
             return Ok(result);
         }
@@ -120,7 +122,8 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         /// <summary>
         /// Метод получит список популярного бизнеса.
         /// </summary>
-        /// <returns>Список бизнеса.</returns>        
+        /// <returns>Список бизнеса.</returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("popular-business")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<PopularBusinessOutput>))]
@@ -156,7 +159,9 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
         public async Task<IActionResult> FilterBusinessesAsync([FromBody] FilterInput filterInput)
         {
-            var result = await _businessService.FilterBusinessesAsync(filterInput.TypeSortPrice, filterInput.ProfitMinPrice, filterInput.ProfitMaxPrice, filterInput.ViewCode, filterInput.CategoryCode, filterInput.MinPriceInvest, filterInput.MaxPriceInvest, filterInput.IsGarant);
+            var result = await _businessService.FilterBusinessesAsync(filterInput.TypeSortPrice,
+                filterInput.ProfitMinPrice, filterInput.ProfitMaxPrice, filterInput.ViewCode, filterInput.CategoryCode,
+                filterInput.MinPriceInvest, filterInput.MaxPriceInvest, filterInput.IsGarant);
 
             return Ok(result);
         }
@@ -169,18 +174,20 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         [AllowAnonymous]
         [HttpPost, Route("filter-pagination")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
-        public async Task<IActionResult> FilterBusinessesWithPaginationAsync([FromBody] FilterBusinessesWithPaginationInput filtersWithPaginationInput)
+        public async Task<IActionResult> FilterBusinessesWithPaginationAsync(
+            [FromBody] FilterBusinessesWithPaginationInput filtersWithPaginationInput)
         {
-            var result = await _businessService.FilterBusinessesWithPaginationAsync(filtersWithPaginationInput.TypeSortPrice,
-                                                                                    filtersWithPaginationInput.MinPrice, 
-                                                                                    filtersWithPaginationInput.MaxPrice, 
-                                                                                    filtersWithPaginationInput.City,
-                                                                                    filtersWithPaginationInput.CategoryCode,
-                                                                                    filtersWithPaginationInput.MinProfit,
-                                                                                    filtersWithPaginationInput.MaxProfit,                                                                                    
-                                                                                    filtersWithPaginationInput.PageNumber,
-                                                                                    filtersWithPaginationInput.CountRows,
-                                                                                    filtersWithPaginationInput.IsGarant);
+            var result = await _businessService.FilterBusinessesWithPaginationAsync(
+                filtersWithPaginationInput.TypeSortPrice,
+                filtersWithPaginationInput.MinPrice,
+                filtersWithPaginationInput.MaxPrice,
+                filtersWithPaginationInput.City,
+                filtersWithPaginationInput.CategoryCode,
+                filtersWithPaginationInput.MinProfit,
+                filtersWithPaginationInput.MaxProfit,
+                filtersWithPaginationInput.PageNumber,
+                filtersWithPaginationInput.CountRows,
+                filtersWithPaginationInput.IsGarant);
 
             return Ok(result);
         }

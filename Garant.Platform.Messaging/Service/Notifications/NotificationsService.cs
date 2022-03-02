@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Messaging.Abstraction.Notifications;
-using Garant.Platform.Messaging.Models.Notification.Output;
+using Garant.Platform.Messaging.Core;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Garant.Platform.Messaging.Service.Notifications
 {
@@ -9,18 +11,19 @@ namespace Garant.Platform.Messaging.Service.Notifications
     /// </summary>
     public class NotificationsService : INotificationsService
     {
+        private readonly IHubContext<NotifyHub> _hubContext;
+        
         public NotificationsService()
         {
+            _hubContext = AutoFac.Resolve<IHubContext<NotifyHub>>();
         }
 
         /// <summary>
-        /// Метод запишет уведомление после создания события.
+        /// Метод отправит уведомление, если не были заполнены данные о пользователе в профиле.
         /// </summary>
-        /// <param name="actionNotifySysName">Системное название события.</param>
-        /// <returns>Данные уведомления.</returns>
-        public Task<NotificationOutput> SetAfterActionNotificationAsync(string actionNotifySysName)
+        public async Task SendNotifyEmptyUserInfoAsync()
         {
-            throw new System.NotImplementedException();
+            await _hubContext.Clients.All.SendAsync("SendNotifyEmptyUserInfo", "Не заполнены данные о себе. Перейдите в профиль для их заполнения.");
         }
     }
 }

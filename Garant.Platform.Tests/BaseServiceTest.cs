@@ -4,6 +4,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.FTP.Service;
 using Garant.Platform.Mailings.Service;
 using Garant.Platform.Messaging.Service.Chat;
+using Garant.Platform.Messaging.Service.Notifications;
 using Garant.Platform.Services.Control;
 using Garant.Platform.Services.Document;
 using Garant.Platform.Services.Request;
@@ -46,6 +47,7 @@ namespace Garant.Platform.Tests
         protected ConfiguratorRepository ConfiguratorRepository;
         protected ConfiguratorService ConfiguratorService;
         protected BusinessService BusinessService;
+        protected NotificationsService NotificationsService;
 
         public BaseServiceTest()
         { 
@@ -75,7 +77,8 @@ namespace Garant.Platform.Tests
             UserService = new UserService(null, null, MailingService, UserRepository, FtpService, CommonService);
             FranchiseService = new FranchiseService(null, FranchiseRepository);            
             ChatRepository = new ChatRepository();
-            RequestService = new RequestService(FranchiseRepository, BusinessRepository, PostgreDbContext);
+            NotificationsService = new NotificationsService();
+            RequestService = new RequestService(FranchiseRepository, BusinessRepository, NotificationsService);
             DocumentRepository = new DocumentRepository(PostgreDbContext, UserRepository);
             DocumentService = new DocumentService(PostgreDbContext, FtpService, DocumentRepository);
             ControlRepository = new ControlRepository(PostgreDbContext);
