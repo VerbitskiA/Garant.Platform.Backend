@@ -13,6 +13,7 @@ using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Messaging.Abstraction.Notifications;
+using Garant.Platform.Messaging.Consts;
 using Garant.Platform.Models.Request.Output;
 
 namespace Garant.Platform.Services.Request
@@ -52,11 +53,51 @@ namespace Garant.Platform.Services.Request
         {
             try
             {
-                var result = await _franchiseRepository.CreateRequestFranchiseAsync(userName, phone, city, account, franchiseId);
+                RequestFranchiseOutput result = null;
+                var userRepository = AutoFac.Resolve<IUserRepository>();
+                var userId = await userRepository.FindUserIdUniverseAsync(account);
+                var userInfo = await userRepository.GetUserProfileInfoByIdAsync(userId);
+                
+                if (userInfo == null)
+                {
+                    throw new NotFoundUserInfoException(account);
+                }
+                
+                // Проверит, заполнил ли пользователь все обязательные данные в профиле. 
+                                // Если не заполнены, то выдаст сообщение SignalR.
+                                if (string.IsNullOrEmpty(userInfo.FirstName) 
+                                    || string.IsNullOrEmpty(userInfo.LastName)
+                                    || string.IsNullOrEmpty(userInfo.Email)
+                                    || string.IsNullOrEmpty(userInfo.PhoneNumber)
+                                    || string.IsNullOrEmpty(userInfo.Inn)
+                                    || string.IsNullOrEmpty(userInfo.Kpp)
+                                    || string.IsNullOrEmpty(userInfo.Bik)
+                                    || string.IsNullOrEmpty(userInfo.Kpp)
+                                    || string.IsNullOrEmpty(userInfo.CorrAccountNumber)
+                                    || string.IsNullOrEmpty(userInfo.DefaultBankName)
+                                    || (userInfo.PassportSerial == null)
+                                    || userInfo.PassportNumber == null
+                                    || string.IsNullOrEmpty(userInfo.DateGive)
+                                    || string.IsNullOrEmpty(userInfo.WhoGive)
+                                    || string.IsNullOrEmpty(userInfo.DateGive)
+                                    || string.IsNullOrEmpty(userInfo.Code)
+                                    || string.IsNullOrEmpty(userInfo.AddressRegister))
+                                {
+                                    await _notificationsService.SendNotifyEmptyUserInfoAsync();
+                                    
+                                    return new RequestFranchiseOutput
+                                    {
+                                        IsSuccessCreatedRequest = false,
+                                        RequestStatus = NotifyMessage.NOTIFY_EMPTY_USER_INFO
+                                    };
+                                }
+                
+                result = await _franchiseRepository.CreateRequestFranchiseAsync(userName, phone, city, account, franchiseId);
 
                 if (result != null)
                 {
                     result.IsSuccessCreatedRequest = true;
+                    result.RequestStatus = NotifyMessage.REQUEST_MODERATION;
                 }
 
                 return result;
@@ -66,7 +107,7 @@ namespace Garant.Platform.Services.Request
             {
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
+                await logger.LogError();
                 throw;
             }
         }
@@ -119,7 +160,7 @@ namespace Garant.Platform.Services.Request
                     return new RequestBusinessOutput
                     {
                         IsSuccessCreatedRequest = false,
-                        StatusText = "Не заполнены данные о себе. Перейдите в профиль для их заполнения."
+                        StatusText = NotifyMessage.NOTIFY_EMPTY_USER_INFO
                     };
                 }
                 
@@ -128,7 +169,7 @@ namespace Garant.Platform.Services.Request
                 if (result != null)
                 {
                     result.IsSuccessCreatedRequest = true;
-                    result.StatusText = "Ваша заявка успешно отправлена на модерацию.";
+                    result.StatusText = NotifyMessage.REQUEST_MODERATION;
                 }
 
                 return result;
@@ -138,7 +179,7 @@ namespace Garant.Platform.Services.Request
             {
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
+                await logger.LogError();
                 throw;
             }
         }
@@ -244,8 +285,8 @@ namespace Garant.Platform.Services.Request
             // Если на рассмотрении.
             if (requestStatus.Equals("Review"))
             {
-                result.Item1 = "Заявка на рассмотрении";
-                result.Item2 = "Ваша заявка находится на рассмотрении. В случае изменения ее статуса вы получите оповещение.";
+                result.Item1 = NotifyMessage.REQUEST_REVIEW;
+                result.Item2 = NotifyMessage.REQUEST_REVIEW_DETAIL;
             }
 
             return await Task.FromResult(result);

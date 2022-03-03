@@ -11,5 +11,10 @@ namespace Garant.Platform.Messaging.Abstraction.Notifications
         /// Метод отправит уведомление, если не были заполнены данные о пользователе в профиле.
         /// </summary>
         Task SendNotifyEmptyUserInfoAsync();
+
+        /// <summary>
+        /// Метод отправит уведомление об успешном создании карточки и отправки ее на модерацию.
+        /// </summary>
+        Task SendCardModerationAsync();
     }
 }

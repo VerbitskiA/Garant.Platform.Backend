@@ -7,14 +7,17 @@ using Garant.Platform.Models.Franchise.Output;
 using System.Linq;
 using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.Franchise;
+using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Mailings.Abstraction;
+using Garant.Platform.Messaging.Abstraction.Notifications;
+using Garant.Platform.Messaging.Consts;
+using Garant.Platform.Messaging.Enums;
 using Garant.Platform.Models.Franchise.Input;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Garant.Platform.Models.Pagination.Output;
 
@@ -25,14 +28,23 @@ namespace Garant.Platform.Services.Service.Franchise
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IFtpService _ftpService;
         private readonly IFranchiseRepository _franchiseRepository;
+        private readonly INotificationsService _notificationsService;
+        private readonly IUserRepository _userRepository;
+        private readonly INotificationsRepository _notificationsRepository;
 
         public FranchiseService(IFtpService ftpService,
-            IFranchiseRepository franchiseRepository)
+            IFranchiseRepository franchiseRepository,
+            INotificationsService notificationsService,
+            IUserRepository userRepository,
+            INotificationsRepository notificationsRepository)
         {
             var dbContext = AutoFac.Resolve<IDataBaseConfig>();
             _postgreDbContext = dbContext.GetDbContext();
             _ftpService = ftpService;
             _franchiseRepository = franchiseRepository;
+            _notificationsService = notificationsService;
+            _userRepository = userRepository;
+            _notificationsRepository = notificationsRepository;
         }
 
         /// <summary>
@@ -291,7 +303,7 @@ namespace Garant.Platform.Services.Service.Franchise
 
                 if (franchiseInput == null)
                 {
-                    return null;
+                    return new CreateUpdateFranchiseOutput();
                 }
 
                 // Создаст или обновит франшизу.
@@ -307,8 +319,24 @@ namespace Garant.Platform.Services.Service.Franchise
                 var mailService = AutoFac.Resolve<IMailingService>();
                 await mailService.SendMailAfterCreateCardAsync("Франшиза", newUrl);
                 
-                //TODO тут отправлять на email юзеру но сначала надо получить его mail
-                // await mailService.SendMailUserAfterCreateCardAsync();
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+                var userInfo = await _userRepository.GetUserProfileInfoByIdAsync(userId);
+                
+                // Отправит уведомление о модерации карточки через SignalR.
+                await _notificationsService.SendCardModerationAsync();
+                
+                // Запишет уведомление в БД.
+                await _notificationsRepository.SaveNotifyAsync("AfterCreateCardNotify", NotifyMessage.CARD_MODERATION_TITLE, NotifyMessage.CARD_MODERATION_TEXT, NotificationLevelEnum.Success.ToString(), true, userId, "AfterCreateCard");
+
+                var userEmail = string.Empty;
+
+                if (userInfo != null)
+                {
+                    userEmail = userInfo.Email;
+                }
+                
+                // Отправит пользователю на почту уведомление о созданной карточке.
+                await mailService.SendMailUserAfterCreateCardAsync(userEmail, "Франшиза", newUrl);
 
                 return result;
             }
@@ -317,7 +345,7 @@ namespace Garant.Platform.Services.Service.Franchise
             {
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
+                await logger.LogError();
                 throw;
             }
         }

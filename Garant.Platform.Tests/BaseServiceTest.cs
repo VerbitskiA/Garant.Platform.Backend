@@ -48,6 +48,7 @@ namespace Garant.Platform.Tests
         protected ConfiguratorService ConfiguratorService;
         protected BusinessService BusinessService;
         protected NotificationsService NotificationsService;
+        protected NotificationsRepository NotificationsRepository;
 
         public BaseServiceTest()
         { 
@@ -64,10 +65,12 @@ namespace Garant.Platform.Tests
 
             // Настройка экземпляров сервисов для тестов.
             CommonService = new CommonService(null);
+            NotificationsService = new NotificationsService();
+            NotificationsRepository = new NotificationsRepository();
             UserRepository = new UserRepository(CommonService);
             FranchiseRepository = new FranchiseRepository(UserRepository, CommonService);
             BusinessRepository = new BusinessRepository(UserRepository, CommonService);
-            BusinessService = new BusinessService(BusinessRepository, FtpService);
+            BusinessService = new BusinessService(BusinessRepository, FtpService, NotificationsService, UserRepository, NotificationsRepository);
             PaginationRepository = new PaginationRepository(CommonService);
 
             BlogRepository = new BlogRepository(UserRepository);
@@ -75,9 +78,8 @@ namespace Garant.Platform.Tests
 
             MailingService = new MailingService(AppConfiguration);
             UserService = new UserService(null, null, MailingService, UserRepository, FtpService, CommonService);
-            FranchiseService = new FranchiseService(null, FranchiseRepository);            
+            FranchiseService = new FranchiseService(null, FranchiseRepository, NotificationsService, UserRepository, NotificationsRepository);            
             ChatRepository = new ChatRepository();
-            NotificationsService = new NotificationsService();
             RequestService = new RequestService(FranchiseRepository, BusinessRepository, NotificationsService);
             DocumentRepository = new DocumentRepository(PostgreDbContext, UserRepository);
             DocumentService = new DocumentService(PostgreDbContext, FtpService, DocumentRepository);
