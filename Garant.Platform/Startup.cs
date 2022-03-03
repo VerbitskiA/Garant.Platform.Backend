@@ -120,7 +120,7 @@ namespace Garant.Platform
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Garant.Platform v1"));
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
+                // endpoints.MapDefaultControllerRoute();
                 endpoints.MapHub<NotifyHub>("/notify");
             });
 
