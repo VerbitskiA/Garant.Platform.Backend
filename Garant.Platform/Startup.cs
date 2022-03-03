@@ -115,14 +115,16 @@ namespace Garant.Platform
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Garant.Platform v1"));
+            
             app.UseEndpoints(endpoints =>
             {
-                // endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapHub<NotifyHub>("/notify");
             });
+            
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Garant.Platform v1"));
 
             // Наполнит словарь для динамической смены датаконтекстов при работе с разными БД.
             var connStrs = new Dictionary<string, string>();
