@@ -16,5 +16,7 @@
         public const string CARD_MODERATION_TEXT = "Карточка успешно создана и отправлена на модерацию.";
 
         public const string CARD_MODERATION_TITLE = "Создание новой карточки";
+
+        public const string ERROR_EMPTY_SPHERE_CATEGORY = "Не заполнены обязательные поля для создания сферы или категории.";
     }
 }

@@ -12,6 +12,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
+using Garant.Platform.Messaging.Abstraction.Notifications;
 using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.User.Output;
 
@@ -26,17 +27,19 @@ namespace Garant.Platform.Configurator.Services
         private readonly IConfiguratorRepository _configuratorRepository;
         private readonly IFranchiseRepository _franchiseRepository;
         private readonly IBusinessRepository _businessRepository;
+        private readonly INotificationsService _notificationsService;
 
         public ConfiguratorService(IConfiguratorRepository configuratorRepository,
             IFranchiseRepository franchiseRepository,
-            IBusinessRepository businessRepository)
+            IBusinessRepository businessRepository,
+            INotificationsService notificationsService)
         {
             var dbContext = AutoFac.Resolve<IDataBaseConfig>();
             _postgreDbContext = dbContext.GetDbContext();
             _configuratorRepository = configuratorRepository;
             _franchiseRepository = franchiseRepository;
             _businessRepository = businessRepository;
-
+            _notificationsService = notificationsService;
         }
 
         /// <summary>
@@ -257,6 +260,32 @@ namespace Garant.Platform.Configurator.Services
                 }
 
                 return resultStatus;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        public async Task<CreateSphereOutput> CreateSphereAsync(string sphereName, string sphereType, string sysName)
+        {
+            try
+            {
+                // Если не заполнены сфера или тип.
+                if (string.IsNullOrEmpty(sphereName) 
+                    || string.IsNullOrEmpty(sphereType)
+                    || string.IsNullOrEmpty(sysName))
+                {
+                    await _notificationsService.SendErrorMessageCreateSphereCategoryAsync();
+                }
+
+                var result = await _configuratorRepository.CreateSphereAsync(sphereName, sphereType, sysName);
+
+                return result;
             }
             
             catch (Exception e)

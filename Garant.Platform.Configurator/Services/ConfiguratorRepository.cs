@@ -13,6 +13,7 @@ using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Configurator.Output;
+using Garant.Platform.Models.Entities.Franchise;
 using Garant.Platform.Models.Entities.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -222,7 +223,56 @@ namespace Garant.Platform.Configurator.Services
             {
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод создаст новую сферу.
+        /// </summary>
+        /// <param name="sphereName">Название сферы.</param>
+        /// <param name="sphereType">Тип сферы (бизнес или франшиза).</param>
+        /// <param name="sysName">Системное название сферы.</param>
+        /// <returns>Созданная сфера.</returns>
+        public async Task<CreateSphereOutput> CreateSphereAsync(string sphereName, string sphereType, string sysName)
+        {
+            try
+            {
+                var result = new CreateSphereOutput();
+                
+                // Если нужно создать сферу франшизы.
+                if (sphereType.Equals("Franchise"))
+                {
+                    var addCategory = new FranchiseCategoryEntity
+                    {
+                        FranchiseCategoryCode = Guid.NewGuid().ToString(),
+                        FranchiseCategoryName = sphereName,
+                        FranchiseCategorySysName = sysName
+                    };
+                    
+                    await _postgreDbContext.FranchiseCategories.AddAsync(addCategory);
+                    await _postgreDbContext.SaveChangesAsync();
+
+                    result = await _postgreDbContext.FranchiseCategories
+                        .Where(fc => fc.FranchiseCategoryCode.Equals(addCategory.FranchiseCategoryCode))
+                        .Select(fc => new CreateSphereOutput
+                        {
+                            SphereName = addCategory.FranchiseCategoryName,
+                            SphereSysName = sysName,
+                            SphereCode = addCategory.FranchiseCategoryCode
+                        })
+                        .FirstOrDefaultAsync();
+                }
+                
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }
