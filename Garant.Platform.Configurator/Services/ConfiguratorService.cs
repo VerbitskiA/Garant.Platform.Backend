@@ -12,6 +12,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
+using Garant.Platform.Messaging.Abstraction.Notifications;
 using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.User.Output;
 
@@ -26,17 +27,19 @@ namespace Garant.Platform.Configurator.Services
         private readonly IConfiguratorRepository _configuratorRepository;
         private readonly IFranchiseRepository _franchiseRepository;
         private readonly IBusinessRepository _businessRepository;
+        private readonly INotificationsService _notificationsService;
 
         public ConfiguratorService(IConfiguratorRepository configuratorRepository,
             IFranchiseRepository franchiseRepository,
-            IBusinessRepository businessRepository)
+            IBusinessRepository businessRepository,
+            INotificationsService notificationsService)
         {
             var dbContext = AutoFac.Resolve<IDataBaseConfig>();
             _postgreDbContext = dbContext.GetDbContext();
             _configuratorRepository = configuratorRepository;
             _franchiseRepository = franchiseRepository;
             _businessRepository = businessRepository;
-
+            _notificationsService = notificationsService;
         }
 
         /// <summary>
@@ -257,6 +260,72 @@ namespace Garant.Platform.Configurator.Services
                 }
 
                 return resultStatus;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        public async Task<CreateSphereOutput> CreateSphereAsync(string sphereName, string sphereType, string sysName)
+        {
+            try
+            {
+                // Если не заполнены сфера или тип.
+                if (string.IsNullOrEmpty(sphereName) 
+                    || string.IsNullOrEmpty(sphereType)
+                    || string.IsNullOrEmpty(sysName))
+                {
+                    await _notificationsService.SendErrorMessageCreateSphereCategoryAsync();
+                }
+
+                var result = await _configuratorRepository.CreateSphereAsync(sphereName, sphereType, sysName);
+                
+                // Отправит уведомление о созданной сфере.
+                await _notificationsService.SendCreateSphereAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод создаст категорию сферы.
+        /// </summary>
+        /// <param name="sphereCode">Код сферы (guid).</param>
+        /// <param name="categoryName">Название категории.</param>
+        /// <param name="categoryType">Тип категории.</param>
+        /// <param name="sysName">Системное название.</param>
+        /// <returns>Созданная категория.</returns>
+        public async Task<CreateCategoryOutput> CreateCategoryAsync(string sphereCode, string categoryName, string categoryType, string sysName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(sphereCode) 
+                    || string.IsNullOrEmpty(categoryName)
+                    || string.IsNullOrEmpty(categoryType)
+                    || string.IsNullOrEmpty(sysName))
+                {
+                    await _notificationsService.SendErrorMessageCreateSphereCategoryAsync();
+                }
+
+                var result = await _configuratorRepository.CreateCategoryAsync(sphereCode, categoryName, categoryType, sysName);
+                
+                // Отправит уведомление о созданной категории.
+                await _notificationsService.SendCreateCategoryAsync();
+
+                return result;
             }
             
             catch (Exception e)

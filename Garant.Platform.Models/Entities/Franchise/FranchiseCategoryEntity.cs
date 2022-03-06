@@ -13,6 +13,7 @@ namespace Garant.Platform.Models.Entities.Franchise
         /// PK.
         /// </summary>
         [Key]
+        [Column("CategoryId", TypeName = "int")]
         public int FranchiseCategoryId { get; set; }
 
         /// <summary>

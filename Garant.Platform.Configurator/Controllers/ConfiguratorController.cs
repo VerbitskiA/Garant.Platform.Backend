@@ -248,5 +248,36 @@ namespace Garant.Platform.Configurator.Controllers
 
             return result;
         }
+
+        /// <summary>
+        /// Метод создаст новую сферу.
+        /// </summary>
+        /// <param name="createSphereInput">Входная модель.</param>
+        /// <returns>Созданная сфера.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("create-sphere")]
+        [ProducesResponseType(200, Type = typeof(CreateSphereOutput))]
+        public async Task<CreateSphereOutput> CreateSphereAsync([FromBody] CreateSphereInput createSphereInput)
+        {
+            var result = await _configuratorService.CreateSphereAsync(createSphereInput.SphereName, createSphereInput.SphereType, createSphereInput.SysName);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод создаст категорию сферы.
+        /// </summary>
+        /// <param name="createCategoryInput">Входная модель.</param>
+        /// <returns>Созданная категория.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("create-category")]
+        public async Task<CreateCategoryOutput> CreateCategoryAsync([FromBody] CreateCategoryInput createCategoryInput)
+        {
+            var result = await _configuratorService.CreateCategoryAsync(createCategoryInput.SphereCode, createCategoryInput.CategoryName, createCategoryInput.CategoryType, createCategoryInput.SysName);
+
+            return result;
+        }
     }
 }

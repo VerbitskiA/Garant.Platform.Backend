@@ -86,7 +86,7 @@ namespace Garant.Platform.Tests
             ControlRepository = new ControlRepository(PostgreDbContext);
             ControlService = new ControlService(PostgreDbContext, ControlRepository, UserRepository);
             ConfiguratorRepository = new ConfiguratorRepository();
-            ConfiguratorService = new ConfiguratorService(ConfiguratorRepository, FranchiseRepository, BusinessRepository);
+            ConfiguratorService = new ConfiguratorService(ConfiguratorRepository, FranchiseRepository, BusinessRepository, NotificationsService);
         }
     }
 }
