@@ -42,5 +42,21 @@ namespace Garant.Platform.Messaging.Service.Notifications
         {
             await _hubContext.Clients.All.SendAsync("SendEmptySphereCategory", NotifyMessage.ERROR_EMPTY_SPHERE_CATEGORY);
         }
+        
+        /// <summary>
+        /// Метод отправит уведомление о созданной сфере.
+        /// </summary>
+        public async Task SendCreateSphereAsync()
+        {
+            await _hubContext.Clients.All.SendAsync("SendCreateSphere", NotifyMessage.SUCCESS_CREATE_SPHERE);
+        }
+        
+        /// <summary>
+        /// Метод отправит уведомление о созданной категории.
+        /// </summary>
+        public async Task SendCreateCategoryAsync()
+        {
+            await _hubContext.Clients.All.SendAsync("SendCreateCategory", NotifyMessage.SUCCESS_CREATE_CATEGORY);
+        }
     }
 }

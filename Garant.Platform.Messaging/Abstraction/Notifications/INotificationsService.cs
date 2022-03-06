@@ -18,8 +18,18 @@ namespace Garant.Platform.Messaging.Abstraction.Notifications
         Task SendCardModerationAsync();
 
         /// <summary>
-        /// Метод отправит уведомление о незаполненности обязательных полей при создании сферы или категории в конфигураторе.
+        /// Метод отправит уведомление о незаполненности обязательных полей при создании сферы в конфигураторе.
         /// </summary>
         Task SendErrorMessageCreateSphereCategoryAsync();
+
+        /// <summary>
+        /// Метод отправит уведомление о созданной сфере.
+        /// </summary>
+        Task SendCreateSphereAsync();
+
+        /// <summary>
+        /// Метод отправит уведомление о созданной категории.
+        /// </summary>
+        Task SendCreateCategoryAsync();
     }
 }

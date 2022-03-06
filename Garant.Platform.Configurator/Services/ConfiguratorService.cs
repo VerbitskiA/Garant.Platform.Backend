@@ -284,6 +284,46 @@ namespace Garant.Platform.Configurator.Services
                 }
 
                 var result = await _configuratorRepository.CreateSphereAsync(sphereName, sphereType, sysName);
+                
+                // Отправит уведомление о созданной сфере.
+                await _notificationsService.SendCreateSphereAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод создаст категорию сферы.
+        /// </summary>
+        /// <param name="sphereCode">Код сферы (guid).</param>
+        /// <param name="categoryName">Название категории.</param>
+        /// <param name="categoryType">Тип категории.</param>
+        /// <param name="sysName">Системное название.</param>
+        /// <returns>Созданная категория.</returns>
+        public async Task<CreateCategoryOutput> CreateCategoryAsync(string sphereCode, string categoryName, string categoryType, string sysName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(sphereCode) 
+                    || string.IsNullOrEmpty(categoryName)
+                    || string.IsNullOrEmpty(categoryType)
+                    || string.IsNullOrEmpty(sysName))
+                {
+                    await _notificationsService.SendErrorMessageCreateSphereCategoryAsync();
+                }
+
+                var result = await _configuratorRepository.CreateCategoryAsync(sphereCode, categoryName, categoryType, sysName);
+                
+                // Отправит уведомление о созданной категории.
+                await _notificationsService.SendCreateCategoryAsync();
 
                 return result;
             }
