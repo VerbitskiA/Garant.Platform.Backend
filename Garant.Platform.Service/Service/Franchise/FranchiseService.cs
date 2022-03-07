@@ -591,5 +591,28 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод поместит франшизу в архив.
+        /// </summary>
+        /// <param name="franchiseId">Идентификатор франшизы.</param>
+        /// <returns>Статус архивации.</returns>
+        public async Task<bool> ArchiveFranchiseAsync(long franchiseId)
+        {
+            try
+            {
+                var result = await _franchiseRepository.ArchiveFranchiseAsync(franchiseId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

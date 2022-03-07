@@ -271,5 +271,7 @@ namespace Garant.Platform.Models.Entities.Franchise
         public string CommentRejection { get; set; }
 
         public UserEntity User { get; set; }
+
+        public ArchiveFranchiseEntity ArchiveFranchise { get; set; }
     }
 }

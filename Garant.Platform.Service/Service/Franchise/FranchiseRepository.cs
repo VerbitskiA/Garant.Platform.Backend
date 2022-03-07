@@ -42,7 +42,8 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var items = await (from p in _postgreDbContext.Franchises
-                        where p.IsAccepted == true
+                        join archive in _postgreDbContext.ArchiveFranchises on p.FranchiseId equals archive.FranchiseId
+                        where p.IsAccepted == true && archive.IsArchive == false                         
                         select new FranchiseOutput
                         {
                             DateCreate = p.DateCreate,
@@ -1517,6 +1518,80 @@ namespace Garant.Platform.Services.Service.Franchise
                 return false;
             }
             
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод поместит франшизу в архив.
+        /// </summary>
+        /// <param name="franchiseId">Идентификатор франшизы.</param>
+        /// <returns>Статус архивации.</returns>
+        public async Task<bool> ArchiveFranchiseAsync(long franchiseId)
+        {
+            try
+            {
+                var findFranchise = await _postgreDbContext.Franchises.FirstOrDefaultAsync(f => f.FranchiseId == franchiseId);
+
+                //франшизы не найдено
+                if (findFranchise is null)
+                {
+                    return false;
+                }
+
+                if (await FranchiseIsArchiveAsync(franchiseId))
+                {
+                    //франшиза уже в архиве
+                    return false;
+                }
+
+                ArchiveFranchiseEntity archiveFranchise = new()
+                {
+                    FranchiseId = findFranchise.FranchiseId,
+                    IsArchive = true,
+                    ArchivingDate = DateTime.Now                    
+                };
+
+                await _postgreDbContext.AddAsync(archiveFranchise);
+                await _postgreDbContext.SaveChangesAsync();
+
+                return true;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Метод проверяет есть ли франшиза в архиве.
+        /// </summary>
+        /// <param name="franchiseId">Идентификатор франшизы.</param>
+        /// <returns>Находится ли франшиза в архиве.</returns>
+        private async Task<bool> FranchiseIsArchiveAsync(long franchiseId)
+        {
+            try
+            {
+                var findFranchise = await _postgreDbContext.ArchiveFranchises.FirstOrDefaultAsync(f => f.FranchiseId == franchiseId);
+
+                if (findFranchise is null)
+                {
+                    return false;
+                }
+
+                return findFranchise.IsArchive;                
+            }
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
