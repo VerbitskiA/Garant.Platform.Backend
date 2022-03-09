@@ -250,6 +250,7 @@ namespace Garant.Platform.Controllers.Franchise
         [AllowAnonymous]
         [HttpPost]
         [Route("to-archive")]
+        [ProducesResponseType(200, Type = typeof(bool))]
         public async Task<bool> ArchiveFranchiseAsync([FromBody] long franchiseId)
         {
             var result = await _franchiseService.ArchiveFranchiseAsync(franchiseId);
@@ -265,9 +266,26 @@ namespace Garant.Platform.Controllers.Franchise
         [AllowAnonymous]
         [HttpGet]
         [Route("archive-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
         public async Task<IEnumerable<FranchiseOutput>> GetArchiveFranchiseListAsync()
         {
             var result = await _franchiseService.GetArchiveFranchiseListAsync();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод восстановит франшизу из архива.
+        /// </summary>
+        /// <param name="franchiseId">Идентификатор франшизы.</param>
+        /// <returns>Статус восстановления франшизы.</returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("restore-from-archive")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<bool> RestoreFranchiseFromArchive([FromBody] long franchiseId)
+        {
+            var result = await _franchiseService.RestoreFranchiseFromArchive(franchiseId);
 
             return result;
         }

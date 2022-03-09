@@ -1612,5 +1612,44 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод восстановит франшизу из архива.
+        /// </summary>
+        /// <param name="franchiseId">Идентификатор франшизы.</param>
+        /// <returns>Статус восстановления франшизы.</returns>
+        public async Task<bool> RestoreFranchiseFromArchive(long franchiseId)
+        {
+            try
+            {
+                var findFranchise = await _postgreDbContext.Franchises.FirstOrDefaultAsync(f => f.FranchiseId == franchiseId);
+
+                //франшизы не найдено
+                if (findFranchise is null)
+                {
+                    return false;
+                }
+
+                if (!findFranchise.IsArchived)
+                {
+                    //франшиза уже не в архиве
+                    return false;
+                }
+
+                findFranchise.IsArchived = false;                
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return true;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }
