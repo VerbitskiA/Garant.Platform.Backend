@@ -614,5 +614,28 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
+
+
+        /// <summary>
+        /// Метод вернёт список франшиз из архива.
+        /// </summary>
+        /// <returns>Список архивированных франшиз.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> GetArchiveFranchiseListAsync()
+        {
+            try
+            {
+                var result = await _franchiseRepository.GetArchiveFranchiseListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

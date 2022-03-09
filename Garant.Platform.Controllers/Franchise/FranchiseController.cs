@@ -249,10 +249,25 @@ namespace Garant.Platform.Controllers.Franchise
         /// <returns>Статус архивации.</returns>
         [AllowAnonymous]
         [HttpPost]
-        [Route("archive-franchise")]
+        [Route("to-archive")]
         public async Task<bool> ArchiveFranchiseAsync([FromBody] long franchiseId)
         {
             var result = await _franchiseService.ArchiveFranchiseAsync(franchiseId);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод вернёт список франшиз из архива.
+        /// </summary>
+        /// <param name="franchiseId">Идентификатор франшизы.</param>
+        /// <returns>Статус архивации.</returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("archive-list")]
+        public async Task<IEnumerable<FranchiseOutput>> GetArchiveFranchiseListAsync()
+        {
+            var result = await _franchiseService.GetArchiveFranchiseListAsync();
 
             return result;
         }

@@ -41,24 +41,23 @@ namespace Garant.Platform.Services.Service.Franchise
         {
             try
             {
-                var items = await (from p in _postgreDbContext.Franchises
-                        join archive in _postgreDbContext.ArchiveFranchises on p.FranchiseId equals archive.FranchiseId
-                        where p.IsAccepted == true && archive.IsArchive == false                         
-                        select new FranchiseOutput
-                        {
-                            DateCreate = p.DateCreate,
-                            Price = string.Format("{0:0,0}", p.Price),
-                            CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
-                            DayDeclination = "дня",
-                            Text = p.Text,
-                            TextDoPrice = p.TextDoPrice,
-                            Title = p.Title,
-                            Url = p.Url,
-                            IsGarant = p.IsGarant,
-                            ProfitPrice = p.ProfitPrice,
-                            TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
-                            FranchiseId = p.FranchiseId
-                        })
+                var items = await (from p in _postgreDbContext.Franchises                                  
+                                   where p.IsAccepted == true && p.IsArchived == false
+                                   select new FranchiseOutput
+                                   {
+                                       DateCreate = p.DateCreate,
+                                       Price = string.Format("{0:0,0}", p.Price),
+                                       CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                                       DayDeclination = "дня",
+                                       Text = p.Text,
+                                       TextDoPrice = p.TextDoPrice,
+                                       Title = p.Title,
+                                       Url = p.Url,
+                                       IsGarant = p.IsGarant,
+                                       ProfitPrice = p.ProfitPrice,
+                                       TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                                       FranchiseId = p.FranchiseId
+                                   })
                     .ToListAsync();
 
                 foreach (var item in items)
@@ -83,19 +82,19 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var result = await (from p in _postgreDbContext.PopularFranchises
-                        select new PopularFranchiseOutput
-                        {
-                            DateCreate = p.DateCreate,
-                            Price = string.Format("{0:0,0}", p.Price),
-                            CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
-                            DayDeclination = "дня",
-                            Text = p.Text,
-                            TextDoPrice = p.TextDoPrice,
-                            Title = p.Title,
-                            Url = p.Url,
-                            // TotalInvest = string.Format("{0:0,0}", p.),
-                            FranchiseId = p.FranchiseId
-                        })
+                                    select new PopularFranchiseOutput
+                                    {
+                                        DateCreate = p.DateCreate,
+                                        Price = string.Format("{0:0,0}", p.Price),
+                                        CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                                        DayDeclination = "дня",
+                                        Text = p.Text,
+                                        TextDoPrice = p.TextDoPrice,
+                                        Title = p.Title,
+                                        Url = p.Url,
+                                        // TotalInvest = string.Format("{0:0,0}", p.),
+                                        FranchiseId = p.FranchiseId
+                                    })
                     .Take(4)
                     .ToListAsync();
 
@@ -125,21 +124,21 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var items = await (from p in _postgreDbContext.Franchises
-                        select new FranchiseOutput
-                        {
-                            DateCreate = p.DateCreate,
-                            Price = string.Format("{0:0,0}", p.Price),
-                            CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
-                            DayDeclination = "дня",
-                            Text = p.Text,
-                            TextDoPrice = p.TextDoPrice,
-                            Title = p.Title,
-                            Url = p.Url,
-                            IsGarant = p.IsGarant,
-                            ProfitPrice = p.ProfitPrice,
-                            TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
-                            FranchiseId = p.FranchiseId
-                        })
+                                   select new FranchiseOutput
+                                   {
+                                       DateCreate = p.DateCreate,
+                                       Price = string.Format("{0:0,0}", p.Price),
+                                       CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                                       DayDeclination = "дня",
+                                       Text = p.Text,
+                                       TextDoPrice = p.TextDoPrice,
+                                       Title = p.Title,
+                                       Url = p.Url,
+                                       IsGarant = p.IsGarant,
+                                       ProfitPrice = p.ProfitPrice,
+                                       TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                                       FranchiseId = p.FranchiseId
+                                   })
                     .Take(4)
                     .ToListAsync();
 
@@ -169,11 +168,11 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var result = await (from c in _postgreDbContext.FranchiseCities
-                        select new FranchiseCityOutput
-                        {
-                            CityCode = c.CityCode,
-                            CityName = c.CityName
-                        })
+                                    select new FranchiseCityOutput
+                                    {
+                                        CityCode = c.CityCode,
+                                        CityName = c.CityName
+                                    })
                     .ToListAsync();
 
                 return result;
@@ -197,11 +196,11 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var result = await (from c in _postgreDbContext.FranchiseCategories
-                        select new CategoryOutput
-                        {
-                            CategoryCode = c.FranchiseCategoryCode,
-                            CategoryName = c.FranchiseCategoryName
-                        })
+                                    select new CategoryOutput
+                                    {
+                                        CategoryCode = c.FranchiseCategoryCode,
+                                        CategoryName = c.FranchiseCategoryName
+                                    })
                     .ToListAsync();
 
                 return result;
@@ -225,11 +224,11 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var result = await (from c in _postgreDbContext.ViewBusiness
-                        select new ViewBusinessOutput
-                        {
-                            ViewCode = c.ViewCode,
-                            ViewName = c.ViewName
-                        })
+                                    select new ViewBusinessOutput
+                                    {
+                                        ViewCode = c.ViewCode,
+                                        ViewName = c.ViewName
+                                    })
                     .ToListAsync();
 
                 return result;
@@ -266,27 +265,27 @@ namespace Garant.Platform.Services.Service.Franchise
                 if (typeSort.Equals("Asc"))
                 {
                     query = (from f in _postgreDbContext.Franchises
-                            where f.ViewBusiness.Equals(viewCode)
-                                  && f.Category.Equals(categoryCode)
-                                  && (f.Price <= maxPrice && f.Price >= minPrice)
-                                  && (f.GeneralInvest >= minPriceInvest && f.GeneralInvest <= maxPriceInvest)
-                                  && f.IsGarant == isGarant
-                            orderby f.FranchiseId
-                            select new FranchiseOutput
-                            {
-                                DateCreate = f.DateCreate,
-                                Price = string.Format("{0:0,0}", f.Price),
-                                CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                                DayDeclination = "дня",
-                                Text = f.Text,
-                                TextDoPrice = f.TextDoPrice,
-                                Title = f.Title,
-                                Url = f.Url,
-                                IsGarant = f.IsGarant,
-                                ProfitPrice = f.ProfitPrice,
-                                TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
-                                FranchiseId = f.FranchiseId
-                            })
+                             where f.ViewBusiness.Equals(viewCode)
+                                   && f.Category.Equals(categoryCode)
+                                   && (f.Price <= maxPrice && f.Price >= minPrice)
+                                   && (f.GeneralInvest >= minPriceInvest && f.GeneralInvest <= maxPriceInvest)
+                                   && f.IsGarant == isGarant
+                             orderby f.FranchiseId
+                             select new FranchiseOutput
+                             {
+                                 DateCreate = f.DateCreate,
+                                 Price = string.Format("{0:0,0}", f.Price),
+                                 CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                 DayDeclination = "дня",
+                                 Text = f.Text,
+                                 TextDoPrice = f.TextDoPrice,
+                                 Title = f.Title,
+                                 Url = f.Url,
+                                 IsGarant = f.IsGarant,
+                                 ProfitPrice = f.ProfitPrice,
+                                 TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
+                                 FranchiseId = f.FranchiseId
+                             })
                         .AsQueryable();
 
                     Console.WriteLine();
@@ -296,25 +295,25 @@ namespace Garant.Platform.Services.Service.Franchise
                 else if (typeSort.Equals("Desc"))
                 {
                     query = (from f in _postgreDbContext.Franchises
-                            where f.ViewBusiness.Equals(viewCode)
-                                  && f.Category.Equals(categoryCode)
-                                  && (f.Price <= maxPrice && f.Price >= minPrice)
-                                  && (f.GeneralInvest >= minPriceInvest && f.GeneralInvest <= maxPriceInvest)
-                                  && f.IsGarant == isGarant
-                            orderby f.FranchiseId descending
-                            select new FranchiseOutput
-                            {
-                                DateCreate = f.DateCreate,
-                                Price = string.Format("{0:0,0}", f.Price),
-                                CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                                DayDeclination = "дня",
-                                Text = f.Text,
-                                TextDoPrice = f.TextDoPrice,
-                                Title = f.Title,
-                                Url = f.Url,
-                                IsGarant = f.IsGarant,
-                                ProfitPrice = f.ProfitPrice
-                            })
+                             where f.ViewBusiness.Equals(viewCode)
+                                   && f.Category.Equals(categoryCode)
+                                   && (f.Price <= maxPrice && f.Price >= minPrice)
+                                   && (f.GeneralInvest >= minPriceInvest && f.GeneralInvest <= maxPriceInvest)
+                                   && f.IsGarant == isGarant
+                             orderby f.FranchiseId descending
+                             select new FranchiseOutput
+                             {
+                                 DateCreate = f.DateCreate,
+                                 Price = string.Format("{0:0,0}", f.Price),
+                                 CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                 DayDeclination = "дня",
+                                 Text = f.Text,
+                                 TextDoPrice = f.TextDoPrice,
+                                 Title = f.Title,
+                                 Url = f.Url,
+                                 IsGarant = f.IsGarant,
+                                 ProfitPrice = f.ProfitPrice
+                             })
                         .AsQueryable();
                 }
 
@@ -358,22 +357,22 @@ namespace Garant.Platform.Services.Service.Franchise
                 var month = DateTime.Now.Month;
 
                 var items = await (from f in _postgreDbContext.Franchises
-                        where f.DateCreate.Month == month
-                        select new FranchiseOutput
-                        {
-                            DateCreate = f.DateCreate,
-                            Price = string.Format("{0:0,0}", f.Price),
-                            CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                            DayDeclination = "дня",
-                            Text = f.Text,
-                            TextDoPrice = f.TextDoPrice,
-                            Title = f.Title,
-                            Url = f.Url,
-                            IsGarant = f.IsGarant,
-                            ProfitPrice = f.ProfitPrice,
-                            TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
-                            FranchiseId = f.FranchiseId
-                        })
+                                   where f.DateCreate.Month == month
+                                   select new FranchiseOutput
+                                   {
+                                       DateCreate = f.DateCreate,
+                                       Price = string.Format("{0:0,0}", f.Price),
+                                       CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                       DayDeclination = "дня",
+                                       Text = f.Text,
+                                       TextDoPrice = f.TextDoPrice,
+                                       Title = f.Title,
+                                       Url = f.Url,
+                                       IsGarant = f.IsGarant,
+                                       ProfitPrice = f.ProfitPrice,
+                                       TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
+                                       FranchiseId = f.FranchiseId
+                                   })
                     .Take(10)
                     .ToListAsync();
 
@@ -403,19 +402,19 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var items = await (from f in _postgreDbContext.Franchises
-                        select new FranchiseOutput
-                        {
-                            DateCreate = f.DateCreate,
-                            Price = string.Format("{0:0,0}", f.Price),
-                            CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                            DayDeclination = "дня",
-                            Text = f.Text,
-                            TextDoPrice = f.TextDoPrice,
-                            Title = f.Title,
-                            Url = f.Url,
-                            IsGarant = f.IsGarant,
-                            ProfitPrice = f.ProfitPrice
-                        })
+                                   select new FranchiseOutput
+                                   {
+                                       DateCreate = f.DateCreate,
+                                       Price = string.Format("{0:0,0}", f.Price),
+                                       CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                                       DayDeclination = "дня",
+                                       Text = f.Text,
+                                       TextDoPrice = f.TextDoPrice,
+                                       Title = f.Title,
+                                       Url = f.Url,
+                                       IsGarant = f.IsGarant,
+                                       ProfitPrice = f.ProfitPrice
+                                   })
                     .Take(10)
                     .ToListAsync();
 
@@ -889,52 +888,52 @@ namespace Garant.Platform.Services.Service.Franchise
                     .FirstOrDefaultAsync();
 
                 var result = await (from f in _postgreDbContext.Franchises
-                        where f.FranchiseId == franchiseId
-                        select new FranchiseOutput
-                        {
-                            FranchiseId = f.FranchiseId,
-                            ActivityDetail = f.ActivityDetail,
-                            BaseDate = f.BaseDate,
-                            BusinessCount = f.BusinessCount,
-                            Category = f.Category,
-                            SubCategory = f.SubCategory,
-                            DateCreate = f.DateCreate,
-                            DotCount = f.DotCount,
-                            FinIndicators = f.FinIndicators,
-                            FranchisePacks = f.FranchisePacks,
-                            UrlsDetails = f.UrlsDetails,
-                            UrlLogo = f.UrlLogo,
-                            NameFinIndicators = f.FinIndicators,
-                            NameFinModelFile = f.NameFinModelFile,
-                            NameFranchisePhoto = f.NameFranchisePhoto,
-                            NamePresentFile = f.NamePresentFile,
-                            TrainingPhotoName = f.TrainingPhotoName,
-                            Title = f.Title,
-                            Text = f.Text,
-                            Price = string.Format("{0:0,0}", f.Price),
-                            ViewBusiness = f.ViewBusiness,
-                            IsGarant = f.IsGarant,
-                            ProfitMonth = f.ProfitMonth,
-                            ProfitPrice = f.ProfitPrice,
-                            Status = f.Status,
-                            YearStart = f.YearStart,
-                            GeneralInvest = f.GeneralInvest,
-                            LumpSumPayment = f.LumpSumPayment,
-                            Royalty = f.Royalty,
-                            Payback = f.Payback,
-                            LaunchDate = f.LaunchDate,
-                            InvestInclude = f.InvestInclude,
-                            Peculiarity = f.Peculiarity,
-                            PaymentDetail = f.PaymentDetail,
-                            TrainingDetails = f.TrainingDetails,
-                            UrlVideo = f.UrlVideo,
-                            Reviews = f.Reviews,
-                            Mode = mode,
-                            TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
-                            Url = f.Url,
-                            FullName = fio.FullName,
-                            UserId = f.UserId
-                        })
+                                    where f.FranchiseId == franchiseId
+                                    select new FranchiseOutput
+                                    {
+                                        FranchiseId = f.FranchiseId,
+                                        ActivityDetail = f.ActivityDetail,
+                                        BaseDate = f.BaseDate,
+                                        BusinessCount = f.BusinessCount,
+                                        Category = f.Category,
+                                        SubCategory = f.SubCategory,
+                                        DateCreate = f.DateCreate,
+                                        DotCount = f.DotCount,
+                                        FinIndicators = f.FinIndicators,
+                                        FranchisePacks = f.FranchisePacks,
+                                        UrlsDetails = f.UrlsDetails,
+                                        UrlLogo = f.UrlLogo,
+                                        NameFinIndicators = f.FinIndicators,
+                                        NameFinModelFile = f.NameFinModelFile,
+                                        NameFranchisePhoto = f.NameFranchisePhoto,
+                                        NamePresentFile = f.NamePresentFile,
+                                        TrainingPhotoName = f.TrainingPhotoName,
+                                        Title = f.Title,
+                                        Text = f.Text,
+                                        Price = string.Format("{0:0,0}", f.Price),
+                                        ViewBusiness = f.ViewBusiness,
+                                        IsGarant = f.IsGarant,
+                                        ProfitMonth = f.ProfitMonth,
+                                        ProfitPrice = f.ProfitPrice,
+                                        Status = f.Status,
+                                        YearStart = f.YearStart,
+                                        GeneralInvest = f.GeneralInvest,
+                                        LumpSumPayment = f.LumpSumPayment,
+                                        Royalty = f.Royalty,
+                                        Payback = f.Payback,
+                                        LaunchDate = f.LaunchDate,
+                                        InvestInclude = f.InvestInclude,
+                                        Peculiarity = f.Peculiarity,
+                                        PaymentDetail = f.PaymentDetail,
+                                        TrainingDetails = f.TrainingDetails,
+                                        UrlVideo = f.UrlVideo,
+                                        Reviews = f.Reviews,
+                                        Mode = mode,
+                                        TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
+                                        Url = f.Url,
+                                        FullName = fio.FullName,
+                                        UserId = f.UserId
+                                    })
                     .FirstOrDefaultAsync();
 
                 return result;
@@ -1428,22 +1427,22 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var items = await (from p in _postgreDbContext.Franchises
-                        where p.IsAccepted == false && p.IsRejected == false
-                        select new FranchiseOutput
-                        {
-                            DateCreate = p.DateCreate,
-                            Price = string.Format("{0:0,0}", p.Price),
-                            CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
-                            DayDeclination = "дня",
-                            Text = p.Text,
-                            TextDoPrice = p.TextDoPrice,
-                            Title = p.Title,
-                            Url = p.Url,
-                            IsGarant = p.IsGarant,
-                            ProfitPrice = p.ProfitPrice,
-                            TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
-                            FranchiseId = p.FranchiseId
-                        })
+                                   where p.IsAccepted == false && p.IsRejected == false
+                                   select new FranchiseOutput
+                                   {
+                                       DateCreate = p.DateCreate,
+                                       Price = string.Format("{0:0,0}", p.Price),
+                                       CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                                       DayDeclination = "дня",
+                                       Text = p.Text,
+                                       TextDoPrice = p.TextDoPrice,
+                                       Title = p.Title,
+                                       Url = p.Url,
+                                       IsGarant = p.IsGarant,
+                                       ProfitPrice = p.ProfitPrice,
+                                       TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                                       FranchiseId = p.FranchiseId
+                                   })
                     .ToListAsync();
 
                 return items;
@@ -1517,7 +1516,7 @@ namespace Garant.Platform.Services.Service.Franchise
 
                 return false;
             }
-            
+
             catch (Exception e)
             {
                 Console.WriteLine(e);
@@ -1544,20 +1543,15 @@ namespace Garant.Platform.Services.Service.Franchise
                     return false;
                 }
 
-                if (await FranchiseIsArchiveAsync(franchiseId))
+                if (findFranchise.IsArchived)
                 {
                     //франшиза уже в архиве
                     return false;
                 }
 
-                ArchiveFranchiseEntity archiveFranchise = new()
-                {
-                    FranchiseId = findFranchise.FranchiseId,
-                    IsArchive = true,
-                    ArchivingDate = DateTime.Now                    
-                };
+                findFranchise.IsArchived = true;
+                findFranchise.ArchivedDate = DateTime.Now;
 
-                await _postgreDbContext.AddAsync(archiveFranchise);
                 await _postgreDbContext.SaveChangesAsync();
 
                 return true;
@@ -1572,24 +1566,42 @@ namespace Garant.Platform.Services.Service.Franchise
             }
         }
 
-
         /// <summary>
-        /// Метод проверяет есть ли франшиза в архиве.
+        /// Метод вернёт список франшиз из архива.
         /// </summary>
-        /// <param name="franchiseId">Идентификатор франшизы.</param>
-        /// <returns>Находится ли франшиза в архиве.</returns>
-        private async Task<bool> FranchiseIsArchiveAsync(long franchiseId)
+        /// <returns>Список архивированных франшиз.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> GetArchiveFranchiseListAsync()
         {
             try
             {
-                var findFranchise = await _postgreDbContext.ArchiveFranchises.FirstOrDefaultAsync(f => f.FranchiseId == franchiseId);
+                var items = await _postgreDbContext.Franchises
+                    .Where(p=>p.IsArchived == true)
+                    .OrderBy(p=>p.ArchivedDate)
+                    .Select(p => new FranchiseOutput
+                    {
+                        DateCreate = p.DateCreate,
+                        Price = string.Format("{0:0,0}", p.Price),
+                        CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                        DayDeclination = "дня",
+                        Text = p.Text,
+                        TextDoPrice = p.TextDoPrice,
+                        Title = p.Title,
+                        Url = p.Url,
+                        IsGarant = p.IsGarant,
+                        ProfitPrice = p.ProfitPrice,
+                        TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                        FranchiseId = p.FranchiseId,
+                        ArchivedDate = p.ArchivedDate,
+                        IsArchived = p.IsArchived                        
+                    })                    
+                    .ToListAsync();
 
-                if (findFranchise is null)
+                foreach (var item in items)
                 {
-                    return false;
-                }
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }                    
 
-                return findFranchise.IsArchive;                
+                return items;
             }
 
             catch (Exception e)
