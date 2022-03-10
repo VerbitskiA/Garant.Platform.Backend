@@ -1249,7 +1249,7 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 List<FranchiseOutput> items = null;
-                IQueryable<FranchiseEntity> query = _postgreDbContext.Franchises;
+                var query = _postgreDbContext.Franchises.AsQueryable();
 
                 //Применяем фильтры, если они указаны                
                 if (minProfit > 0)
@@ -1291,30 +1291,25 @@ namespace Garant.Platform.Services.Service.Franchise
                     }
                 }
 
-                if (query is not null)
+                items = await query.Select(f => new FranchiseOutput
                 {
+                    DateCreate = f.DateCreate,
+                    Price = string.Format("{0:0,0}", f.Price),
+                    CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
+                    DayDeclination = "дня",
+                    Text = f.Text,
+                    TextDoPrice = f.TextDoPrice,
+                    Title = f.Title,
+                    Url = f.Url,
+                    IsGarant = f.IsGarant,
+                    ProfitPrice = f.ProfitPrice,
+                    TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
+                    FranchiseId = f.FranchiseId
+                }).ToListAsync();
 
-                    items = await query.Select(f => new FranchiseOutput
-                    {
-                        DateCreate = f.DateCreate,
-                        Price = string.Format("{0:0,0}", f.Price),
-                        CountDays = DateTime.Now.Subtract(f.DateCreate).Days,
-                        DayDeclination = "дня",
-                        Text = f.Text,
-                        TextDoPrice = f.TextDoPrice,
-                        Title = f.Title,
-                        Url = f.Url,
-                        IsGarant = f.IsGarant,
-                        ProfitPrice = f.ProfitPrice,
-                        TotalInvest = string.Format("{0:0,0}", f.GeneralInvest),
-                        FranchiseId = f.FranchiseId
-                    }).ToListAsync();
-
-                    foreach (var item in items)
-                    {
-                        item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
-                    }
-
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
                 }
 
 
