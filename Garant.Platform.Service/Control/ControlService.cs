@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Control;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Control.Output;
 
 namespace Garant.Platform.Services.Control
@@ -18,9 +20,10 @@ namespace Garant.Platform.Services.Control
         private readonly IControlRepository _controlRepository;
         private readonly IUserRepository _userRepository;
 
-        public ControlService(PostgreDbContext postgreDbContext, IControlRepository controlRepository, IUserRepository userRepository)
+        public ControlService(IControlRepository controlRepository, IUserRepository userRepository)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _controlRepository = controlRepository;
             _userRepository = userRepository;
         }
