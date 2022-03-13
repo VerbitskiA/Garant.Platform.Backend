@@ -41,7 +41,7 @@ namespace Garant.Platform.Services.Service.Franchise
         {
             try
             {
-                var items = await (from p in _postgreDbContext.Franchises                                  
+                var items = await (from p in _postgreDbContext.Franchises
                                    where p.IsAccepted == true && p.IsArchived == false
                                    select new FranchiseOutput
                                    {
@@ -1575,8 +1575,8 @@ namespace Garant.Platform.Services.Service.Franchise
             try
             {
                 var items = await _postgreDbContext.Franchises
-                    .Where(p=>p.IsArchived == true)
-                    .OrderBy(p=>p.ArchivedDate)
+                    .Where(p => p.IsArchived == true)
+                    .OrderBy(p => p.ArchivedDate)
                     .Select(p => new FranchiseOutput
                     {
                         DateCreate = p.DateCreate,
@@ -1592,14 +1592,14 @@ namespace Garant.Platform.Services.Service.Franchise
                         TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
                         FranchiseId = p.FranchiseId,
                         ArchivedDate = p.ArchivedDate,
-                        IsArchived = p.IsArchived                        
-                    })                    
+                        IsArchived = p.IsArchived
+                    })
                     .ToListAsync();
 
                 foreach (var item in items)
                 {
                     item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
-                }                    
+                }
 
                 return items;
             }
@@ -1636,7 +1636,7 @@ namespace Garant.Platform.Services.Service.Franchise
                     return false;
                 }
 
-                findFranchise.IsArchived = false;                
+                findFranchise.IsArchived = false;
 
                 await _postgreDbContext.SaveChangesAsync();
 
@@ -1653,7 +1653,7 @@ namespace Garant.Platform.Services.Service.Franchise
         }
 
         /// <summary>
-        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца.
+        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца (>=30 дней).
         /// </summary>
         /// <returns>Франшизы в архиве после удаления.</returns>
 
@@ -1663,12 +1663,42 @@ namespace Garant.Platform.Services.Service.Franchise
             {
                 var franchises = await _postgreDbContext.Franchises.Where(f => f.IsArchived).ToListAsync();
 
+                DateTime nowDate = DateTime.Now;
+
                 foreach (var franchise in franchises)
                 {
-                    //TODO: Вычислисть дату архивации.
+                    int diffDays = nowDate.Subtract(franchise.ArchivedDate).Days;
+
+                    if (diffDays >= 30)
+                    {
+                        _postgreDbContext.Franchises.Remove(franchise);
+                    }
+
+                    await _postgreDbContext.SaveChangesAsync();
                 }
 
-                return (IEnumerable<FranchiseOutput>)franchises;
+                var result = await _postgreDbContext.Franchises
+                                   .Where(p => p.IsArchived)
+                                   .Select(p => new FranchiseOutput
+                                   {
+                                       DateCreate = p.DateCreate,
+                                       Price = string.Format("{0:0,0}", p.Price),
+                                       CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                                       DayDeclination = "дня",
+                                       Text = p.Text,
+                                       TextDoPrice = p.TextDoPrice,
+                                       Title = p.Title,
+                                       Url = p.Url,
+                                       IsGarant = p.IsGarant,
+                                       ProfitPrice = p.ProfitPrice,
+                                       TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                                       FranchiseId = p.FranchiseId,
+                                       ArchivedDate = p.ArchivedDate,
+                                       IsArchived = p.IsArchived
+                                   })
+                                   .ToListAsync();
+
+                return result;
             }
 
             catch (Exception e)

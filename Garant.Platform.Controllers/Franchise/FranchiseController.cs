@@ -247,7 +247,6 @@ namespace Garant.Platform.Controllers.Franchise
         /// </summary>
         /// <param name="franchiseId">Идентификатор франшизы.</param>
         /// <returns>Статус архивации.</returns>
-        [AllowAnonymous]
         [HttpPost]
         [Route("to-archive")]
         [ProducesResponseType(200, Type = typeof(bool))]
@@ -263,7 +262,6 @@ namespace Garant.Platform.Controllers.Franchise
         /// </summary>
         /// <param name="franchiseId">Идентификатор франшизы.</param>
         /// <returns>Статус архивации.</returns>
-        [AllowAnonymous]
         [HttpGet]
         [Route("archive-list")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
@@ -279,7 +277,6 @@ namespace Garant.Platform.Controllers.Franchise
         /// </summary>
         /// <param name="franchiseId">Идентификатор франшизы.</param>
         /// <returns>Статус восстановления франшизы.</returns>
-        [AllowAnonymous]
         [HttpPost]
         [Route("restore-from-archive")]
         [ProducesResponseType(200, Type = typeof(bool))]
@@ -290,13 +287,16 @@ namespace Garant.Platform.Controllers.Franchise
             return result;
         }
 
-        [AllowAnonymous]
+        /// <summary>
+        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца (>=30 дней).
+        /// </summary>
+        /// <returns>Франшизы в архиве после удаления.</returns>        
         [HttpPost]
-        [Route("remove-old-from-archive")]
-        [ProducesResponseType(200, Type = typeof(bool))]
-        public async Task<bool> RemoveFrachisesFromArchiveAsync()
+        [Route("remove-older-month")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IEnumerable<FranchiseOutput>> RemoveFranchisesOlderMonthFromArchiveAsync()
         {
-            var result = await _franchiseService.RestoreFranchiseFromArchive();
+            var result = await _franchiseService.RemoveFranchisesOlderMonthFromArchiveAsync();
 
             return result;
         }

@@ -23,7 +23,6 @@ using Garant.Platform.Services.Service.Pagination;
 using Garant.Platform.Services.Service.Search;
 using Garant.Platform.Services.Service.User;
 using Microsoft.AspNetCore.Identity;
-using Garant.Platform.Services.HostedServices;
 
 namespace Garant.Platform.Services.AutofacModules
 {
