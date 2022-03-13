@@ -243,5 +243,11 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="franchiseId">Идентификатор франшизы.</param>
         /// <returns>Статус восстановления франшизы.</returns>
         Task<bool> RestoreFranchiseFromArchive(long franchiseId);
+
+        /// <summary>
+        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца.
+        /// </summary>
+        /// <returns>Франшизы в архиве после удаления.</returns>
+        Task<IEnumerable<FranchiseOutput>> RemoveFranchisesOlderMonthFromArchiveAsync();
     }
 }

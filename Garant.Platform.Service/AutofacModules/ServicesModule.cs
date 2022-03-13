@@ -23,6 +23,7 @@ using Garant.Platform.Services.Service.Pagination;
 using Garant.Platform.Services.Service.Search;
 using Garant.Platform.Services.Service.User;
 using Microsoft.AspNetCore.Identity;
+using Garant.Platform.Services.HostedServices;
 
 namespace Garant.Platform.Services.AutofacModules
 {
@@ -89,6 +90,7 @@ namespace Garant.Platform.Services.AutofacModules
             builder.RegisterType<ControlService>().As<IControlService>();
             builder.RegisterType<ControlRepository>().Named<IControlRepository>("ControlRepository");
             builder.RegisterType<ControlRepository>().As<IControlRepository>();
+          
         }
     }
 }

@@ -289,5 +289,16 @@ namespace Garant.Platform.Controllers.Franchise
 
             return result;
         }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("remove-old-from-archive")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<bool> RemoveFrachisesFromArchiveAsync()
+        {
+            var result = await _franchiseService.RestoreFranchiseFromArchive();
+
+            return result;
+        }
     }
 }

@@ -1651,5 +1651,33 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца.
+        /// </summary>
+        /// <returns>Франшизы в архиве после удаления.</returns>
+
+        public async Task<IEnumerable<FranchiseOutput>> RemoveFranchisesOlderMonthFromArchiveAsync()
+        {
+            try
+            {
+                var franchises = await _postgreDbContext.Franchises.Where(f => f.IsArchived).ToListAsync();
+
+                foreach (var franchise in franchises)
+                {
+                    //TODO: Вычислисть дату архивации.
+                }
+
+                return (IEnumerable<FranchiseOutput>)franchises;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }
