@@ -83,8 +83,8 @@ namespace Garant.Platform.Tests
             RequestService = new RequestService(FranchiseRepository, BusinessRepository, NotificationsService);
             DocumentRepository = new DocumentRepository(PostgreDbContext, UserRepository);
             DocumentService = new DocumentService(PostgreDbContext, FtpService, DocumentRepository);
-            ControlRepository = new ControlRepository(PostgreDbContext);
-            ControlService = new ControlService(PostgreDbContext, ControlRepository, UserRepository);
+            ControlRepository = new ControlRepository();
+            ControlService = new ControlService(ControlRepository, UserRepository);
             ConfiguratorRepository = new ConfiguratorRepository();
             ConfiguratorService = new ConfiguratorService(ConfiguratorRepository, FranchiseRepository, BusinessRepository, NotificationsService);
         }

@@ -192,6 +192,20 @@ namespace Garant.Platform.Controllers.Franchise
 
             return Ok(result);
         }
+        
+        /// <summary>
+        /// Метод получит список категорий франшиз только после авторизации.
+        /// </summary>
+        /// <returns>Список категорий.</returns>
+        [HttpGet]
+        [Route("category-list-auth")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<CategoryOutput>))]
+        public async Task<IActionResult> GetCategoryListAuthAsync()
+        {
+            var result = await _franchiseService.GetCategoryListAsync();
+
+            return Ok(result);
+        }
 
         /// <summary>
         /// Метод получит список подкатегорий франшиз.
