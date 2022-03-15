@@ -242,5 +242,47 @@ namespace Garant.Platform.Mailings.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод отправит на почту администрации сервиса заявку с посадочных страниц.
+        /// </summary>
+        /// <param name="name">Имя пользователя.</param>
+        /// <param name="phoneNumber">Телефон пользователя.</param>
+        /// <param name="landingType">Тип посадочной страницы.</param>
+        public async Task SendMailLandingReuestAsync(string name, string phoneNumber, string landingType)
+        {
+            try
+            {
+                var data = await GetHostAndPortAsync(_configuration["MailingSettings:Email"]);
+                var email = _configuration["MailingSettings:Email"];
+                var password = _configuration["MailingSettings:MailAdministrationServicePassword"];
+
+                var emailMessage = new MimeMessage();
+                emailMessage.From.Add(new MailboxAddress(email));
+                emailMessage.To.Add(new MailboxAddress(_configuration["MailingSettings:Email"]));
+                emailMessage.Subject = $"Новая заявка с посадочной страницы \"{landingType}\"";
+                emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                {
+                    Text = $"Новая заявка с посадочной страницы \"{landingType}\" <br>" +
+                           "Данные заявки: <br>" +
+                           $"Имя: {name} <br>" +
+                           $"Телефон: {phoneNumber}"
+                };
+
+                using var client = new SmtpClient();
+                await client.ConnectAsync(data.Item1, data.Item2, MailKit.Security.SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(email, password);
+                await client.SendAsync(emailMessage);
+                await client.DisconnectAsync(true);
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }
