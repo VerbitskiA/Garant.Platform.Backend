@@ -274,8 +274,7 @@ namespace Garant.Platform.Controllers.Franchise
         /// <summary>
         /// Метод вернёт список франшиз из архива.
         /// </summary>
-        /// <param name="franchiseId">Идентификатор франшизы.</param>
-        /// <returns>Статус архивации.</returns>
+        /// <returns>Список архивированных франшиз.</returns>
         [HttpGet]
         [Route("archive-list")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
@@ -302,7 +301,7 @@ namespace Garant.Platform.Controllers.Franchise
         }
 
         /// <summary>
-        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца (>=30 дней).
+        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца (>=31 дней).
         /// </summary>
         /// <returns>Франшизы в архиве после удаления.</returns>        
         [HttpPost]

@@ -662,7 +662,7 @@ namespace Garant.Platform.Services.Service.Franchise
         }
 
         /// <summary>
-        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца (>=30 дней).
+        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца (>=31 дней).
         /// </summary>
         /// <returns>Франшизы в архиве после удаления.</returns>
         public async Task<IEnumerable<FranchiseOutput>> RemoveFranchisesOlderMonthFromArchiveAsync()

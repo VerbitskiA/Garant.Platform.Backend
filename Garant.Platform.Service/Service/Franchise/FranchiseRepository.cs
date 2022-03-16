@@ -1648,7 +1648,7 @@ namespace Garant.Platform.Services.Service.Franchise
         }
 
         /// <summary>
-        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца (>=30 дней).
+        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца (>=31 дней).
         /// </summary>
         /// <returns>Франшизы в архиве после удаления.</returns>
 
@@ -1664,7 +1664,7 @@ namespace Garant.Platform.Services.Service.Franchise
                 {
                     int diffDays = nowDate.Subtract(franchise.ArchivedDate).Days;
 
-                    if (diffDays >= 30)
+                    if (diffDays >= 31)
                     {
                         _postgreDbContext.Franchises.Remove(franchise);
                     }
@@ -1672,28 +1672,34 @@ namespace Garant.Platform.Services.Service.Franchise
                     await _postgreDbContext.SaveChangesAsync();
                 }
 
-                var result = await _postgreDbContext.Franchises
-                                   .Where(p => p.IsArchived)
-                                   .Select(p => new FranchiseOutput
-                                   {
-                                       DateCreate = p.DateCreate,
-                                       Price = string.Format("{0:0,0}", p.Price),
-                                       CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
-                                       DayDeclination = "дня",
-                                       Text = p.Text,
-                                       TextDoPrice = p.TextDoPrice,
-                                       Title = p.Title,
-                                       Url = p.Url,
-                                       IsGarant = p.IsGarant,
-                                       ProfitPrice = p.ProfitPrice,
-                                       TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
-                                       FranchiseId = p.FranchiseId,
-                                       ArchivedDate = p.ArchivedDate,
-                                       IsArchived = p.IsArchived
-                                   })
-                                   .ToListAsync();
+                var items = await _postgreDbContext.Franchises
+                   .Where(p => p.IsArchived == true)
+                   .OrderBy(p => p.ArchivedDate)
+                   .Select(p => new FranchiseOutput
+                   {
+                       DateCreate = p.DateCreate,
+                       Price = string.Format("{0:0,0}", p.Price),
+                       CountDays = DateTime.Now.Subtract(p.DateCreate).Days,
+                       DayDeclination = "дня",
+                       Text = p.Text,
+                       TextDoPrice = p.TextDoPrice,
+                       Title = p.Title,
+                       Url = p.Url,
+                       IsGarant = p.IsGarant,
+                       ProfitPrice = p.ProfitPrice,
+                       TotalInvest = string.Format("{0:0,0}", p.GeneralInvest),
+                       FranchiseId = p.FranchiseId,
+                       ArchivedDate = p.ArchivedDate,
+                       IsArchived = p.IsArchived
+                   })
+                   .ToListAsync();
 
-                return result;
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
+
+                return items;
             }
 
             catch (Exception e)
