@@ -220,5 +220,15 @@ namespace Garant.Platform.Models.Entities.Business
         /// Комментарий причины отклонения.
         /// </summary>
         public string CommentRejection { get; set; }
+
+        /// <summary>
+        /// Архивирован ли бизнес.
+        /// </summary>
+        public bool IsArchived { get; set; }
+
+        /// <summary>
+        /// Дата архивации.
+        /// </summary>
+        public DateTime ArchivedDate { get; set; }
     }
 }

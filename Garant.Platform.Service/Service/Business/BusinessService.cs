@@ -434,5 +434,94 @@ namespace Garant.Platform.Services.Service.Business
                 throw;
             }
         }
-    }
+
+        /// <summary>
+        /// Метод поместит бизнес в архив.
+        /// </summary>
+        /// <param name="businessId">Идентификатор бизнеса.</param>
+        /// <returns>Статус архивации.</returns>
+        public async Task<bool> ArchiveBusinessAsync(long businessId)
+        {
+            try
+            {
+                var result = await _businessRepository.ArchiveBusinessAsync(businessId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод вернёт список бизнесов из архива.
+        /// </summary>
+        /// <returns>Список архивированных бизнесов.</returns>
+        public async Task<IEnumerable<BusinessOutput>> GetArchiveBusinessListAsync()
+        {
+            try
+            {
+                var result = await _businessRepository.GetArchiveBusinessListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод восстановит бизнес из архива.
+        /// </summary>
+        /// <param name="businessId">Идентификатор бизнеса.</param>
+        /// <returns>Статус восстановления бизнеса.</returns>
+        public async Task<bool> RestoreBusinessFromArchive(long businessId)
+        {
+            try
+            {
+                var result = await _businessRepository.RestoreBusinessFromArchive(businessId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод удалит из архива бизнесы, которые там находятся больше одного месяца (>=31 дней).
+        /// </summary>
+        /// <returns>Бизнесы в архиве после удаления.</returns>
+        public async Task<IEnumerable<BusinessOutput>> RemoveBusinessesOlderMonthFromArchiveAsync()
+        {
+            try
+            {
+                var result = await _businessRepository.RemoveBusinessesOlderMonthFromArchiveAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
 }
