@@ -31,5 +31,10 @@ namespace Garant.Platform.Messaging.Abstraction.Notifications
         /// Метод отправит уведомление о созданной категории.
         /// </summary>
         Task SendCreateCategoryAsync();
+
+        /// <summary>
+        /// Метод отправит уведомление на фронт после отправки заявки с посадочных страниц.
+        /// </summary>
+        Task SendLandingRequestMessageAsync();
     }
 }

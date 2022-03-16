@@ -58,5 +58,13 @@ namespace Garant.Platform.Messaging.Service.Notifications
         {
             await _hubContext.Clients.All.SendAsync("SendCreateCategory", NotifyMessage.SUCCESS_CREATE_CATEGORY);
         }
+
+        /// <summary>
+        /// Метод отправит уведомление на фронт после отправки заявки с посадочных страниц.
+        /// </summary>
+        public async Task SendLandingRequestMessageAsync()
+        {
+            await _hubContext.Clients.All.SendAsync("SendLandingRequestMessage", NotifyMessage.SUCCESS_LANDING_REQUEST);
+        }
     }
 }

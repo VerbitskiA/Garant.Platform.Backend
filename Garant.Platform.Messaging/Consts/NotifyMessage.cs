@@ -22,5 +22,7 @@
         public const string SUCCESS_CREATE_SPHERE = "Сфера успешно создана";
         
         public const string SUCCESS_CREATE_CATEGORY = "Категория успешно создана";
+
+        public const string SUCCESS_LANDING_REQUEST = "Благодарим за заявку! В ближайшее время наш менеджер свяжется с вами";
     }
 }

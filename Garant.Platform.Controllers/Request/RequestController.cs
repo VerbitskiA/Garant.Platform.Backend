@@ -68,5 +68,19 @@ namespace Garant.Platform.Controllers.Request
 
             return result;
         }
+
+        /// <summary>
+        /// Метод отправит заявку с посадочных страниц на почту сервиса.
+        /// </summary>
+        /// <param name="name">Имя пользователя, который оставляет заявку.</param>
+        /// <param name="phoneNumber">Телефон пользователя, который оставляет заявку.</param>
+        /// <param name="landingType">Тип посадочной страницы.</param>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("send-landing-request")]
+        public async Task SendLandingRequestAsync([FromQuery] string name, string phoneNumber, string landingType)
+        {
+            await _requestService.SendLandingRequestAsync(name, phoneNumber, landingType);
+        }
     }
 }

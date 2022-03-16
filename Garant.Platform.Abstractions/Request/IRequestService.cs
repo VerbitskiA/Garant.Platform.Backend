@@ -36,5 +36,13 @@ namespace Garant.Platform.Abstractions.Request
         /// </summary>
         /// <returns>Список заявок.</returns>
         Task<IEnumerable<RequestOutput>> GetUserRequestsAsync(string account);
+
+        /// <summary>
+        /// Метод отправит заявку с посадочных страниц на почту сервиса.
+        /// </summary>
+        /// <param name="name">Имя пользователя, который оставляет заявку.</param>
+        /// <param name="phoneNumber">Телефон пользователя, который оставляет заявку.</param>
+        /// <param name="landingType">Тип посадочной страницы.</param>
+        Task SendLandingRequestAsync(string name, string phoneNumber, string landingType);
     }
 }

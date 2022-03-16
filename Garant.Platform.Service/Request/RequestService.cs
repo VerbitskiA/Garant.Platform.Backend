@@ -12,6 +12,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
+using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Messaging.Abstraction.Notifications;
 using Garant.Platform.Messaging.Consts;
 using Garant.Platform.Models.Request.Output;
@@ -147,7 +148,7 @@ namespace Garant.Platform.Services.Request
                     || string.IsNullOrEmpty(userInfo.Kpp)
                     || string.IsNullOrEmpty(userInfo.CorrAccountNumber)
                     || string.IsNullOrEmpty(userInfo.DefaultBankName)
-                    || (userInfo.PassportSerial == null)
+                    || userInfo.PassportSerial == null
                     || userInfo.PassportNumber == null
                     || string.IsNullOrEmpty(userInfo.DateGive)
                     || string.IsNullOrEmpty(userInfo.WhoGive)
@@ -273,7 +274,7 @@ namespace Garant.Platform.Services.Request
                 throw;
             }
         }
-        
+
         /// <summary>
         /// Метод вернет заголовок и описание статуса заявки исходя из ее статуса.
         /// </summary>
@@ -290,6 +291,38 @@ namespace Garant.Platform.Services.Request
             }
 
             return await Task.FromResult(result);
+        }
+        
+        /// <summary>
+        /// Метод отправит заявку с посадочных страниц на почту сервиса.
+        /// </summary>
+        /// <param name="name">Имя пользователя, который оставляет заявку.</param>
+        /// <param name="phoneNumber">Телефон пользователя, который оставляет заявку.</param>
+        /// <param name="landingType">Тип посадочной страницы.</param>
+        public async Task SendLandingRequestAsync(string name, string phoneNumber, string landingType)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(phoneNumber))
+                {
+                    throw new EmptyRequestLandingParamsException();
+                }
+                
+                // Отправит заявку на почту администрации сервиса.
+                var mailingService = AutoFac.Resolve<IMailingService>();
+                await mailingService.SendMailLandingReuestAsync(name, phoneNumber, landingType);
+                
+                // Отправит уведомление на фронт.
+                await _notificationsService.SendLandingRequestMessageAsync();
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
         }
     }
 }

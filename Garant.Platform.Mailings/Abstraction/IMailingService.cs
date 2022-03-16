@@ -43,5 +43,13 @@ namespace Garant.Platform.Mailings.Abstraction
         /// <param name="cardType">Тип карточки.</param>
         /// <param name="cardUrl">Ссылка на карточку.</param>
         Task SendMailUserAfterCreateCardAsync(string mailTo, string cardType, string cardUrl = null);
+
+        /// <summary>
+        /// Метод отправит на почту администрации сервиса заявку с посадочных страниц.
+        /// </summary>
+        /// <param name="name">Имя пользователя.</param>
+        /// <param name="phoneNumber">Телефон пользователя.</param>
+        /// <param name="landingType">Тип посадочной страницы.</param>
+        Task SendMailLandingReuestAsync(string name, string phoneNumber, string landingType);
     }
 }
