@@ -78,22 +78,22 @@ namespace Garant.Platform.Services.Service.Business
                 // Создаст или обновит бизнес.
                 result = await _businessRepository.CreateUpdateBusinessAsync(businessInput,
                     businessInput.UrlsBusiness, files, account);
-                
+
                 // Сформирует ссылку на карточку франшизы.
                 var commonRepository = AutoFac.Resolve<ICommonRepository>();
                 var cardUrl = await commonRepository.GetCardUrlAsync("ModerationBusinessCard");
                 var newUrl = cardUrl + result.BusinessId;
-                
+
                 // Отправит оповещение администрации сервиса.
                 var mailService = AutoFac.Resolve<IMailingService>();
                 await mailService.SendMailAfterCreateCardAsync("Бизнес", newUrl);
-                
+
                 // Отправит уведомление о модерации карточки через SignalR.
                 await _notificationsService.SendCardModerationAsync();
 
                 var userId = await _userRepository.FindUserIdUniverseAsync(account);
                 var userInfo = await _userRepository.GetUserProfileInfoByIdAsync(userId);
-                
+
                 // Запишет уведомление в БД.
                 await _notificationsRepository.SaveNotifyAsync("AfterCreateCardNotify", NotifyMessage.CARD_MODERATION_TITLE, NotifyMessage.CARD_MODERATION_TEXT, NotificationLevelEnum.Success.ToString(), true, userId, "AfterCreateCard");
 
@@ -103,7 +103,7 @@ namespace Garant.Platform.Services.Service.Business
                 {
                     userEmail = userInfo.Email;
                 }
-                
+
                 // Отправит пользователю на почту уведомление о созданной карточке.
                 await mailService.SendMailUserAfterCreateCardAsync(userEmail, "Бизнес", newUrl);
 
@@ -524,4 +524,5 @@ namespace Garant.Platform.Services.Service.Business
                 throw;
             }
         }
+    }
 }

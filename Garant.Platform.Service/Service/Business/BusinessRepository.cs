@@ -1191,7 +1191,7 @@ namespace Garant.Platform.Services.Service.Business
             try
             {
                 var items = await _postgreDbContext.Businesses
-                    .Where(b => b.IsAccepted == true && b.IsArchived == false)
+                    .Where(b => b.IsAccepted == true && b.IsArchived == true)
                     .Select(b => new BusinessOutput
                     {
                         DateCreate = b.DateCreate,
@@ -1290,7 +1290,7 @@ namespace Garant.Platform.Services.Service.Business
                 await _postgreDbContext.SaveChangesAsync();
 
                 var items = await _postgreDbContext.Businesses
-                     .Where(b => b.IsAccepted == true && b.IsArchived == false)
+                     .Where(b => b.IsAccepted == true && b.IsArchived == true)
                      .Select(b => new BusinessOutput
                      {
                          DateCreate = b.DateCreate,

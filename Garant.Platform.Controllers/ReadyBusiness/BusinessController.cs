@@ -210,7 +210,7 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         /// Метод поместит бизнес в архив.
         /// </summary>
         /// <param name="businessId">Идентификатор бизнеса.</param>
-        /// <returns>Статус архивации.</returns>
+        /// <returns>Статус архивации.</returns>        
         [HttpPost]
         [Route("to-archive")]
         [ProducesResponseType(200, Type = typeof(bool))]
@@ -224,7 +224,7 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         /// <summary>
         /// Метод вернёт список бизнесов из архива.
         /// </summary>
-        /// <returns>Список архивированных бизнесов.</returns>
+        /// <returns>Список архивированных бизнесов.</returns>        
         [HttpGet]
         [Route("archive-list")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
@@ -239,7 +239,7 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         /// Метод восстановит бизнес из архива.
         /// </summary>
         /// <param name="businessId">Идентификатор бизнеса.</param>
-        /// <returns>Статус восстановления бизнеса.</returns>
+        /// <returns>Статус восстановления бизнеса.</returns>       
         [HttpPost]
         [Route("restore-from-archive")]
         [ProducesResponseType(200, Type = typeof(bool))]
@@ -253,7 +253,7 @@ namespace Garant.Platform.Controllers.ReadyBusiness
         /// <summary>
         /// Метод удалит из архива бизнесы, которые там находятся больше одного месяца (>=31 дней).
         /// </summary>
-        /// <returns>Бизнесы в архиве после удаления.</returns>      
+        /// <returns>Бизнесы в архиве после удаления.</returns>            
         [HttpPost]
         [Route("remove-older-month")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
