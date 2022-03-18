@@ -4,6 +4,7 @@ using Garant.Platform.Core.Data;
 using Garant.Platform.FTP.Service;
 using Garant.Platform.Mailings.Service;
 using Garant.Platform.Messaging.Service.Chat;
+using Garant.Platform.Messaging.Service.Notifications;
 using Garant.Platform.Services.Control;
 using Garant.Platform.Services.Document;
 using Garant.Platform.Services.Request;
@@ -45,6 +46,9 @@ namespace Garant.Platform.Tests
         protected BlogRepository BlogRepository;
         protected ConfiguratorRepository ConfiguratorRepository;
         protected ConfiguratorService ConfiguratorService;
+        protected BusinessService BusinessService;
+        protected NotificationsService NotificationsService;
+        protected NotificationsRepository NotificationsRepository;
 
         public BaseServiceTest()
         { 
@@ -57,29 +61,32 @@ namespace Garant.Platform.Tests
             var optionsBuilder = new DbContextOptionsBuilder<PostgreDbContext>();
             optionsBuilder.UseNpgsql(PostgreConfigString);
             PostgreDbContext = new PostgreDbContext(optionsBuilder.Options);
-            FtpService = new FtpService(AppConfiguration, PostgreDbContext);
+            FtpService = new FtpService(AppConfiguration);
 
             // Настройка экземпляров сервисов для тестов.
-            CommonService = new CommonService(PostgreDbContext, null);
-            UserRepository = new UserRepository(PostgreDbContext, CommonService);
-            FranchiseRepository = new FranchiseRepository(PostgreDbContext, UserRepository, CommonService);
-            BusinessRepository = new BusinessRepository(PostgreDbContext, UserRepository, CommonService);
-            PaginationRepository = new PaginationRepository(PostgreDbContext);
+            CommonService = new CommonService(null);
+            NotificationsService = new NotificationsService();
+            NotificationsRepository = new NotificationsRepository();
+            UserRepository = new UserRepository(CommonService);
+            FranchiseRepository = new FranchiseRepository(UserRepository, CommonService);
+            BusinessRepository = new BusinessRepository(UserRepository, CommonService);
+            BusinessService = new BusinessService(BusinessRepository, FtpService, NotificationsService, UserRepository, NotificationsRepository);
+            PaginationRepository = new PaginationRepository(CommonService);
 
-            BlogRepository = new BlogRepository(PostgreDbContext);
-            BlogService = new BlogService(PostgreDbContext, BlogRepository, FtpService);
+            BlogRepository = new BlogRepository(UserRepository);
+            BlogService = new BlogService(BlogRepository, FtpService);
 
-            MailingService = new MailingService(PostgreDbContext, AppConfiguration);
-            UserService = new UserService(null, null, PostgreDbContext, MailingService, UserRepository, FtpService, CommonService);
-            FranchiseService = new FranchiseService(PostgreDbContext, null, FranchiseRepository);            
-            ChatRepository = new ChatRepository(PostgreDbContext);
-            RequestService = new RequestService(FranchiseRepository, BusinessRepository, PostgreDbContext);
+            MailingService = new MailingService(AppConfiguration);
+            UserService = new UserService(null, null, MailingService, UserRepository, FtpService, CommonService);
+            FranchiseService = new FranchiseService(null, FranchiseRepository, NotificationsService, UserRepository, NotificationsRepository);            
+            ChatRepository = new ChatRepository();
+            RequestService = new RequestService(FranchiseRepository, BusinessRepository, NotificationsService);
             DocumentRepository = new DocumentRepository(PostgreDbContext, UserRepository);
             DocumentService = new DocumentService(PostgreDbContext, FtpService, DocumentRepository);
-            ControlRepository = new ControlRepository(PostgreDbContext);
-            ControlService = new ControlService(PostgreDbContext, ControlRepository, UserRepository);
-            ConfiguratorRepository = new ConfiguratorRepository(PostgreDbContext);
-            ConfiguratorService = new ConfiguratorService(PostgreDbContext, ConfiguratorRepository);
+            ControlRepository = new ControlRepository();
+            ControlService = new ControlService(ControlRepository, UserRepository);
+            ConfiguratorRepository = new ConfiguratorRepository();
+            ConfiguratorService = new ConfiguratorService(ConfiguratorRepository, FranchiseRepository, BusinessRepository, NotificationsService);
         }
     }
 }

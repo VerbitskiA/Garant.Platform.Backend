@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.Category
         {
             var mock = new Mock<IMainPageService>();
             mock.Setup(a => a.GetCategoriesListAsync());
-            var component = new MainPageService(PostgreDbContext);
+            var component = new MainPageService();
             var result = await component.GetCategoriesListAsync();
 
             Assert.IsTrue(result.ResultCol1.Any());

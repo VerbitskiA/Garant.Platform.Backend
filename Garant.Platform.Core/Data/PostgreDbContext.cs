@@ -16,6 +16,7 @@ using Garant.Platform.Models.Entities.News;
 using Garant.Platform.Models.Entities.Suggestion;
 using Garant.Platform.Models.Entities.Transition;
 using Garant.Platform.Models.Entities.User;
+using Garant.Platform.Models.Notification;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Core.Data
@@ -29,7 +30,11 @@ namespace Garant.Platform.Core.Data
             _options = options;
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) { }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<NewsViewsEntity>()
+                        .HasKey(c => new { c.NewsId, c.UserId });
+        }
 
         public DbSet<BaseUserEntity> BaseUsers { get; set; }
 
@@ -62,6 +67,11 @@ namespace Garant.Platform.Core.Data
         /// Таблица новостей Info.News.
         /// </summary>
         public DbSet<NewsEntity> News { get; set; }
+
+        /// <summary>
+        /// Класс сопоставляется с таблицей Info.NewsViews.
+        /// </summary>
+        public DbSet<NewsViewsEntity> NewsViews { get; set; }
 
         /// <summary>
         /// Таблица категорий Business.BusinessCategories.
@@ -257,5 +267,10 @@ namespace Garant.Platform.Core.Data
         /// Таблица Info.ArticleThemes.
         /// </summary>
         public DbSet<ArticleThemeEntity> ArticleThemes { get; set; }
+
+        /// <summary>
+        /// Таблица Communications.Notification. 
+        /// </summary>
+        public DbSet<NotificationEntity> Notifications { get; set; }
     }
 }

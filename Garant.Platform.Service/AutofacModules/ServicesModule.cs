@@ -12,7 +12,7 @@ using Garant.Platform.Core.Abstraction;
 using Garant.Platform.Core.Attributes;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Models.Entities.User;
-using Garant.Platform.Service.Service.Ad;
+using Garant.Platform.Services.Service.Ad;
 using Garant.Platform.Services.Control;
 using Garant.Platform.Services.Document;
 using Garant.Platform.Services.Request;

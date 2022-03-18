@@ -6,11 +6,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Entities.User;
@@ -40,11 +42,17 @@ namespace Garant.Platform.Services.Service.User
         private readonly IFtpService _ftpService;
         private readonly ICommonService _commonService;
 
-        public UserService(SignInManager<UserEntity> signInManager, UserManager<UserEntity> userManager, PostgreDbContext postgreDbContext, IMailingService mailingService, IUserRepository userRepository, IFtpService ftpService, ICommonService commonService)
+        public UserService(SignInManager<UserEntity> signInManager, 
+            UserManager<UserEntity> userManager, 
+            IMailingService mailingService, 
+            IUserRepository userRepository, 
+            IFtpService ftpService, 
+            ICommonService commonService)
         {
             _signInManager = signInManager;
             _userManager = userManager;
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _mailingService = mailingService;
             _userRepository = userRepository;
             _ftpService = ftpService;

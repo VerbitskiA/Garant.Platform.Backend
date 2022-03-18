@@ -50,6 +50,12 @@ namespace Garant.Platform.Models.Entities.Business
         [Column("BusinessId", TypeName = "bigint")]
         public long BusinessId { get; set; }
 
+        /// <summary>
+        /// Статус заявки.
+        /// </summary>
+        [Column("RequestStatus", TypeName = "varchar(100)")]
+        public string RequestStatus { get; set; }
+
         public UserEntity User { get; set; }
 
         public BusinessEntity Business { get; set; }

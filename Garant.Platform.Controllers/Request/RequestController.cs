@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Request;
 using Garant.Platform.Base;
 using Garant.Platform.Models.Request.Input;
@@ -32,11 +33,11 @@ namespace Garant.Platform.Controllers.Request
         [HttpPost]
         [Route("create-request-franchise")]
         [ProducesResponseType(200, Type = typeof(RequestFranchiseOutput))]
-        public async Task<IActionResult> CreateRequestFranchiseAsync([FromBody] RequestFranchiseInput requestFranchiseInput)
+        public async Task<RequestFranchiseOutput> CreateRequestFranchiseAsync([FromBody] RequestFranchiseInput requestFranchiseInput)
         {
             var result = await _requestService.CreateRequestFranchiseAsync(requestFranchiseInput.UserName, requestFranchiseInput.Phone, requestFranchiseInput.City, GetUserName(), requestFranchiseInput.FranchiseId);
 
-            return Ok(result);
+            return result;
         }
 
         /// <summary>
@@ -47,11 +48,39 @@ namespace Garant.Platform.Controllers.Request
         [HttpPost]
         [Route("create-request-business")]
         [ProducesResponseType(200, Type = typeof(RequestBusinessOutput))]
-        public async Task<IActionResult> CreateRequestBusinessAsync([FromBody] RequestBusinessInput requestBusinessInput)
+        public async Task<RequestBusinessOutput> CreateRequestBusinessAsync([FromBody] RequestBusinessInput requestBusinessInput)
         {
             var result = await _requestService.CreateRequestBusinessAsync(requestBusinessInput.UserName, requestBusinessInput.Phone, GetUserName(), requestBusinessInput.BusinessId);
 
-            return Ok(result);
+            return result;
+        }
+
+        /// <summary>
+        /// Метод получит список заявок пользователя для вкладки профиля "Уведомления".
+        /// </summary>
+        /// <returns>Список заявок.</returns>
+        [HttpGet]
+        [Route("get-requests")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<RequestOutput>))]
+        public async Task<IEnumerable<RequestOutput>> GetUserRequestsAsync()
+        {
+            var result = await _requestService.GetUserRequestsAsync(GetUserName());
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод отправит заявку с посадочных страниц на почту сервиса.
+        /// </summary>
+        /// <param name="name">Имя пользователя, который оставляет заявку.</param>
+        /// <param name="phoneNumber">Телефон пользователя, который оставляет заявку.</param>
+        /// <param name="landingType">Тип посадочной страницы.</param>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("send-landing-request")]
+        public async Task SendLandingRequestAsync([FromQuery] string name, string phoneNumber, string landingType)
+        {
+            await _requestService.SendLandingRequestAsync(name, phoneNumber, landingType);
         }
     }
 }

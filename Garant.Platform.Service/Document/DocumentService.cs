@@ -10,6 +10,7 @@ using Garant.Platform.FTP.Abstraction;
 using Garant.Platform.Models.Document.Input;
 using Garant.Platform.Models.Document.Output;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Garant.Platform.Services.Document
@@ -256,6 +257,34 @@ namespace Garant.Platform.Services.Document
                 return result;
             }
 
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод скачает файл.
+        /// </summary>
+        /// <param name="fileName">Имя файла.</param>
+        /// <returns>Файл для скачивания фронтом.</returns>
+        public async Task<FileContentResult> DownloadFileAsync(string fileName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    throw new EmptyFileNameException();
+                }
+                
+                var result = await _ftpService.DownloadFileAsync(fileName);
+                
+                return result;
+            }
+            
             catch (Exception e)
             {
                 Console.WriteLine(e);

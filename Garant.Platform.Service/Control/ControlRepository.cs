@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Control;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Control.Output;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,9 +19,10 @@ namespace Garant.Platform.Services.Control
     {
         private readonly PostgreDbContext _postgreDbContext;
 
-        public ControlRepository(PostgreDbContext postgreDbContext)
+        public ControlRepository()
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>

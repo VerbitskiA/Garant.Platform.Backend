@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Messaging.Abstraction.Chat;
 using Garant.Platform.Messaging.Models.Chat.Output;
 using Garant.Platform.Models.Entities.Chat;
@@ -19,9 +21,10 @@ namespace Garant.Platform.Messaging.Service.Chat
     {
         private readonly PostgreDbContext _postgreDbContext;
 
-        public ChatRepository(PostgreDbContext postgreDbContext)
+        public ChatRepository()
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>
@@ -342,7 +345,7 @@ namespace Garant.Platform.Messaging.Service.Chat
                 // Найдет дату начала диалога.
                 var result = await _postgreDbContext.MainInfoDialogs
                     .Where(d => d.DialogId == dialogId)
-                    .Select(d => d.Created.ToString("f"))
+                    .Select(d => d.Created.ToString("dd.MM.yyyy HH:mm"))
                     .FirstOrDefaultAsync();
 
                 return result;

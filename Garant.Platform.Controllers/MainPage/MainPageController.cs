@@ -35,7 +35,7 @@ namespace Garant.Platform.Controllers.MainPage
         /// <returns>Список категорий бизнеса. Все это дело разбито на 4 столбца.</returns>
         [AllowAnonymous]
         [HttpPost, Route("categories-list")]
-        [ProducesResponseType(200, Type = typeof(GetResultBusinessCategoryOutput))]
+        [ProducesResponseType(200, Type = typeof(GetResultCategoryOutput))]
         public async Task<IActionResult> GetCategoriesListAsync()
         {
             var result = await _mainPageService.GetCategoriesListAsync();

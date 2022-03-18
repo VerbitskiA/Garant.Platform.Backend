@@ -10,7 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Core.Exceptions;
+using Garant.Platform.Abstractions.User;
+using Garant.Platform.Core.Utils;
 
 namespace Garant.Platform.Services.Service.Blog
 {
@@ -20,10 +23,13 @@ namespace Garant.Platform.Services.Service.Blog
     public class BlogRepository : IBlogRepository
     {
         private readonly PostgreDbContext _postgreDbContext;
+        private readonly IUserRepository _userRepository;
 
-        public BlogRepository(PostgreDbContext postgreDbContext)
+        public BlogRepository(IUserRepository userRepository)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
+            _userRepository = userRepository;
         }
 
         /// <summary>
@@ -332,7 +338,8 @@ namespace Garant.Platform.Services.Service.Blog
                             Text = n.Text,
                             Type = n.Type,
                             Url = n.Url,
-                            Position = n.Position
+                            Position = n.Position,
+                            ViewsCount = n.ViewsCount
                         })
                     .ToListAsync();
 
@@ -638,6 +645,163 @@ namespace Garant.Platform.Services.Service.Blog
                 await logger.LogError();
                 throw;
             }
+        }
+
+
+        /// <summary>
+        /// Метод удалит новость.
+        /// </summary>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <returns></returns>
+        public async Task DeleteNewAsync(long newsId)
+        {
+            try
+            {
+                var deletedNew = await _postgreDbContext.News.FirstOrDefaultAsync(u => u.NewsId.Equals(newsId));
+
+                if (deletedNew is not null)
+                {
+                    _postgreDbContext.News.Remove(deletedNew);
+
+                    await _postgreDbContext.SaveChangesAsync();
+                }                              
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод удалит статью.
+        /// </summary>
+        /// <param name="articleId">Идентификатор статьи.</param>
+        /// <returns></returns>
+        public async Task DeleteArticleAsync(long articleId)
+        {
+            try
+            {
+                var deletedArticle = await _postgreDbContext.Articles.FirstOrDefaultAsync(u => u.ArticleId.Equals(articleId));
+
+                if (deletedArticle is not null)
+                {
+                    _postgreDbContext.Articles.Remove(deletedArticle);
+
+                    await _postgreDbContext.SaveChangesAsync();
+                }
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод удалит блог со статьями.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns></returns>
+        public async Task DeleteBlogAsync(long blogId)
+        {
+            try
+            {
+                var deletedBlog = await _postgreDbContext.Blogs
+                    .Include(u=>u.Articles)
+                    .FirstOrDefaultAsync(u => u.BlogId.Equals(blogId));
+
+                if (deletedBlog is not null)
+                {
+                    _postgreDbContext.Blogs.Remove(deletedBlog);
+
+                    await _postgreDbContext.SaveChangesAsync();
+                }                
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Метод увелечит количество просмотров новости один раз в сутки на пользователя.
+        /// </summary>
+        /// <param name="account">Данные об аккаунте пользователя.</param>
+        /// <param name="newsId">Идентификатор новости.</param>
+        /// <returns></returns>
+        public async Task<bool> IncrementViewsNewOnceADayAsync(string account, long newsId)
+        {
+            //TODO: удалять записи когда удаляется новость или юзер.
+            var userId = string.Empty;
+            // Найдет такого пользователя.
+            var findUser = await _userRepository.FindUserByEmailOrPhoneNumberAsync(account);
+
+            // Если такого пользователя не найдено, значит поищет по коду.
+            if (findUser == null)
+            {
+                var findUserIdByCode = await _userRepository.FindUserByCodeAsync(account);
+
+                if (!string.IsNullOrEmpty(findUserIdByCode))
+                {
+                    userId = findUserIdByCode;
+                }
+            }
+            else
+            {
+                userId = findUser.UserId;
+            }
+
+            var getNew = await _postgreDbContext.News.FirstOrDefaultAsync(n => n.NewsId.Equals(newsId));
+
+            if (getNew is null)
+            {
+                throw new NotFoundNewException(newsId);
+            }
+
+            var getViewsNews = await _postgreDbContext.NewsViews.FirstOrDefaultAsync(v => v.NewsId.Equals(newsId) && v.UserId.Equals(userId));
+
+            var viewDate = DateTime.Now;           
+
+            if (getViewsNews is null)
+            {
+                //пользователь новость не смотрел
+                NewsViewsEntity viewsNewsEntity = new()
+                {
+                    NewsId = newsId,
+                    UserId = userId,
+                    ViewDate = viewDate
+                };
+
+                //Добавляем запись о просмотре
+                await _postgreDbContext.NewsViews.AddAsync(viewsNewsEntity);
+                getNew.ViewsCount++;
+            }
+            else
+            {
+                if (viewDate.Date.Equals(getViewsNews.ViewDate.Date))
+                {
+                    return false;                    
+                }
+
+                getViewsNews.ViewDate = viewDate;
+                getNew.ViewsCount++;
+            }
+            
+            await _postgreDbContext.SaveChangesAsync();
+
+            return true;
         }
     }
 }

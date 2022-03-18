@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Commerce.Abstraction;
@@ -33,9 +34,11 @@ namespace Garant.Platform.Commerce.Service.Tinkoff
         private readonly ITinkoffRepository _tinkoffRepository;
         private readonly IGarantActionService _garantActionService;
 
-        public TinkoffService(PostgreDbContext postgreDbContext, ITinkoffRepository tinkoffRepository, IGarantActionService garantActionService)
+        public TinkoffService(ITinkoffRepository tinkoffRepository, 
+            IGarantActionService garantActionService)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _configuration = AutoFac.Resolve<IConfiguration>();
             _tinkoffRepository = tinkoffRepository;
             _garantActionService = garantActionService;

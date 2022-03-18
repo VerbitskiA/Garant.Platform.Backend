@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Models.Franchise.Output;
+using Garant.Platform.Models.Pagination.Output;
 using Microsoft.AspNetCore.Http;
 
 namespace Garant.Platform.Abstractions.Franchise
@@ -49,7 +50,7 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <summary>
         /// Метод фильтрации франшиз по разным атрибутам.
         /// </summary>
-        /// <param name="typeSort">Тип фильтрации цены (по возрастанию или убыванию).</param>
+        /// <param name="typeSort">Тип сортировки цены (по возрастанию или убыванию).</param>
         /// <param name="isGarant">Покупка через гарант.</param>
         /// <param name="minPrice">Прибыль от.</param>
         /// <param name="maxPrice">Прибыль до.</param>
@@ -58,7 +59,23 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <param name="minPriceInvest">Сумма инвестиций от.</param>
         /// <param name="maxPriceInvest">Сумма инвестиций до.</param>
         /// <returns>Список франшиз после фильтрации.</returns>
-        Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice, double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false);
+        Task<IEnumerable<FranchiseOutput>> FilterFranchisesAsync(string typeSort, double minPrice, double maxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = true);
+
+        /// <summary>
+        /// Метод фильтрует франшизы с учётом пагинации.
+        /// </summary>
+        /// <param name="typeSort">Тип сортировки цены (по возрастанию или убыванию).</param>
+        /// <param name="viewCode">Код вида бизнеса.</param>
+        /// <param name="categoryCode">Код категории.</param>
+        /// <param name="minInvest">Сумма инвестиций от.</param>
+        /// <param name="maxInvest">Сумма инвестиций до.</param>
+        /// <param name="minProfit">Прибыль от.</param>
+        /// <param name="maxProfit">Прибыль до.</param>
+        /// <param name="pageNumber">Номер страницы.</param>
+        /// <param name="countRows">Количество объектов.</param>
+        /// <param name="isGarant">Покупка через гарант.</param>
+        /// <returns>Список франшиз после фильтрации и данные для пагинации..</returns>
+        Task<IndexOutput> FilterFranchisesWithPaginationAsync(string typeSort, string viewCode, string categoryCode, double minInvest, double maxInvest, double minProfit, double maxProfit, int pageNumber, int countRows, bool isGarant);
 
         /// <summary>
         /// Метод получит новые франшизы, которые были созданы в текущем месяце.
@@ -105,7 +122,32 @@ namespace Garant.Platform.Abstractions.Franchise
         /// <summary>
         /// Метод получит список подкатегорий франшиз.
         /// </summary>
+        /// <param name="categoryCode">Код категории, для которой нужно получить список подкатегорий.</param>
+        /// <param name="categorySysName">Системное имя категории, для которой нужно получить список подкатегорий.</param>
         /// <returns>Список подкатегорий.</returns>
-        Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync();
+        Task<IEnumerable<SubCategoryOutput>> GetSubCategoryListAsync(string categoryCode, string categorySysName);
+
+        /// <summary>
+        /// Метод найдет сферы в соответствии с поисковым запросом.
+        /// </summary>
+        /// <param name="searchText">Поисковый запрос.</param>SearchCategoryAsync
+        /// <returns>Список сфер.</returns>
+        Task<IEnumerable<CategoryOutput>> SearchSphereAsync(string searchText);
+
+        /// <summary>
+        /// Метод найдет категории в соответствии с поисковым запросом.
+        /// </summary>
+        /// <param name="searchText">Поисковый запрос.</param>
+        /// <param name="categoryCode">Код сферы.</param>
+        /// <param name="categorySysName">Системное название сферы.</param>
+        /// <returns>Список категорий.</returns>
+        Task<IEnumerable<SubCategoryOutput>> SearchCategoryAsync(string searchText, string categoryCode,
+            string categorySysName);
+        
+        /// <summary>
+        /// Метод получит список франшиз, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список франшиз.</returns>
+        Task<IEnumerable<FranchiseOutput>> GetNotAcceptedFranchisesAsync();
     }
 }

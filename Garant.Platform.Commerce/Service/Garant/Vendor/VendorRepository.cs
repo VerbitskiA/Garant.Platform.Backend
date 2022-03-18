@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Commerce.Abstraction.Garant.Vendor;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Commerce.Output;
 using Garant.Platform.Models.Entities.Commerce;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +23,10 @@ namespace Garant.Platform.Commerce.Service.Garant.Vendor
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IUserRepository _userRepository;
 
-        public VendorRepository(PostgreDbContext postgreDbContext, IUserRepository userRepository)
+        public VendorRepository(IUserRepository userRepository)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _userRepository = userRepository;
         }
 

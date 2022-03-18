@@ -55,5 +55,24 @@ namespace Garant.Platform.Configurator.Abstractions
         /// </summary>
         /// <returns>Список действий.</returns>
         Task<IEnumerable<BlogActionOutput>> GetBlogActionsAsync();
+        
+        /// <summary>
+        /// Метод создаст новую сферу.
+        /// </summary>
+        /// <param name="sphereName">Название сферы.</param>
+        /// <param name="sphereType">Тип сферы (бизнес или франшиза).</param>
+        /// <param name="sysName">Системное название сферы.</param>
+        /// <returns>Созданная сфера.</returns>
+        Task<CreateSphereOutput> CreateSphereAsync(string sphereName, string sphereType, string sysName);
+        
+        /// <summary>
+        /// Метод создаст категорию сферы.
+        /// </summary>
+        /// <param name="sphereCode">Код сферы (guid).</param>
+        /// <param name="categoryName">Название категории.</param>
+        /// <param name="categoryType">Тип категории.</param>
+        /// <param name="sysName">Системное название.</param>
+        /// <returns>Созданная категория.</returns>
+        Task<CreateCategoryOutput> CreateCategoryAsync(string sphereCode, string categoryName, string categoryType, string sysName);
     }
 }

@@ -56,6 +56,12 @@ namespace Garant.Platform.Models.Entities.Franchise
         [Column("FranchiseId", TypeName = "bigint")]
         public long FranchiseId { get; set; }
 
+        /// <summary>
+        /// Статус заявки.
+        /// </summary>
+        [Column("RequestStatus", TypeName = "varchar(100)")]
+        public string RequestStatus { get; set; }
+
         public UserEntity User { get; set; }
 
         public FranchiseEntity Franchise { get; set; }

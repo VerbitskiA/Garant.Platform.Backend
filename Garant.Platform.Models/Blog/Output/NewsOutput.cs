@@ -47,6 +47,11 @@ namespace Garant.Platform.Models.Blog.Output
         /// </summary>
         public int Position { get; set; }
 
+        /// <summary>
+        /// Количество просмотров.
+        /// </summary>
+        public long ViewsCount { get; set; }
+
         public string Date { get; set; }
         
         public string Time { get; set; }

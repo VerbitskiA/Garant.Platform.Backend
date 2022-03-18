@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
-using System.Net;
 using Microsoft.AspNetCore;
 
 namespace Garant.Platform
@@ -12,24 +11,11 @@ namespace Garant.Platform
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        //public static IWebHostBuilder CreateHostBuilder(string[] args) =>
-        //    WebHost.CreateDefaultBuilder(args)
-        //        .ConfigureWebHostDefaults(webBuilder =>
-        //        {
-        //            webBuilder.UseKestrel()
-        //                .UseContentRoot(Directory.GetCurrentDirectory())
-        //                .UseUrls("https://*:9991")
-        //                .UseStartup<Startup>(); 
-        //        });
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseKestrel(opt =>
-                {
-                    opt.Listen(IPAddress.Loopback, 9898);
-                })
+                .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseUrls("http://*:9898")
+                .UseUrls("http://*:9991")
                 .UseStartup<Startup>();
     }
 }

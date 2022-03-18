@@ -4,11 +4,13 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Base.Exceptions;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.Mailings.Abstraction;
 using Garant.Platform.Models.Entities.User;
 using Garant.Platform.Models.Mailing.Output;
@@ -24,9 +26,10 @@ namespace Garant.Platform.Base.Service
         private readonly IMailingService _mailigSmsService;
         private readonly PostgreDbContext _postgreDbContext;
 
-        public CommonService(PostgreDbContext postgreDbContext, IMailingService mailigSmsService)
+        public CommonService(IMailingService mailigSmsService)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _mailigSmsService = mailigSmsService;
         }
 

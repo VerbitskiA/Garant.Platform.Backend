@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.MainPage;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
@@ -21,127 +22,87 @@ namespace Garant.Platform.Services.Service.MainPage
     public sealed class MainPageService : IMainPageService
     {
         private readonly PostgreDbContext _postgreDbContext;
-
-        public MainPageService(PostgreDbContext postgreDbContext)
+        
+        public MainPageService()
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
         }
 
         /// <summary>
         /// Метод получит список категорий бизнеса.
         /// </summary>
         /// <returns>Список категорий бизнеса. Все это дело разбито на 4 столбца.</returns>
-        public async Task<GetResultBusinessCategoryOutput> GetCategoriesListAsync()
+        public async Task<GetResultCategoryOutput> GetCategoriesListAsync()
         {
             try
             {
-                var result = new GetResultBusinessCategoryOutput();
+                var result = new GetResultCategoryOutput();
 
-                // Получит весь список категорий.
-                var allColList = await (from c in _postgreDbContext.BusinessCategories
-                                        orderby c.Column
+                // Получит весь список категорий бизнеса.
+                var allColBusinessList = await (from c in _postgreDbContext.BusinessCategories
+                                        orderby c.Position
                                         select new BusinessCategoryOutput
                                         {
-                                            Name = c.BusinessName,
+                                            Name = c.BusinessCategoryName,
                                             Position = c.Position,
                                             Column = c.Column,
                                             Url = c.Url
                                         })
                     .ToListAsync();
+                
+                // Получит весь список категорий франшиз.
+                var allColFranchiseList = await (from c in _postgreDbContext.FranchiseCategories
+                        orderby c.Position
+                        select new FranchiseCategoryOutput
+                        {
+                            Name = c.FranchiseCategoryName,
+                            Position = c.Position,
+                            Column = c.Column,
+                            Url = c.Url
+                        })
+                    .ToListAsync(); 
 
-                // Распределит по спискам в зависимости от столбца.
-                foreach (var item in allColList)
+                // Заполнит категориями бизнеса 1 и 2 столбцы.
+                foreach (var item in allColBusinessList)
                 {
                     // Если все списки наполнены, то незачем продолжать дальше.
-                    if (result.ResultCol1.Count >= 16 && result.ResultCol2.Count >= 16 && result.ResultCol3.Count >= 16 && result.ResultCol4.Count >= 16)
+                    if (result.ResultCol1.Count >= 16 && result.ResultCol2.Count >= 16)
                     {
                         continue;
                     }
 
-                    // Смотрит 1 столбец.
-                    if (item.Column == 1)
+                    // Заполнит первый столбец.
+                    if (result.ResultCol1.Count <= 16)
                     {
-                        // Если еще не было записей, то добавит первый и пропустит итерацию.
-                        if (!result.ResultCol1.Any())
-                        {
-                            result.ResultCol1.Add(item);
-                            continue;
-                        }
-
-                        // Если список еще не дошел до 16 записей, то продолжит заполнять.
-                        if (result.ResultCol1.Count < 16)
-                        {
-                            result.ResultCol1.Add(item);
-                        }
-
-                        // Если уже 16 записей, то будет добавлять в следующий столбец.
-                        else
-                        {
-                            if (result.ResultCol2.Count < 16)
-                            {
-                                result.ResultCol2.Add(item);
-                            }
-                        }
+                        result.ResultCol1.Add(item);
                     }
 
-                    // Смотрит 2 столбец.
-                    else if (item.Column == 2)
+                    // Заполнит второй столбец.
+                    else
                     {
-                        // Если еще не было записей, то добавит первый и пропустит итерацию.
-                        if (!result.ResultCol2.Any())
-                        {
-                            result.ResultCol2.Add(item);
-                            continue;
-                        }
-
-                        // Если список еще не дошел до 16 записей, то продолжит заполнять.
-                        if (result.ResultCol2.Count < 16)
-                        {
-                            result.ResultCol2.Add(item);
-                        }
+                        result.ResultCol2.Add(item);
+                    }
+                }
+                
+                // Заполнит категориями франшиз 1 и 2 столбцы.
+                foreach (var item in allColFranchiseList)
+                {
+                    if (result.ResultCol3.Count >= 16 && result.ResultCol4.Count >= 16)
+                    {
+                        continue;
                     }
 
-                    // Смотрит 3 столбец.
-                    else if (item.Column == 3)
+                    // Заполнит первый столбец.
+                    if (result.ResultCol3.Count <= 16)
                     {
-                        // Если еще не было записей, то добавит первый и пропустит итерацию.
-                        if (!result.ResultCol3.Any())
-                        {
-                            result.ResultCol3.Add(item);
-                            continue;
-                        }
-
-                        // Если список еще не дошел до 16 записей, то продолжит заполнять.
-                        if (result.ResultCol3.Count < 16)
-                        {
-                            result.ResultCol3.Add(item);
-                        }
-
-                        // Если уже 16 записей, то будет добавлять в следующий столбец.
-                        else
-                        {
-                            if (result.ResultCol4.Count < 16)
-                            {
-                                result.ResultCol4.Add(item);
-                            }
-                        }
+                        result.ResultCol3.Add(item);
                     }
 
-                    // Смотрит 4 столбец.
-                    else if (item.Column == 4)
+                    // Заполнит второй столбец.
+                    else
                     {
-                        // Если еще не было записей, то добавит первый и пропустит итерацию.
-                        if (!result.ResultCol4.Any())
-                        {
-                            result.ResultCol4.Add(item);
-                            continue;
-                        }
-
-                        // Если список еще не дошел до 16 записей, то продолжит заполнять.
-                        if (result.ResultCol4.Count < 16)
-                        {
-                            result.ResultCol4.Add(item);
-                        }
+                        result.ResultCol4.Add(item);
                     }
                 }
 

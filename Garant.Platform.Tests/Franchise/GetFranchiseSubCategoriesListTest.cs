@@ -14,9 +14,9 @@ namespace Garant.Platform.Tests.Franchise
         public async Task GetFranchiseSubCategoriesListAsyncTest()
         {
             var mock = new Mock<IFranchiseService>();
-            mock.Setup(a => a.GetSubCategoryListAsync());
-            var component = new FranchiseService(PostgreDbContext, null, FranchiseRepository);
-            var result = await component.GetSubCategoryListAsync();
+            mock.Setup(a => a.GetSubCategoryListAsync("0599ef42-ddf6-4c5a-b406-127d5e867ef6", "Auto"));
+            var component = new FranchiseService(null, FranchiseRepository, NotificationsService, UserRepository, NotificationsRepository);
+            var result = await component.GetSubCategoryListAsync("0599ef42-ddf6-4c5a-b406-127d5e867ef6", "Auto");
 
             Assert.IsTrue(result.Any());
         }

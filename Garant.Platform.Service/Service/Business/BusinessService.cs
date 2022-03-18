@@ -4,13 +4,21 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
+using Garant.Platform.Abstractions.User;
+using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
 using Garant.Platform.Core.Logger;
+using Garant.Platform.Core.Utils;
 using Garant.Platform.FTP.Abstraction;
+using Garant.Platform.Mailings.Abstraction;
+using Garant.Platform.Messaging.Abstraction.Notifications;
+using Garant.Platform.Messaging.Consts;
+using Garant.Platform.Messaging.Enums;
 using Garant.Platform.Models.Business.Input;
 using Garant.Platform.Models.Business.Output;
+using Garant.Platform.Models.Pagination.Output;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace Garant.Platform.Services.Service.Business
 {
@@ -22,12 +30,23 @@ namespace Garant.Platform.Services.Service.Business
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IBusinessRepository _businessRepository;
         private readonly IFtpService _ftpService;
+        private readonly INotificationsService _notificationsService;
+        private readonly IUserRepository _userRepository;
+        private readonly INotificationsRepository _notificationsRepository;
 
-        public BusinessService(PostgreDbContext postgreDbContext, IBusinessRepository businessRepository, IFtpService ftpService)
+        public BusinessService(IBusinessRepository businessRepository,
+            IFtpService ftpService,
+            INotificationsService notificationsService,
+            IUserRepository userRepository,
+            INotificationsRepository notificationsRepository)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _businessRepository = businessRepository;
             _ftpService = ftpService;
+            _notificationsService = notificationsService;
+            _userRepository = userRepository;
+            _notificationsRepository = notificationsRepository;
         }
 
         /// <summary>
@@ -37,7 +56,8 @@ namespace Garant.Platform.Services.Service.Business
         /// <param name="businessDataInput">Входная модель.</param>
         /// <param name="account">Логин.</param>
         /// <returns>Данные карточки бизнеса.</returns>
-        public async Task<CreateUpdateBusinessOutput> CreateUpdateBusinessAsync(IFormCollection businessFilesInput, string businessDataInput, string account)
+        public async Task<CreateUpdateBusinessOutput> CreateUpdateBusinessAsync(IFormCollection businessFilesInput,
+            string businessDataInput, string account)
         {
             try
             {
@@ -55,20 +75,37 @@ namespace Garant.Platform.Services.Service.Business
                     return null;
                 }
 
-                long lastBusinessId = 1;
-
-                // Если в таблице нет записей, то добавленная первая будет иметь id 1000000.
-                var count = await _postgreDbContext.Businesses.Select(f => f.BusinessId).CountAsync();
-
-                if (count > 0)
-                {
-                    // Найдет последний Id бизнеса и увеличит его на 1.
-                    lastBusinessId = await _postgreDbContext.Businesses.MaxAsync(c => c.BusinessId);
-                    lastBusinessId++;
-                }
-
                 // Создаст или обновит бизнес.
-                result = await _businessRepository.CreateUpdateBusinessAsync(businessInput, lastBusinessId, businessInput.UrlsBusiness, files, account);
+                result = await _businessRepository.CreateUpdateBusinessAsync(businessInput,
+                    businessInput.UrlsBusiness, files, account);
+                
+                // Сформирует ссылку на карточку франшизы.
+                var commonRepository = AutoFac.Resolve<ICommonRepository>();
+                var cardUrl = await commonRepository.GetCardUrlAsync("ModerationBusinessCard");
+                var newUrl = cardUrl + result.BusinessId;
+                
+                // Отправит оповещение администрации сервиса.
+                var mailService = AutoFac.Resolve<IMailingService>();
+                await mailService.SendMailAfterCreateCardAsync("Бизнес", newUrl);
+                
+                // Отправит уведомление о модерации карточки через SignalR.
+                await _notificationsService.SendCardModerationAsync();
+
+                var userId = await _userRepository.FindUserIdUniverseAsync(account);
+                var userInfo = await _userRepository.GetUserProfileInfoByIdAsync(userId);
+                
+                // Запишет уведомление в БД.
+                await _notificationsRepository.SaveNotifyAsync("AfterCreateCardNotify", NotifyMessage.CARD_MODERATION_TITLE, NotifyMessage.CARD_MODERATION_TEXT, NotificationLevelEnum.Success.ToString(), true, userId, "AfterCreateCard");
+
+                var userEmail = string.Empty;
+
+                if (userInfo != null)
+                {
+                    userEmail = userInfo.Email;
+                }
+                
+                // Отправит пользователю на почту уведомление о созданной карточке.
+                await mailService.SendMailUserAfterCreateCardAsync(userEmail, "Бизнес", newUrl);
 
                 return result;
             }
@@ -77,7 +114,7 @@ namespace Garant.Platform.Services.Service.Business
             {
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
+                await logger.LogError();
                 throw;
             }
         }
@@ -87,7 +124,8 @@ namespace Garant.Platform.Services.Service.Business
         /// </summary>
         /// <param name="form">Файлы.</param>
         /// <returns>Список названий файлов.</returns>
-        public async Task<IEnumerable<string>> AddTempFilesBeforeCreateBusinessAsync(IFormCollection form, string account)
+        public async Task<IEnumerable<string>> AddTempFilesBeforeCreateBusinessAsync(IFormCollection form,
+            string account)
         {
             try
             {
@@ -124,10 +162,6 @@ namespace Garant.Platform.Services.Service.Business
             try
             {
                 var result = await _businessRepository.GetBusinessAsync(businessId, mode);
-
-                // Приведет к числу и потом к строке чтобы убрать передние нули, если они будут.
-                var newPrice = Convert.ToInt32(result.Price);
-                result.Price = newPrice.ToString();
 
                 return result;
             }
@@ -233,7 +267,7 @@ namespace Garant.Platform.Services.Service.Business
         /// Метод получит список бизнеса.
         /// </summary>
         /// <returns>Список бизнеса.</returns>
-        public async Task<IEnumerable<PopularBusinessOutput>> GetBusinessListAsync()
+        public async Task<IEnumerable<BusinessOutput>> GetBusinessListAsync()
         {
             try
             {
@@ -263,11 +297,14 @@ namespace Garant.Platform.Services.Service.Business
         /// <param name="maxPriceInvest">Сумма общих инвестиций до.</param>
         /// <param name="isGarant">Флаг гаранта.</param>
         /// <returns>Список бизнесов после фильтрации.</returns>
-        public async Task<IEnumerable<BusinessOutput>> FilterBusinessesAsync(string typeSortPrice, double profitMinPrice, double profitMaxPrice, string viewCode, string categoryCode, double minPriceInvest, double maxPriceInvest, bool isGarant = false)
+        public async Task<IEnumerable<BusinessOutput>> FilterBusinessesAsync(string typeSortPrice,
+            double profitMinPrice, double profitMaxPrice, string viewCode, string categoryCode, double minPriceInvest,
+            double maxPriceInvest, bool isGarant = false)
         {
             try
             {
-                var result = await _businessRepository.FilterBusinessesAsync(typeSortPrice, profitMinPrice, profitMaxPrice, viewCode, categoryCode, minPriceInvest, maxPriceInvest, isGarant);
+                var result = await _businessRepository.FilterBusinessesAsync(typeSortPrice, profitMinPrice,
+                    profitMaxPrice, viewCode, categoryCode, minPriceInvest, maxPriceInvest, isGarant);
 
                 foreach (var item in result)
                 {
@@ -302,6 +339,91 @@ namespace Garant.Platform.Services.Service.Business
                 }
 
                 return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод получит список бизнесов, которые ожидают согласования.
+        /// </summary>
+        /// <returns>Список бизнесов.</returns>
+        public async Task<IEnumerable<BusinessOutput>> GetNotAcceptedBusinessesAsync()
+        {
+            try
+            {
+                var result = await _businessRepository.GetNotAcceptedBusinessesAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод фильтрует бизнес по параметрам с учётом пагинации.
+        /// </summary>
+        /// <param name="typeSortPrice">Тип сортировки цены (убыванию, возрастанию).</param>
+        /// <param name="minPrice">Цена от.</param>
+        /// <param name="maxPrice">Цена до.</param>
+        /// <param name="city">Город.</param>
+        /// <param name="categoryCode">Код вида бизнеса.</param>
+        /// <param name="profitMinPrice">Прибыль в месяц от.</param>
+        /// <param name="profitMaxPrice">прибыль в месяц до.</param>
+        /// <param name="pageNumber">Номер страницы.</param>
+        /// <param name="countRows">Количество записей.</param>
+        /// <param name="isGarant">Флаг гаранта.</param>
+        /// <returns>Список бизнесов после фильтрации и данные для пагинации.</returns>
+        public async Task<IndexOutput> FilterBusinessesWithPaginationAsync(string typeSortPrice, double minPrice,
+            double maxPrice,
+            string city, string categoryCode, double profitMinPrice,
+            double profitMaxPrice, int pageNumber, int countRows, bool isGarant = true)
+        {
+            try
+            {
+                var businessList = await _businessRepository.FilterBusinessesIndependentlyAsync(typeSortPrice, minPrice,
+                    maxPrice,
+                    city, categoryCode, profitMinPrice,
+                    profitMaxPrice, isGarant);
+
+                foreach (var item in businessList)
+                {
+                    item.FullText = item.Text + " " + item.CountDays + " " + item.DayDeclination;
+                }
+
+                var count = businessList.Count;
+                var items = businessList.Skip((pageNumber - 1) * countRows).Take(countRows).ToList();
+
+                var pageData = new PaginationOutput(count, pageNumber, countRows);
+                var paginationData = new IndexOutput
+                {
+                    PageData = pageData,
+                    Results = items,
+                    TotalCount = count,
+                    IsLoadAll = count < countRows,
+                    IsVisiblePagination = count > countRows,
+                    CountAll = count
+                };
+
+                if (paginationData.IsLoadAll)
+                {
+                    var difference = countRows - count;
+                    paginationData.TotalCount += difference;
+                }
+
+                return paginationData;
             }
 
             catch (Exception e)

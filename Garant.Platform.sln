@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Commerce", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Integrations", "Garant.Platform.Integrations\Garant.Platform.Integrations.csproj", "{1C6B4163-5564-4EC0-BC5E-70AC8BE59862}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Garant.Platform.Configurator", "Garant.Platform.Configurator\Garant.Platform.Configurator.csproj", "{B5A39AC1-8C83-42C0-9C5B-7697506CF48D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Garant.Platform.Configurator", "Garant.Platform.Configurator\Garant.Platform.Configurator.csproj", "{B5A39AC1-8C83-42C0-9C5B-7697506CF48D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

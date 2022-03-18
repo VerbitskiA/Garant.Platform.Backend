@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Garant.Platform.Abstractions.Business;
+using Garant.Platform.Abstractions.DataBase;
+using Garant.Platform.Abstractions.Franchise;
 using Garant.Platform.Configurator.Abstractions;
-using Garant.Platform.Configurator.Enums;
 using Garant.Platform.Configurator.Exceptions;
 using Garant.Platform.Configurator.Models.Output;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
+using Garant.Platform.Messaging.Abstraction.Notifications;
 using Garant.Platform.Models.Configurator.Output;
 using Garant.Platform.Models.User.Output;
 
@@ -21,11 +25,21 @@ namespace Garant.Platform.Configurator.Services
     {
         private readonly PostgreDbContext _postgreDbContext;
         private readonly IConfiguratorRepository _configuratorRepository;
+        private readonly IFranchiseRepository _franchiseRepository;
+        private readonly IBusinessRepository _businessRepository;
+        private readonly INotificationsService _notificationsService;
 
-        public ConfiguratorService(PostgreDbContext postgreDbContext, IConfiguratorRepository configuratorRepository)
+        public ConfiguratorService(IConfiguratorRepository configuratorRepository,
+            IFranchiseRepository franchiseRepository,
+            IBusinessRepository businessRepository,
+            INotificationsService notificationsService)
         {
-            _postgreDbContext = postgreDbContext;
+            var dbContext = AutoFac.Resolve<IDataBaseConfig>();
+            _postgreDbContext = dbContext.GetDbContext();
             _configuratorRepository = configuratorRepository;
+            _franchiseRepository = franchiseRepository;
+            _businessRepository = businessRepository;
+            _notificationsService = notificationsService;
         }
 
         /// <summary>
@@ -155,6 +169,170 @@ namespace Garant.Platform.Configurator.Services
                 Console.WriteLine(e);
                 var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
                 await logger.LogCritical();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод утвердит карточку. После этого карточка попадает в каталоги.
+        /// </summary>
+        /// <param name="cardId">Id карточки.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <returns>Статус утверждения.</returns>
+        public async Task<bool> AcceptCardAsync(long cardId, string cardType)
+        {
+            try
+            {
+                var resultStatus = false;
+                
+                if (cardId <= 0)
+                {
+                    throw new EmptyCardIdException(cardId);
+                }
+
+                if (string.IsNullOrEmpty(cardType))
+                {
+                    throw new EmptyCardTypeException(cardType);
+                }
+
+                // Одобрит карточку франшизы.
+                if (cardType.Equals("Franchise"))
+                {
+                    resultStatus = await _franchiseRepository.UpdateAcceptedFranchiseAsync(cardId);
+                }
+                
+                // Одобрит карточку бизнеса.
+                if (cardType.Equals("Business"))
+                {
+                    resultStatus = await _businessRepository.UpdateAcceptedBusinessAsync(cardId);
+                }
+
+                return resultStatus;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод отклонит публикацию карточки. 
+        /// </summary>
+        /// <param name="cardId">Id карточки.</param>
+        /// <param name="cardType">Тип карточки.</param>
+        /// <param name="comment">Комментарий отклонения.</param>
+        /// <returns>Статус отклонения.</returns>
+        public async Task<bool> RejectCardAsync(long cardId, string cardType, string comment)
+        {
+            try
+            {
+                var resultStatus = false;
+                
+                if (cardId <= 0)
+                {
+                    throw new EmptyCardIdException(cardId);
+                }
+
+                if (string.IsNullOrEmpty(cardType))
+                {
+                    throw new EmptyCardTypeException(cardType);
+                }
+
+                if (string.IsNullOrEmpty(comment))
+                {
+                    throw new EmptyCommentRejectionException();
+                }
+                
+                // Отклонит карточку франшизы.
+                if (cardType.Equals("Franchise"))
+                {
+                    resultStatus = await _franchiseRepository.UpdateRejectedFranchiseAsync(cardId, comment);
+                }
+                
+                // Отклонит карточку бизнеса.
+                if (cardType.Equals("Business"))
+                {
+                    resultStatus = await _businessRepository.UpdateRejectedBusinessAsync(cardId, comment);
+                }
+
+                return resultStatus;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        public async Task<CreateSphereOutput> CreateSphereAsync(string sphereName, string sphereType, string sysName)
+        {
+            try
+            {
+                // Если не заполнены сфера или тип.
+                if (string.IsNullOrEmpty(sphereName) 
+                    || string.IsNullOrEmpty(sphereType)
+                    || string.IsNullOrEmpty(sysName))
+                {
+                    await _notificationsService.SendErrorMessageCreateSphereCategoryAsync();
+                }
+
+                var result = await _configuratorRepository.CreateSphereAsync(sphereName, sphereType, sysName);
+                
+                // Отправит уведомление о созданной сфере.
+                await _notificationsService.SendCreateSphereAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод создаст категорию сферы.
+        /// </summary>
+        /// <param name="sphereCode">Код сферы (guid).</param>
+        /// <param name="categoryName">Название категории.</param>
+        /// <param name="categoryType">Тип категории.</param>
+        /// <param name="sysName">Системное название.</param>
+        /// <returns>Созданная категория.</returns>
+        public async Task<CreateCategoryOutput> CreateCategoryAsync(string sphereCode, string categoryName, string categoryType, string sysName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(sphereCode) 
+                    || string.IsNullOrEmpty(categoryName)
+                    || string.IsNullOrEmpty(categoryType)
+                    || string.IsNullOrEmpty(sysName))
+                {
+                    await _notificationsService.SendErrorMessageCreateSphereCategoryAsync();
+                }
+
+                var result = await _configuratorRepository.CreateCategoryAsync(sphereCode, categoryName, categoryType, sysName);
+                
+                // Отправит уведомление о созданной категории.
+                await _notificationsService.SendCreateCategoryAsync();
+
+                return result;
+            }
+            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
                 throw;
             }
         }
