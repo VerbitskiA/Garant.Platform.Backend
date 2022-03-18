@@ -12,10 +12,10 @@ namespace Garant.Platform.Services.DataBase
     /// </summary>
     public class DataBaseConfig : BaseController, IDataBaseConfig
     {
-        private readonly string CONN_STR_RU = ConnectionTypeEnum.NpgTestSqlConnectionRu.ToString();
-        // private string CONN_STR = ConnectionTypeEnum.NpgConfigurationConnectionRu.ToString();
-        private readonly string CONN_STR_EN = ConnectionTypeEnum.NpgTestSqlConnectionEn.ToString();
-        // private string CONN_STR = ConnectionTypeEnum.NpgConfigurationConnectionEn.ToString();
+        // private readonly string CONN_STR_RU = ConnectionTypeEnum.NpgTestSqlConnectionRu.ToString();
+        private readonly string CONN_STR_RU = ConnectionTypeEnum.NpgConfigurationConnectionRu.ToString();
+        // private readonly string CONN_STR_EN = ConnectionTypeEnum.NpgTestSqlConnectionEn.ToString();
+        private readonly string CONN_STR_EN = ConnectionTypeEnum.NpgConfigurationConnectionEn.ToString();
         
         /// <summary>
         /// Метод определит, какой датаконтекст использовать. Это зависит от геолокации пользователя.
