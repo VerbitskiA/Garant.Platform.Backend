@@ -48,17 +48,17 @@ namespace Garant.Platform
 
             #region Для прода.
             
-            // services.AddDbContext<IdentityDbContext>(options =>
-            //     options.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnectionRu")));
-
-            #endregion
-
-            #region Для теста.
-            
             services.AddDbContext<IdentityDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnectionRu")));
+                options.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnectionRu")));
 
             #endregion
+
+            // #region Для теста.
+            //
+            // services.AddDbContext<IdentityDbContext>(options =>
+            //     options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnectionRu")));
+            //
+            // #endregion
 
             services.AddIdentity<UserEntity, IdentityRole>(opts =>
                 {
