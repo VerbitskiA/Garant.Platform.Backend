@@ -99,16 +99,16 @@ namespace Garant.Platform.Mailings.Service
         private async Task<(string, int)> GetHostAndPortAsync(string param)
         {
             // Для mail.ru или bk.ru.
-            if (param.Contains("@mail") || param.Contains("@bk"))
+            if (param.Contains("@mail") || param.Contains("@bk") || param.Contains("@gmail"))
             {
                 return await Task.FromResult(("smtp.mail.ru", 2525));
             }
 
             // Для gmail.com.
-            if (param.Contains("@gmail"))
-            {
-                return await Task.FromResult(("smtp.gmail.com", 587));
-            }
+            // if (param.Contains("@gmail"))
+            // {
+            //     return await Task.FromResult(("smtp.gmail.com", 587));
+            // }
 
             // Для yandex.ru.
             if (param.Contains("@yandex"))
