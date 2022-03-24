@@ -734,13 +734,12 @@ namespace Garant.Platform.Services.Service.Blog
             }
         }
 
-
         /// <summary>
         /// Метод увелечит количество просмотров новости один раз в сутки на пользователя.
         /// </summary>
         /// <param name="account">Данные об аккаунте пользователя.</param>
         /// <param name="newsId">Идентификатор новости.</param>
-        /// <returns></returns>
+        /// <returns>Статус повышения количества просмотров.</returns>
         public async Task<bool> IncrementViewsNewOnceADayAsync(string account, long newsId)
         {
             //TODO: удалять записи когда удаляется новость или юзер.
@@ -799,6 +798,144 @@ namespace Garant.Platform.Services.Service.Blog
                 getNew.ViewsCount++;
             }
             
+            await _postgreDbContext.SaveChangesAsync();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров блога один раз в сутки на пользователя.
+        /// </summary>
+        /// <param name="account">Данные об аккаунте пользователя.</param>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns>Статус повышения количества просмотров.</returns>
+        public async Task<bool> IncrementViewsBlogOnceADayAsync(string account, long blogId)
+        {
+            //TODO: удалять записи когда удаляется блог или юзер.
+            var userId = string.Empty;
+            // Найдет такого пользователя.
+            var findUser = await _userRepository.FindUserByEmailOrPhoneNumberAsync(account);
+
+            // Если такого пользователя не найдено, значит поищет по коду.
+            if (findUser == null)
+            {
+                var findUserIdByCode = await _userRepository.FindUserByCodeAsync(account);
+
+                if (!string.IsNullOrEmpty(findUserIdByCode))
+                {
+                    userId = findUserIdByCode;
+                }
+            }
+            else
+            {
+                userId = findUser.UserId;
+            }
+
+            var getBlog = await _postgreDbContext.Blogs.FirstOrDefaultAsync(n => n.BlogId.Equals(blogId));
+
+            if (getBlog is null)
+            {
+                throw new NotFoundBlogException(blogId);
+            }
+
+            var getViewsBlogs = await _postgreDbContext.BlogsViews.FirstOrDefaultAsync(v => v.BlogId.Equals(blogId) && v.UserId.Equals(userId));
+
+            var viewDate = DateTime.Now;
+
+            if (getViewsBlogs is null)
+            {
+                //пользователь блог не смотрел
+                BlogsViewsEntity viewBlogEntity = new()
+                {
+                    BlogId = blogId,
+                    UserId = userId,
+                    ViewDate = viewDate
+                };
+
+                //Добавляем запись о просмотре
+                await _postgreDbContext.BlogsViews.AddAsync(viewBlogEntity);
+                getBlog.ViewsCount++;
+            }
+            else
+            {
+                if (viewDate.Date.Equals(getViewsBlogs.ViewDate.Date))
+                {
+                    return false;
+                }
+
+                getViewsBlogs.ViewDate = viewDate;
+                getBlog.ViewsCount++;
+            }
+
+            await _postgreDbContext.SaveChangesAsync();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров статьи один раз в сутки на пользователя.
+        /// </summary>
+        /// <param name="account">Данные об аккаунте пользователя.</param>
+        /// <param name="articleId">Идентификатор статьи.</param>
+        /// <returns>Статус повышения количества просмотров.</returns>
+        public async Task<bool> IncrementViewsArticleOnceADayAsync(string account, long articleId)
+        {
+            //TODO: удалять записи когда удаляется статья или юзер.
+            var userId = string.Empty;
+            // Найдет такого пользователя.
+            var findUser = await _userRepository.FindUserByEmailOrPhoneNumberAsync(account);
+
+            // Если такого пользователя не найдено, значит поищет по коду.
+            if (findUser == null)
+            {
+                var findUserIdByCode = await _userRepository.FindUserByCodeAsync(account);
+
+                if (!string.IsNullOrEmpty(findUserIdByCode))
+                {
+                    userId = findUserIdByCode;
+                }
+            }
+            else
+            {
+                userId = findUser.UserId;
+            }
+
+            var getArticle = await _postgreDbContext.Articles.FirstOrDefaultAsync(n => n.ArticleId.Equals(articleId));
+
+            if (getArticle is null)
+            {
+                throw new NotFoundArticleByIdException(articleId);
+            }
+
+            var getViewsArticles = await _postgreDbContext.ArticlesViews.FirstOrDefaultAsync(v => v.ArticleId.Equals(articleId) && v.UserId.Equals(userId));
+
+            var viewDate = DateTime.Now;
+
+            if (getViewsArticles is null)
+            {
+                //пользователь статью не смотрел
+                ArticlesViewsEntity viewBlogEntity = new()
+                {
+                    ArticleId = articleId,
+                    UserId = userId,
+                    ViewDate = viewDate
+                };
+
+                //Добавляем запись о просмотре
+                await _postgreDbContext.ArticlesViews.AddAsync(viewBlogEntity);
+                getArticle.ViewsCount++;
+            }
+            else
+            {
+                if (viewDate.Date.Equals(getViewsArticles.ViewDate.Date))
+                {
+                    return false;
+                }
+
+                getViewsArticles.ViewDate = viewDate;
+                getArticle.ViewsCount++;
+            }
+
             await _postgreDbContext.SaveChangesAsync();
 
             return true;

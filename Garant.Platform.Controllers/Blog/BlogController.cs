@@ -345,7 +345,7 @@ namespace Garant.Platform.Controllers.Blog
         /// Метод увеличит счётчик просмотров новости на одного пользователя в сутки.
         /// </summary>
         /// <param name="newId">Идентификатор новости.</param>
-        /// <returns>Данные новости.</returns>        
+        /// <returns>Статус повышения количества просмотров.</returns>        
         [HttpPost]
         [Route("increment-view-new")]
         [ProducesResponseType(200)]
@@ -357,6 +357,43 @@ namespace Garant.Platform.Controllers.Blog
             var res = await _blogService.IncrementViewsNewOnceADayAsync(GetUserName(), newId);
 
             return res;           
+        }
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров блога на одного пользователя в сутки.
+        /// </summary>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns>Статус повышения количества просмотров.</returns>        
+        [HttpPost]
+        [Route("increment-view-blog")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(500)]
+        public async Task<bool> IncrementViewsBlogOnceADayAsync([FromBody] long blogId)
+        {
+            var res = await _blogService.IncrementViewsBlogOnceADayAsync(GetUserName(), blogId);
+
+            return res;
+        }
+
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров статьи на одного пользователя в сутки.
+        /// </summary>
+        /// <param name="articleId">Идентификатор статьи.</param>
+        /// <returns>Статус повышения количества просмотров.</returns>        
+        [HttpPost]
+        [Route("increment-view-article")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403, Type = typeof(string))]
+        [ProducesResponseType(500)]
+        public async Task<bool> IncrementViewsArticleOnceADayAsync([FromBody] long articleId)
+        {
+            var res = await _blogService.IncrementViewsArticleOnceADayAsync(GetUserName(), articleId);
+
+            return res;
         }
     }
 }

@@ -272,5 +272,15 @@ namespace Garant.Platform.Core.Data
         /// Таблица Communications.Notification. 
         /// </summary>
         public DbSet<NotificationEntity> Notifications { get; set; }
+
+        /// <summary>
+        /// Таблица Info.BlogsViews.
+        /// </summary>
+        public DbSet<BlogsViewsEntity> BlogsViews { get; set; }
+
+        /// <summary>
+        /// Таблица Info.ArticlesViews.
+        /// </summary>
+        public DbSet<ArticlesViewsEntity> ArticlesViews { get; set; }
     }
 }

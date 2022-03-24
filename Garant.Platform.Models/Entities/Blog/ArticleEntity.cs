@@ -85,5 +85,11 @@ namespace Garant.Platform.Models.Entities.Blog
         /// </summary>
         [Column("SignatureText", TypeName = "varchar(300)")]
         public string SignatureText { get; set; }
+
+        /// <summary>
+        /// Количество просмотров.
+        /// </summary>
+        [Column("ViewsCount", TypeName = "bigint")]
+        public long ViewsCount { get; set; }
     }
 }

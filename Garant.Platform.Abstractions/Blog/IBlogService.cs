@@ -149,7 +149,24 @@ namespace Garant.Platform.Abstractions.Blog
         /// </summary>
         /// <param name="account">Данные об аккаунте пользователя.</param>
         /// <param name="newsId">Идентификатор новости.</param>
-        /// <returns>Данные новости.</returns>
+        /// <returns>Статус повышения количества просмотров.</returns>
         Task<bool> IncrementViewsNewOnceADayAsync(string account, long newsId);
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров блога один раз в сутки на пользователя.
+        /// </summary>
+        /// <param name="account">Данные об аккаунте пользователя.</param>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns>Статус повышения количества просмотров.</returns>
+        Task<bool> IncrementViewsBlogOnceADayAsync(string account, long blogId);
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров статьи один раз в сутки на пользователя.
+        /// </summary>
+        /// <param name="account">Данные об аккаунте пользователя.</param>
+        /// <param name="articleId">Идентификатор статьи.</param>
+        /// <returns>Статус повышения количества просмотров.</returns>
+        Task<bool> IncrementViewsArticleOnceADayAsync(string account, long articleId);
+
     }
 }

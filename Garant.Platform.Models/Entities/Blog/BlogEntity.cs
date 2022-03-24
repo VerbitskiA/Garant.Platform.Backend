@@ -54,6 +54,12 @@ namespace Garant.Platform.Models.Entities.Blog
         public DateTime DateCreated { get; set; }
 
         /// <summary>
+        /// Количество просмотров.
+        /// </summary>
+        [Column("ViewsCount", TypeName = "bigint")]
+        public long ViewsCount { get; set; }
+
+        /// <summary>
         /// Статьи блога.
         /// </summary>
         public List<ArticleEntity> Articles { get; set; }
