@@ -34,6 +34,10 @@ namespace Garant.Platform.Core.Data
         {
             modelBuilder.Entity<NewsViewsEntity>()
                         .HasKey(c => new { c.NewsId, c.UserId });
+            modelBuilder.Entity<ArticlesViewsEntity>()
+                        .HasKey(c => new { c.ArticleId, c.UserId });
+            modelBuilder.Entity<BlogsViewsEntity>()
+                        .HasKey(c => new { c.BlogId, c.UserId });
         }
 
         public DbSet<BaseUserEntity> BaseUsers { get; set; }
