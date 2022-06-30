@@ -161,6 +161,13 @@ namespace Garant.Platform.Abstractions.User
         Task<UserEntity> FindUserUniverseAsync(string account);
 
         /// <summary>
+        /// Метод найдёт юзера по айди.
+        /// </summary>
+        /// <param name="userId">Id.</param>
+        /// <returns>Данные пользователя.</returns>
+        Task<UserEntity> FindUserById(string userId);
+
+        /// <summary>
         /// Метод получит информацию профиля пользователя.
         /// </summary>
         /// <param name="account">Логин или email пользователя.</param>

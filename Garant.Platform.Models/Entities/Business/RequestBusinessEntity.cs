@@ -56,6 +56,12 @@ namespace Garant.Platform.Models.Entities.Business
         [Column("RequestStatus", TypeName = "varchar(100)")]
         public string RequestStatus { get; set; }
 
+        /// <summary>
+        /// Почта.
+        /// </summary>
+        [Column("Email", TypeName = "varchar(100)")]
+        public string Email { get; set; }
+
         public UserEntity User { get; set; }
 
         public BusinessEntity Business { get; set; }

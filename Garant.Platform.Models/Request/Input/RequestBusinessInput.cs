@@ -16,6 +16,11 @@
         public string Phone { get; set; }
 
         /// <summary>
+        /// Почта.
+        /// </summary>
+        public string Mail { get; set; }
+
+        /// <summary>
         /// Id бизнеса, по которому оставлена заявка.
         /// </summary>
         public long BusinessId { get; set; }

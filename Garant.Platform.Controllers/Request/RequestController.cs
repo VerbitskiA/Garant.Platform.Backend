@@ -48,9 +48,14 @@ namespace Garant.Platform.Controllers.Request
         [HttpPost]
         [Route("create-request-business")]
         [ProducesResponseType(200, Type = typeof(RequestBusinessOutput))]
+        [AllowAnonymous]
         public async Task<RequestBusinessOutput> CreateRequestBusinessAsync([FromBody] RequestBusinessInput requestBusinessInput)
         {
-            var result = await _requestService.CreateRequestBusinessAsync(requestBusinessInput.UserName, requestBusinessInput.Phone, GetUserName(), requestBusinessInput.BusinessId);
+            var result = await _requestService.CreateRequestBusinessAsync(requestBusinessInput.UserName, 
+                requestBusinessInput.Phone, 
+                requestBusinessInput.Mail,
+                GetUserName(), 
+                requestBusinessInput.BusinessId);
 
             return result;
         }

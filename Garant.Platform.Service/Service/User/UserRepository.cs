@@ -1166,5 +1166,24 @@ namespace Garant.Platform.Services.Service.User
                 throw;
             }
         }
+
+        public async Task<UserEntity> FindUserById(string userId)
+        {
+            try
+            {
+                var result = await _postgreDbContext.Users                    
+                    .FirstOrDefaultAsync(u=>u.Id == userId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

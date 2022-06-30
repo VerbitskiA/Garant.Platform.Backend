@@ -865,7 +865,7 @@ namespace Garant.Platform.Services.Service.Business
         /// <param name="account">Аккаунт пользователя.</param>
         /// <param name="businessId">Id бизнеса, по которому оставлена заявка.</param>
         /// <returns>Данные заявки.</returns>
-        public async Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string account, long businessId)
+        public async Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string email, string account, long businessId)
         {
             try
             {
@@ -877,7 +877,9 @@ namespace Garant.Platform.Services.Service.Business
                     UserId = userId,
                     DateCreate = now,
                     Phone = phone,
+                    Email = email,
                     UserName = userName,
+                    RequestStatus = "Review",
                     BusinessId = businessId
                 };
 
@@ -889,6 +891,7 @@ namespace Garant.Platform.Services.Service.Business
                     UserId = userId,
                     DateCreate = now,
                     Phone = phone,
+                    Email = email,
                     UserName = userName,
                     BusinessId = businessId
                 };

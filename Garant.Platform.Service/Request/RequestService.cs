@@ -121,7 +121,7 @@ namespace Garant.Platform.Services.Request
         /// <param name="account">Аккаунт пользователя.</param>
         /// <param name="businessId">Id бизнеса, по которому оставлена заявка.</param>
         /// <returns>Данные заявки.</returns>
-        public async Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone,
+        public async Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string email,
             string account, long businessId)
         {
             try
@@ -135,42 +135,56 @@ namespace Garant.Platform.Services.Request
                 {
                     throw new NotFoundUserInfoException(account);
                 }
-                
+
+                #region Если пользователь неавторизован, то не надо смотреть его профиль
                 // Проверит, заполнил ли пользователь все обязательные данные в профиле. 
                 // Если не заполнены, то выдаст сообщение SignalR.
-                if (string.IsNullOrEmpty(userInfo.FirstName) 
-                    || string.IsNullOrEmpty(userInfo.LastName)
-                    || string.IsNullOrEmpty(userInfo.Email)
-                    || string.IsNullOrEmpty(userInfo.PhoneNumber)
-                    || string.IsNullOrEmpty(userInfo.Inn)
-                    || string.IsNullOrEmpty(userInfo.Kpp)
-                    || string.IsNullOrEmpty(userInfo.Bik)
-                    || string.IsNullOrEmpty(userInfo.Kpp)
-                    || string.IsNullOrEmpty(userInfo.CorrAccountNumber)
-                    || string.IsNullOrEmpty(userInfo.DefaultBankName)
-                    || userInfo.PassportSerial == null
-                    || userInfo.PassportNumber == null
-                    || string.IsNullOrEmpty(userInfo.DateGive)
-                    || string.IsNullOrEmpty(userInfo.WhoGive)
-                    || string.IsNullOrEmpty(userInfo.DateGive)
-                    || string.IsNullOrEmpty(userInfo.Code)
-                    || string.IsNullOrEmpty(userInfo.AddressRegister))
-                {
-                    await _notificationsService.SendNotifyEmptyUserInfoAsync();
+                //if (string.IsNullOrEmpty(userInfo.FirstName) 
+                //    || string.IsNullOrEmpty(userInfo.LastName)
+                //    || string.IsNullOrEmpty(userInfo.Email)
+                //    || string.IsNullOrEmpty(userInfo.PhoneNumber)
+                //    || string.IsNullOrEmpty(userInfo.Inn)
+                //    || string.IsNullOrEmpty(userInfo.Kpp)
+                //    || string.IsNullOrEmpty(userInfo.Bik)
+                //    || string.IsNullOrEmpty(userInfo.Kpp)
+                //    || string.IsNullOrEmpty(userInfo.CorrAccountNumber)
+                //    || string.IsNullOrEmpty(userInfo.DefaultBankName)
+                //    || userInfo.PassportSerial == null
+                //    || userInfo.PassportNumber == null
+                //    || string.IsNullOrEmpty(userInfo.DateGive)
+                //    || string.IsNullOrEmpty(userInfo.WhoGive)
+                //    || string.IsNullOrEmpty(userInfo.DateGive)
+                //    || string.IsNullOrEmpty(userInfo.Code)
+                //    || string.IsNullOrEmpty(userInfo.AddressRegister))
+                //{
+                //    await _notificationsService.SendNotifyEmptyUserInfoAsync();
                     
-                    return new RequestBusinessOutput
-                    {
-                        IsSuccessCreatedRequest = false,
-                        StatusText = NotifyMessage.NOTIFY_EMPTY_USER_INFO
-                    };
-                }
-                
-                result = await _businessRepository.CreateRequestBusinessAsync(userName, phone, account, businessId);
+                //    return new RequestBusinessOutput
+                //    {
+                //        IsSuccessCreatedRequest = false,
+                //        StatusText = NotifyMessage.NOTIFY_EMPTY_USER_INFO
+                //    };
+                //}
+                #endregion
+
+                result = await _businessRepository.CreateRequestBusinessAsync(userName, phone, email, account, businessId);
                 
                 if (result != null)
                 {
                     result.IsSuccessCreatedRequest = true;
                     result.StatusText = NotifyMessage.REQUEST_MODERATION;
+
+                    var mailingService = AutoFac.Resolve<IMailingService>();
+
+                    var business = await _businessRepository.GetBusinessAsync(businessId, "View");
+
+                    var userDestination = await userRepository.FindUserById(business.UserId);
+
+                    string title = "На ваш бизнес поступила заявка!";
+
+                    string message = $"На ваш бизнес {business.BusinessName} поступила заявка от пользователя {userName}. С ним можно связаться по телефону {phone} или написать на {email}";
+
+                   await  mailingService.SendAcceptEmailAsync(userDestination.Email, message, title);
                 }
 
                 return result;

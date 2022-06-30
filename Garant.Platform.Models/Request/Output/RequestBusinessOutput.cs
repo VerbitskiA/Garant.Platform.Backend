@@ -28,6 +28,11 @@ namespace Garant.Platform.Models.Request.Output
         public string Phone { get; set; }
 
         /// <summary>
+        /// Почта.
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
         /// Дата создания заявки.
         /// </summary>
         public DateTime DateCreate { get; set; }

@@ -28,7 +28,7 @@ namespace Garant.Platform.Abstractions.Request
         /// <param name="account">Аккаунт пользователя.</param>
         /// <param name="businessId">Id бизнеса, по которому оставлена заявка.</param>
         /// <returns>Данные заявки.</returns>
-        Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string account, long businessId);
+        Task<RequestBusinessOutput> CreateRequestBusinessAsync(string userName, string phone, string email, string account, long businessId);
 
         /// <summary>
         /// Метод получит список заявок для вкладки профиля "Уведомления".
