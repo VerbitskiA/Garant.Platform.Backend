@@ -982,7 +982,8 @@ namespace Garant.Platform.Services.Service.Business
                 {
                     query = query.Where(q => q.Category.Equals(categoryCode)).AsQueryable();
                 }
-                query = query.Where(q => q.IsGarant.Equals(isGarant)).AsQueryable();
+
+                query = query.Where(q => q.IsAccepted).AsQueryable();
 
                 if (typeSortPrice is not null)
                 {
