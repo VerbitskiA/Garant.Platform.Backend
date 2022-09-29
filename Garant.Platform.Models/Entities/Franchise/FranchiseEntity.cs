@@ -270,6 +270,16 @@ namespace Garant.Platform.Models.Entities.Franchise
         /// </summary>
         public string CommentRejection { get; set; }
 
-        public UserEntity User { get; set; }
+        /// <summary>
+        /// Архивирована ли франшиза.
+        /// </summary>
+        public bool IsArchived { get; set; }
+
+        /// <summary>
+        /// Дата архивации.
+        /// </summary>
+        public DateTime ArchivedDate { get; set; }
+
+        public UserEntity User { get; set; }        
     }
 }

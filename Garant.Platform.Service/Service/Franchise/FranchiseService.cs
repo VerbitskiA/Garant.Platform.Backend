@@ -591,5 +591,96 @@ namespace Garant.Platform.Services.Service.Franchise
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод поместит франшизу в архив.
+        /// </summary>
+        /// <param name="franchiseId">Идентификатор франшизы.</param>
+        /// <returns>Статус архивации.</returns>
+        public async Task<bool> ArchiveFranchiseAsync(long franchiseId)
+        {
+            try
+            {
+                var result = await _franchiseRepository.ArchiveFranchiseAsync(franchiseId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+
+        /// <summary>
+        /// Метод вернёт список франшиз из архива.
+        /// </summary>
+        /// <returns>Список архивированных франшиз.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> GetArchiveFranchiseListAsync()
+        {
+            try
+            {
+                var result = await _franchiseRepository.GetArchiveFranchiseListAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод восстановит франшизу из архива.
+        /// </summary>
+        /// <param name="franchiseId">Идентификатор франшизы.</param>
+        /// <returns>Статус восстановления франшизы.</returns>
+        public async Task<bool> RestoreFranchiseFromArchive(long franchiseId)
+        {
+            try
+            {
+                var result = await _franchiseRepository.RestoreFranchiseFromArchive(franchiseId);
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца (>=31 дней).
+        /// </summary>
+        /// <returns>Франшизы в архиве после удаления.</returns>
+        public async Task<IEnumerable<FranchiseOutput>> RemoveFranchisesOlderMonthFromArchiveAsync()
+        {
+            try
+            {
+                var result = await _franchiseRepository.RemoveFranchisesOlderMonthFromArchiveAsync();
+
+                return result;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }

@@ -272,5 +272,6 @@ namespace Garant.Platform.Core.Data
         /// Таблица Communications.Notification. 
         /// </summary>
         public DbSet<NotificationEntity> Notifications { get; set; }
+
     }
 }

@@ -89,6 +89,7 @@ namespace Garant.Platform.Services.AutofacModules
             builder.RegisterType<ControlService>().As<IControlService>();
             builder.RegisterType<ControlRepository>().Named<IControlRepository>("ControlRepository");
             builder.RegisterType<ControlRepository>().As<IControlRepository>();
+          
         }
     }
 }

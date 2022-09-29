@@ -255,5 +255,63 @@ namespace Garant.Platform.Controllers.Franchise
 
             return result;
         }
+
+        /// <summary>
+        /// Метод поместит франшизу в архив.
+        /// </summary>
+        /// <param name="franchiseId">Идентификатор франшизы.</param>
+        /// <returns>Статус архивации.</returns>
+        [HttpPost]
+        [Route("to-archive")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<bool> ArchiveFranchiseAsync([FromBody] long franchiseId)
+        {
+            var result = await _franchiseService.ArchiveFranchiseAsync(franchiseId);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод вернёт список франшиз из архива.
+        /// </summary>
+        /// <returns>Список архивированных франшиз.</returns>
+        [HttpGet]
+        [Route("archive-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IEnumerable<FranchiseOutput>> GetArchiveFranchiseListAsync()
+        {
+            var result = await _franchiseService.GetArchiveFranchiseListAsync();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод восстановит франшизу из архива.
+        /// </summary>
+        /// <param name="franchiseId">Идентификатор франшизы.</param>
+        /// <returns>Статус восстановления франшизы.</returns>
+        [HttpPost]
+        [Route("restore-from-archive")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<bool> RestoreFranchiseFromArchive([FromBody] long franchiseId)
+        {
+            var result = await _franchiseService.RestoreFranchiseFromArchive(franchiseId);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод удалит из архива франшизы, которые там находятся больше одного месяца (>=31 дней).
+        /// </summary>
+        /// <returns>Франшизы в архиве после удаления.</returns>        
+        [HttpPost]
+        [Route("remove-older-month")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<FranchiseOutput>))]
+        public async Task<IEnumerable<FranchiseOutput>> RemoveFranchisesOlderMonthFromArchiveAsync()
+        {
+            var result = await _franchiseService.RemoveFranchisesOlderMonthFromArchiveAsync();
+
+            return result;
+        }
     }
 }
