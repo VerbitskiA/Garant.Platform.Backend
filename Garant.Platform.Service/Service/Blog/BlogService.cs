@@ -685,5 +685,53 @@ namespace Garant.Platform.Services.Service.Blog
                 throw;
             }
         }
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров блога один раз в сутки на пользователя.
+        /// </summary>
+        /// <param name="account">Данные об аккаунте пользователя.</param>
+        /// <param name="blogId">Идентификатор блога.</param>
+        /// <returns></returns>
+        public async Task<bool> IncrementViewsBlogOnceADayAsync(string account, long blogId)
+        {
+            try
+            {
+                var res = await _blogRepository.IncrementViewsBlogOnceADayAsync(account, blogId);
+
+                return res;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод увеличит счётчик просмотров статьи один раз в сутки на пользователя.
+        /// </summary>
+        /// <param name="account">Данные об аккаунте пользователя.</param>
+        /// <param name="articleId">Идентификатор статьи.</param>
+        /// <returns></returns>
+        public async Task<bool> IncrementViewsArticleOnceADayAsync(string account, long articleId)
+        {
+            try
+            {
+                var res = await _blogRepository.IncrementViewsArticleOnceADayAsync(account, articleId);
+
+                return res;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
     }
 }
