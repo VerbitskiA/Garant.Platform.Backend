@@ -108,5 +108,31 @@ namespace Garant.Platform.Abstractions.Business
         /// </summary>
         /// <returns>Список бизнесов.</returns>
         Task<IEnumerable<BusinessOutput>> GetNotAcceptedBusinessesAsync();
+
+        /// <summary>
+        /// Метод поместит бизнес в архив.
+        /// </summary>
+        /// <param name="businessId">Идентификатор бизнеса.</param>
+        /// <returns>Статус архивации.</returns>
+        Task<bool> ArchiveBusinessAsync(long businessId);
+
+        /// <summary>
+        /// Метод вернёт список бизнесов из архива.
+        /// </summary>
+        /// <returns>Список архивированных бизнесов.</returns>
+        Task<IEnumerable<BusinessOutput>> GetArchiveBusinessListAsync();
+
+        /// <summary>
+        /// Метод восстановит бизнес из архива.
+        /// </summary>
+        /// <param name="businessId">Идентификатор бизнеса.</param>
+        /// <returns>Статус восстановления бизнеса.</returns>
+        Task<bool> RestoreBusinessFromArchive(long businessId);
+
+        /// <summary>
+        /// Метод удалит из архива бизнесы, которые там находятся больше одного месяца (>=31 дней).
+        /// </summary>
+        /// <returns>Бизнесы в архиве после удаления.</returns>
+        Task<IEnumerable<BusinessOutput>> RemoveBusinessesOlderMonthFromArchiveAsync();
     }
 }

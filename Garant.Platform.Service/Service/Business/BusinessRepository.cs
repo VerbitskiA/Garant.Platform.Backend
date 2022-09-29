@@ -628,7 +628,7 @@ namespace Garant.Platform.Services.Service.Business
             try
             {
                 var result = await _postgreDbContext.Businesses
-                    .Where(b => b.IsAccepted == true)
+                    .Where(b => b.IsAccepted == true && b.IsArchived == false)
                     .Select(b => new BusinessOutput
                     {
                         DateCreate = b.DateCreate,
@@ -1140,6 +1140,190 @@ namespace Garant.Platform.Services.Service.Business
                 await logger.LogError();
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Метод поместит бизнес в архив.
+        /// </summary>
+        /// <param name="businessId">Идентификатор бизнеса.</param>
+        /// <returns>Статус архивации.</returns>
+        public async Task<bool> ArchiveBusinessAsync(long businessId)
+        {
+            try
+            {
+                var findBusiness = await _postgreDbContext.Businesses.FirstOrDefaultAsync(f => f.BusinessId == businessId);
+
+                //бизнес не найден
+                if (findBusiness is null)
+                {
+                    return false;
+                }
+
+                if (findBusiness.IsArchived)
+                {
+                    //бизнес уже в архиве
+                    return false;
+                }
+
+                findBusiness.IsArchived = true;
+                findBusiness.ArchivedDate = DateTime.Now;
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return true;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод вернёт список бизнесов из архива.
+        /// </summary>
+        /// <returns>Список архивированных бизнесов.</returns>
+        public async Task<IEnumerable<BusinessOutput>> GetArchiveBusinessListAsync()
+        {
+            try
+            {
+                var items = await _postgreDbContext.Businesses
+                    .Where(b => b.IsAccepted == true && b.IsArchived == true)
+                    .Select(b => new BusinessOutput
+                    {
+                        DateCreate = b.DateCreate,
+                        Price = string.Format("{0:0,0}", b.Price),
+                        CountDays = DateTime.Now.Subtract(b.DateCreate).Days,
+                        DayDeclination = "дня",
+                        Text = b.Text,
+                        TextDoPrice = b.TextDoPrice,
+                        BusinessName = b.BusinessName,
+                        Url = b.UrlsBusiness,
+                        TotalInvest = string.Format("{0:0,0}", b.InvestPrice),
+                        BusinessId = b.BusinessId,
+                        IsArchived = b.IsArchived,
+                        ArchivedDate = b.ArchivedDate
+                    })
+                    .ToListAsync();
+
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
+
+                return items;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод восстановит бизнес из архива.
+        /// </summary>
+        /// <param name="businessId">Идентификатор бизнеса.</param>
+        /// <returns>Статус восстановления бизнеса.</returns>
+        public async Task<bool> RestoreBusinessFromArchive(long businessId)
+        {
+            try
+            {
+                var findBusiness = await _postgreDbContext.Businesses.FirstOrDefaultAsync(f => f.BusinessId == businessId);
+
+                //бизнес не найден
+                if (findBusiness is null)
+                {
+                    return false;
+                }
+
+                if (!findBusiness.IsArchived)
+                {
+                    //бизнес уже не в архиве
+                    return false;
+                }
+
+                findBusiness.IsArchived = false;
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return true;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Метод удалит из архива бизнесы, которые там находятся больше одного месяца (>=31 дней).
+        /// </summary>
+        /// <returns>Бизнесы в архиве после удаления.</returns>
+        public async Task<IEnumerable<BusinessOutput>> RemoveBusinessesOlderMonthFromArchiveAsync()
+        {
+            try
+            {
+                var businesses = await _postgreDbContext.Businesses.Where(b => b.IsArchived).ToListAsync();
+
+                DateTime nowDate = DateTime.Now;
+
+                foreach (var business in businesses)
+                {
+                    int diffDays = nowDate.Subtract(business.ArchivedDate).Days;
+
+                    if (diffDays >= 31)
+                    {
+                        _postgreDbContext.Businesses.Remove(business);
+                    }                    
+                }
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                var items = await _postgreDbContext.Businesses
+                     .Where(b => b.IsAccepted == true && b.IsArchived == true)
+                     .Select(b => new BusinessOutput
+                     {
+                         DateCreate = b.DateCreate,
+                         Price = string.Format("{0:0,0}", b.Price),
+                         CountDays = DateTime.Now.Subtract(b.DateCreate).Days,
+                         DayDeclination = "дня",
+                         Text = b.Text,
+                         TextDoPrice = b.TextDoPrice,
+                         BusinessName = b.BusinessName,
+                         Url = b.UrlsBusiness,
+                         TotalInvest = string.Format("{0:0,0}", b.InvestPrice),
+                         BusinessId = b.BusinessId,
+                         IsArchived = b.IsArchived,
+                         ArchivedDate = b.ArchivedDate
+                     })
+                     .ToListAsync();
+
+                foreach (var item in items)
+                {
+                    item.DayDeclination = await _commonService.GetCorrectDayDeclinationAsync(item.CountDays);
+                }
+
+                return items;
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+
         }
     }
 }

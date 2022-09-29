@@ -205,5 +205,63 @@ namespace Garant.Platform.Controllers.ReadyBusiness
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Метод поместит бизнес в архив.
+        /// </summary>
+        /// <param name="businessId">Идентификатор бизнеса.</param>
+        /// <returns>Статус архивации.</returns>        
+        [HttpPost]
+        [Route("to-archive")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<bool> ArchiveBusinessAsync([FromBody] long businessId)
+        {
+            var result = await _businessService.ArchiveBusinessAsync(businessId);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод вернёт список бизнесов из архива.
+        /// </summary>
+        /// <returns>Список архивированных бизнесов.</returns>        
+        [HttpGet]
+        [Route("archive-list")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
+        public async Task<IEnumerable<BusinessOutput>> GetArchiveFranchiseListAsync()
+        {
+            var result = await _businessService.GetArchiveBusinessListAsync();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод восстановит бизнес из архива.
+        /// </summary>
+        /// <param name="businessId">Идентификатор бизнеса.</param>
+        /// <returns>Статус восстановления бизнеса.</returns>       
+        [HttpPost]
+        [Route("restore-from-archive")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<bool> RestoreFranchiseFromArchive([FromBody] long businessId)
+        {
+            var result = await _businessService.RestoreBusinessFromArchive(businessId);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Метод удалит из архива бизнесы, которые там находятся больше одного месяца (>=31 дней).
+        /// </summary>
+        /// <returns>Бизнесы в архиве после удаления.</returns>            
+        [HttpPost]
+        [Route("remove-older-month")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BusinessOutput>))]
+        public async Task<IEnumerable<BusinessOutput>> RemoveFranchisesOlderMonthFromArchiveAsync()
+        {
+            var result = await _businessService.RemoveBusinessesOlderMonthFromArchiveAsync();
+
+            return result;
+        }
     }
 }
