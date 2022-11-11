@@ -15,7 +15,7 @@ namespace Garant.Platform.Controllers.Request
     /// </summary>
     [ApiController]
     [Route("request")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class RequestController : BaseController
     {
         private readonly IRequestService _requestService;

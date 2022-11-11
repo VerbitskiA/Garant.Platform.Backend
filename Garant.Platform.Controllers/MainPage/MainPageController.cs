@@ -17,7 +17,7 @@ namespace Garant.Platform.Controllers.MainPage
     /// Контроллер главной страницы.
     /// </summary>
     [ApiController, Route("main")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class MainPageController : ControllerBase
     {
         private readonly IMainPageService _mainPageService;

@@ -13,7 +13,7 @@ namespace Garant.Platform.Controllers.Ad
     /// Контроллер объявлений.
     /// </summary>
     [ApiController, Route("ad")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class AdController : BaseController
     {
         private readonly IAdService _adService;

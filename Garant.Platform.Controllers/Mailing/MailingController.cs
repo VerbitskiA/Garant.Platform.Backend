@@ -13,7 +13,7 @@ namespace Garant.Platform.Controllers.Mailing
     /// Контроллер работы с рассылками.
     /// </summary>
     [ApiController, Route("mailing")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class MailingController : BaseController
     {
         private readonly ICommonService _commonService;

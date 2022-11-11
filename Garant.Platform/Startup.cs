@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Garant.Platform.Core.Filters;
 
 namespace Garant.Platform
 {
@@ -43,18 +44,18 @@ namespace Garant.Platform
                     .AllowAnyMethod()
                     .AllowCredentials();
             }));
-            
+
             services.AddSignalR();
 
             #region Для прода.
-            
+
             // services.AddDbContext<IdentityDbContext>(options =>
             //     options.UseNpgsql(Configuration.GetConnectionString("NpgConfigurationConnectionRu")));
 
             #endregion
 
             #region Для теста.
-            
+
             services.AddDbContext<IdentityDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("NpgTestSqlConnectionRu")));
 
@@ -73,7 +74,19 @@ namespace Garant.Platform
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+                });
+
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Garant.Platform", Version = "v1" });                
+
+                c.OperationFilter<AuthResponsesOperationFilter>();
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -98,7 +111,7 @@ namespace Garant.Platform
             services.AddSingleton(mapper);
 
             ApplicationContainer = AutoFac.Init(cb => { cb.Populate(services); });
-            
+
             // Добавит доступ к контексту из любого компонента.
             services.AddHttpContextAccessor();
 
@@ -115,14 +128,14 @@ namespace Garant.Platform
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapHub<NotifyHub>("/notify");
             });
-            
+
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Garant.Platform v1"));
 

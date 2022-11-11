@@ -13,7 +13,7 @@ namespace Garant.Platform.Controllers.Control
     /// Контроллер для работы с разными контролами.
     /// </summary>
     [ApiController, Route("control")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class ControlController : BaseController
     {
         private readonly IControlService _controlService;

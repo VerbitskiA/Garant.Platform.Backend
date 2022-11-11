@@ -23,7 +23,7 @@ namespace Garant.Platform.Controllers.User
     /// Контроллер работы с пользователями сервиса.
     /// </summary>
     [ApiController, Route("user")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;

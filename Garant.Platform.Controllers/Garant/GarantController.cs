@@ -22,7 +22,7 @@ namespace Garant.Platform.Controllers.Garant
     /// </summary>
     [ApiController]
     [Route("garant")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class GarantController : BaseController
     {
         private readonly IGarantActionService _garantActionService;

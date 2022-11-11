@@ -16,7 +16,7 @@ namespace Garant.Platform.Controllers.Document
     /// Контроллер работы со всеми документами.
     /// </summary>
     [ApiController, Route("document")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class DocumentController : BaseController
     {
         private readonly IDocumentService _documentService;
