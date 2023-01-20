@@ -15,7 +15,7 @@ namespace Garant.Platform.Tests.User.ProfileData
         {
             var mock = new Mock<IUserService>();
             mock.Setup(a => a.GetProfileMenuListAsync());
-            var component = new UserService(null, null, MailingService, UserRepository, FtpService, CommonService);
+            var component = new UserService(null, null, MailingService, UserRepository, FtpService, CommonService, null);
             var result = await component.GetProfileMenuListAsync();
 
             Assert.IsTrue(result.Any());

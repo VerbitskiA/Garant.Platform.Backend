@@ -77,7 +77,7 @@ namespace Garant.Platform.Tests
             BlogService = new BlogService(BlogRepository, FtpService);
 
             MailingService = new MailingService(AppConfiguration);
-            UserService = new UserService(null, null, MailingService, UserRepository, FtpService, CommonService);
+            UserService = new UserService(null, null, MailingService, UserRepository, FtpService, CommonService, null);
             FranchiseService = new FranchiseService(null, FranchiseRepository, NotificationsService, UserRepository, NotificationsRepository);            
             ChatRepository = new ChatRepository();
             RequestService = new RequestService(FranchiseRepository, BusinessRepository, NotificationsService);
