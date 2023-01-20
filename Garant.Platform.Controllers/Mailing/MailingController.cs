@@ -32,7 +32,7 @@ namespace Garant.Platform.Controllers.Mailing
         [ProducesResponseType(200, Type = typeof(MailngOutput))]
         public async Task<IActionResult> SendMailAcceptCodeSmsAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
         {
-            var result = await _commonService.GenerateAcceptCodeAsync(sendAcceptCodeInput.Data);
+            var result = await _commonService.GenerateAcceptCodeAsync(sendAcceptCodeInput.Email);
 
             return Ok(result);
         }

@@ -20,11 +20,14 @@ namespace Garant.Platform.Core.Filters
                         {
                             new OpenApiSecurityScheme 
                             {
-                                Reference = new OpenApiReference 
+                                Reference = new OpenApiReference
                                 {
                                     Type = ReferenceType.SecurityScheme,
-                                    Id = "bearer"
-                                }
+                                    Id = "Bearer"
+                                },
+                                Scheme = "oauth2",
+                                Name = "Bearer",
+                                In = ParameterLocation.Header,
                             }, 
                             new string[] {}
                         }

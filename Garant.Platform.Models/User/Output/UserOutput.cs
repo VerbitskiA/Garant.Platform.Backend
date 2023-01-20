@@ -53,5 +53,11 @@ namespace Garant.Platform.Models.User.Output
         /// Полные ФИО.
         /// </summary>
         public string FullName { get; set; }
+
+        public string Code { get; set; }
+
+        public string UserRole { get; set; }
+
+        public bool EmailConfirmed { get; set; }
     }
 }

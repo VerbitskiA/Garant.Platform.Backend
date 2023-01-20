@@ -143,8 +143,7 @@ namespace Garant.Platform.Base.Service
                 var insertData = new UserEntity
                 {
                     Code = code,
-                    DateRegister = DateTime.Now,
-                    RememberMe = false,
+                    DateRegister = DateTime.Now,                    
                     EmailConfirmed = false,
                     PhoneNumberConfirmed = false,
                     TwoFactorEnabled = false,
@@ -186,20 +185,25 @@ namespace Garant.Platform.Base.Service
         /// <returns>Хэш пароля.</returns>
         public async Task<string> HashPasswordAsync(string password)
         {
-            byte[] salt;
-            byte[] buffer2;
+            //byte[] salt;
+            //byte[] buffer2;
 
-            using (var bytes = new Rfc2898DeriveBytes(password, 0x10, 0x3e8))
-            {
-                salt = bytes.Salt;
-                buffer2 = bytes.GetBytes(0x20);
-            }
+            //using (var bytes = new Rfc2898DeriveBytes(password, 0x10, 0x3e8))
+            //{
+            //    salt = bytes.Salt;
+            //    buffer2 = bytes.GetBytes(0x20);
+            //}
 
-            var dst = new byte[0x31];
-            Buffer.BlockCopy(salt, 0, dst, 1, 0x10);
-            Buffer.BlockCopy(buffer2, 0, dst, 0x11, 0x20);
+            //var dst = new byte[0x31];
+            //Buffer.BlockCopy(salt, 0, dst, 1, 0x10);
+            //Buffer.BlockCopy(buffer2, 0, dst, 0x11, 0x20);
 
-            return await Task.FromResult(Convert.ToBase64String(dst));
+            //return await Task.FromResult(Convert.ToBase64String(dst));
+
+            var md5 = MD5.Create();
+            var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+            return Convert.ToBase64String(hash);
         }
 
         /// <summary>

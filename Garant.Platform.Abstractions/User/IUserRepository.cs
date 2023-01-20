@@ -29,6 +29,12 @@ namespace Garant.Platform.Abstractions.User
         /// <returns>Id пользователя.</returns>
         Task<string> FindUserByCodeAsync(string data);
 
+        Task<RegisterResult> CreateEmptyUserAsync(string email);
+
+        Task<RegisterResult> UpdateCodeWhileRegistrationAsync(string email);
+
+        Task<UserOutput> CompleteRegisterAsync(CompleteRegistrationInput completeRegistration);
+
         /// <summary>
         /// Метод получает список полей основного хидера.
         /// </summary>

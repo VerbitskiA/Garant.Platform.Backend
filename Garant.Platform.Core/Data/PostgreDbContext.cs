@@ -38,6 +38,8 @@ namespace Garant.Platform.Core.Data
 
         public DbSet<BaseUserEntity> BaseUsers { get; set; }
 
+        public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
+
         /// <summary>
         /// Таблица пользователей.
         /// </summary>

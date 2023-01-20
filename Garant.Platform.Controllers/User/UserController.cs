@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Input;
 using Garant.Platform.Models.Header.Output;
@@ -23,7 +25,7 @@ namespace Garant.Platform.Controllers.User
     /// Контроллер работы с пользователями сервиса.
     /// </summary>
     [ApiController, Route("user")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
@@ -38,13 +40,118 @@ namespace Garant.Platform.Controllers.User
         /// </summary>
         /// <returns>Данные нового пользователя.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("create")]
-        [ProducesResponseType(200, Type = typeof(UserOutput))]
-        public async Task<IActionResult> CreateAsync([FromBody] UserInput userInput)
+        [HttpPost, Route("start-register")]
+        [ProducesResponseType(200, Type = typeof(ClaimOutput))]
+        public async Task<IActionResult> StartRegisterAsync([FromBody] StartRegisterInput startRegister)
         {
-            var result = await _userService.CreateAsync(userInput.Name, userInput.LastName, userInput.City, userInput.Email, userInput.Password, userInput.Role);
+            try
+            {
+                var status = await _userService.StartRegisterUserAsync(startRegister.Email);
 
-            return Ok(result);
+                if (status)
+                {
+                    return Ok(new { message = $"Код подтверждения выслан на почту {startRegister.Email}." });
+                }
+                else
+                {
+                    return StatusCode(500, "Что-то пошло не так :(");
+                }
+            }
+            catch (RegisterFailedException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Метод создает пользователя.
+        /// </summary>
+        /// <returns>Данные нового пользователя.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("resend-code")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> ResendCodeAsync([FromBody] StartRegisterInput resendingCode)
+        {
+            try
+            {
+                var status = await _userService.ResendCodeAsync(resendingCode.Email);
+
+                if (status)
+                {
+                    return Ok(new { message = $"Код подтверждения выслан заново на почту {resendingCode.Email}." });
+                }
+                else
+                {
+                    return StatusCode(500, "Что-то пошло не так :(");
+                }
+            }
+            catch (RegisterFailedException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Метод проверит правильность кода подтверждения.
+        /// </summary>
+        /// <param name="sendAcceptCodeInput">Входная модель.</param>
+        /// <returns>Статус проверки.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("check-code")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        public async Task<IActionResult> CheckAcceptCodeAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
+        {
+            try
+            {
+                var status = await _userService.CheckAcceptCodeAsync(sendAcceptCodeInput.Email, sendAcceptCodeInput.Code);
+
+                if (status)
+                {
+                    return Ok(new { status = status, message = $"Код успешно подтвеждён." });
+                }
+                else
+                {
+                    return Ok(new { status = status, message = $"Ошибка! Указан неверный код!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Метод проверит правильность кода подтверждения.
+        /// </summary>
+        /// <param name="sendAcceptCodeInput">Входная модель.</param>
+        /// <returns>Статус проверки.</returns>
+        [AllowAnonymous]
+        [HttpPost, Route("complete-registration")]
+        [ProducesResponseType(200, Type = typeof(ClaimOutput))]
+        public async Task<IActionResult> CompleteRegistationAsync([FromBody] CompleteRegistrationInput completeRegistration)
+        {
+            try
+            {
+                var user = await _userService.CompleteRegisterAsync(completeRegistration);
+
+                return Ok(user);
+            }
+            catch (RegisterFailedException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         /// <summary>
@@ -57,26 +164,52 @@ namespace Garant.Platform.Controllers.User
         [ProducesResponseType(200, Type = typeof(ClaimOutput))]
         public async Task<IActionResult> LoginAsync([FromBody] UserInput loginInput)
         {
-            var result = await _userService.LoginAsync(loginInput.Email, loginInput.Password);
+            try
+            {
+                var result = await _userService.AuthenticateUserAsync(loginInput.Email, loginInput.Password);
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch(ArgumentException ex)
+            {
+                return BadRequest(new {status = false, message = ex.Message});
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
-
-        /// <summary>
-        /// Метод проверит правильность кода подтверждения.
-        /// </summary>
-        /// <param name="sendAcceptCodeInput">Входная модель.</param>
-        /// <returns>Статус проверки.</returns>
         [AllowAnonymous]
-        [HttpPost, Route("check-code")]
+        [HttpPost, Route("refresh-token")]
         [ProducesResponseType(200, Type = typeof(ClaimOutput))]
-        public async Task<IActionResult> CheckAcceptCodeAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] string refreshToken)
         {
-            var user = await _userService.CheckAcceptCodeAsync(sendAcceptCodeInput.Code);
+            try
+            {
+                var result = await _userService.RefreshAccessTokenAsync(refreshToken);
 
-            return Ok(user);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [Authorize]
+        [HttpGet, Route("test")]
+        public async Task<IActionResult> Test()
+        {
+            try
+            {
+                return Ok("TEST TEST TEST");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
+        #region header
         /// <summary>
         /// Метод получит список полей основного хидера.
         /// </summary>
@@ -165,19 +298,19 @@ namespace Garant.Platform.Controllers.User
             return Ok(result);
         }
 
-        /// <summary>
-        /// Метод обновит токен.
-        /// </summary>
-        /// <returns>Новый токен.</returns>
-        [AllowAnonymous]
-        [HttpGet, Route("token")]
-        [ProducesResponseType(200, Type = typeof(ClaimOutput))]
-        public async Task<IActionResult> GenerateTokenAsync()
-        {
-            var result = await _userService.GenerateTokenAsync();
+        ///// <summary>
+        ///// Метод обновит токен.
+        ///// </summary>
+        ///// <returns>Новый токен.</returns>
+        //[AllowAnonymous]
+        //[HttpGet, Route("token")]
+        //[ProducesResponseType(200, Type = typeof(ClaimOutput))]
+        //public async Task<IActionResult> GenerateTokenAsync()
+        //{
+        //    var result = await _userService.GenerateTokenAsync();
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
         /// <summary>
         /// Метод сформирует хлебные крошки для страницы.
@@ -311,5 +444,6 @@ namespace Garant.Platform.Controllers.User
 
             return Ok(result);
         }
+        #endregion
     }
 }

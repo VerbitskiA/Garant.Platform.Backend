@@ -6,6 +6,7 @@ using Garant.Platform.Abstractions.DataBase;
 using Garant.Platform.Abstractions.User;
 using Garant.Platform.Base.Abstraction;
 using Garant.Platform.Core.Data;
+using Garant.Platform.Core.Exceptions;
 using Garant.Platform.Core.Logger;
 using Garant.Platform.Core.Utils;
 using Garant.Platform.Models.Entities.Transition;
@@ -35,6 +36,8 @@ namespace Garant.Platform.Services.Service.User
             _commonService = commonService;
         }
 
+        #region huita
+
         /// <summary>
         /// Метод найдет пользователя по email или номеру телефона.
         /// </summary>
@@ -54,8 +57,9 @@ namespace Garant.Platform.Services.Service.User
                                         FirstName = u.FirstName,
                                         LastName = u.LastName,
                                         City = u.City,
-                                        IsWriteQuestion = u.IsWriteQuestion,
-                                        UserId = u.Id
+                                        UserId = u.Id,
+                                        Code = u.Code,
+                                        EmailConfirmed = u.EmailConfirmed
                                     })
                     .FirstOrDefaultAsync();
 
@@ -71,7 +75,6 @@ namespace Garant.Platform.Services.Service.User
                                 FirstName = u.FirstName,
                                 LastName = u.LastName,
                                 City = u.City,
-                                IsWriteQuestion = u.IsWriteQuestion,
                                 UserId = u.Id
                             })
                         .FirstOrDefaultAsync();
@@ -218,7 +221,6 @@ namespace Garant.Platform.Services.Service.User
                                              select u)
                             .FirstOrDefaultAsync();
 
-                        getUser.UserPassword = password;
                         getUser.PasswordHash = passwordHash;
 
                         await _postgreDbContext.SaveChangesAsync();
@@ -269,7 +271,6 @@ namespace Garant.Platform.Services.Service.User
                                              select u)
                             .FirstOrDefaultAsync();
 
-                        getUser.ConfirmEmailCode = guid;
 
                         await _postgreDbContext.SaveChangesAsync();
                     }
@@ -376,12 +377,14 @@ namespace Garant.Platform.Services.Service.User
         {
             try
             {
-                var userCode = await (from u in _postgreDbContext.Users
-                                      where u.ConfirmEmailCode.Equals(code)
-                                      select u)
-                    .FirstOrDefaultAsync();
+                //var userCode = await (from u in _postgreDbContext.Users
+                //                      where u.ConfirmEmailCode.Equals(code)
+                //                      select u)
+                //    .FirstOrDefaultAsync();
 
-                return userCode != null;
+                //return userCode != null;
+
+                throw new NotImplementedException();
             }
 
             catch (Exception e)
@@ -1166,5 +1169,135 @@ namespace Garant.Platform.Services.Service.User
                 throw;
             }
         }
+
+        #endregion
+
+        #region REGISTRATION
+
+        public async Task<RegisterResult> CreateEmptyUserAsync(string email)
+        {
+            try
+            {
+                var random = new Random();
+
+                var code = random.Next(10000, 99999).ToString("D4");
+
+                UserEntity createdUser = new()
+                {
+                    Email = email,
+                    Code = code,
+                    EmailConfirmed = false,
+                    DateRegister = DateTime.UtcNow,
+                    UserRole = "User"
+                };
+
+                await _postgreDbContext.Users.AddAsync(createdUser);
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return new RegisterResult
+                {
+                    Email = createdUser.Email,
+                    GeneratedCode = createdUser.Code
+                };
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        public async Task<RegisterResult> UpdateCodeWhileRegistrationAsync(string email)
+        {
+            try
+            {
+                var findedUser = await _postgreDbContext.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+
+                if (findedUser is null)
+                {
+                    throw new RegisterFailedException($"Пользователь с емейлом {email} не найден! Начните регистрацию заново!");
+                }
+
+                if (findedUser.EmailConfirmed)
+                {
+                    throw new RegisterFailedException($"Емейлом {email} уже подтвердён. Продолжите регистрацию.");
+                }
+
+                var random = new Random();
+
+                var code = random.Next(10000, 99999).ToString("D4");
+
+                findedUser.Code = code;
+
+                _postgreDbContext.Update(findedUser);
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return new RegisterResult
+                {
+                    Email = findedUser.Email,
+                    GeneratedCode = findedUser.Code
+                };
+            }
+
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        public async Task<UserOutput> CompleteRegisterAsync(CompleteRegistrationInput completeRegistration)
+        {
+            try
+            {
+                var findedUser = await _postgreDbContext.Users.FirstOrDefaultAsync(u=>u.Email.ToLower() == completeRegistration.Email.ToLower());
+
+                if (findedUser is null)
+                {
+                    throw new RegisterFailedException($"Пользователь с емейлом {completeRegistration.Email} не найден! Начните регистрацию заново!");
+                }
+
+                if (!findedUser.EmailConfirmed)
+                {
+                    throw new RegisterFailedException($"Email {completeRegistration.Email} не подтвеждён!");
+                }
+
+                findedUser.FirstName = completeRegistration.FirstName;
+                findedUser.LastName = completeRegistration.LastName;
+                findedUser.City = completeRegistration.City;
+                findedUser.PasswordHash = await _commonService.HashPasswordAsync(completeRegistration.Password);
+                findedUser.IsRegistrationComplete = true;
+
+                _postgreDbContext.Update(findedUser);
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return new UserOutput
+                {
+                    FirstName = findedUser.FirstName,
+                    LastName = findedUser.LastName,
+                    City = findedUser.City,
+                    Email = findedUser.Email,
+                    UserRole = findedUser.UserRole,
+                    UserId = findedUser.Id                    
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogError();
+                throw;
+            }
+        }
+
+        #endregion
     }
 }

@@ -7,16 +7,16 @@ namespace Garant.Platform.Models.Entities.User
     /// <summary>
     /// Класс сопоставляется с таблицей пользователей.
     /// </summary>
-    [Table("Users", Schema = "dbo")]
+    [Table("CustomUsers", Schema = "dbo")]
     public class UserEntity : IdentityUser
     {
-        [Column("UserPassword", TypeName = "varchar(100)")]
-        public string UserPassword { get; set; }
+        [Column("IsRegistrationComplete", TypeName = "boolean")]
+        public bool IsRegistrationComplete { get; set; } = false;
 
         /// <summary>
-        /// Роль пользователя: Заказчик или Исполнитель.
+        /// Роль пользователя.
         /// </summary>
-        [Column("UserRole", TypeName = "varchar(1)")]
+        [Column("UserRole", TypeName = "varchar(20)")]
         public string UserRole { get; set; }
 
         /// <summary>
@@ -52,31 +52,11 @@ namespace Garant.Platform.Models.Entities.User
         [Column("City", TypeName = "varchar(200)")]
         public string City { get; set; }
 
-        [Column("RememberMe", TypeName = "boolean")]
-        public bool RememberMe { get; set; }
-
         /// <summary>
         /// Код подтверждения.
         /// </summary>
         [Column("Code", TypeName = "varchar(5)")]
         public string Code { get; set; }
 
-        /// <summary>
-        /// Подписаться на рассылку.
-        /// </summary>
-        [Column("IsNews", TypeName = "bool")]
-        public bool IsNews { get; set; }
-
-        /// <summary>
-        /// Флаг ответа на вопросы.
-        /// </summary>
-        [Column("IsWriteQuestion", TypeName = "bool")]
-        public bool IsWriteQuestion { get; set; }
-
-        /// <summary>
-        /// Код подтверждения почты (Guid).
-        /// </summary>
-        [Column("ConfirmEmailCode", TypeName = "varchar(200)")]
-        public string ConfirmEmailCode { get; set; }
     }
 }

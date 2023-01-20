@@ -39,7 +39,10 @@ namespace Garant.Platform.Services.AutofacModules
             builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<UserRepository>().Named<IUserRepository>("UserRepository");
             builder.RegisterType<UserRepository>().As<IUserRepository>();
-              
+
+            builder.RegisterType<RefreshTokenRepository>().Named<IRefreshTokenRepository>("RefreshTokenRepository");
+            builder.RegisterType<RefreshTokenRepository>().As<IRefreshTokenRepository>();
+
             // Общий сервис.
             builder.RegisterType<SignInManager<UserEntity>>().InstancePerLifetimeScope();
             builder.RegisterType<UserManager<UserEntity>>().InstancePerLifetimeScope();

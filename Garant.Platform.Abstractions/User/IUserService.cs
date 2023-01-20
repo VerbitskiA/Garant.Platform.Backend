@@ -4,6 +4,7 @@ using Garant.Platform.Models.Footer.Output;
 using Garant.Platform.Models.Header.Output;
 using Garant.Platform.Models.Suggestion.Output;
 using Garant.Platform.Models.Transition.Output;
+using Garant.Platform.Models.User.Input;
 using Garant.Platform.Models.User.Output;
 using Microsoft.AspNetCore.Http;
 
@@ -22,12 +23,17 @@ namespace Garant.Platform.Abstractions.User
         /// <returns>Данные авторизованного пользователя.</returns>
         Task<ClaimOutput> LoginAsync(string email, string password);
 
-        /// <summary>
-        /// Метод проверит правильность кода подтверждения.
-        /// </summary>
-        /// <param name="code">Код подтверждения.</param>
-        /// <returns>Статус проверки.</returns>
-        Task<ClaimOutput> CheckAcceptCodeAsync(string code);
+        Task<bool> StartRegisterUserAsync(string email);
+
+        Task<bool> ResendCodeAsync(string email);
+
+        Task<bool> CheckAcceptCodeAsync(string email, string code);
+
+        Task<ClaimOutput> CompleteRegisterAsync(CompleteRegistrationInput completeRegistration);
+
+        Task<ClaimOutput> RefreshAccessTokenAsync(string refreshToken);
+
+        Task<ClaimOutput> AuthenticateUserAsync(string email, string password);
 
         /// <summary>
         /// Метод создаст нового пользователя.

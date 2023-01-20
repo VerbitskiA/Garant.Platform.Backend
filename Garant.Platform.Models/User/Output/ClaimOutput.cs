@@ -8,12 +8,17 @@
         /// <summary>
         /// Логин или email.
         /// </summary>
-        public string User { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// Токен пользователя.
         /// </summary>
-        public string Token { get; set; }
+        public string AccessToken { get; set; }
+
+        /// <summary>
+        /// Токен пользователя.
+        /// </summary>
+        public string RefreshToken { get; set; }
 
         /// <summary>
         /// Флаг успеха авторизации.
@@ -23,6 +28,6 @@
         /// <summary>
         /// Флаг заполнения данных о себе.
         /// </summary>
-        public bool IsWriteProfileData { get; set; }
+        //public bool IsWriteProfileData { get; set; }
     }
 }

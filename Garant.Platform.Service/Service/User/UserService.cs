@@ -41,13 +41,15 @@ namespace Garant.Platform.Services.Service.User
         private readonly IUserRepository _userRepository;
         private readonly IFtpService _ftpService;
         private readonly ICommonService _commonService;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
 
-        public UserService(SignInManager<UserEntity> signInManager, 
-            UserManager<UserEntity> userManager, 
-            IMailingService mailingService, 
-            IUserRepository userRepository, 
-            IFtpService ftpService, 
-            ICommonService commonService)
+        public UserService(SignInManager<UserEntity> signInManager,
+            UserManager<UserEntity> userManager,
+            IMailingService mailingService,
+            IUserRepository userRepository,
+            IFtpService ftpService,
+            ICommonService commonService,
+            IRefreshTokenRepository refreshTokenRepository)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -57,7 +59,10 @@ namespace Garant.Platform.Services.Service.User
             _userRepository = userRepository;
             _ftpService = ftpService;
             _commonService = commonService;
+            _refreshTokenRepository = refreshTokenRepository;
         }
+
+        #region huita
 
         /// <summary>
         /// Метод авторизует пользователя стандартным способом.
@@ -76,6 +81,9 @@ namespace Garant.Platform.Services.Service.User
                     throw new ErrorUserAuthorize(email);
                 }
 
+                //TODO: добавить данные в клеймы
+                var findedUser = await _userRepository.FindUserByEmailOrPhoneNumberAsync(email);
+
                 var claim = GetIdentityClaim(email);
 
                 // Генерит токен юзеру.
@@ -86,10 +94,9 @@ namespace Garant.Platform.Services.Service.User
 
                 var result = new ClaimOutput
                 {
-                    User = email,
-                    Token = token,
-                    IsSuccess = true,
-                    IsWriteProfileData = isWrite
+                    Email = email,
+                    AccessToken = token,
+                    IsSuccess = true
                 };
 
                 return result;
@@ -109,11 +116,11 @@ namespace Garant.Platform.Services.Service.User
         /// </summary>
         /// <param name="email">Email.</param>
         /// <returns>Токен пользователя.</returns>
-        private ClaimsIdentity GetIdentityClaim(string email)
+        private ClaimsIdentity GetIdentityClaim(string email, string role = "User")
         {
             var claims = new List<Claim> {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, email)
-                //new Claim(JwtRegisteredClaimNames.UniqueName, username)
+                new Claim(ClaimsIdentity.DefaultNameClaimType, email),
+                new Claim(ClaimsIdentity.DefaultNameClaimType, role)
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
@@ -142,62 +149,6 @@ namespace Garant.Platform.Services.Service.User
         }
 
         /// <summary>
-        /// Метод проверит правильность кода подтверждения.
-        /// </summary>
-        /// <param name="code">Код подтверждения.</param>
-        /// <returns>Статус проверки.</returns>
-        public async Task<ClaimOutput> CheckAcceptCodeAsync(string code)
-        {
-            try
-            {
-                var user = await (from u in _postgreDbContext.Users
-                                  where u.Code.Equals(code)
-                                  select u)
-                    .FirstOrDefaultAsync();
-
-                var claim = GetIdentityClaim(code);
-
-                // Генерит токен юзеру.
-                var token = GenerateToken(claim).Result;
-
-                ClaimOutput result = null;
-
-                // Если пользователь найден.
-                if (user != null)
-                {
-                    // Проверит, заполнял ли пользователь данные о себе.
-                    var isWrite = await IsWriteProfileDataAsync(user.Email ?? user.PhoneNumber ?? code);
-
-                    result = new ClaimOutput
-                    {
-                        Token = token,
-                        User = user.PhoneNumber ?? user.Email,
-                        IsSuccess = true,
-                        IsWriteProfileData = isWrite
-                    };
-                }
-
-                else
-                {
-                    result = new ClaimOutput
-                    {
-                        IsSuccess = false
-                    };
-                }
-
-                return result;
-            }
-
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
-                await logger.LogCritical();
-                throw;
-            }
-        }
-
-        /// <summary>
         /// Метод создаст нового пользователя.
         /// </summary>
         /// <param name="name">Имя.</param>
@@ -211,33 +162,47 @@ namespace Garant.Platform.Services.Service.User
         {
             try
             {
-                var date = DateTime.UtcNow;
+                #region identity version
 
-                // Создаст пользователя.
-                await _userManager.CreateAsync(new UserEntity
-                {
-                    UserName = email,
-                    FirstName = name,
-                    LastName = lastName,
-                    Email = email,
-                    City = city,
-                    DateRegister = date,
-                    Code = string.Empty,
-                    UserPassword = password,
-                    LockoutEnabled = false,
-                    UserRole = role
-                }, password);
+                //var date = DateTime.UtcNow;
 
-                var reult = new UserOutput
-                {
-                    Email = email,
-                    City = city,
-                    FirstName = name,
-                    LastName = lastName,
-                    DateRegister = date
-                };
+                //// Создаст пользователя.
+                //var registerResult = await _userManager.CreateAsync(new UserEntity
+                //{
+                //    UserName = email,
+                //    FirstName = name,
+                //    LastName = lastName,
+                //    Email = email,
+                //    City = city,
+                //    DateRegister = date,
+                //    Code = string.Empty,
+                //    UserPassword = password,
+                //    LockoutEnabled = false,
+                //    UserRole = role
+                //}, password);
 
-                return reult;
+                //if (!registerResult.Succeeded)
+                //{
+                //    throw new RegisterFailedException(string.Join(",", registerResult.Errors.Select(x => x.Description)));
+                //}
+
+                ////TODO: исправить рещультат
+                //var reult = new UserOutput
+                //{
+                //    Email = email,
+                //    City = city,
+                //    FirstName = name,
+                //    LastName = lastName,
+                //    DateRegister = date
+                //};
+
+                //return reult;
+
+                #endregion
+
+               
+
+                throw new NotImplementedException();
             }
 
             catch (Exception e)
@@ -470,7 +435,7 @@ namespace Garant.Platform.Services.Service.User
 
                 var result = new ClaimOutput
                 {
-                    Token = encodedJwt
+                    AccessToken = encodedJwt
                 };
 
                 return result;
@@ -806,5 +771,277 @@ namespace Garant.Platform.Services.Service.User
                 throw;
             }
         }
+
+        #endregion
+
+        #region REGISTRATION
+
+        public async Task<bool> StartRegisterUserAsync(string email)
+        {
+            try
+            {
+                var findedUser = await _userRepository.FindUserByEmailOrPhoneNumberAsync(email);
+
+                if (findedUser is not null)
+                {
+                    throw new RegisterFailedException($"Пользователь с емейлом {email} уже существует!");
+                }
+
+                //1. создать пустого пользователя
+                var registerResult = await _userRepository.CreateEmptyUserAsync(email);
+
+                //2. отправить код на емейл
+                await _mailingService.SendAcceptCodeMailAsync(registerResult.GeneratedCode, registerResult.Email);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        public async Task<bool> CheckAcceptCodeAsync(string email, string code)
+        {
+            try
+            {
+                var findedUser = await _postgreDbContext.Users.FirstOrDefaultAsync(c => c.Email.ToLower() == email.ToLower());
+
+                if (findedUser is null)
+                {
+                    throw new RegisterFailedException($"Пользователь с емейлом {email} не найден!");
+                }
+
+                if (findedUser.Code != code)
+                {
+                    //
+                    return false;
+                }
+
+                findedUser.EmailConfirmed = true;
+
+                _postgreDbContext.Update(findedUser);
+
+                await _postgreDbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        public async Task<bool> ResendCodeAsync(string email)
+        {
+            try
+            {   
+                var registerResult = await _userRepository.UpdateCodeWhileRegistrationAsync(email);
+
+                await _mailingService.SendAcceptCodeMailAsync(registerResult.GeneratedCode, registerResult.Email);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        public async Task<ClaimOutput> CompleteRegisterAsync(CompleteRegistrationInput completeRegistration)
+        {
+            try
+            {
+                var registerResult = await _userRepository.CompleteRegisterAsync(completeRegistration);
+
+                var claim = GetIdentityClaim(registerResult.Email, registerResult.UserRole);
+
+                // Генерит токен юзеру.
+                var token = await GenerateToken(claim);
+
+                string refreshToken = GenerateRerfreshToken();
+
+                await _refreshTokenRepository.CreateAsync(refreshToken, registerResult.UserId);
+
+                var result = new ClaimOutput
+                {
+                    Email = completeRegistration.Email,
+                    AccessToken = token,
+                    RefreshToken = refreshToken,
+                    IsSuccess = true
+                };
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        public async Task<ClaimOutput> RefreshAccessTokenAsync(string refreshToken)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(refreshToken))
+                {
+                    throw new ArgumentNullException(nameof(refreshToken), $"Рефреш токен не может быть пустым или null.");
+                }
+
+                //валидируем рефреш токен
+                bool isValidRefreshToken = ValidateRefreshToken(refreshToken);
+
+                if (!isValidRefreshToken)
+                {
+                    throw new ArgumentException($"Рефреш токен не валиден.", nameof(refreshToken));
+                }
+
+                //ищем рефреш токен в бд
+                var token = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+
+                if (token is null)
+                {
+                    throw new ArgumentException($"Рефреш токен отсутствует в БД.", nameof(refreshToken));
+                }
+
+                //ищем юзера по юзер айди из рефреш токена
+                var user = await _postgreDbContext.Users.FirstOrDefaultAsync(x => x.Id == token.UserId);
+
+                if (user is null)
+                {
+                    throw new ArgumentException($"С рефреш токеном не ассоциируется ни один пользователь.", nameof(refreshToken));
+                }
+
+                //удаляем все рефреш токены юзера
+                await _refreshTokenRepository.DeleteAllAsync(user.Id);
+
+                //получаем клеймы
+                var claimsIdentity = GetIdentityClaim(user.Email, user.UserRole); ;
+
+                //генерим новые токены
+                string newAccessToken = await GenerateToken(claimsIdentity);
+                string newRefreshToken = GenerateRerfreshToken();
+
+                var newToken = await _refreshTokenRepository.CreateAsync(newRefreshToken, user.Id);
+
+                return new ClaimOutput
+                {
+                    Email = user.Email,
+                    AccessToken = newAccessToken,
+                    RefreshToken = newRefreshToken,
+                    IsSuccess = true
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        public async Task<ClaimOutput> AuthenticateUserAsync(string email, string password)
+        {
+            try
+            {
+                var hashPassword = await _commonService.HashPasswordAsync(password);
+
+                var user = await _postgreDbContext.Users.FirstOrDefaultAsync(x=>x.Email == email && x.PasswordHash == hashPassword);
+
+                if (user is null)
+                {
+                    throw new ArgumentException($"Пользователя с таким емейлом и паролем не найдено!");
+                }
+
+                //удалим все старые токены пользователя
+                await _refreshTokenRepository.DeleteAllAsync(user.Id);
+
+                var claim = GetIdentityClaim(user.Email, user.UserRole);
+
+                // Генерит токен юзеру.
+                var token = await GenerateToken(claim);
+
+                string refreshToken = GenerateRerfreshToken();
+
+                await _refreshTokenRepository.CreateAsync(refreshToken, user.Id);
+
+                return new ClaimOutput
+                {
+                    Email = user.Email,
+                    AccessToken = token,
+                    RefreshToken = refreshToken,
+                    IsSuccess = true
+                }; ;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var logger = new Logger(_postgreDbContext, e.GetType().FullName, e.Message, e.StackTrace);
+                await logger.LogCritical();
+                throw;
+            }
+        }
+
+        #endregion
+
+        private bool ValidateRefreshToken(string refreshToken)
+        {
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+
+            TokenValidationParameters validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = RefreshTokenOptions.ISSUER,
+                ValidateAudience = true,
+                ValidAudience = RefreshTokenOptions.AUDIENCE,
+                ValidateLifetime = true,
+                IssuerSigningKey = RefreshTokenOptions.GetSymmetricSecurityKey(),
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            try
+            {
+                tokenHandler.ValidateToken(refreshToken, validationParameters, out SecurityToken validatedToken);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+        }
+
+        private string GenerateRerfreshToken()
+        {
+            var now = DateTime.UtcNow;
+            // создаем JWT-токен
+            var jwt = new JwtSecurityToken(
+                    issuer: RefreshTokenOptions.ISSUER,
+                    audience: RefreshTokenOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: null,
+                    expires: now.AddMinutes(RefreshTokenOptions.LIFETIME),
+                    signingCredentials: new SigningCredentials(RefreshTokenOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+
+            string refreshToken = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            return refreshToken;
+        }
+
+        
     }
 }
