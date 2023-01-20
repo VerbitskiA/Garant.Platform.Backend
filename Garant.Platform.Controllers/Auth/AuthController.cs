@@ -94,7 +94,7 @@ namespace Garant.Platform.Controllers.Auth
 
                 if (status)
                 {
-                    return Ok(new { status = status, message = $"Код успешно подтвеждён." });
+                    return Ok(new { status = status, message = $"Код успешно подтверждён." });
                 }
                 else
                 {
