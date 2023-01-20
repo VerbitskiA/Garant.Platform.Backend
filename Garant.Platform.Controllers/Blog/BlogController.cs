@@ -16,7 +16,7 @@ namespace Garant.Platform.Controllers.Blog
     /// Контроллер блогов и новостей.
     /// </summary>
     [ApiController, Route("blog")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BlogController : BaseController
     {
         private readonly IBlogService _blogService;

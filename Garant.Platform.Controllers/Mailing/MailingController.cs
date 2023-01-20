@@ -27,14 +27,14 @@ namespace Garant.Platform.Controllers.Mailing
         /// Метод отправит код подтверждения. Также запишет этот код в базу.
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
-        [HttpPost, Route("send-confirm-code")]
-        [ProducesResponseType(200, Type = typeof(MailngOutput))]
-        public async Task<IActionResult> SendMailAcceptCodeSmsAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
-        {
-            var result = await _commonService.GenerateAcceptCodeAsync(sendAcceptCodeInput.Email);
+        //[AllowAnonymous]
+        //[HttpPost, Route("send-confirm-code")]
+        //[ProducesResponseType(200, Type = typeof(MailngOutput))]
+        //public async Task<IActionResult> SendMailAcceptCodeSmsAsync([FromBody] SendAcceptCodeInput sendAcceptCodeInput)
+        //{
+        //    var result = await _commonService.GenerateAcceptCodeAsync(sendAcceptCodeInput.Email);
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
     }
 }

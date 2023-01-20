@@ -14,7 +14,7 @@ namespace Garant.Platform.Controllers.Search
     /// </summary>
     [ApiController]
     [Route("search")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class SearchController : BaseController
     {
         private readonly ISearchService _searchService;

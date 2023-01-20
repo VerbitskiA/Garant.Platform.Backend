@@ -16,7 +16,7 @@ namespace Garant.Platform.Controllers.Franchise
     /// Контроллер франшиз.
     /// </summary>
     [ApiController, Route("franchise")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FranchiseController : BaseController
     {
         private readonly IFranchiseService _franchiseService;

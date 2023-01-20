@@ -17,7 +17,7 @@ namespace Garant.Platform.Controllers.ReadyBusiness
     /// </summary>
     [ApiController]
     [Route("business")]
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class BusinessController : BaseController
     {
         private readonly IBusinessService _businessService;
